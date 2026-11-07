@@ -355,7 +355,7 @@ function parseScript(text,lenient){
       return {ifg:{k:k,op:op,v:+rv}};
     }
     if(op!=='='&&op!=='!=')throw PE(l.n,k+' can only be checked with  is  or  is not');
-    if(k==='dimension'){var dw=rv.toLowerCase().replace(/[\s"]+/g,'_').replace(/^_+|_+$/g,'');if(dw==='main'||dw==='overworld'||dw==='main_world')dw='overworld';if(dw==='deepvoid')dw='deep_void';if(dw!=='overworld'&&dw!=='deep_void')throw PE(l.n,"unknown dimension '"+rv+"'. You can use: overworld, deep_void");return {ifg:{k:k,op:op,s:dw}};}
+    if(k==='dimension'){var dw=rv.toLowerCase().replace(/[\s"]+/g,'_').replace(/^_+|_+$/g,'');if(dw==='deepvoid')dw='deep_void';if(dw!=='deep_void')throw PE(l.n,"unknown dimension '"+rv+"'. You can use: deep_void  (anywhere else, use else:)");return {ifg:{k:k,op:op,s:dw}};}
     if(k==='biome'){var bw=rv.toLowerCase();if(BIOMES.indexOf(bw)<0){var gb=guess(bw,BIOMES);throw PE(l.n,"unknown biome '"+rv+"'."+(gb?" Did you mean '"+gb+"'?":" You can use: "+BIOMES.join(', ')));}return {ifg:{k:k,op:op,s:bw}};}
     if(k==='item')return {ifg:{k:k,op:op,s:item(l,rv)}};
     var nm=rv.match(/^"([^"]{1,40})"$/);if(!nm)throw PE(l.n,'write the name in quotes, like  if player name is "Bob":');
@@ -564,7 +564,7 @@ if(nv===''||nv==='-')nv=0;fc.push([rel?1:0,+nv]);}
         out.names[item(r2,mm[1].trim())]=mm[2];
       }
     }else if(m=l.t.match(/^(disable|enable)\s+collision\s+of\s+(.+)$/i)){out.col=out.col||{};out.col[colT(l,m[2].trim())]=m[1].toLowerCase()==='enable';}
-    else if(m=l.t.match(/^api\s+"?(potato)"?$/i)){out.api='potato';}
+    else if(m=l.t.match(/^api\s+"?(potato)"?$/i)){throw PE(l.n,"the old 'api potato' line is gone. Make aliases with publish_aliases: instead");}
     else if(/^publish_aliases\s*:$/i.test(l.t)){
       if(!(pos<L.length&&L[pos].ind>0))throw PE(l.n,'nothing is written under this line');
       var aind=L[pos].ind;out.pa=out.pa||[];

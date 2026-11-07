@@ -10426,7 +10426,7 @@ function modDef(q){   // define mob|item "이름": 기존 것을 바탕(base)으
 function modApply(list){
   MODDEF.mob={};MODDEF.item={};MODDEF.q=[];MODDEF.sp=[];
   for(const k in MOD.orig){if(ITEMS[k])ITEMS[k].name=MOD.orig[k];}
-  MOD.spW=null;MOD.orig={};MOD.ev=[];MOD.on=[];MOD.st={};MOD.remap={};MOD.col={};MOD.potato=false;MOD.phAll=false;MOD.pa=[];MOD.sig={};
+  MOD.spW=null;MOD.orig={};MOD.ev=[];MOD.on=[];MOD.st={};MOD.remap={};MOD.col={};MOD.pa=[];MOD.sig={};
   for(const k in MOD.iorig){if(ITEMS[k])ITEMS[k].icon=MOD.iorig[k];}
   MOD.iorig={};MOD.tex={};let texN=0;MODPKQ=[];
   const bx=document.getElementById('modbtns');if(bx)bx.innerHTML='';
@@ -10441,9 +10441,8 @@ function modApply(list){
       const im=new Image();im.onload=()=>{MOD.tex[k]=im;try{for(const q in ICONURL)delete ICONURL[q];for(const q in ICONC)delete ICONC[q];renderInv();renderEquip();}catch(e){}};im.src=v;
     }}
     if(d.packs&&typeof d.packs==='object')MODPKQ.push(d.packs);
-    if(d.api==='potato'){MOD.potato=true;MOD.phAll=true;}   // 옛날 형식 (api potato)
     if(Array.isArray(d.defs)){for(const q of d.defs.slice(0,1000))MODDEF.q.push(q);}
-    if(Array.isArray(d.pa)){for(const q of d.pa.slice(0,1000)){if(q&&typeof q.a==='string'&&/^[a-z0-9_]{1,30}$/.test(q.a)&&Array.isArray(q.do)){MOD.pa.push({a:q.a,do:q.do,mid:m.id,mn:String(m.name||'').slice(0,40),u:(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(String(q.u||''))?q.u:(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(m.id||''))?String(m.id).toLowerCase():''))});MOD.potato=true;}}}   // publish_aliases: 별칭 정의 (이 모드가 대신 풀어줘요)
+    if(Array.isArray(d.pa)){for(const q of d.pa.slice(0,1000)){if(q&&typeof q.a==='string'&&/^[a-z0-9_]{1,30}$/.test(q.a)&&Array.isArray(q.do)){MOD.pa.push({a:q.a,do:q.do,mid:m.id,mn:String(m.name||'').slice(0,40),u:(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(String(q.u||''))?q.u:(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(m.id||''))?String(m.id).toLowerCase():''))});}}}   // publish_aliases: 별칭 정의 (이 모드가 대신 풀어줘요)
     if(d.col&&typeof d.col==='object'&&!Array.isArray(d.col))for(const k of Object.keys(d.col).slice(0,60)){if(/^[a-z_0-9]{1,30}$/.test(k))MOD.col[k]=!!d.col[k];}
     if(Array.isArray(d.sets))for(const t of d.sets.slice(0,100))modSet(t,setName);
     if(d.remap&&typeof d.remap==='object'&&!Array.isArray(d.remap))for(const k of Object.keys(d.remap).slice(0,30)){if(MOD_KEY.test(k)&&MOD_KEY.test(d.remap[k]))MOD.remap[k]=d.remap[k];}
@@ -10486,53 +10485,7 @@ function modTxt(s){   // Potato API: %player_name% 같은 값을 글에 넣어�
   if(s.indexOf('{:')>=0)s=s.replace(/\{:([a-z0-9_]{1,30}):\}/g,(m,k)=>{shLoad();const u=MODX.uid?MODX.uid.slice(0,8)+'_'+k:'';if(SHV[u]!==undefined)return String(SHV[u]);for(const x of (MODX.uses||[])){const w=SHV[x.slice(0,8)+'_'+k];if(w!==undefined)return String(w);}return SHV[k]===undefined?'':String(SHV[k]);});   // {:이름:} 제작자끼리 공유하는 변수 (uuid 모드는 자기 번호 안에서 먼저 찾아요)
   if(MOD.pa.length&&!MODX.inAlias&&MODX.uses&&MODX.uses.length&&s.indexOf('%')>=0){for(const q of MOD.pa){if(!MODX.uses.includes(q.u))continue;if(s.indexOf('%'+q.a+'%')<0)continue;s=modAlias(q,s);}}   // %별칭% → 별칭을 만든 모드(Potato API)가 대신 실행
   if(s.indexOf('{')>=0)s=s.replace(/\{(_?[a-z0-9_]{1,20}_?)\}/g,(m,k)=>{const v=modVGet(k);return v===undefined?'0':String(v);});   // {변수} / {_지역변수_}
-  if(!MOD.potato||s.indexOf('%')<0)return s;
-  return s.replace(/%([a-z0-9_' ]{3,30})%/g,(m,k)=>{
-    if(!MOD.phAll)return m;   // 옛 api potato 모드만 게임이 풀어줘요
-    switch(k){
-      case 'player_name':return myName();
-      case 'player_location':return Math.round(P.x)+' '+Math.round(P.y);   // 'x z' (예: 300 20)
-      case 'player_x':return String(Math.round(P.x));
-      case 'player_y':return String(Math.round((P.alt||0)*10)/10);   // 열기구 고도 (0~3, 땅 위는 0)
-      case 'player_z':return String(Math.round(P.y));   // 위에서 보는 2D라 z는 세로 좌표
-      case 'world_player_count':return String(1+remotes.size);
-      case 'online_player':{const a=[myName()];for(const r of remotes.values())if(r&&r.name)a.push(String(r.name).slice(0,15));return a.join(', ');}
-      case 'player_hp':return String(Math.round(P.hp*10)/10);
-      case 'player_max_hp':return String(P.maxhp);
-      case 'player_item':{const q=inv[P.sel];return q&&ITEMS[q.id]?String(ITEMS[q.id].name):'';}
-      case 'player_biome':{try{const cu=cbOf(P.x,P.y);return String(cu?cu.n:(BIOME_NAME[bioAt(P.x,P.y)]||''));}catch(e){return '';}}
-      case 'world_day':return String(Math.floor(world.clock/DAY_SEC)+1);
-      case 'world_time':{const h=(6+world.clock/DAY_SEC*24)%24;return String(Math.floor(h)).padStart(2,'0')+':'+String(Math.floor((h%1)*60)).padStart(2,'0');}
-      case 'player':return MODX.actor||myName();
-      case 'interacted':case 'interacted_item':return MODX.touched||'';
-      case 'eaten_item':case 'eaten':return MODX.eaten||'';
-      case "player's_uuid":case 'player_uuid':return myUuid();   // 로그인하면 Supabase 계정 id
-      case 'mod_name':return MODX.mn;
-      case 'mod_uuid':return MODX.mid;
-      case 'crafted_item':return MODX.crafted;
-      case 'placed_block':return MODX.placed;
-      case 'distroyed_block':case 'destroyed_block':return MODX.destroyed;
-      case 'nearest_player':case 'nearst_player':return modPick('player','near');
-      case 'farest_player':case 'farthest_player':return modPick('player','far');
-      case 'random_player':return modPick('player','rand');
-      case 'nearest_mob':case 'nearst_mob':return modPick('mob','near');
-      case 'farest_mob':case 'farthest_mob':return modPick('mob','far');
-      case 'random_mob':return modPick('mob','rand');
-      case 'nearest_monster':case 'nearst_monster':return modPick('monster','near');
-      case 'farest_monster':case 'farthest_monster':return modPick('monster','far');
-      case 'random_monster':return modPick('monster','rand');   // on 이벤트에서는 그 일을 한 사람 이름
-      case 'damage':return String(MODX.dmg||0);
-      case 'attacker':return MODX.attacker;
-      case 'victim':return MODX.victim;
-      case 'random':return String(1+Math.floor(Math.random()*100));
-      case 'world_name':return String((typeof shown!=='undefined'&&shown&&shown.name)||'');
-      default:{
-        {const mc=/^player_(.+)_count$/.exec(k);if(mc&&ITEMS[mc[1]])return String(modInv(mc[1]));}
-        if(k.startsWith('var_')){const v=modVars()[k.slice(4)];return v===undefined?'0':String(v);}
-        return m;
-      }
-    }
-  });
+  return s;
 }
 const SHV={};let shAt=0,shWarn=false;const shLast={},shPend={};
 function shLoad(force){const sb=window.bfSb;if(!sb)return;const t=Date.now();if(!force&&t-shAt<20000)return;shAt=t;try{sb.from('beaconfall_shared_vars').select('name,value').limit(500).then(r=>{if(r&&r.data)for(const q of r.data)SHV[q.name]=q.value;}).catch(()=>{});}catch(e){}}
@@ -10547,21 +10500,6 @@ function shSet(n,v){
   shLast[n]=t;send();
 }
 function myUuid(){try{if(window.bfUid)return String(window.bfUid);let u=localStorage.getItem('bf.uuid');if(!u){u=(crypto.randomUUID?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:(r&3|8)).toString(16);}));localStorage.setItem('bf.uuid',u);}return u;}catch(e){return 'unknown';}}
-function modPick(kind,how){
-  const L=[];   // {n:이름, d:거리}
-  if(kind==='player'){
-    if(how==='rand')L.push({n:myName(),d:0});
-    for(const r of remotes.values())if(r&&r.name)L.push({n:String(r.name).slice(0,15),d:Math.hypot(r.x-P.x,r.y-P.y)});
-    if(!L.length)return myName();
-  }else{
-    if(!monsters)return '';
-    for(const m of monsters){if(m.hid)continue;const T=MT(m);L.push({n:String(T.name||m.ty||''),d:Math.hypot(m.x-P.x,m.y-P.y)});}
-    if(kind==='mob')for(const a of animals){const nm=(typeof ANIM_NAME!=='undefined'&&ANIM_NAME[a.type])||a.type;L.push({n:String(nm),d:Math.hypot(a.x-P.x,a.y-P.y)});}
-    if(!L.length)return '';
-  }
-  if(how==='rand')return L[Math.floor(Math.random()*L.length)].n;
-  L.sort((a,b)=>a.d-b.d);return (how==='near'?L[0]:L[L.length-1]).n;
-}
 function modIsLoc(n){return n.length>2&&n[0]==='_'&&n[n.length-1]==='_';}   // {_이름_} = 이 이벤트 안에서만 쓰는 변수
 function modShKey(n){return (MODX.uid?MODX.uid.slice(0,8)+'_':'')+n;}
 function modShGet(n){shLoad();const k=modShKey(n);if(SHV[k]!==undefined)return SHV[k];for(const x of (MODX.uses||[])){const w=SHV[x.slice(0,8)+'_'+n];if(w!==undefined)return w;}return SHV[n];}   // {:이름:} 공유 변수
@@ -10758,7 +10696,7 @@ function modCondOk(c){   // if A or B: 안의 조건 하나
   if(c.md)return modHasMod(c.md);
   if(c.hand)return modHandOk(c.hand);
   if(c.has){const hid=modIt(c.has.item);return !!(ITEMS[hid]&&modInv(hid)>=Math.max(1,c.has.n|0||1));}
-  if(c.ifp){if(!MOD.potato)return false;const isp=c.ifp.w==='victim'?MODX.vp:MODX.ap;return isp!==!!c.ifp.not;}
+  if(c.ifp){const isp=c.ifp.w==='victim'?MODX.vp:MODX.ap;return isp!==!!c.ifp.not;}
   if(c.ifv)return modVarCmp(c.ifv);
   if(c.ifg)return modGCmp(c.ifg);
   if(c.ifc&&typeof c.ifc.c==='string')return String(modTxt(String(c.ifc.v))).toLowerCase().includes(c.ifc.c.toLowerCase());
@@ -10809,7 +10747,7 @@ function modRun0(acts,depth,box){
     else if(a.inl&&Array.isArray(a.do)){modRun(a.do,depth+1,box);}
     else if(a.addv&&typeof a.addv.n==='string'&&typeof a.addv.d==='number'){const cur=Number(modVGet(a.addv.n));modVarSet(a.addv.n,(Number.isFinite(cur)?cur:0)+a.addv.d);}
     else if(typeof a.resv==='string'){if(a.resv.startsWith('s__'))modVarSet(a.resv,'');else delete (modIsLoc(a.resv)?MODX.loc:modVars())[a.resv];}
-    else if(a.ifp&&Array.isArray(a.do)){if(MOD.potato){const isp=a.ifp.w==='victim'?MODX.vp:MODX.ap;if(isp!==!!a.ifp.not)modRun(a.do,depth+1,box);}}
+    else if(a.ifp&&Array.isArray(a.do)){const isp=a.ifp.w==='victim'?MODX.vp:MODX.ap;if(isp!==!!a.ifp.not)modRun(a.do,depth+1,box);}
     else if(a.shset&&typeof a.shset.n==='string'){shSet(MODX.uid?MODX.uid.slice(0,8)+'_'+a.shset.n:a.shset.n,modTxt(String(a.shset.v)));}
     else if(a.ifc&&typeof a.ifc.c==='string'&&Array.isArray(a.do)){if(String(modTxt(String(a.ifc.v))).toLowerCase().includes(a.ifc.c.toLowerCase()))modRun(a.do,depth+1,box);}
     else if(a.ifv&&Array.isArray(a.do)){if(modVarCmp(a.ifv))modRun(a.do,depth+1,box);}
