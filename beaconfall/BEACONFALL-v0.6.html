@@ -407,7 +407,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.6<br>build 197</p>
+    <p class="foot">v0.6<br>build 198</p>
   </nav>
 </div>
 
@@ -524,7 +524,8 @@ const BGM=(()=>{
 <script>
 //==GEN_START
 /* ---------- 월드 생성 (DOM 의존 없음) ---------- */
-const W=21504, H=13312, SEA=0.5;   // 구역(256×256)별로 불러오는 아주 큰 월드
+let W=21504, H=13312;const SEA=0.5;   // 옛 월드는 21504×13312, 새 월드는 25565×25565 (월드마다 setWorldSize 로 바꿔요)
+const WS_OLD=[21504,13312],WS_NEW=[25565,25565];   // 구역(256×256)별로 불러오는 아주 큰 월드
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 var MODBLK={},MODPKO=[],MODPPL={},MODUI={},MODPKQ=[],MODSND={},MODMUSP={};   // 리소스팩 그림
 function hashStr(s){let h=2166136261;s=String(s);for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
@@ -571,7 +572,7 @@ const TREE_SW=[5,5,5,3,2,3,5,5,3,3];
 
 /* 월드: 시작섬 1개 + 테마 섬들. 지형은 한꺼번에 만들지 않고, 플레이어가 가까이 가면 구역(256×256)별로 불러와요.
    모든 값은 시드로 정해지는 함수라서 어디서든(손님 포함) 똑같은 월드가 나와요. */
-const CHK=256, CXN=W/CHK, CYN=H/CHK, APR=8, RGN=CHK+2*APR, TMAX=2048, BMAX=1024, CHK_CAP=150;
+let CXN=W/256, CYN=H/256;const CHK=256, APR=8, RGN=CHK+2*APR, TMAX=2048, BMAX=1024, CHK_CAP=150;
 let TER=null,PTF=null;   // PTF: 모드가 바꾼 지형 설정(방장→손님)
 let sV=0,sB=0,sM=0,sC=0;const MODBIO={id:{},by:[null],n:0};   // sC: 모드로 만든 바이옴 번호 (0=없음)   // shape()의 결과 (높이, 섬 종류(+128 용암), 습도)
 function shape(x,y,hb,fb,L){
@@ -648,12 +649,12 @@ const hs=(x,y,sl)=>hash2((x+sl*977)^TER.s0,(y+sl*131)^TER.s1);
 /* 강 (미리 그려 둔 희소 격자) */
 function rvPt(x,y){
   if(x<0||y<0||x>=W||y>=H)return 0;
-  const b=TER.rvb.get((y>>6)*(W>>6)+(x>>6));
+  const b=TER.rvb.get((y>>6)*RVW+(x>>6));
   return b?b[((y&63)<<6)|(x&63)]:0;
 }
 function rvSetPt(x,y,val){
   if(x<1||y<1||x>=W-1||y>=H-1)return;
-  const q=Math.max(1,Math.min(255,Math.round(val*32))),k=(y>>6)*(W>>6)+(x>>6);
+  const q=Math.max(1,Math.min(255,Math.round(val*32))),k=(y>>6)*RVW+(x>>6);
   let b=TER.rvb.get(k);if(!b){b=new Uint8Array(4096);TER.rvb.set(k,b);}
   const j=((y&63)<<6)|(x&63);if(q>b[j])b[j]=q;
 }
@@ -720,7 +721,7 @@ function ensureTrees(cx,cy){
   }
   TER.tn[ci]=list.length;
 }
-const GW_=Math.ceil(W/16);
+let GW_=Math.ceil(W/16);
 function treeCells(cx,cy){   // 8칸 격자에 나무가 있는지 (바위가 나무 옆에 안 놓이게)
   const ci=cy*CXN+cx;let s=TER.tcs[ci];if(s)return s;
   ensureTrees(cx,cy);s=new Set();
@@ -1394,7 +1395,15 @@ function drawCamp(g){
 }
 
 /* ---------- 월드 로딩 ---------- */
-async function loadWorld(seed,name,id){
+let RVW=W>>6;
+function setWorldSize(w,h){   // 월드 크기에 따라 달라지는 값을 한꺼번에 다시 계산해요
+  W=w;H=h;CXN=Math.ceil(W/CHK);CYN=Math.ceil(H/CHK);GW_=Math.ceil(W/16);GW=Math.ceil(W/GRID);GH=Math.ceil(H/GRID);CW=GW*2;CH=GH*2;
+  EW=Math.ceil(W/EC);EH=Math.ceil(H/EC);SCW=Math.ceil(W/SC);SCH=Math.ceil(H/SC);RVW=((W-1)>>6)+1;
+  const n=GW*GH;if(n<=1100000){SK_F=2000000;SK_R=4000000;SK_C=10000000;}else{SK_F=n;SK_R=2*n;SK_C=4*n;}   // 층마다 칸 번호가 겹치지 않게
+  seaC=seaG=seaP=seaS=null;seaRoutes.clear();
+}
+async function loadWorld(seed,name,id,sz){
+  {const q=settings.worlds.find(x=>x.id===id),z=sz||(q&&q.sz)||0;const d=z?WS_NEW:WS_OLD;if(d[0]!==W||d[1]!==H)setWorldSize(d[0],d[1]);}
   if(world)saveWorld(true);
   const L=$('#loading');L.classList.remove('done');L.style.display='flex';
   const progress=async(p,msg)=>{$('#barfill').style.width=(p*100)+'%';$('#loadmsg').textContent=msg;await new Promise(r=>requestAnimationFrame(()=>setTimeout(r,0)));};
@@ -4589,8 +4598,8 @@ function trySpawnOre(){
 }
 
 /* 구조물: 16px 격자 (물체 층 + 바닥 층) */
-const GRID=16, GW=Math.ceil(W/GRID), GH=Math.ceil(H/GRID);
-const CG=8, CW=GW*2, CH=GH*2;   // 컨베이어·분류기는 8×8 칸(타일의 1/4 넓이)
+const GRID=16;let GW=Math.ceil(W/GRID), GH=Math.ceil(H/GRID);
+const CG=8;let CW=GW*2, CH=GH*2;   // 컨베이어·분류기는 8×8 칸(타일의 1/4 넓이)
 const STRUCT={
   bench:{layer:'o',block:true,item:'bench',n:1,need:2},
   feller:{layer:'o',block:true,item:'feller',n:1,need:3},
@@ -5147,7 +5156,8 @@ function drawStruct(g,b){
 const structMap=l=>l==='f'?world.fgrid:l==='c'?world.cgrid:l==='r'?world.rgrid:world.sgrid;
 const skey=(l,gx,gy)=>l==='c'?gy*CW+gx:gy*GW+gx;
 const L2=l=>l==='f'||l==='c'||l==='r'?l:'o';
-const structKey=b=>b.layer==='c'?10000000+b.gy*CW+b.gx:b.layer==='r'?4000000+b.gy*GW+b.gx:b.layer==='f'?2000000+b.gy*GW+b.gx:b.gy*GW+b.gx;   // 칸 번호가 겹치지 않게 간격을 넓게 (예전엔 멀리 있는 컨베이어가 안 부서졌어요)
+let SK_F=2000000,SK_R=4000000,SK_C=10000000;
+const structKey=b=>b.layer==='c'?SK_C+b.gy*CW+b.gx:b.layer==='r'?SK_R+b.gy*GW+b.gx:b.layer==='f'?SK_F+b.gy*GW+b.gx:b.gy*GW+b.gx;   // 칸 번호가 겹치지 않게 간격을 넓게 (예전엔 멀리 있는 컨베이어가 안 부서졌어요)
 const structByKey=key=>key>=10000000?world.cgrid.get(key-10000000):key>=4000000?world.rgrid.get(key-4000000):key>=2000000?world.fgrid.get(key-2000000):world.sgrid.get(key);
 const structBox=b=>b.layer==='c'?[b.gx*CG,b.gy*CG,CG]:[b.gx*GRID,b.gy*GRID,GRID];
 function addStructCell(id,gx,gy,ex){
@@ -7429,7 +7439,7 @@ function drawBoatHull(g,px,py){
 }
 
 /* 지도(M)와 탐험 안개: 가 본 곳만 보여요 */
-const EC=32,EW=Math.ceil(W/EC),EH=Math.ceil(H/EC);
+const EC=32;let EW=Math.ceil(W/EC),EH=Math.ceil(H/EC);
 let exploreT=0,mapOn=false;
 function exploreTick(dt){
   exploreT-=dt;if(exploreT>0||!world.expl)return;exploreT=0.3;
@@ -8440,7 +8450,7 @@ function takeItemN(id,n){
   persist();renderInv();
 }
 /* 화물선 항로: 바다 칸만 골라서 육지를 돌아가요 */
-const SC=24,SCW=Math.ceil(W/SC),SCH=Math.ceil(H/SC);
+const SC=24;let SCW=Math.ceil(W/SC),SCH=Math.ceil(H/SC);
 let seaC=null,seaG=null,seaP=null,seaS=null;const seaRoutes=new Map();let nextCargoId=1;
 function seaCell(cx,cy){
   if(cx<0||cy<0||cx>=SCW||cy>=SCH)return false;
@@ -9796,7 +9806,7 @@ async function dvTravel(back){   // 공허의 포탈: Deep Void 차원 ↔ 원�
   if(!back){
     const id='v'+hashStr(par.id+'|deepvoid').toString(36);
     tgt=settings.worlds.find(w=>w.id===id);
-    if(!tgt){tgt={id,name:(par.name+' · Deep Void').slice(0,30),seed:String(1+hashStr(String(par.seed)+'|deepvoid')%999999998),created:Date.now(),dim:{p:par.id,n:'Deep Void',k:'dv'}};
+    if(!tgt){tgt={id,name:(par.name+' · Deep Void').slice(0,30),seed:String(1+hashStr(String(par.seed)+'|deepvoid')%999999998),created:Date.now(),dim:{p:par.id,n:'Deep Void',k:'dv'},sz:1};
       if(par.diff)tgt.diff=par.diff;if(par.keep)tgt.keep=true;if(par.hard)tgt.hard=true;if(par.sandbox){tgt.sandbox=true;tgt.sbEver=true;}
       settings.worlds.push(tgt);}
   }
@@ -10254,7 +10264,7 @@ async function modTravel(name){   // define world 로 만든 월드(또는 원�
     const id='d'+hashStr(par.id+'|'+name).toString(36);
     tgt=settings.worlds.find(w=>w.id===id);
     if(!tgt){const sd=dd.sd||String(1+hashStr(String(par.seed)+'|'+name)%999999998);
-      tgt={id,name:(par.name+' · '+name).slice(0,30),seed:sd,created:Date.now(),dim:{p:par.id,n:name}};
+      tgt={id,name:(par.name+' · '+name).slice(0,30),seed:sd,created:Date.now(),dim:{p:par.id,n:name},sz:1};
       if(par.diff)tgt.diff=par.diff;if(par.keep)tgt.keep=true;if(par.hard)tgt.hard=true;if(par.sandbox){tgt.sandbox=true;tgt.sbEver=true;}
       settings.worlds.push(tgt);}
   }
@@ -14165,7 +14175,7 @@ async function guestHandle(d){
     {let ml=[];try{if(typeof d.mods==='string'&&d.mods)ml=JSON.parse(d.mods);}catch(e){ml=[];}if(!Array.isArray(ml))ml=[];ml=ml.slice(0,50).filter(m=>m&&m.data&&typeof m.data==='object');
       if(ml.length){const ok=await modAsk(ml);closeModal();if(!ok){netLeave('모드를 허용하지 않아서 방에서 나왔어요.');return;}}
       modApply(ml);}
-    if(/^\d{1,10}$/.test(String(d.seed))){net.wname=String(d.name||'').slice(0,16);WOPT.keep=!!d.keep;WOPT.hard=false;WOPT.dmg=WOPT.hp=1;netRefresh();PTF=cleanTF(d.tf);try{await loadWorld(String(d.seed),net.wname,null);}finally{PTF=null;}}
+    if(/^\d{1,10}$/.test(String(d.seed))){net.wname=String(d.name||'').slice(0,16);WOPT.keep=!!d.keep;WOPT.hard=false;WOPT.dmg=WOPT.hp=1;netRefresh();PTF=cleanTF(d.tf);try{await loadWorld(String(d.seed),net.wname,null,d.sz?1:0);}finally{PTF=null;}}
   }else if(!world){return;}
   else if(d.t==='state'){
     applyState(d);closeModal();
@@ -14314,7 +14324,7 @@ async function hostRoom(addr,wid){
       c.on('open',()=>{
         if(!world||world.id!==w.id){try{c.close();}catch(e){}return;}
         net.conns.push(c);
-        try{let ms='';try{const l=MOD.on.map(m=>({id:m.id,kind:m.kind,name:m.name,author_name:m.author_name,data:m.data}));ms=JSON.stringify(l);if(ms.length>200000)ms='';if(ms==='[]')ms='';}catch(e){}c.send({t:'world',tf:(w.tf||null),name:w.name,seed:w.seed,keep:WOPT.keep?1:0,ver:GAME_VER,mods:ms});}catch(e){}
+        try{let ms='';try{const l=MOD.on.map(m=>({id:m.id,kind:m.kind,name:m.name,author_name:m.author_name,data:m.data}));ms=JSON.stringify(l);if(ms.length>200000)ms='';if(ms==='[]')ms='';}catch(e){}c.send({t:'world',tf:(w.tf||null),name:w.name,seed:w.seed,sz:w.sz?1:0,keep:WOPT.keep?1:0,ver:GAME_VER,mods:ms});}catch(e){}
         sendSnapshot(c);
         bcast();
       });
@@ -14408,7 +14418,7 @@ document.addEventListener('click',async e=>{
   if('newworld' in d){
     const seed=($('#nseed').value.replace(/\D/g,'')||randSeedNum()).replace(/^0+(?=\d)/,'');
     const name=($('#nname').value.trim()||`${seed}번 섬`).slice(0,16);
-    const w={id:'w'+Date.now().toString(36),name,seed,created:Date.now(),sandbox:$('#nsand').getAttribute('aria-pressed')==='true'};if(w.sandbox)w.sbEver=true;
+    const w={id:'w'+Date.now().toString(36),name,seed,sz:1,created:Date.now(),sandbox:$('#nsand').getAttribute('aria-pressed')==='true'};if(w.sandbox)w.sbEver=true;
     {const df=document.querySelector('#ndiff [aria-pressed="true"]');if(df&&df.dataset.diff!=='normal')w.diff=df.dataset.diff;if($('#nkeep').getAttribute('aria-pressed')==='true')w.keep=true;if($('#nhard').getAttribute('aria-pressed')==='true')w.hard=true;}
     settings.worlds.push(w);settings.current=w.id;saveSettings();closeModal();
     if(net.role)netLeave('');
