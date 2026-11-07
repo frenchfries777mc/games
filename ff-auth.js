@@ -91,7 +91,7 @@ async function setUser(u){
   setTimeout(noticeAck,300);
 }
 /* 확인 창: 지정한 사용자가 접속하면 체크해야 닫히는 창을 띄우고, 닫으면 ff_notice_ack 에 기록해요 */
-var NOTICE={id:'cc4-credit-1',names:['수령동지'],text:'이 체크박스를 클릭하면 이제부터 본인은 이 사이트 개발에 참여하지 않았다는 데에 동의하고, 이 사이트를 본인, 혹은 본인을 포함한 단체로 소개하는 것이 CC 4.0에 위배된다는 것을 인정합니다',btn:'닫기'};
+var NOTICE={id:'cc4-credit-1',names:['수령동지'],text:'이 체크박스를 클릭하면 이제부터 본인은 이 사이트 개발에 참여하지 않았다는 데에 동의하고, 이 사이트를 본인, 혹은 본인을 포함한 단체로 소개하는 것이 CC 4.0에 위배된다는 것을 인정합니다',btn:'확인합니다',thanks:'잘했습니다!',reward:'+100 hC'};
 var noticeOpen=false;
 async function noticeAck(){
   if(noticeOpen||!user||!prof||!sb) return;
@@ -116,7 +116,9 @@ async function noticeAck(){
     var ok=false;
     try{ var r=await sb.from('ff_notice_ack').insert({user_id:uid,name:nm,notice:NOTICE.id,text:NOTICE.text}); ok=!(r&&r.error); }catch(e){}
     if(ok){ try{ localStorage.setItem('ff.ack.'+NOTICE.id+'.'+uid,'1'); }catch(e){} }
-    done=true; guard.disconnect(); el.remove(); noticeOpen=false;
+    done=true; guard.disconnect();
+    el.innerHTML='<div style="text-align:center;color:#ece6d8"><div style="font-size:44px;font-weight:900;color:#d9b45f">'+esc(NOTICE.reward)+'</div><div style="font-size:24px;font-weight:800;margin-top:8px">'+esc(NOTICE.thanks)+'</div></div>';
+    setTimeout(function(){ el.remove(); noticeOpen=false; },2600);
   });
 }
 /* One nickname everywhere: when profiles.display_name changes (here, in another window or on another site) every game that called FFAuth.onNick(fn) hears it at once. */
