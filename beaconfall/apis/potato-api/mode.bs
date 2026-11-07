@@ -1,0 +1,6 @@
+mod "Potato API"
+
+on world generate:
+    chat "\2모드가 정상적으로 불러와졌습니다"
+    chat "\6Potato API made by Frenchfries777"
+    chat "This mod made for Beaconfall 0.5"
