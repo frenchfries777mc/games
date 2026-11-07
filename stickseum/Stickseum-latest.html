@@ -19,7 +19,7 @@ html,body{margin:0;height:100%;background:#05061a;color:#cfd6e4;font-family:syst
 <div id="ld"><b>STICKSEUM</b><div id="ldb"><i id="ldi"></i></div><div id="ldp"></div></div>
 <script>
 (function(){
-var SRC='Stickseum-game.html', EST=3914897, bar=document.getElementById('ldi'), txt=document.getElementById('ldp');
+var SRC='Stickseum-game.html', EST=14372577, bar=document.getElementById('ldi'), txt=document.getElementById('ldp');
 var LANGS=['ko','en','es','fr','de','ja','zh','pt','ru','tr','it','pl','ar','nw','gk'];      // (언어는 게임과 같은 규칙: 저장된 선택 → 브라우저 언어 → 영어. nw·gk는 한국어 그대로)
 var LT={en:'Loading {p}%',es:'Cargando {p}%',fr:'Chargement {p} %',de:'Lädt {p} %',ja:'読み込み中 {p}%',zh:'加载中 {p}%',pt:'Carregando {p}%',ru:'Загрузка {p}%',tr:'Yükleniyor %{p}',it:'Caricamento {p}%',pl:'Wczytywanie {p}%',ar:'جارٍ التحميل {p}%'};
 var LG=(function(){ var s=null; try{ s=localStorage.getItem('arenaClashLang'); }catch(e){} if(LANGS.indexOf(s)>=0) return s; var c=(navigator.languages&&navigator.languages.length)?navigator.languages:[navigator.language||'']; for(var i=0;i<c.length;i++){ var b=String(c[i]||'').toLowerCase().split('-')[0]; if(LANGS.indexOf(b)>=0) return b; } return 'en'; })();
