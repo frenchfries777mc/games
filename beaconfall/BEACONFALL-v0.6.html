@@ -350,6 +350,7 @@ body.playing #buffs{ display:flex; }
 #modal .crlist{ max-height:34vh; overflow:auto; margin:6px 0 4px; }
 .crrow{ display:flex; width:100%; gap:10px; align-items:baseline; text-align:left; font:inherit; font-size:13px; color:var(--text); background:rgba(255,255,255,.04); border:0; padding:6px 8px; margin-bottom:3px; cursor:pointer; }
 .crrow.on{ background:rgba(242,199,90,.18); box-shadow:inset 0 0 0 2px var(--gold); }
+.crrow.can{ box-shadow:inset 0 0 0 1px rgba(242,199,90,.55); }
 .crrow b{ font-weight:400; min-width:120px; }
 .crrow span{ color:var(--muted); font-size:12px; }
 html:not(.introDone) #ui,html:not(.introDone) #authgate,html:not(.introDone) #authme,html:not(.introDone) #authprof{visibility:hidden}
@@ -407,7 +408,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.6<br>build 198</p>
+    <p class="foot">v0.6<br>build 199</p>
   </nav>
 </div>
 
@@ -4294,13 +4295,12 @@ const recText=r=>{
 function renderRecipes(){
   const box=$('#recipes'),list=$('#rlist'),st=box.scrollTop;
   const rq=(($('#rsearch')||{}).value||'').trim().toLowerCase();
-  let html='',grp='';
+  let html='',grp='';const top=[];   // 지금 만들 수 있는 것은 맨 위에 모아요
   RECIPES.forEach((r,ri)=>{
     if(craftMode==='smelt'&&r.st!=='smelt')return;
     if(craftMode==='cook'&&r.st!=='cook')return;
     if(r.st&&craftMode!==r.st)return;   // 제련·요리 레시피는 용광로·화덕에서만 보여요
     if(rq&&!rq.split(/\s+/).every(w=>recText(r).includes(w)))return;
-    if(r.grp!==grp){grp=r.grp;html+=`<h4>${grp==='맨손'?'기본':grp}</h4>`;}
     const outId=typeof r.out==='function'?r.showId:r.out[0].id,outN=typeof r.out==='function'?1:r.out[0].n;
     const can=resolveRecipe(r).can,dim=!recipeOk(r);
     let last=r.pat.length-1;while(last>2&&!r.pat[last])last--;
@@ -4312,8 +4312,12 @@ function renderRecipes(){
       else if(q.any)cells+=`<span class="rc any" title="${i+1}번 칸: ${q.any.map(id=>ITEMS[id].name).join(' / ')} 중 하나"><img src="${iconURL(q.any[q.any.length>2?2:0])}" alt=""></span>`;
       else cells+=`<span class="rc" title="${i+1}번 칸: ${ITEMS[q.id].name}"><img src="${iconURL(q.id)}" alt=""></span>`;
     }
-    html+=`<div class="rrow${can?' can':''}${dim?' dim':''}" data-ri="${ri}" title="${r.note||''}"><div class="rout"><img src="${iconURL(outId)}" alt=""><b>${outN>1?'×'+outN:''}</b></div><div class="rname">${r.name||ITEMS[outId].name}<small>${recipeWhere(r)}</small></div><div class="rpat">${cells}</div></div>`;
+    const rowH=`<div class="rrow${can?' can':''}${dim?' dim':''}" data-ri="${ri}" title="${r.note||''}"><div class="rout"><img src="${iconURL(outId)}" alt=""><b>${outN>1?'×'+outN:''}</b></div><div class="rname">${r.name||ITEMS[outId].name}<small>${recipeWhere(r)}</small></div><div class="rpat">${cells}</div></div>`;
+    if(can&&!dim&&craftMode!=='smelt'){top.push(rowH);return;}
+    if(r.grp!==grp){grp=r.grp;html+=`<h4>${grp==='맨손'?'기본':grp}</h4>`;}
+    html+=rowH;
   });
+  if(top.length)html=`<h4>${i18nTr('지금 만들 수 있어요')} (${top.length})</h4>`+top.join('')+html;
   if(rq&&!html)html='<h4>'+i18nTr('검색 결과가 없어요')+'</h4>';
   list.innerHTML=html;box.scrollTop=st;
 }
@@ -9069,10 +9073,11 @@ function openCrafterUI(c){
   const dirName=['오른쪽 →','아래쪽 ↓','왼쪽 ←','위쪽 ↑'];
   const neigh=di=>{const x=c.gx+DIRV[di][0],y=c.gy+DIRV[di][1],o=sgAt(x,y);return (o&&o.id==='chest')?'상자':beltsNear(c.gx,c.gy).some(q=>q.di===di&&!beltPointsInto(q.b,c))?'벨트':'';};
   const dirBtns=()=>['<button class="abtn'+(ob===-1?' on':'')+'" data-ob="-1">자동</button>'].concat([0,1,2,3].map(di=>{const n=neigh(di);return `<button class="abtn${ob===di?' on':''}" data-ob="${di}"${n?'':' disabled style="opacity:.35"'}>${dirName[di]}${n?' ('+n+')':''}</button>`;})).join('');
-  const rows=q=>list.filter(e=>!q||e.name.includes(q)).map(e=>`<button class="crrow${e.key===rc?' on':''}" data-k="${esc(e.key)}"><b>${esc(e.name)}${e.out.n>1?' ×'+e.out.n:''}</b><span>${Object.entries(e.m).map(([k,n])=>nm(k)+(n>1?'×'+n:'')).join(' + ')}</span></button>`).join('')||'<p class="hint">'+i18nTr('찾는 아이템이 없어요')+'</p>';
+  const bag=e=>Object.entries(e.m).every(([k,n])=>haveN(k)>=n);
+  const rows=q=>list.filter(e=>!q||e.name.includes(q)||Object.keys(e.m).some(k=>nm(k).includes(q))).slice().sort((a,b)=>(bag(b)-bag(a))).map(e=>`<button class="crrow${e.key===rc?' on':''}${bag(e)?' can':''}" data-k="${esc(e.key)}"><img src="${iconURL(e.out.id)}" alt="" width="18" height="18" style="align-self:center;image-rendering:pixelated"><b>${esc(e.name)}${e.out.n>1?' ×'+e.out.n:''}</b><span>${Object.entries(e.m).map(([k,n])=>nm(k)+(n>1?'×'+n:'')).join(' + ')}</span></button>`).join('')||'<p class="hint">'+i18nTr('찾는 아이템이 없어요')+'</p>';
   openModal(`<h2>자동제작장치<small>AUTO CRAFTER</small></h2>
     <div class="row col"><label>내보낼 방향 (옆에 붙은 상자나 컨베이어)</label><div class="abtns" id="crdirs">${dirBtns()}</div></div>
-    <div class="row col"><label for="crq">만들 아이템 (재료를 컨베이어로 공급하세요)</label><input class="field" id="crq" placeholder="이름으로 찾기" autocomplete="off"></div>
+    <div class="row col"><label for="crq">만들 아이템 (재료를 컨베이어로 공급하세요)</label><input class="field" id="crq" placeholder="이름이나 재료로 찾기" autocomplete="off"></div>
     <div id="crlist" class="crlist">${rows('')}</div>
     <div class="actions"><button class="btn sm ghost" data-close>닫기</button></div>`,m=>{
       const cl=m.querySelector('#crlist'),dr=m.querySelector('#crdirs');
