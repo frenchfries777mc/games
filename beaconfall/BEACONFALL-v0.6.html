@@ -4,6 +4,11 @@
 <head><style id="ffTap">html,body{touch-action:manipulation}</style>
 <meta charset="utf-8">
 <link rel="icon" type="image/svg+xml" href="https://frenchfries777.com/games/gamelogo/beaconfall.svg">
+<script>/* Fry Code 「바로 적용」 테스트 모드 (?bstest=1): 저장소를 메모리로 바꿔서 진짜 기록·모드 목록을 건드리지 않아요 */
+(function(){if(!/[?&]bstest=1/.test(location.search))return;window.BST=1;var m={};var S={getItem:function(k){return Object.prototype.hasOwnProperty.call(m,k)?m[k]:null},setItem:function(k,v){m[k]=String(v)},removeItem:function(k){delete m[k]},clear:function(){m={}},key:function(i){return Object.keys(m)[i]||null}};Object.defineProperty(S,'length',{get:function(){return Object.keys(m).length}});try{Object.defineProperty(window,'localStorage',{value:S,configurable:true});}catch(e){}
+window.__bstQ=null;addEventListener('message',function(e){var d=e.data;if(!d||d.type!=='bs-apply'||e.source!==parent)return;if(window.bstApply)window.bstApply(d);else window.__bstQ=d;});
+var st=document.createElement('style');st.textContent='#introScr,#me,#authgate,#backbtn{display:none!important}';document.head.appendChild(st);})();
+</script>
 <script src="https://frenchfries777.com/games/ff-lang.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>BEACONFALL</title>
@@ -408,7 +413,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.6<br>build 201</p>
+    <p class="foot">v0.6<br>build 202</p>
   </nav>
 </div>
 
@@ -526,7 +531,7 @@ const BGM=(()=>{
 //==GEN_START
 /* ---------- 월드 생성 (DOM 의존 없음) ---------- */
 let W=21504, H=13312;const SEA=0.5;   // 옛 월드는 21504×13312, 새 월드는 25565×25565 (월드마다 setWorldSize 로 바꿔요)
-const WS_OLD=[21504,13312],WS_NEW=[25565,25565];   // 구역(256×256)별로 불러오는 아주 큰 월드
+const WS_OLD=[21504,13312],WS_NEW=[25565,25565],WS_TEST=[6144,6144];   /* WS_TEST: Fry Code 「바로 적용」 전용 작은 월드 */   // 구역(256×256)별로 불러오는 아주 큰 월드
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 var MODBLK={},MODPKO=[],MODPPL={},MODUI={},MODPKQ=[],MODSND={},MODMUSP={};   // 리소스팩 그림
 function hashStr(s){let h=2166136261;s=String(s);for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
@@ -1441,7 +1446,7 @@ function setWorldSize(w,h){   // 월드 크기에 따라 달라지는 값을 한
   seaC=seaG=seaP=seaS=null;seaRoutes.clear();
 }
 async function loadWorld(seed,name,id,sz){
-  {const q=settings.worlds.find(x=>x.id===id),z=sz||(q&&q.sz)||0;const d=z?WS_NEW:WS_OLD;if(d[0]!==W||d[1]!==H)setWorldSize(d[0],d[1]);}
+  {const q=settings.worlds.find(x=>x.id===id),z=sz||(q&&q.sz)||0;const d=z===2?WS_TEST:z?WS_NEW:WS_OLD;if(d[0]!==W||d[1]!==H)setWorldSize(d[0],d[1]);}
   if(world)saveWorld(true);
   const L=$('#loading');L.classList.remove('done');L.style.display='flex';
   const progress=async(p,msg)=>{$('#barfill').style.width=(p*100)+'%';$('#loadmsg').textContent=msg;await new Promise(r=>requestAnimationFrame(()=>setTimeout(r,0)));};
@@ -4461,6 +4466,7 @@ $('#rlist').addEventListener('contextmenu',e=>{
 const SAVE_KEY=id=>'stranded.save.v5.'+id;   // 섬 구성이 바뀌어 예전 저장과는 호환되지 않아요
 let lastSaveT=0;
 function saveWorld(force){
+  if(window.BST)return;
   if(!world||!world.id||!force||window.bfCloudLoading||world.bakHold||window.__bpBulk)return;
   bakMaybe(world.id);
   try{
@@ -14672,9 +14678,63 @@ function frame(now){
   try{drawLabels();}catch(e){STLBL.length=0;}
   requestAnimationFrame(frame);
 }
+/* ---- Fry Code 「바로 적용」 (?bstest=1) : 부모(Fry Code)가 {type:'bs-apply',code,reset}을 보내면 .bs를 읽어 적용하고 {type:'bs-ready'} 또는 {type:'bs-error',msg}를 돌려줘요 ---- */
+let bstFrame=null,bstFrameP=null,bstSeq=0,bstBusy=false,bstNext=null;
+function bstPost(o){try{if(parent&&parent!==window)parent.postMessage(o,'*');}catch(e){}}
+function bstParser(){
+  if(bstFrameP)return bstFrameP;
+  return bstFrameP=new Promise((res,rej)=>{
+    const f=document.createElement('iframe');f.style.display='none';f.src='mods.html?bsparse=1';bstFrame=f;
+    const t=setTimeout(()=>{bstFrameP=null;rej(new Error('parser timeout'));},15000);
+    const h=e=>{if(e.source===f.contentWindow&&e.data&&e.data.type==='bs-parser-ready'){clearTimeout(t);removeEventListener('message',h);res(f);}};
+    addEventListener('message',h);document.body.appendChild(f);
+  });
+}
+function bstParse(code){
+  return bstParser().then(f=>new Promise((res,rej)=>{
+    const id=++bstSeq,t=setTimeout(()=>{removeEventListener('message',h);rej(new Error('parser timeout'));},10000);
+    const h=e=>{const d=e.data;if(e.source!==f.contentWindow||!d||d.type!=='bs-parsed'||d.id!==id)return;clearTimeout(t);removeEventListener('message',h);d.error?rej(new Error(d.error)):res(d);};
+    addEventListener('message',h);f.contentWindow.postMessage({type:'bs-parse',code:String(code),id},'*');
+  }));
+}
+async function bstRun(d){
+  if(bstBusy){bstNext=d;return;}
+  bstBusy=true;
+  try{
+    let ent=null;
+    if(d&&typeof d.code==='string'&&d.code.trim()){
+      const ps=await bstParse(d.code);
+      ent={id:'bstest',kind:ps.kind||'mod',name:ps.name||'테스트',descr:ps.descr||'',data:ps.data};
+    }
+    if(d&&d.reset===false&&world&&mode==='play'){
+      modApply(ent?[ent]:[]);
+    }else{
+      modApply(ent?[ent]:[]);
+      closeModal();
+      const seed=randSeedNum().replace(/^0+(?=\d)/,'');
+      const w={id:'bst'+Date.now().toString(36),name:'테스트',seed,sz:2,created:Date.now()};
+      settings.worlds=[w];settings.current=w.id;
+      await loadWorld(w.seed,w.name,w.id);
+      world.introSeen=true;enterPlay();
+    }
+    bstPost({type:'bs-ready'});
+  }catch(e){
+    bstPost({type:'bs-error',msg:String((e&&e.message)||e).slice(0,500)});
+  }
+  bstBusy=false;
+  if(bstNext){const n=bstNext;bstNext=null;bstRun(n);}
+}
 (async()=>{
   try{await document.fonts.ready;}catch(e){}
   resize();
+  if(window.BST){
+    window.bstApply=bstRun;
+    requestAnimationFrame(t=>{last=t;frame(t);});
+    bstPost({type:'bs-boot'});
+    if(window.__bstQ){const q=window.__bstQ;window.__bstQ=null;bstRun(q);}
+    else setTimeout(()=>{if(!world&&!bstBusy)bstRun({code:'',reset:true});},3000);
+    return;
+  }
   const cw=curWorld();
   await loadWorld(cw.seed,cw.name,cw.id);
   requestAnimationFrame(t=>{last=t;frame(t);});
@@ -15061,6 +15121,7 @@ gate.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter')login
 gate.addEventListener('keyup',e=>e.stopPropagation(),true);
 me.onclick=async()=>{try{if(csOn&&csDirty)await csPush();}catch(e){}csUid=null;csOn=false;csState='';frStop();try{await sb.auth.signOut({scope:'local'});}catch(e){}   /* 이 브라우저만 로그아웃 (허브·다른 게임과 같은 로그인 칸을 써요) */window.bfUser=null;window.bfUid=null;marked=false;me.classList.remove('show');prof.classList.remove('show');$g('apass').value='';say('');gate.classList.add('show');};
 (async()=>{
+ if(window.BST){window.bfTrial=true;enter('체험',null);return;}
  gate.classList.add('show');
  if(!sb){say('서버에 연결하지 못했어요. 인터넷을 확인하고 다시 시도해 주세요.');return;}
  say('계정을 확인하는 중…',true);
