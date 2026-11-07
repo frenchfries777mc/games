@@ -288,7 +288,7 @@ input[type=text],input[type=number],input[type=search],textarea,select{backgroun
 #dipSide .btn.sm,#tpanel .btn.sm{min-height:34px}
 body:has(#dipSide:not([style*="display: none"])) :is(#trepChip,#trep,#tutfab){display:none!important}
 @media(min-width:1001px){body:has(#dipSide:not([style*="display: none"])) #tutbox{left:356px!important;right:auto!important;bottom:104px!important}}
-#tbar{display:none;position:absolute;left:50%;transform:translateX(-50%);bottom:92px;width:min(900px,calc(100vw - 24px));padding:14px 20px;align-items:center;gap:24px;z-index:19;border:2px solid #8a6ad0;border-radius:14px;background:rgba(24,18,38,.93);box-shadow:0 8px 24px #0009;cursor:pointer;color:#ece5f7}
+#tbar{display:none;position:absolute;left:50%;transform:translateX(-50%);bottom:92px;width:min(1180px,calc(100vw - 24px));padding:14px 20px;align-items:center;gap:22px;z-index:19;border:2px solid #8a6ad0;border-radius:14px;background:rgba(24,18,38,.93);box-shadow:0 8px 24px #0009;cursor:pointer;color:#ece5f7}
 #game.ce-mod.ce-tbar #tbar{display:flex}
 #tbar>*{flex:none;white-space:nowrap}
 #tbar .fl{width:52px;height:34px;border-radius:2px;border:1px solid #fff4}
@@ -298,6 +298,7 @@ body:has(#dipSide:not([style*="display: none"])) :is(#trepChip,#trep,#tutfab){di
 #tbar .rec{margin-left:auto;padding:12px 28px;border-radius:10px;background:#f0c060;color:#1a1208;font-weight:900;font-size:16px}
 #tbar .ds{padding:10px 16px;border:2px solid #8a6ad0;border-radius:10px;font-weight:800;font-size:14px}
 #tbar .ds:hover{background:#2a2142}
+@media (max-width:1250px){#tbar{gap:14px;padding:14px 14px}#tbar .st{min-width:78px}#tbar .rec{padding:12px 20px}#tbar .ds{padding:10px 12px}}
 @media (max-width:1000px){#side{width:330px}.phases{display:none}}
 @media (max-width:860px){.brand h1{font-size:44px}#lobbyRight{right:12px;width:min(340px,calc(100vw - 24px))}.btn.mode{min-height:78px;padding:12px 18px}}
 @media (max-width:760px){#main{flex-direction:column}#side{width:auto;height:46%;border-left:0;border-top:2px solid var(--goldd)}#topbar{gap:8px;overflow:hidden}#topbar .ttl{display:none}.stats{display:none}#maphint{max-width:80%;font-size:12px}#hint{font-size:12px}.seal{min-width:120px;padding:0 16px}}
@@ -557,7 +558,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 168</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 169</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div><p class="tagline">사절을 보내 동맹을 맺고, 군대를 보내 왕관을 차지하세요.</p></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
