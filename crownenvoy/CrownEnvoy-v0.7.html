@@ -511,7 +511,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 157</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 158</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -6950,7 +6950,7 @@ Object.assign(UI,{
 
 ;(function(){
 const STEPS=[["#mapwrap", "map", "지도에서 영토를 누르면 정보가 나와요. 내 영토(내 나라 색)를 눌러 시작해 보세요. 휠이나 + 버튼으로 확대할 수 있어요."], ["#panel", "map", "내 영토를 고른 뒤 이웃 영토를 누르면 공격·이동 명령을 만들 수 있어요. 보병·기병·포병 슬라이더로 병력을 정하고 [공격 추가]를 누르세요."], ["#timer", "map", "위의 시간이 계획 시간이에요. 모두의 시간이 끝나면 명령이 한꺼번에 실행되고 전투 연출이 나와요. 마음에 안 들면 이전 턴 되돌리기(혼자 할 때)를 쓸 수 있어요."], ["#tabs [data-tab=\"dip\"]", "dip", "외교 탭: 동맹·조약·무역·선전포고를 해요. 나라 이름으로 검색할 수 있고, 먼 나라는 외교관을 보내야 해요."], ["#tabs [data-tab=\"trade\"]", "trade", "무역 탭: 상품 시세를 보고 사고팔며, 항구끼리 무역 협정을 맺으면 매턴 금이 들어와요."], ["#tabs [data-tab=\"tech\"]", "tech", "기술 탭: 연구하면 병종이 발전해요. 기병은 평지, 기관총병은 참호·험지에서 강해요. 기병과 기관총병은 전투에서도 따로 줄을 서요."], ["#tabs [data-tab=\"obj\"]", "obj", "목표 탭: 나라마다 사명이 있어요. 달성하면 승점이 크게 올라요."], ["#panel", "map", "장군은 열세를 뒤집거나 큰 승리를 거두면 훈장을 받아 강해져요. 항구·큰 도시에는 가끔 역병이 돌아 병력이 줄어요. 의학 기술이 피해를 줄여요."]];
-const css=document.createElement('style');css.textContent='.tuthl{outline:3px solid #f3c64f!important;outline-offset:2px;animation:tutp 1.2s ease-in-out infinite;position:relative;z-index:50}@keyframes tutp{50%{outline-color:#fff6c8}}#tutbox{position:fixed;left:50%;transform:translateX(-50%);bottom:76px;width:min(92vw,520px);z-index:9500;background:#13203a;border:1px solid #c9a24a;border-radius:12px;padding:12px 14px;box-shadow:0 8px 30px #000a;color:#eef1f7;font-size:14px;line-height:1.5}#tutbox .tn{color:#f3c64f;font-weight:800;font-size:12px;margin-bottom:4px}#tutbox .tn{cursor:pointer}#tutbox .tn::after{content:var(--tf1,"▾ 접기");float:right;color:#9fb0c8;font-weight:600}.tutmin #tutbox .tn::after{content:var(--tf2,"▴ 펴기")}.tutmin #tutbox .tt,.tutmin #tutbox .ts,.tutmin #tutbox .tb{display:none}.tutmin #tutbox .tn{margin-bottom:0}.tutmin #tutbox{padding:7px 12px;width:auto;min-width:150px}@media(min-width:761px){#tutbox{left:12px;transform:none;width:min(400px,46vw)}}body:has(#evwin:not(.hidden)) #tutbox{display:none}#tutbox .tb{display:flex;gap:6px;margin-top:10px;justify-content:flex-end}';document.head.appendChild(css);
+const css=document.createElement('style');css.textContent='.tuthl{outline:3px solid #f3c64f!important;outline-offset:2px;position:relative;z-index:50}@keyframes tutp{50%{outline-color:#fff6c8}}#tutbox{position:fixed;left:50%;transform:translateX(-50%);bottom:76px;width:min(92vw,520px);z-index:9500;background:#13203a;border:1px solid #c9a24a;border-radius:12px;padding:12px 14px;box-shadow:0 8px 30px #000a;color:#eef1f7;font-size:14px;line-height:1.5}#tutbox .tn{color:#f3c64f;font-weight:800;font-size:12px;margin-bottom:4px}#tutbox .tn{cursor:pointer}#tutbox .tn::after{content:var(--tf1,"▾ 접기");float:right;color:#9fb0c8;font-weight:600}.tutmin #tutbox .tn::after{content:var(--tf2,"▴ 펴기")}.tutmin #tutbox .tt,.tutmin #tutbox .ts,.tutmin #tutbox .tb{display:none}.tutmin #tutbox .tn{margin-bottom:0}.tutmin #tutbox{padding:7px 12px;width:auto;min-width:150px}@media(min-width:761px){#tutbox{left:12px;transform:none;width:min(400px,46vw)}}body:has(#evwin:not(.hidden)) #tutbox{display:none}#tutbox .tb{display:flex;gap:6px;margin-top:10px;justify-content:flex-end}';document.head.appendChild(css);
 let box=null,cur=null;
 function clr(){document.querySelectorAll('.tuthl').forEach(e=>e.classList.remove('tuthl'));}
 window.tutEnd=function(done){clr();if(box){box.remove();box=null;}try{localStorage.setItem('ce_tut','1');}catch(e){}if(done){const t=document.querySelector('#tabs [data-tab="map"]');if(t)t.click();}};
@@ -7038,7 +7038,7 @@ function tutAvoid(el){if(!box)return;const hit=(a,b)=>!(a.right<b.left||a.left>b
   box.style.cssText='';if(!el)return;const e=el.getBoundingClientRect();if(!e.width&&!e.height)return;
   if(hit(e,box.getBoundingClientRect())){box.style.bottom='auto';box.style.top='64px';
     if(hit(e,box.getBoundingClientRect())){box.style.top='auto';box.style.bottom='76px';box.style.left='12px';box.style.transform='none';}}}
-function ctxHide(){window.TUT_HL=null;document.querySelectorAll('.tuthl').forEach(e=>e.classList.remove('tuthl'));if(box){box.remove();box=null;}}
+function ctxHide(){window.TUT_HL=null;window.TUT_HLSEL=null;document.querySelectorAll('.tuthl').forEach(e=>e.classList.remove('tuthl'));if(box){box.remove();box=null;}}
 function ctxShow(d){
   if(!box){box=document.createElement('div');box.id='tutbox';document.body.appendChild(box);box.onclick=ctxClick;}
   const key=d.k+'|'+d.t+'|'+(d.sub||'');
@@ -7049,7 +7049,7 @@ function ctxShow(d){
   document.querySelectorAll('.tuthl').forEach(e=>{if(e!==el)e.classList.remove('tuthl');});
   if(el){if(!el.classList.contains('tuthl'))el.classList.add('tuthl');if(d.scroll&&box._sc!==d.k){box._sc=d.k;try{el.scrollIntoView({block:'center',behavior:'smooth'});}catch(e){}}}
   tutAvoid(el);if(el&&d.scroll)setTimeout(()=>{try{tutAvoid($q(d.hl));}catch(e){}},700);
-  window.TUT_HL=d.tids&&d.tids.length?d.tids:null;}
+  window.TUT_HLSEL=d.hl||null;window.TUT_HL=d.tids&&d.tids.length?d.tids:null;}
 try{if(localStorage.getItem('ce_tut_min')==='1')document.documentElement.classList.add('tutmin');}catch(_){}
 document.addEventListener('click',e=>{const t=e.target&&e.target.closest&&e.target.closest('#tutbox .tn');if(!t)return;const on=document.documentElement.classList.toggle('tutmin');try{localStorage.setItem('ce_tut_min',on?'1':'0');}catch(_){}});
 function ctxClick(e){const b=e.target.closest('[data-t]');if(!b)return;const k=b.dataset.t;
@@ -7921,7 +7921,7 @@ dsl.addEventListener('click',()=>{C.sel=null;C.pend=null;C.win=false;UI.renderAl
 tabs.addEventListener('click',e=>{const b=e.target.closest('button[data-tab]');if(!b||!g.classList.contains('ce-mod'))return;const k=b.dataset.tab;
  if(k==='map'){if(C.tab==='map'){C.win=!C.win;e.stopPropagation();UI.renderTabs();UI.renderPanel();}else C.win=true;}
  else if(C.tab===k){C.tab='map';C.win=false;e.stopPropagation();UI.renderTabs();UI.renderPanel();}},true);
-const rp=UI.renderPanel;UI.renderPanel=function(){const r=rp.apply(this,arguments);try{sync();}catch(e){console.error(e);}return r;};
+const rp=UI.renderPanel;UI.renderPanel=function(){const r=rp.apply(this,arguments);try{sync();}catch(e){console.error(e);}try{if(window.TUT_HLSEL){const el=document.querySelector(window.TUT_HLSEL);if(el&&!el.classList.contains('tuthl'))el.classList.add('tuthl');}}catch(e){}return r;};
 if(mq.addEventListener)mq.addEventListener('change',place);else mq.addListener(place);
 place();
 })();
