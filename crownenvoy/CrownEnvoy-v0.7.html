@@ -103,7 +103,7 @@ button{font:inherit;color:inherit;cursor:pointer}input,select{font:inherit}
 .natlist{display:grid;gap:6px;margin-top:6px}
 .natcard{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;text-align:left;padding:8px 10px;background:var(--panel2);border:1.5px solid var(--line);border-radius:4px;color:var(--text)}
 .natcard .sw{width:14px;height:14px;border-radius:50%;border:1.5px solid #0008}
-.pkhead{display:flex;gap:12px;align-items:flex-start;margin-bottom:8px}.pkport{flex:none;width:76px;height:90px;border:2px solid #8a6ad0;border-radius:6px;overflow:hidden;background:#2a2142}
+.pkhead{display:flex;gap:12px;align-items:flex-start;margin-bottom:8px}.pkcol{flex:none;width:92px;text-align:center}.pkname{margin-top:4px;font-size:12px;font-weight:800;line-height:1.25;color:var(--gold2);word-break:keep-all}.pkname small{display:block;font-weight:500;font-size:10.5px;color:var(--muted)}.pkport{width:76px;height:90px;margin:0 auto;border:2px solid #8a6ad0;border-radius:6px;overflow:hidden;background:#2a2142}
 .natcard b{font-size:13.5px}.natcard small{color:var(--muted);font-size:11.5px;display:block}
 .natcard:not(:disabled):hover{border-color:var(--gold2)}.natcard.on{border-color:var(--gold);background:#371e62}.natcard:disabled{opacity:.45;cursor:default}
 .fl{display:inline-block;flex:none;width:14px;height:14px;border-radius:50%;background-size:cover;background-position:center;background-color:#556;border:1.5px solid #000a;vertical-align:-3px}
@@ -559,7 +559,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 172</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 173</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div><p class="tagline">사절을 보내 동맹을 맺고, 군대를 보내 왕관을 차지하세요.</p></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -6121,7 +6121,7 @@ const UI={
     let h=`<div class="row" style="margin-bottom:8px"><button class="btn sm" data-act="draftBack">← ${me===0?'로비로 돌아가기':'나가기'}</button></div><h3>${tpl.year?tpl.year+' · ':''}${esc(tpl.name)}</h3>${UI.tplInfoHTML(tpl,true)}<div class="card ${mine?'':'mv'}"><b>${mine?'플레이할 나라를 고르세요':esc(d.names[cur]||('지휘관 '+(cur+1)))+'이(가) 고르는 중'}</b><div class="sm muted" style="margin-top:4px">${mine?'목록이나 지도에서 나라를 눌러 살펴본 뒤 선택하세요. 나머지 나라는 AI가 맡아요.':'기다리는 동안 나라들을 둘러보세요.'}</div></div>`;
     if(C.tplSel!=null){const n=tpl.nations[C.tplSel],tk=takenBy[C.tplSel];
       const pr=window.CERuler?CERuler.pick(tpl,n):null;
-      h+=`<div class="card" style="border-left-color:${n.color}"><div class="pkhead">${pr?`<div class="pkport">${pr.svg}</div>`:''}<div style="min-width:0;flex:1"><div class="nat">${fl(n)}${esc(n.name)}</div>${pr?`<div class="sm" style="margin:3px 0;color:var(--gold2)">${esc(pr.title)} ${esc(pr.name)}${pr.known?'':' <span class="muted">· 가상 인물</span>'}</div>`:''}<div class="sm muted" style="margin:3px 0">지역 ${n.count}곳 · 수도 ${esc(TDEF[n.cap].name)}${n.inc>1?` · 경제력 ×${n.inc}`:''}${n.neu?' · 중립 성향':''}</div></div></div>${UI.tplRelHTML(tpl,C.tplSel)}${UI.diffHTML(tpl,n)}
+      h+=`<div class="card" style="border-left-color:${n.color}"><div class="pkhead">${pr?`<div class="pkcol"><div class="pkport">${pr.svg}</div><div class="pkname"><small>${esc(pr.title)}</small>${esc(pr.name)}</div></div>`:''}<div style="min-width:0;flex:1"><div class="nat">${fl(n)}${esc(n.name)}</div><div class="sm muted" style="margin:3px 0">지역 ${n.count}곳 · 수도 ${esc(TDEF[n.cap].name)}${n.inc>1?` · 경제력 ×${n.inc}`:''}${n.neu?' · 중립 성향':''}</div></div></div>${UI.tplRelHTML(tpl,C.tplSel)}${UI.diffHTML(tpl,n)}
         ${mine&&tk==null?`<div class="row" style="margin-top:8px"><button class="btn primary wide" data-act="pickNation" data-k="${C.tplSel}">이 나라로 시작</button></div>`:(tk!=null?`<div class="sm" style="margin-top:6px;color:var(--gold2)">${esc(d.names[tk]||'')}이(가) 선택했어요.</div>`:'')}</div>`;}
     h+=`<h3>나라 목록 <span class="muted sm">${tpl.nations.length}개</span></h3><div class="natlist">`+tpl.nations.map((n,i)=>({n,i})).sort((a,b)=>b.n.count-a.n.count).map(({n,i})=>{const tk=takenBy[i];
       return `<button class="natcard ${C.tplSel===i?'on':''}" data-act="tplSel" data-k="${i}" ${tk!=null&&tk!==me?'':''}>${fl(n)}<div><b>${esc(n.name)}</b>${UI.diffTag(UI.diffOf(tpl,n))}<small>지역 ${n.count}곳${n.neu?' · 중립 성향':''}</small></div>${tk!=null?`<span class="chip ${tk===me?'me':'host'}">${tk===me?'내 나라':esc(d.names[tk]||'선택됨')}</span>`:''}</button>`;}).join('')+`</div>`;
