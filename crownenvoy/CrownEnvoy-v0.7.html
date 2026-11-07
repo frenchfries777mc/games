@@ -529,7 +529,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 162</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 163</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -8074,8 +8074,13 @@ function rulerOf(v,p){const reign=Math.floor((v.round||0)/40);const r=rng(p.id*1
   const nm=NAMES_A[Math.floor(r()*NAMES_A.length)]+NAMES_B[Math.floor(r()*NAMES_B.length)];const g=GOV[p.gov]||GOV.mon;
   const num=(p.gov==='mon'||p.gov==='emp')?` ${(reign%5)+1}세`:'';
   return {title:g.r,name:nm+num,seed:p.id*131+reign*977+7};}
-function portrait(seed,gov,col){const r=rng(seed*7919+3);const pk=a=>a[Math.floor(r()*a.length)];
-  const skin=pk(['#f1cfa8','#e3b88a','#c99468','#a9703f','#f6dcc0']),hair=pk(['#2b2118','#4a3322','#7a5a34','#b9b2a6','#d8c27a','#1c1c1c']);
+/* 민족(문화)에 따라 피부색과 머리색 범위가 달라진다 */
+const SK_N=['sca','ger','eng','nld','bal','rus','slav','ukr','pol','irl','gau','cze','fra'],SK_S=['lat','ibe','spa','por','ita','grc','rom','alb','hun','cau','heb'],SK_M=['ara','per','tur','pun'],SK_E=['chn','kor','jpn','mon'];
+const SKIN={n:['#f6dcc0','#f1cfa8','#f4d6bd'],s:['#e3b88a','#dcad7a','#e8c29a'],m:['#c99468','#b98558','#d3a074'],e:['#ecce9f','#e6c394','#f0d4aa'],x:['#f1cfa8','#e3b88a','#c99468','#a9703f','#f6dcc0']};
+const HAIR={n:['#d8c27a','#b9b2a6','#7a5a34','#4a3322','#9a6a3a'],s:['#2b2118','#4a3322','#1c1c1c','#5a3a22'],m:['#1c1c1c','#2b2118','#1a1410'],e:['#1c1c1c','#2b2118','#15110d'],x:['#2b2118','#4a3322','#7a5a34','#b9b2a6','#d8c27a','#1c1c1c']};
+const grpOf=c=>SK_N.includes(c)?'n':SK_S.includes(c)?'s':SK_M.includes(c)?'m':SK_E.includes(c)?'e':'x';
+function portrait(seed,gov,col,cult){const r=rng(seed*7919+3);const pk=a=>a[Math.floor(r()*a.length)];const G2=grpOf(cult);
+  const skin=pk(SKIN[G2]),hair=pk(HAIR[G2]);
   const beard=pk([0,1,2,0,1]),hs=pk([0,1,2,3]),ey=pk([0,1,2]),mo=pk([0,1,2]);
   let s=`<svg viewBox="0 0 88 104" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><rect width="88" height="104" fill="#dbc88f"/><rect y="70" width="88" height="34" fill="#c9b27a"/>`;
   s+=`<path d="M4 104Q8 76 44 72Q80 76 84 104Z" fill="${col}" stroke="#0005"/>`;
@@ -8138,7 +8143,7 @@ function renderCard(v){const p=v.players[NC.id];if(!p)return '';const me=v.playe
     if(p.isBot&&me.over==null&&p.over==null&&!p.landless&&v.phase==='plan'&&!v.spec)acts+=`<div class="nc-acts"><button data-b158="sph" data-to="${p.id}" class="${p.mysc?'on':''}">${p.mysc?'영향력 행사 중단':'영향력 행사 (매턴 12금)'}</button></div>`;}
   acts+=`<div class="nc-acts"><button data-b158="cmp" data-to="${p.id}">⚖ 국가 비교</button></div>`;
   return `<div class="wlbox"><div class="wlhead"><button class="btn sm" data-b158="back">← 뒤로</button><h2>국가 정보</h2></div><div class="nc-body">
-    <div class="nc-head"><div class="nc-port">${portrait(R.seed,p.gov,p.color)}</div><div style="min-width:0"><div style="font-size:18px;font-weight:700">${fl(p)} ${esc(p.kingdom)}</div><div style="margin-top:4px">${g.n} · ${esc(R.title)} <b>${esc(R.name)}</b></div><div class="muted" style="font-size:12px;margin-top:2px">${FAITH[p.fai]?FAITH[p.fai].ic+' '+FAITH[p.fai].n:''}${p.persona?' · '+esc(p.persona):''}</div></div></div>
+    <div class="nc-head"><div class="nc-port">${portrait(R.seed,p.gov,p.color,p.cult)}</div><div style="min-width:0"><div style="font-size:18px;font-weight:700">${fl(p)} ${esc(p.kingdom)}</div><div style="margin-top:4px">${g.n} · ${esc(R.title)} <b>${esc(R.name)}</b></div><div class="muted" style="font-size:12px;margin-top:2px">${FAITH[p.fai]?FAITH[p.fai].ic+' '+FAITH[p.fai].n:''}${p.persona?' · '+esc(p.persona):''}</div></div></div>
     <div style="margin-top:10px">${rel}${METR.map(([l,get])=>row(v,l,p,get,mxOf(get))).join('')}</div>${acts}</div></div>`;}
 function renderCmp(v){const al=v.players.filter(z=>z.alive);const A=v.players[NC.a],B=v.players[NC.b];if(!A||!B)return '';
   const opt=sel=>al.map(z=>`<option value="${z.id}" ${z.id===sel?'selected':''}>${esc(String(z.kingdom).split('(')[0])}</option>`).join('');
@@ -8146,7 +8151,7 @@ function renderCmp(v){const al=v.players.filter(z=>z.alive);const A=v.players[NC
     return `<div class="nc-cmp"><b style="text-align:left">${num(a)}</b><div class="bl"><i style="width:${a==null?0:Math.max(2,Math.round(a/mx*100))}%;background:${cl?'#b02a2a':A.color}"></i></div><span class="m">${l}</span><div class="br"><i style="width:${b==null?0:Math.max(2,Math.round(b/mx*100))}%;background:${cl?'#b02a2a':B.color}"></i></div><b style="text-align:right">${num(b)}</b></div>`;}).join('');
   const RA=rulerOf(v,A),RB=rulerOf(v,B);
   return `<div class="wlbox"><div class="wlhead"><button class="btn sm" data-b158="back">← 뒤로</button><h2>국가 비교</h2></div><div class="nc-body">
-    <div class="nc-sel"><div class="nc-pt">${portrait(RA.seed,A.gov,A.color)}</div><select data-b158sel="a">${opt(NC.a)}</select><span>vs</span><select data-b158sel="b">${opt(NC.b)}</select><div class="nc-pt">${portrait(RB.seed,B.gov,B.color)}</div></div>${rows}</div></div>`;}
+    <div class="nc-sel"><div class="nc-pt">${portrait(RA.seed,A.gov,A.color,A.cult)}</div><select data-b158sel="a">${opt(NC.a)}</select><span>vs</span><select data-b158sel="b">${opt(NC.b)}</select><div class="nc-pt">${portrait(RB.seed,B.gov,B.color,B.cult)}</div></div>${rows}</div></div>`;}
 function render(){const b=box();const v=C.view;if(!v||!v.players){return;}b.innerHTML=NC.mode==='cmp'?renderCmp(v):renderCard(v);}
 function show(){const b=box();UI.navPush('ncard');b.classList.remove('hidden');NC.on=true;render();}
 function openCard(id){NC.mode='card';NC.id=id;show();}
