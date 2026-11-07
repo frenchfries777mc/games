@@ -48,3 +48,5 @@ footer a{color:var(--text)!important}footer a:hover{color:var(--fry)!important}
 .wi-ar{color:var(--fry)!important;font-weight:700}
 .wi-sub,.wi-gt b,.wi-gt span{color:var(--text)!important;text-shadow:none!important}
 footer{background:var(--bg)!important}
+
+footer,footer *{text-shadow:none!important}
