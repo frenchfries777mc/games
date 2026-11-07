@@ -63,3 +63,7 @@ patchnotes.json | v747 title | 큰 맵 만들기와 시작 위치 제한 | build
 patchnotes.json | v747 items[0] | 깃발 뺏기·황금 쟁탈·금고 약탈·데스매치 더블용 양옆이 긴 맵을 맵 에디터에서 만들 수 있음 (왼쪽 절반만 그리면 오른쪽 자동 대칭, 깃발 위치 도구, 친선 방 전용) | build 747 | 2026-11-07
 patchnotes.json | v747 items[1] | 제국 수호전은 시작 위치 8개인 내 맵으로 열 수 있음 | build 747 | 2026-11-07
 patchnotes.json | v747 items[2] | 시작 위치 최대 개수를 모드에 맞춰 제한 (듀얼 2개 등) | build 747 | 2026-11-07
+patchnotes.json | v748 title | 맵 메이커 위치와 모드 선택 | build 748 | 2026-11-07
+patchnotes.json | v748 items[0] | 친선과 연습 모드 목록 아래 「맵 메이커」 버튼으로 바로 들어감 | build 748 | 2026-11-07
+patchnotes.json | v748 items[1] | 맵 크기에서 큰 맵까지 고를 수 있고, 저장·공개할 때 이 맵의 모드를 선택 | build 748 | 2026-11-07
+patchnotes.json | v748 items[2] | 소형 맵 시작 위치 최대 4개, 중형 맵 최대 8개 | build 748 | 2026-11-07
