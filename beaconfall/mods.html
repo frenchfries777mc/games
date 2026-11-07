@@ -309,7 +309,7 @@ function opn(o){o=String(o).toLowerCase().replace(/\s+/g,' ');return o==='is'?'=
 function PE(n,m){var e=new Error('line '+n+': '+m);e.script=1;return e;}
 var BIOMES=['start','forest','desert','volcano','jungle','mesa','rock','mangrove','ice'];
 var POS=['top left','top right','bottom left','bottom right','center'];
-function keyCode(w){var u=String(w).toUpperCase();if(/^[A-Z]$/.test(u))return 'Key'+u;if(/^[0-9]$/.test(u))return 'Digit'+u;if(/^F([1-9]|1[0-2])$/.test(u))return u;if(u==='SPACE')return 'Space';return '';}
+function keyCode(w){var u=String(w).toUpperCase();if(/^[A-Z]$/.test(u))return 'Key'+u;if(/^[0-9]$/.test(u))return 'Digit'+u;if(/^F([1-9]|1[0-2])$/.test(u))return u;if(u==='SPACE')return 'Space';if(u==='CONTROL'||u==='CTRL')return 'ControlLeft';return '';}
 function parseScript(text,lenient){
   var raw=String(text).replace(/\r/g,'').split('\n'),L=[],i;
   for(i=0;i<raw.length;i++){var t=raw[i];if(/^\s*(#|$)/.test(t))continue;var m=t.match(/^[ \t]*/)[0].replace(/\t/g,'    ').length;bareVar(i+1,t);L.push({n:i+1,ind:m,t:t.trim().replace(/\bvariable\s+\{:([a-z0-9_]{1,17}):\}/gi,'variable s__$1').replace(/\bvariable\s+\{([a-z0-9_]{1,20})\}/gi,'variable $1')});}
@@ -386,7 +386,7 @@ function parseScript(text,lenient){
     if(m=c.match(/^(not\s+)?mod\s+"([^"]{1,40})"$/i))return {md:{n:m[2],not:!!m[1]}};
     if(m=c.match(/^(player|world)\s+(max\s*hp|hp|x|y|z|biome|dimen[st]ion|item|name|day|hour|players)\s*(>=|<=|!=|>|<|=|is\s+not|is)\s*(.+)$/i))return gameCond(l,m);
     if(m=c.match(/^(not\s+)?(left[_\s]|right[_\s])?click\s+press$/i))return {mouse:{b:m[2]?(/right/i.test(m[2])?2:0):-1,not:!!m[1]}};
-    if(m=c.match(/^(not\s+)?key\s+"([^"]+)"\s+press$/i)){var kc0=keyCode(m[2]);if(!kc0)throw PE(l.n,"unknown key '"+m[2]+"'. Use A-Z, 0-9, F1-F12 or Space");return {key:{c:kc0,not:!!m[1]}};}
+    if(m=c.match(/^(not\s+)?key\s+"([^"]+)"\s+press$/i)){var kc0=keyCode(m[2]);if(!kc0)throw PE(l.n,"unknown key '"+m[2]+"'. Use A-Z, 0-9, F1-F12, Space or Control");return {key:{c:kc0,not:!!m[1]}};}
     if(m=c.match(/^(not\s+)?(.+?)\s+in\s+player_hand$/i)){var hq1=m[2].trim().match(/^"([^"]{1,20})"$/);return {hand:{item:hq1?'@'+hq1[1]:item(l,m[2].trim()),not:!!m[1]}};}
     if(m=c.match(/^has\s+(?:(\d+)\s+)?(.+)$/i)){var hq0=m[2].trim().match(/^"([^"]{1,20})"$/);return {has:{item:hq0?'@'+hq0[1]:item(l,m[2].trim()),n:m[1]?+m[1]:1}};}
     if(m=c.match(/^%(attacker|victim)%\s+is\s+(not\s+)?player$/i))return {ifp:{w:m[1].toLowerCase(),not:!!m[2]}};
@@ -450,10 +450,10 @@ function parseScript(text,lenient){
         var tq=m[2].trim().match(/^"([^"]{1,20})"$/),ts=m[3]?+m[3]:0;if(m[3]&&(ts<1||ts>7))throw PE(l.n,'inventory slot must be 1 to 7');
         var ta={item:tq?'@'+tq[1]:item(l,m[2].trim()),n:tn};if(ts)ta.slot=ts;acts.push({take:ta});
       }
-      else if(m=l.t.match(/^give\s+(?:(\d+)\s+)?"([^"]{1,20})"(?:\s+to\s+player)?$/i)){var n0=m[1]?+m[1]:1;if(n0<1||n0>9999)throw PE(l.n,'give amount must be 1 to 9999');acts.push({give:{item:'@'+m[2],n:n0}});}
-      else if(m=l.t.match(/^give\s+(?:(\d+)\s+)?(.+?)(?:\s+to\s+player)?$/i)){
+      else if(m=l.t.match(/^give\s+(?:(\d+)\s+)?"([^"]{1,20})"(?:\s+to\s+(.+))?$/i)){var n0=m[1]?+m[1]:1;if(n0<1||n0>9999)throw PE(l.n,'give amount must be 1 to 9999');var g0={item:'@'+m[2],n:n0};if(m[3]&&toT(l,m[3]).toLowerCase()!=='player')g0.to=toT(l,m[3]);acts.push({give:g0});}
+      else if(m=l.t.match(/^give\s+(?:(\d+)\s+)?(.+?)(?:\s+to\s+(.+))?$/i)){
         var n=m[1]?+m[1]:1;if(n<1||n>9999)throw PE(l.n,'give amount must be 1 to 9999');
-        acts.push({give:{item:item(l,m[2].trim()),n:n}});
+        var g1={item:item(l,m[2].trim()),n:n};if(m[3]&&toT(l,m[3]).toLowerCase()!=='player')g1.to=toT(l,m[3]);acts.push({give:g1});
       }else if(m=l.t.match(/^(?:say|chat)\s+"([^"]{1,100})"(?:\s+to\s+(.+?))?$/i)){var ca={say:m[1]};if(m[2])ca.to=toT(l,m[2]);acts.push(ca);}
       else if(m=l.t.match(/^title\s+"([^"]{1,60})"(?:\s+for\s+(\d+)\s+seconds?)?$/i)){var sec=m[2]?+m[2]:3;if(sec<1||sec>10)throw PE(l.n,'title seconds must be 1 to 10');acts.push({title:{text:m[1],sec:sec}});}
       else if(m=l.t.match(/^if\s+(?:variable\s+\{?|\{)(_?[a-z0-9_]{1,20}_?|:[a-z0-9_]{1,17}:)\}?\s+is\s+(not\s+)?set\s+or\s+(-?\d{1,9})\s*:$/i)){
@@ -472,7 +472,7 @@ function parseScript(text,lenient){
       }else if(m=l.t.match(/^if\s+(not\s+)?(left[_\s]|right[_\s])?click\s+press\s*:$/i)){
         acts.push({mouse:{b:m[2]?(/right/i.test(m[2])?2:0):-1,not:!!m[1]},do:sub(l,depth)});
       }else if(m=l.t.match(/^if\s+(not\s+)?key\s+"([^"]+)"\s+press\s*:$/i)){
-        var kc1=keyCode(m[2]);if(!kc1)throw PE(l.n,"unknown key '"+m[2]+"'. Use A-Z, 0-9, F1-F12 or Space");acts.push({key:{c:kc1,not:!!m[1]},do:sub(l,depth)});
+        var kc1=keyCode(m[2]);if(!kc1)throw PE(l.n,"unknown key '"+m[2]+"'. Use A-Z, 0-9, F1-F12, Space or Control");acts.push({key:{c:kc1,not:!!m[1]},do:sub(l,depth)});
       }else if(m=l.t.match(/^if\s+(not\s+)?(.+?)\s+in\s+player_hand\s*:$/i)){
         var hq2=m[2].trim().match(/^"([^"]{1,20})"$/);acts.push({hand:{item:hq2?'@'+hq2[1]:item(l,m[2].trim()),not:!!m[1]},do:sub(l,depth)});
       }else if(m=l.t.match(/^if\s+has\s+(?:(\d+)\s+)?(.+?)\s*:$/i)){
@@ -559,7 +559,7 @@ if(nv===''||nv==='-')nv=0;fc.push([rel?1:0,+nv]);}
     else if(m=l.t.match(/^every\s+%\{([a-z0-9_]{1,20})\}%\s+seconds?\s*:$/i)){out.events.push({on:'every',n:1,nv:m[1].toLowerCase(),do:sub(l,0)});}
     else if(m=l.t.match(/^every\s+(\S+)\s+seconds?\s*:$/i)){if(!/^\d+$/.test(m[1])||+m[1]<1)throw PE(l.n,'every needs a whole number of seconds, 1 or more');if(+m[1]>3600)throw PE(l.n,'every can be at most 3600 seconds');out.events.push({on:'every',n:+m[1],do:sub(l,0)});}
     else if(m=l.t.match(/^on\s+join\s*:$/i)){out.events.push({on:'join',do:sub(l,0)});}
-    else if(m=l.t.match(/^on\s+key\s+("[^"]+"(?:\s+or\s+"[^"]+")*)\s+press\s*:$/i)){var kl=m[1].match(/"([^"]+)"/g).map(function(x){return x.slice(1,-1);}),kd=sub(l,0);kl.forEach(function(kn){var kc=keyCode(kn);if(!kc)throw PE(l.n,"unknown key '"+kn+"'. Use A-Z, 0-9, F1-F12 or Space");out.events.push({on:'key',target:kc,do:kd});});}
+    else if(m=l.t.match(/^on\s+key\s+("[^"]+"(?:\s+or\s+"[^"]+")*)\s+press\s*:$/i)){var kl=m[1].match(/"([^"]+)"/g).map(function(x){return x.slice(1,-1);}),kd=sub(l,0);kl.forEach(function(kn){var kc=keyCode(kn);if(!kc)throw PE(l.n,"unknown key '"+kn+"'. Use A-Z, 0-9, F1-F12, Space or Control");out.events.push({on:'key',target:kc,do:kd});});}
     else if(m=l.t.match(/^on\s+signal\s+"([^"]{1,40})"\s*:$/i)){out.events.push({on:'signal',target:m[1],do:sub(l,0)});}
     else if(m=l.t.match(/^on\s+(.+?)\s*:$/i)){
       var body=m[1],ofRaw='',byRaw='',om=body.match(/^(.*?)\s+of\s+(.+)$/i);if(om){body=om[1];ofRaw=om[2];}
