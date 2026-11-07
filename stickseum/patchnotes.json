@@ -2,6 +2,22 @@
  "notes": [
   {
    "date": "2026-11-07",
+   "build": "v731",
+   "title": "맵 공개 시작 위치 2개부터",
+   "items": [
+    "듀얼처럼 2명이 겨루는 맵도 시작 위치가 2개만 있으면 공개할 수 있어요 (유저 맵 모드는 맵의 시작 위치 수만큼, 최대 4명이 겨뤄요)"
+   ],
+   "tr": {
+    "en": {
+     "title": "Publish maps with 2 spawn points",
+     "items": [
+      "Maps for two players (like duels) can now be published with just 2 spawn points. The User Maps mode plays with as many players as the map has spawn points, up to 4."
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-11-07",
    "build": "v730",
    "title": "복서 밸런스 조정",
    "items": [
