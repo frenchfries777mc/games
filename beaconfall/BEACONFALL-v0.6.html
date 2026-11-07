@@ -4086,6 +4086,8 @@ function takeOutput(i,shift){
   const o=outs[i];if(!o||!active)return;
   if(shift){if(!roomFor(o.id,o.n)){toast('인벤토리가 가득 찼어요.');return;}}
   else if(held&&(held.id!==o.id||held.n+o.n>maxStack(o.id)))return;
+  MODX.crafted=(ITEMS[o.id]&&ITEMS[o.id].name)||String(o.id);MODX.cid=String(o.id);
+  {let cc=false;try{cc=modEvent('craft',MODX.cid);}catch(e){}if(cc)return;MODX.evDone='craft';}   // cancel event: 제작 안 됨
   active.pat.forEach((p,k)=>{if(p){craft[k].n-=p.n;if(craft[k].n<=0)craft[k]=null;}});
   if(shift)addStack(o.id,o.n);else held=held?{id:o.id,n:held.n+o.n}:{id:o.id,n:o.n};
   achCraft(o.id);MODX.crafted=(ITEMS[o.id]&&ITEMS[o.id].name)||String(o.id);MODX.cid=String(o.id);stAdd('craft',o.n);
@@ -5424,7 +5426,9 @@ function placeItem(){
   if(i<0)return;
   const item=inv[i].id,kind=ITEMS[item].place,c=placeCell(kind);
   if(c.far||!canPlaceCell(c.gx,c.gy,kind)){toast(kind==='station'&&!c.far?i18nTr('정거장은 선로 바로 옆에만 설치할 수 있어요.'):'여기에는 설치할 수 없어요.');return;}
-  achPlace(kind,item);MODX.placed=(ITEMS[item]&&ITEMS[item].name)||String(item);MODX.pid=String(item);stAdd('place');
+  MODX.placed=(ITEMS[item]&&ITEMS[item].name)||String(item);MODX.pid=String(item);
+  {let pc=false;try{pc=modEvent('place',MODX.pid);}catch(e){}if(pc)return;MODX.evDone='place';}   // cancel event: 설치 안 됨
+  achPlace(kind,item);stAdd('place');
   if(kind==='station'){let tries=0;const op=()=>{const sb=world.sgrid.get(c.gy*GW+c.gx);if(sb&&sb.id==='station'){if(mode==='play'&&$('#modal').hidden)openStation(sb);}else if(++tries<10)setTimeout(op,200);};setTimeout(op,250);}
   if(kind==='flag'){let tries=0;const op=()=>{const fb=world.sgrid.get(c.gy*GW+c.gx);if(fb&&fb.id==='flag'){if(mode==='play'&&$('#modal').hidden)openFlag(fb);}else if(++tries<10)setTimeout(op,200);};setTimeout(op,250);}   // 꽂자마자 이름 짓기 창
   if(isGuest()){sendHost({t:'place',item,gx:c.gx,gy:c.gy,dr:faceDir()});return;}
@@ -5488,7 +5492,7 @@ function doInteract(o,code){
       if(o.id==='mdmob')return;
     }
   }catch(e){}
-  try{MODX.touched=(ITEMS[o.id]&&ITEMS[o.id].name)||String(o.id);modEvent('interaction',String(o.id));}catch(e){}
+  {let ic=false;try{MODX.touched=(ITEMS[o.id]&&ITEMS[o.id].name)||String(o.id);ic=modEvent('interaction',String(o.id));}catch(e){}if(ic)return;}   // cancel event: 창이 안 열려요
   if(o.id==='vport'){dvTravel(o.to==='back');return;}
   if(o.id==='bench'||o.id==='lbench')openCraft('bench');else if(o.id==='chest'||o.id==='rchest')openChest(o);else if(o.id==='trader')tradeWith();else if(o.id==='trash')openTrash(o);else if(o.id==='oven'||o.id==='campfire')openCraft('cook');else if(o.id==='furnace'){smeltRef=o;smeltLast=o.fo?o.fo.n:0;openCraft('smelt');}else if(o.id==='armorbench')openArmor();else if(o.id==='anvil')openAnvil();else if(o.id==='cow')milkCow(o.a);else if(o.id==='chicken'||o.id==='penguin'||o.id==='salamander')feedChicken(o.a);else if(o.id==='bone')startDig(o.q);else if(o.id==='conveyor')rotateConveyor(o);else if(o.id==='sorter'){if(code==='KeyF')rotateConveyor(o);else toggleSorterSide(o);}else if(o.id==='rsd'||o.id==='gauge'||o.id==='relay'||o.id==='tele'||o.id==='port')openSignalUI(o);else if(o.id==='bell')ringBell(o);else if(o.id==='guard')openGuardUI(o);else if(o.id==='vnpc')openShop(o.n);else if(o.id==='controller')toggleControl(o);else if(o.id==='beacon')callShip(o);else if(o.id==='ship')boardShip();else if(o.id==='crafter')openCrafterUI(o);else if(o.id==='feller')openFellerUI(o);else if(o.id==='door')toggleDoor(o);else if(o.id==='tgate')openGate(o);else if(o.id==='aquarium')openAquarium(o);else if(o.id==='cart')openCart();else if(o.id==='train')openTrainCargo(o.T);else if(o.id==='mirror')showLook();else if(o.id==='tradepost')openTradepost(o);else if(o.id==='alchemy')openAlchemy();else if(o.id==='runetable')openRunes();else if(o.id==='trap')openTrap(o);else if(o.id==='hammock')napStart(o);else if(o.id==='fishtrap')openFishTrap(o);else if(o.id==='hut')openHut(o);else if(o.id==='stall')openStall(o);else if(o.id==='mailbox')openMailbox(o);else if(o.id==='monument')openMonument(o);else if(o.id==='flag')openFlag(o);else if(o.id==='station')openStation(o);else if(o.id==='revive')reviveReq(o.peer);else if(o.id==='dunin')dunGo(1,'down');else if(o.id==='dunst')dunGo(o.k,o.dir);else trySleep(o);
 }
@@ -6170,8 +6174,10 @@ function damagePlayer(n,kx,ky){
   if(mode!=='play'||P.dead||P.hurtT>0||P.rollT>time)return;
   if(P.sleeping)wakeUp();
   {const had=ARMOR_ORDER.some(k=>eq[k]);n=n*(1-defRed())*(bufOn('def')?0.8:1);if(had)wearArmor();}
+  let dcx=false;
+  try{MODX.dmg=Math.round(n*10)/10;MODX.victim=myName();MODX.attacker=(time-LASTHIT.t<10&&LASTHIT.n)?LASTHIT.n:'환경';MODX.attTy=(time-LASTHIT.t<10)?(LASTHIT.y||''):'';MODX.ap=false;MODX.vp=true;dcx=modEvent('damage','');}catch(e){}
+  if(dcx)return;   // cancel event: 피해를 안 입어요
   P.hp=Math.max(0,P.hp-n);P.hurtT=0.7;P.sinceHit=0;P.regT=0;P.kx=kx||0;P.ky=ky||0;
-  try{MODX.dmg=Math.round(n*10)/10;MODX.victim=myName();MODX.attacker=(time-LASTHIT.t<10&&LASTHIT.n)?LASTHIT.n:'환경';MODX.attTy=(time-LASTHIT.t<10)?(LASTHIT.y||''):'';MODX.ap=false;MODX.vp=true;modEvent('damage','');}catch(e){}
   dnum(P.x,P.y-16,n,3);shake(Math.min(3.5,1+n*0.6),0.2);
   renderHp();flashHurt();SFX.hurt();
   for(let j=0;j<8;j++)parts.push({x:P.x,y:P.y-4,vx:(Math.random()-0.5)*50,vy:-15-Math.random()*30,life:0.4,c:j%2?'#e0434f':'#ff9aa2'});
@@ -7233,7 +7239,7 @@ function spawnAnimals(){
   }
 }
 function animalDamage(a,dmg,fx,fy){
-  SFX.animal(a.type,a.x,a.y);try{if(mode==='play'){MODX.dmg=Math.round(dmg*10)/10;MODX.ap=true;MODX.vp=false;MODX.attacker=myName();const an=(typeof ANIM_NAME!=='undefined'&&ANIM_NAME[a.type])||a.type;MODX.victim=an;modEvent('damage','',{k:'animal',n:an,n2:a.type});}}catch(e){}a.hp-=dmg;a.hurt=0.25;a.flee=3;a.fx=fx;a.fy=fy;a.stun=0.2;
+  let acn=false;SFX.animal(a.type,a.x,a.y);try{if(mode==='play'){MODX.dmg=Math.round(dmg*10)/10;MODX.ap=true;MODX.vp=false;MODX.attacker=myName();const an=(typeof ANIM_NAME!=='undefined'&&ANIM_NAME[a.type])||a.type;MODX.victim=an;acn=modEvent('damage','',{k:'animal',n:an,n2:a.type});}}catch(e){}if(acn)return;a.hp-=dmg;a.hurt=0.25;a.flee=3;a.fx=fx;a.fy=fy;a.stun=0.2;
   const dx=a.x-fx,dy=a.y-fy,d=Math.hypot(dx,dy)||1;a.kx=dx/d*70;a.ky=dy/d*70;
   for(let j=0;j<5;j++)parts.push({x:a.x,y:a.y-3,vx:(Math.random()-0.5)*40,vy:-10-Math.random()*20,life:0.35,c:j%2?'#ffffff':'#e0434f'});
   if(a.hp<=0){
@@ -11102,7 +11108,7 @@ function modAsk(list){
   });
 }
 modApply(modLocal());
-function stAdd(k,n){const o=stObj();o[k]=(+o[k]||0)+(n===undefined?1:n);{const me={tree:'chop',rock:'mine',craft:'craft',fish:'fish',place:'place',death:'die'}[k];if(me)modEvent(me,me==='place'?(MODX.pid||''):me==='craft'?(MODX.cid||''):'');}
+function stAdd(k,n){const o=stObj();o[k]=(+o[k]||0)+(n===undefined?1:n);{const me={tree:'chop',rock:'mine',craft:'craft',fish:'fish',place:'place',death:'die'}[k];if(me&&MODX.evDone===me)MODX.evDone='';else if(me)modEvent(me,me==='place'?(MODX.pid||''):me==='craft'?(MODX.cid||''):'');}   // place·craft 는 cancel event 때문에 일이 일어나기 전에 미리 알려요
   if((k==='tree'||k==='kill')&&typeof world!=='undefined'&&world){const w=(settings.wst=settings.wst&&typeof settings.wst==='object'?settings.wst:{}),wk=invKey();if(wk){const c=w[wk]=w[wk]||{};c[k]=(+c[k]||0)+(n===undefined?1:n);}const sc=world.stc=world.stc||{};sc[k]=(+sc[k]||0)+(n===undefined?1:n);}}   // 엔딩 대사용: 월드별 집계
 let ntT=0;
 function worldNotice(){   // 방식이 바뀐 장치가 있는 월드를 열면 한 번만 알려요
@@ -11902,11 +11908,11 @@ function monsterDamage(m,dmg,fx,fy,rune,kind){
   dmg=dmg/WOPT.hp;
   if(m.void&&monsters.some(q=>q.of===m.id&&!q.burn&&!q.dead))dmg*=0.25;   // 하수인이 살아 있으면 공허의 보호막
   const T=MT(m);
+  try{if(mode==='play'){MODX.dmg=Math.round(dmg*10)/10;MODX.ap=true;MODX.vp=false;MODX.attacker=myName();MODX.victim=T.name||m.ty||'slime';if(modEvent('damage','',{k:'monster',n:T.name||'',n2:m.ty||'slime'}))return;}}catch(e){}   // cancel event: 피해를 안 줘요
   if(mode==='play'){dnum(m.x,m.y-(m.boss?34:13),dmg,kind|0);if(kind){hitStop=Math.max(hitStop,kind===2?0.06:0.05);shake(kind===2?2.2:1.6,0.14);}}
   m.hp-=dmg;m.hurt=0.25;if(!m.boss&&MT(m).wind<0.5)m.st=0;m.stun=m.boss?0.08:0.3;
   const dx=m.x-fx,dy=m.y-fy,d=Math.hypot(dx,dy)||1,kb=(T.kb===undefined?1:T.kb);m.kx=dx/d*80*kb*(kind?2:1);m.ky=dy/d*80*kb*(kind?2:1);if(kind&&!m.boss)m.stun=0.5;
   if(rune&&m.hp>0)applyRune(m,rune);
-  try{if(mode==='play'){MODX.dmg=Math.round(dmg*10)/10;MODX.ap=true;MODX.vp=false;MODX.attacker=myName();MODX.victim=T.name||m.ty||'slime';modEvent('damage','',{k:'monster',n:T.name||'',n2:m.ty||'slime'});}}catch(e){}
   if(m.hp>0)SFX.monHit(m.ty||'slime',m.x,m.y);else SFX.monDie(m.ty||'slime',m.x,m.y,!!m.boss);
   for(let j=0;j<6;j++)parts.push({x:m.x,y:m.y-3,vx:(Math.random()-0.5)*50,vy:-10-Math.random()*25,life:0.35,c:j%2?'#ffffff':T.col});
   if(m.hp<=0){
@@ -12505,13 +12511,13 @@ function eatSelected(){
   const sel=inv[P.sel];if(!sel||!foodV(sel.id))return;
   const bf=FOODBUF[sel.id]||(MODDEF.fbuf||{})[sel.id];
   if(P.hp>=P.maxhp&&!bf&&rollsLeft()>=ROLL_MAX)return;
+  {let ec=false;try{MODX.eaten=(ITEMS[sel.id]&&ITEMS[sel.id].name)||String(sel.id);ec=modEvent('eat',String(sel.id));}catch(e){}if(ec)return;}   // cancel event: 먹지 않아요
   P.eatCd=time+0.6;P.rolls=Math.min(ROLL_MAX,rollsLeft()+ROLL_FOOD);
   P.hp=Math.min(P.maxhp,P.hp+foodV(sel.id));renderHp();
   if(bf){achGrant('feast');P.buf=P.buf||{};for(const k in bf)P.buf[k]=time+bf[k];renderBuf();}
   for(let j=0;j<5;j++)parts.push({x:P.x,y:P.y-8,vx:(Math.random()-0.5)*24,vy:-18-Math.random()*14,life:0.6,c:j%2?'#ff9aa2':'#e0434f'});
   const eid=sel.id;MODX.eaten=(ITEMS[eid]&&ITEMS[eid].name)||String(eid);
   sel.n--;if(sel.n<=0)inv[P.sel]=null;persist();renderInv();
-  try{modEvent('eat',String(eid));}catch(e){}
 }
 function dropFromSlot(arr,i,all){
   const st=arr[i];if(!st||P.dead)return;
