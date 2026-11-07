@@ -77,3 +77,6 @@ html[data-ff-theme] .games .game:hover h2,html[data-ff-theme] .games .game:hover
 html[data-ff-theme] .games .game .shot::before{content:'';position:absolute;left:0;top:0;bottom:0;width:0;background:var(--fry);z-index:3;transition:width .45s cubic-bezier(.2,.8,.2,1)}
 html[data-ff-theme] .games .game:hover .shot::before{width:76px}
 html[data-ff-theme] .games .game:hover h2,html[data-ff-theme] .games .game:hover h2 *{color:var(--fry)!important;-webkit-text-fill-color:var(--fry)!important}
+
+/* remove short gold bottom bars on rows / cards */
+html[data-ff-theme] .games .game::after,html[data-ff-theme] .games .game:hover::after,.games .game::after,.wi-go::after{display:none!important;content:none!important;width:0!important}
