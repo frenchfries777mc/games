@@ -2,6 +2,22 @@
  "notes": [
   {
    "date": "2026-11-07",
+   "build": "v733",
+   "title": "친선과 연습 모드 설명 삭제",
+   "items": [
+    "친선과 연습 모드 선택 카드에서 모드 설명을 없애고 인원만 보여요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Mode descriptions removed from Friendly and Practice",
+     "items": [
+      "Removed the mode descriptions from the Friendly and Practice mode cards; only the player count is shown."
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-11-07",
    "build": "v732",
    "title": "신문 보상 중복 수령 수정",
    "items": [
