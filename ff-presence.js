@@ -21,14 +21,19 @@ function which(){
   if(/\/prototypes\/gatecrash\//i.test(p)) return 'gatecrash';
   return null;
 }
-/* 게임이 아닌 사이트(Educations, Tools)는 '사이트'로 따로 세요 (허브 인원과 섞이지 않아요) */
+/* 게임이 아닌 곳은 '장소'로 따로 세요: hub(허브) / games(게임 사이트) / educations·tools(사이트) / edu_이름·tools_이름(그 프로그램) */
+var HUBDIRS=/^\/(games\/)?(lounge|music|settings|community|wiki|oauth|patchnotes|profile|help)(\/|$)/i;
+function clean(x){ return String(x||'').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,16); }
 function siteOf(){
-  var p=decodeURIComponent(location.pathname||'');
+  var p=decodeURIComponent(location.pathname||''), m;
+  if((m=p.match(/\/educations\/([^\/]+)\/?/))&&!/\.html?$/i.test(m[1])&&clean(m[1])) return 'edu_'+clean(m[1]);
   if(/^\/(games\/)?educations(\/|$)/i.test(p)||/\/educations\//i.test(p)) return 'educations';
+  if((m=p.match(/\/tools\/([^\/]+)\/?/))&&!/\.html?$/i.test(m[1])&&clean(m[1])) return 'tools_'+clean(m[1]);
   if(/\/tools(\/|$)/i.test(p)) return 'tools';
+  if(/^\/games(\/|$)/i.test(p)&&!HUBDIRS.test(p)) return 'games';
   return null;
 }
-var game=which(), site=game?null:siteOf(), place=game||site||'hub';
+function coarse(x){ return /^edu_/.test(x)?'educations':(/^tools_/.test(x)?'tools':x); }
 window.FFPresence={game:game};
 if(!window.fetch) return;
 /* 방 서버(ff-host)의 화면 없는 브라우저는 사람이 아니라서 접속 신호를 보내지 않아요 (주소의 dedicated=1, 자동화 브라우저 표시) */
@@ -48,13 +53,19 @@ function gid(){ var g=null; try{ g=localStorage.getItem('ff_gid'); }catch(e){}
   return g; }
 function rpc(name,body,tok,keep){ return fetch(URL_+'/rest/v1/rpc/'+name,{method:'POST',keepalive:!!keep,headers:{'apikey':KEY,'Authorization':'Bearer '+(tok||KEY),'Content-Type':'application/json'},body:JSON.stringify(body||{})}).catch(function(){}); }
 var last=0, wasGuest=false, busy=false, noSite=false;
+/* 로그인한 사람의 손님 신호(같은 브라우저 번호)는 지워서 한 사람이 두 명으로 세어지지 않게 해요 (supabase-presence-v7.sql 전에는 조용히 건너뜀) */
+var guestCleared=false;
+function clearGuest(t){ if(guestCleared) return; var g=null; try{ g=localStorage.getItem('ff_gid'); }catch(e){} if(!g) return; guestCleared=true; rpc('ff_guest_clear',{p_gid:g},t); }
 function ping(force){
   if(busy||(!force&&Date.now()-last<40000)) return; busy=true;
   freshToken().then(function(t){
     last=Date.now();
-    if(t){ wasGuest=false;
+    if(t){ wasGuest=false; clearGuest(t);
       if(game) return rpc('ff_ping',{p_game:game},t);
-      if(site&&!noSite) return rpc('ff_site_ping',{p_site:site},t).then(function(r){ if(r&&r.status===404){ noSite=true; return rpc('ff_hub_ping',{},t); } });   /* supabase-presence-v5.sql 전이면 옛 방식(허브로 합산) */
+      if(site&&!noSite) return rpc('ff_site_ping',{p_site:site},t).then(function(r){
+        if(r&&r.status===404){ noSite=true; return rpc('ff_hub_ping',{},t); }                                /* supabase-presence-v5.sql 전이면 옛 방식(허브로 합산) */
+        if(r&&!r.ok&&coarse(site)!==site) return rpc('ff_site_ping',{p_site:coarse(site)},t).then(function(r2){ if(r2&&r2.status===404){ noSite=true; return rpc('ff_hub_ping',{},t); } });   /* v7 전이면 프로그램 이름 대신 사이트로 */
+        if(r&&!r.ok&&site==='games') return rpc('ff_hub_ping',{},t); });
       return rpc('ff_hub_ping',{},t); }
     wasGuest=true; return rpc('ff_guest_ping',{p_gid:gid(),p_place:place});
   }).then(function(){ busy=false; },function(){ busy=false; });
