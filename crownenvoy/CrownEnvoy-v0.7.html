@@ -529,7 +529,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 161</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 162</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -8185,6 +8185,173 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
   else if(k==='lv')send({a:'b158',op:'lv',to,lv:b.dataset.lv});
   else if(k==='sph')send({a:'b158',op:'sph',to});});
 document.addEventListener('change',e=>{const s=e.target.closest&&e.target.closest('[data-b158sel]');if(!s)return;NC[s.dataset.b158sel]=+s.value;render();});
+})();
+</script>
+<script id="ce-med">
+/* 중재안: 제3국이 싸우는 두 나라의 영토·배상금을 지도에서 정해 보내면, 다음 턴 시작 때 두 나라가 확정 또는 결렬만 고른다 */
+(function(){
+const FEE=80,MAXT=4,GMAX=2000,CD=4;
+const st2=document.createElement('style');st2.textContent=`body:has(:is(#medwin,#ncard):not(.hidden)) :is(#trepChip,#trep,#tutfab,#tutbox){display:none!important}`;document.head.appendChild(st2);
+const act0=act;
+const sn=p=>String(p.kingdom||p.name||'').split('(')[0];
+const lst=x=>[...new Set((Array.isArray(x)?x:[]).map(Number).filter(Number.isInteger))];
+function activeOf(a,b){return (G.medp||[]).find(P=>P.st==='wait'&&((P.a===a&&P.b===b)||(P.a===b&&P.b===a)));}
+function finish(P,okFlag,text){P.st=okFlag?'done':'fail';P.res=text;const md=G.players[P.med];
+  log(`중재안: ${text}`,'dip');wlog(okFlag?'truce':'event',P.a,P.b,`${snm(P.med)}의 중재안: ${text}`);
+  [P.med,P.a,P.b].forEach(i=>hooks.toast(i,`${snm(P.med)}의 중재안: ${text}`));}
+function sendMed(pid,m){const p=G.players[pid];
+  if(G.phase!=='plan')return fail('계획 단계에서만 가능합니다.');
+  const a=G.players[+m.x],b=G.players[+m.y];
+  if(!p||!a||!b||!a.alive||!b.alive||a.id===b.id||a.id===pid||b.id===pid)return fail('대상 오류');
+  if(!isHostile(a.id,b.id))return fail('두 나라는 전쟁 중이 아니에요.');
+  if(isHostile(pid,a.id)||isHostile(pid,b.id))return fail('내가 전쟁 중인 나라는 중재할 수 없어요.');
+  if(!hasChannel(pid,a.id)||!hasChannel(pid,b.id))return fail('두 나라와 모두 외교 채널이 있어야 해요.');
+  if(activeOf(a.id,b.id))return fail('이미 보낸 중재안이 있어요.');
+  if(p.gold<FEE)return fail(`금화가 부족합니다 (필요 ${FEE})`);if((p.medCd||0)>G.round)return fail(`${p.medCd-G.round}라운드 뒤에 다시 중재할 수 있어요.`);
+  const ga=lst(m.ga),gb=lst(m.gb);
+  if(ga.length>MAXT||gb.length>MAXT)return fail(`영토는 나라마다 ${MAXT}곳까지 지정할 수 있어요.`);
+  if(ga.length&&!cedeValid(a.id,ga))return fail(`${snm(a.id)}이(가) 내줄 수 없는 영토가 있어요. (수도는 안 돼요)`);
+  if(gb.length&&!cedeValid(b.id,gb))return fail(`${snm(b.id)}이(가) 내줄 수 없는 영토가 있어요. (수도는 안 돼요)`);
+  const n=Math.max(0,Math.min(GMAX,Math.round((+m.gn||0)/10)*10)),gp=+m.gp;
+  if(n>0&&gp!==a.id&&gp!==b.id)return fail('배상금을 낼 나라를 골라 주세요.');
+  (G.medp=G.medp||[]).push({id:G.uid++,med:pid,a:a.id,b:b.id,ga,gb,gold:n>0?{p:gp,n}:null,sent:G.round,st:'wait',ans:{}});
+  p.gold-=FEE;p.medCd=G.round+CD;
+  return ok(`중재안을 보냈어요. 다음 턴 시작 때 두 나라에 전달돼요. (금화 ${FEE} 소모)`);}
+function applyMed(P){const a=P.a,b=P.b,md=G.players[P.med];
+  if(!isHostile(a,b)){finish(P,false,'이미 전쟁이 끝나 있어요');return false;}
+  if((P.ga.length&&!cedeValid(a,P.ga))||(P.gb.length&&!cedeValid(b,P.gb))){finish(P,false,'영토 주인이 바뀌어 시행할 수 없어요');return false;}
+  makeTruce(a,b,null,{fn:()=>{const t=[];
+    if(P.ga.length){const L=xferLand(P.ga,a,b,true);if(L.length)t.push(`${snm(a)}이(가) ${snm(b)}에 영토 ${L.length}곳(${L.map(x=>TDEF[x.id].name).join(', ')})을 넘겼다`);}
+    if(P.gb.length){const L=xferLand(P.gb,b,a,true);if(L.length)t.push(`${snm(b)}이(가) ${snm(a)}에 영토 ${L.length}곳(${L.map(x=>TDEF[x.id].name).join(', ')})을 넘겼다`);}
+    if(P.gold){const pay=G.players[P.gold.p],rc=G.players[P.gold.p===a?b:a];const amt=Math.min(P.gold.n,Math.max(0,Math.floor(pay.gold)));pay.gold-=amt;rc.gold+=amt;if(amt)t.push(`${snm(pay.id)}이(가) ${snm(rc.id)}에 배상금 ${amt}금을 냈다`);}
+    return t.join(' · ');}});
+  if(md&&md.alive){md.trust=clamp(md.trust+8,0,100);md.vp+=4;}
+  opnAdd(a,P.med,'med','중재해 줬다',12,24);opnAdd(b,P.med,'med','중재해 줬다',12,24);
+  finish(P,true,`${snm(a)}와(과) ${snm(b)}이(가) 중재안을 확정해 휴전했다`);return true;}
+function respond(pid,m){const P=(G.medp||[]).find(x=>x.id===+m.id);
+  if(!P||P.st!=='wait')return fail('이미 끝난 중재안이에요.');if(pid!==P.a&&pid!==P.b)return fail('대상 오류');
+  if(G.round<=P.sent)return fail('중재안은 다음 턴 시작 때 전달돼요.');if(G.phase!=='plan')return fail('계획 단계에서만 가능합니다.');if(P.ans[pid]!=null)return fail('이미 답했어요.');
+  P.ans[pid]=!!m.ok;
+  if(!P.ans[pid]){finish(P,false,`${snm(pid)}이(가) 거절해 결렬됐다`);return ok('중재안이 결렬됐어요.');}
+  if(P.ans[P.a]&&P.ans[P.b])return applyMed(P)?ok('중재안을 확정했어요. 두 나라가 휴전했습니다.'):ok('중재안을 시행할 수 없어 결렬됐어요.');
+  return ok('확정했어요. 상대 나라의 답을 기다려요.');}
+function botMed(pid,x,y){const bal=warBalance(x,y);let gp=null,gn=0;
+  if(Math.abs(bal)>0.3){const lo=bal>0?y:x;gp=lo;gn=Math.max(0,Math.min(300,Math.floor(G.players[lo].gold*0.3/10)*10));}
+  return sendMed(pid,{x,y,ga:[],gb:[],gp,gn});}
+function botAns(pid){(G.medp||[]).forEach(P=>{if(P.st!=='wait'||G.round<=P.sent||(pid!==P.a&&pid!==P.b)||P.ans[pid]!=null)return;
+  const o=pid===P.a?P.b:P.a,give=pid===P.a?P.ga:P.gb,get=pid===P.a?P.gb:P.ga,me=G.players[pid],g=cedeGeo();
+  const sg=give.reduce((s,i)=>s+cedeSev(i,g),0),sr=get.reduce((s,i)=>s+cedeSev(i,g),0);
+  const gs=P.gold?(P.gold.p===pid?1:-1)*clamp(P.gold.n/Math.max(150,me.gold+200),0,0.5):0;
+  const dire=clamp(-warBalance(pid,o),0,1);
+  const ch=clamp(0.5+0.4*dire+0.1*((me.ww||0)/100)+0.5*sr-0.9*(1-0.5*dire)*(sg+gs),0.05,0.95);
+  respond(pid,{id:P.id,ok:Math.random()<ch});});}
+
+act=function(pid,m){
+  if(m&&m.a==='mediate'){const p=G.players[pid];if(p&&p.isBot)return botMed(pid,+m.x,+m.y);return fail('중재안 창에서 중재안을 만들어 보내 주세요.');}
+  if(m&&m.a==='medsend')return sendMed(pid,m);
+  if(m&&m.a==='medresp')return respond(pid,m);
+  return act0(pid,m);};
+const _eb=extBot;
+extBot=function(pid){_eb(pid);try{botAns(pid);}catch(e){console.error('med bot',e);}};
+const _es=extSettle;
+extSettle=function(){_es();try{(G.medp||[]).forEach(P=>{if(P.st!=='wait')return;
+    if(!isHostile(P.a,P.b)||!G.players[P.a].alive||!G.players[P.b].alive){P.st='fail';P.res='전쟁이 이미 끝났다';return;}
+    if(G.round>P.sent+1)finish(P,false,'응답이 없어 결렬됐다');});
+  G.medp=(G.medp||[]).filter(P=>G.round-P.sent<=4);}catch(e){console.error('med tick',e);}};
+const _mkv=makeView;
+makeView=function(pid,opts){const v=_mkv(pid,opts);
+  try{v.medp=(G.medp||[]).filter(P=>P.a===pid||P.b===pid||P.med===pid).map(P=>({id:P.id,med:P.med,a:P.a,b:P.b,ga:P.ga.slice(),gb:P.gb.slice(),gold:P.gold?{p:P.gold.p,n:P.gold.n}:null,sent:P.sent,open:G.round>P.sent,st:P.st,res:P.res||'',my:P.ans[pid]==null?null:P.ans[pid],da:P.ans[P.a]!=null,db:P.ans[P.b]!=null}));}catch(e){console.error('med view',e);}
+  return v;};
+
+/* ================= 화면 ================= */
+const MW={on:false,mode:'compose',x:null,y:null,ga:[],gb:[],gp:null,gn:0,id:null,fit:null};
+const seen=new Set();
+const CSS=`#medwin{position:fixed;inset:0;z-index:9000;background:rgba(6,10,18,.88);display:flex;align-items:center;justify-content:center}#medwin.hidden{display:none}
+#medwin .mw-body{overflow:auto;padding:12px 16px}
+#medwin .mw-vs{display:flex;gap:10px;align-items:center;justify-content:center;font-weight:700;padding-bottom:8px;flex-wrap:wrap}
+#medwin canvas{width:100%;height:clamp(240px,44vh,420px);border:2px solid #7a6030;border-radius:8px;display:block;background:#1f3a46;touch-action:manipulation}
+#medwin .mw-row{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px dotted #b89a5a;font-size:13px}
+#medwin .mw-row .l{flex:none;width:112px;color:#6a5424}
+#medwin .mw-row .v{flex:1;min-width:0}
+#medwin .md-btns{display:flex;gap:8px;flex:1}
+#medwin .md-btns button,#medwin .md-btns .box{flex:1 1 0;min-width:0;height:38px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;border:1px solid #9a7c42;background:#e6d6a8;color:#2a1e0e;border-radius:999px;padding:0 10px;font-size:13px;cursor:pointer}
+#medwin .md-btns .box{cursor:default;background:#f4ead0;font-weight:700}
+#medwin .md-btns button.on{background:#7a5a22;color:#fff}#medwin .md-btns button:disabled{opacity:.45;cursor:default}
+#medwin .mw-act{margin-top:12px}`;
+const mel=()=>{let b=document.getElementById('medwin');if(!b){const st=document.createElement('style');st.textContent=CSS;document.head.appendChild(st);b=document.createElement('div');b.id='medwin';b.className='hidden';document.body.appendChild(b);b.addEventListener('click',e=>{if(e.target===b)UI.back();});}return b;};
+const NM=(v,i)=>sn(v.players[i]);
+const names=(ids)=>ids.length?ids.map(i=>TDEF[i].name).join(', '):'—';
+function openCompose(x,y){MW.mode='compose';MW.x=x;MW.y=y;MW.ga=[];MW.gb=[];MW.gp=null;MW.gn=0;MW.id=null;show();}
+function openView(id){MW.mode='view';MW.id=id;show();}
+function show(){const b=mel();UI.navPush('medwin');b.classList.remove('hidden');MW.on=true;render();}
+function termsOf(v){if(MW.mode==='compose')return {a:MW.x,b:MW.y,ga:MW.ga,gb:MW.gb,gold:MW.gn>0&&MW.gp!=null?{p:MW.gp,n:MW.gn}:null};
+  const P=(v.medp||[]).find(x=>x.id===MW.id);return P||null;}
+function drawMap(cv,v,T){const dpr=Math.min(2,window.devicePixelRatio||1),W=cv.clientWidth||600,H=cv.clientHeight||320;cv.width=W*dpr;cv.height=H*dpr;const c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);
+  let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;v.terr.forEach(t=>{if(t.owner!==T.a&&t.owner!==T.b)return;GEO.polys[t.id].forEach(r=>r.forEach(p=>{if(p[0]<x0)x0=p[0];if(p[0]>x1)x1=p[0];if(p[1]<y0)y0=p[1];if(p[1]>y1)y1=p[1];}));});
+  if(x0>x1){x0=0;x1=1000;y0=0;y1=700;}const pad=26;x0-=pad;x1+=pad;y0-=pad;y1+=pad;
+  const s=Math.min(W/(x1-x0),H/(y1-y0)),ox=(W-(x1-x0)*s)/2,oy=(H-(y1-y0)*s)/2;MW.fit={x0,y0,s,ox,oy};
+  const X=px=>ox+(px-x0)*s,Y=py=>oy+(py-y0)*s;c.fillStyle='#1f3a46';c.fillRect(0,0,W,H);
+  const A=v.players[T.a],B=v.players[T.b];const recv={};T.ga.forEach(i=>recv[i]=T.b);T.gb.forEach(i=>recv[i]=T.a);
+  const path=id=>{c.beginPath();GEO.polys[id].forEach(r=>{r.forEach((p,i)=>i?c.lineTo(X(p[0]),Y(p[1])):c.moveTo(X(p[0]),Y(p[1])));c.closePath();});};
+  v.terr.forEach(t=>{if(TDEF[t.id].kind==='sea')return;path(t.id);const o=t.owner;
+    if(recv[t.id]!=null){c.fillStyle=v.players[recv[t.id]].color;c.globalAlpha=.95;}
+    else if(o===T.a||o===T.b){c.fillStyle=v.players[o].color;c.globalAlpha=.8;}
+    else{c.fillStyle='#d9c58e';c.globalAlpha=1;}
+    c.fill();c.globalAlpha=1;if(o!=null&&o!==T.a&&o!==T.b&&v.players[o]){c.fillStyle=v.players[o].color;c.globalAlpha=.22;c.fill();c.globalAlpha=1;}
+    c.strokeStyle='rgba(40,28,10,.55)';c.lineWidth=.6;c.stroke();});
+  Object.keys(recv).forEach(k=>{const id=+k;path(id);c.setLineDash([5,3]);c.strokeStyle='#fff';c.lineWidth=2.2;c.stroke();c.setLineDash([]);});
+  c.textAlign='center';c.textBaseline='middle';
+  [A,B].forEach(p=>{if(p&&p.cap!=null&&TDEF[p.cap]){c.font='700 13px system-ui';c.fillStyle='#fff';c.strokeStyle='#000';c.lineWidth=3;c.strokeText('★',X(TDEF[p.cap].x),Y(TDEF[p.cap].y));c.fillText('★',X(TDEF[p.cap].x),Y(TDEF[p.cap].y));}});
+  c.font='700 11px system-ui';Object.keys(recv).forEach(k=>{const id=+k,d=TDEF[id];const tx=X(d.x),ty=Y(d.y)+11;c.lineWidth=3;c.strokeStyle='#000';c.strokeText(d.name,tx,ty);c.fillStyle='#fff';c.fillText(d.name,tx,ty);});}
+function hit(v,e){const cv=e.currentTarget,r=cv.getBoundingClientRect(),f=MW.fit;if(!f)return -1;const px=e.clientX-r.left,py=e.clientY-r.top;const mx=(px-f.ox)/f.s+f.x0,my=(py-f.oy)/f.s+f.y0;
+  for(const t of v.terr){if(t.owner!==MW.x&&t.owner!==MW.y)continue;if(TDEF[t.id].kind==='sea')continue;if(inTerr(mx,my,GEO.polys[t.id]))return t.id;}return -1;}
+function render(){const b=mel(),v=C.view;if(!v||!v.players)return;const T=termsOf(v);if(!T){UI.back();return;}
+  const A=v.players[T.a],B=v.players[T.b];const comp=MW.mode==='compose';
+  const P=comp?null:T;const goldTxt=T.gold?`${NM(v,T.gold.p)}이(가) ${NM(v,T.gold.p===T.a?T.b:T.a)}에게 ${T.gold.n}금`:'—';
+  let rows='';
+  if(comp){
+    rows=`<div class="mw-row"><span class="l">${esc(sn(A))} 내줄 영토</span><span class="v">${esc(names(MW.ga))}</span></div>
+    <div class="mw-row"><span class="l">${esc(sn(B))} 내줄 영토</span><span class="v">${esc(names(MW.gb))}</span></div>
+    <div class="mw-row"><span class="l">배상금 낼 나라</span><div class="md-btns"><button data-b160="pay" data-p="" class="${MW.gp==null?'on':''}">없음</button><button data-b160="pay" data-p="${A.id}" class="${MW.gp===A.id?'on':''}">${esc(sn(A))}</button><button data-b160="pay" data-p="${B.id}" class="${MW.gp===B.id?'on':''}">${esc(sn(B))}</button></div></div>
+    <div class="mw-row"><span class="l">배상금</span><div class="md-btns"><button data-b160="amt" data-d="-100">−100</button><div class="box">${MW.gp==null?'—':MW.gn+'금'}</div><button data-b160="amt" data-d="100">+100</button></div></div>`;
+  }else{
+    rows=`<div class="mw-row"><span class="l">${esc(sn(A))} → ${esc(sn(B))}</span><span class="v">${esc(names(T.ga))}</span></div>
+    <div class="mw-row"><span class="l">${esc(sn(B))} → ${esc(sn(A))}</span><span class="v">${esc(names(T.gb))}</span></div>
+    <div class="mw-row"><span class="l">배상금</span><span class="v">${esc(goldTxt)}</span></div>`;}
+  let acts='';
+  if(comp){const me=v.players[v.me];const cd=(me&&me.medCd)||0;acts=`<div class="md-btns mw-act"><button data-b160="send" ${me&&me.gold<FEE?'disabled':''}>중재안 보내기 · ${FEE}금</button><button data-b160="clr">초기화</button><button data-b160="close">닫기</button></div>`;}
+  else{const mine=T.a===v.me||T.b===v.me;
+    if(mine&&T.st==='wait'&&T.open&&T.my==null&&v.phase==='plan')acts=`<div class="md-btns mw-act"><button data-b160="yes">확정</button><button data-b160="no">결렬</button></div>`;
+    else acts=`<div class="mw-row"><span class="l">상태</span><span class="v">${T.st==='done'?'확정':T.st==='fail'?'결렬':!T.open?'다음 턴 시작 때 전달':T.my===true?'확정함 · 상대를 기다리는 중':'응답 대기'}${T.res?' · '+esc(T.res):''}</span></div><div class="md-btns mw-act"><button data-b160="close">닫기</button></div>`;}
+  b.innerHTML=`<div class="wlbox"><div class="wlhead"><button class="btn sm" data-b160="close">← 뒤로</button><h2>${comp?'중재안 작성':'중재안'}</h2></div><div class="mw-body"><div class="mw-vs">${fl(A)} ${esc(sn(A))} <span>⚔</span> ${fl(B)} ${esc(sn(B))}${comp?'':` <span class="muted" style="font-weight:400">· 중재 ${esc(NM(v,T.med))}</span>`}</div><canvas id="mwcv"></canvas>${rows}${acts}</div></div>`;
+  const cv=document.getElementById('mwcv');drawMap(cv,v,T);
+  if(comp)cv.onclick=e=>{const v2=C.view,id=hit(v2,e);if(id<0)return;const own=v2.terr[id].owner,mine=own===MW.x?MW.ga:MW.gb;
+    if(v2.players[own].cap===id){UI.toast('수도는 지정할 수 없어요.','bad');return;}
+    const i=mine.indexOf(id);if(i>=0)mine.splice(i,1);else{if(mine.length>=MAXT){UI.toast(`영토는 나라마다 ${MAXT}곳까지예요.`,'bad');return;}mine.push(id);}render();};}
+
+const _cl=UI.closeLayer;
+UI.closeLayer=function(n){if(n==='medwin'){mel().classList.add('hidden');MW.on=false;return true;}return _cl.apply(this,arguments);};
+const _ra=UI.renderAll;
+UI.renderAll=function(){const r=_ra.apply(this,arguments);
+  try{if(MW.on)render();else{const v=C.view;if(v&&!v.spec&&!v.draft&&v.phase==='plan'){const P=(v.medp||[]).find(x=>x.open&&x.st==='wait'&&(x.a===v.me||x.b===v.me)&&x.my==null&&!seen.has(x.id));if(P){seen.add(P.id);openView(P.id);}}}}catch(e){}
+  return r;};
+UI.medHTML=function(){const v=C.view;if(!v)return '';const L=(v.med||[]).filter(x=>v.players[x[0]]&&v.players[x[1]]);const me=mePl();
+  const pairs=L.map(x=>{const P=(v.medp||[]).find(q=>q.st==='wait'&&((q.a===x[0]&&q.b===x[1])||(q.a===x[1]&&q.b===x[0])));
+    return `<div class="row" style="justify-content:space-between;gap:8px;margin:3px 0"><span>${esc(sn(v.players[x[0]]))} ⚔ ${esc(sn(v.players[x[1]]))}</span>${P?`<button class="btn sm" data-b160="view" data-id="${P.id}">${P.med===v.me?'보낸 중재안':'중재안'}</button>`:`<button class="btn sm" data-b160="compose" data-x="${x[0]}" data-y="${x[1]}" ${me.gold<FEE?'disabled':''}>중재안 작성</button>`}</div>`;}).join('');
+  const got=(v.medp||[]).filter(P=>(P.a===v.me||P.b===v.me)&&P.st==='wait'&&P.open).map(P=>`<div class="row" style="justify-content:space-between;gap:8px;margin:3px 0"><span>${esc(sn(v.players[P.med]))}의 중재안</span><button class="btn sm" data-b160="view" data-id="${P.id}">${P.my==null?'열기':'답함'}</button></div>`).join('');
+  if(!pairs&&!got)return '';
+  return `<h3>중재 <span class="muted sm">두 나라의 전쟁을 말려요 · ${FEE}금</span></h3><div class="card sm" style="padding:8px 10px">${got}${pairs}</div>`;};
+
+window.CEMed={MW,render};
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-b160]');if(!b)return;const k=b.dataset.b160,v=C.view;if(!v)return;
+  if(k==='compose')openCompose(+b.dataset.x,+b.dataset.y);
+  else if(k==='view')openView(+b.dataset.id);
+  else if(k==='close')UI.back();
+  else if(k==='clr'){MW.ga=[];MW.gb=[];MW.gp=null;MW.gn=0;render();}
+  else if(k==='pay'){MW.gp=b.dataset.p===''?null:+b.dataset.p;if(MW.gp==null)MW.gn=0;else if(!MW.gn)MW.gn=100;render();}
+  else if(k==='amt'){if(MW.gp==null){UI.toast('배상금을 낼 나라를 먼저 골라 주세요.','bad');return;}MW.gn=Math.max(0,Math.min(GMAX,MW.gn+(+b.dataset.d)));render();}
+  else if(k==='send'){send({a:'medsend',x:MW.x,y:MW.y,ga:MW.ga,gb:MW.gb,gp:MW.gp,gn:MW.gn});UI.back();}
+  else if(k==='yes'||k==='no'){send({a:'medresp',id:MW.id,ok:k==='yes'});UI.back();}});
 })();
 </script>
 <script src="https://frenchfries777.com/games/ff-profile.js"></script>
