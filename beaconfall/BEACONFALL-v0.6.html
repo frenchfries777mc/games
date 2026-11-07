@@ -14730,7 +14730,7 @@ function bstPost(o){try{if(parent&&parent!==window)parent.postMessage(o,'*');}ca
 function bstParser(){
   if(bstFrameP)return bstFrameP;
   return bstFrameP=new Promise((res,rej)=>{
-    const f=document.createElement('iframe');f.style.display='none';f.src='mods.html?bsparse=1';bstFrame=f;
+    const f=document.createElement('iframe');f.style.display='none';f.src='mods.html?bsparse=1&v='+Date.now();bstFrame=f;
     const t=setTimeout(()=>{bstFrameP=null;rej(new Error('parser timeout'));},15000);
     const h=e=>{if(e.source===f.contentWindow&&e.data&&e.data.type==='bs-parser-ready'){clearTimeout(t);removeEventListener('message',h);res(f);}};
     addEventListener('message',h);document.body.appendChild(f);
@@ -14752,7 +14752,7 @@ function bstApiLoad(k){
   return bstApiCache[k]=(async()=>{
     const M={events:[],sets:[]};
     for(const f of A.files){
-      const code=await (await fetch(A.dir+f)).text(),d=(await bstParse(code)).data||{};
+      const code=await (await fetch(A.dir+f+'?v='+Date.now(),{cache:'no-store'})).text(),d=(await bstParse(code)).data||{};
       if(d.events)M.events=M.events.concat(d.events);
       if(d.sets)M.sets=M.sets.concat(d.sets);
       if(d.pa)M.pa=(M.pa||[]).concat(d.pa);
