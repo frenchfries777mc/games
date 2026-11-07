@@ -1684,7 +1684,7 @@ function loadSave(){
       saveData.boxes=Math.max(0,Math.min(9999,Math.floor(+s.boxes||0))); saveData.epicBoxes=Math.max(0,Math.min(9999,Math.floor(+s.epicBoxes||0))); saveData.boxesOpened=Math.max(0,Math.floor(+s.boxesOpened||0)); saveData.dailyCount=Math.max(0,Math.floor(+s.dailyCount||0)); saveData.souls=Math.max(0,Math.min(999999,Math.floor(+s.souls||0))); saveData.pxEarned=Math.max(0,Math.floor(+s.pxEarned||0)); saveData.pxSpent=Math.max(0,Math.floor(+s.pxSpent||0));
       saveData.dailyLast=(typeof s.dailyLast==='string' && /^\d{4}-\d{2}-\d{2}$/.test(s.dailyLast)) ? s.dailyLast : '';
       saveData.fwDay=(typeof s.fwDay==='string') ? s.fwDay.slice(0,120) : '';
-      saveData.missions=(s.missions&&typeof s.missions==='object')?s.missions:null; saveData.season=(s.season&&typeof s.season==='object')?s.season:null; saveData.trailerSeen=s.trailerSeen?1:0;
+      saveData.missions=(s.missions&&typeof s.missions==='object')?s.missions:null; saveData.season=(s.season&&typeof s.season==='object')?s.season:null; saveData.trailerSeen=s.trailerSeen?1:0; saveData.newsClaimed=Array.isArray(s.newsClaimed)?s.newsClaimed.filter(w=>typeof w==='string').slice(-30):[]; saveData.seenNews=(typeof s.seenNews==='string')?s.seenNews.slice(0,60):'';
     }
   }catch(e){}
 }
@@ -1696,7 +1696,7 @@ function persistSave(){
       gold, owned:saveData.owned, equipped:saveData.equipped, xp:saveData.xp, xc:PLAYER_FLAT, rk:RANK_SCALE_VER, totalKills:saveData.totalKills, totalMatches:saveData.totalMatches,
       totalWins:saveData.totalWins, winStreak:saveData.winStreak||0, maxStreak:Math.max(saveData.maxStreak||0,saveData.winStreak||0), totalDamage:saveData.totalDamage, totalAssists:saveData.totalAssists,
       modeMatches:saveData.modeMatches, charKills:saveData.charKills, charPts:saveData.charPts, avatar:saveData.avatar, playerName:saveData.playerName, nameDirty:!!saveData.nameDirty,
-      achievements:saveData.achievements, weaponXp:saveData.weaponXp, trailerSeen:saveData.trailerSeen?1:0,
+      achievements:saveData.achievements, weaponXp:saveData.weaponXp, trailerSeen:saveData.trailerSeen?1:0, newsClaimed:Array.isArray(saveData.newsClaimed)?saveData.newsClaimed.slice(-30):[], seenNews:saveData.seenNews||'',
       boxes:saveData.boxes, epicBoxes:saveData.epicBoxes, fwDay:saveData.fwDay||'', boxesOpened:saveData.boxesOpened, dailyLast:saveData.dailyLast, dailyCount:saveData.dailyCount, souls:saveData.souls, pxEarned:saveData.pxEarned, pxSpent:saveData.pxSpent, missions:saveData.missions, season:saveData.season
     }); _so.sg=saveSigOf(_so); localStorage.setItem(SAVE_KEY, JSON.stringify(_so));
   }catch(e){}
@@ -5999,7 +5999,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-07-v731';
+const GAME_BUILD='build 2026-11-07-v732';
 const GAME_VERSION='1.0', GAME_VERSION_NAME='신화의 전설';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -8678,7 +8678,7 @@ function clanSyncMyName(id){            // my row in the clan list keeps the nic
    - the NICKNAME of the account is the one in the save (the account wins over what this browser had); the public profile is made to say the same (so an old copy that overwrote it is repaired);
    - while playing: the save goes up a little after changes (at most once in 30 s) and when the tab is left, but never before the first sync has finished (an empty browser cannot overwrite the account);
    - no connection / too big / refused: the game goes on as before (progress only in this browser) and the account window says so. */
-const SAVE_FIELDS=['gold','xp','owned','equipped','totalKills','totalMatches','totalWins','winStreak','maxStreak','totalDamage','totalAssists','modeMatches','charKills','charPts','avatar','playerName','achievements','weaponXp','boxes','epicBoxes','fwDay','boxesOpened','dailyLast','dailyCount','souls','pxEarned','pxSpent','missions','season','favChars','trailerSeen'];
+const SAVE_FIELDS=['gold','xp','owned','equipped','totalKills','totalMatches','totalWins','winStreak','maxStreak','totalDamage','totalAssists','modeMatches','charKills','charPts','avatar','playerName','achievements','weaponXp','boxes','epicBoxes','fwDay','boxesOpened','dailyLast','dailyCount','souls','pxEarned','pxSpent','missions','season','favChars','trailerSeen','newsClaimed','seenNews'];
 const CLOUD_META_KEY='stickseumSave', CLOUD_MAX_CHARS=3600, CLOUD_MIN_GAP_MS=30000, CLOUD_DEBOUNCE_MS=20000;
 let cloudSaveState='off', cloudSaveReady=false, cloudSaveTimer=null, cloudSaveLastJson='', cloudSaveLastAt=0, cloudSaveNote='', cloudSaveBackoffUntil=0, sbUserMeta={};
 function cloudSavePayload(){ const o={v:1}; for(const k of SAVE_FIELDS) o[k]=(k==='gold') ? gold : saveData[k]; o.xc=PLAYER_FLAT; o.rk=RANK_SCALE_VER; o.at=Date.now(); o.sg=saveSigOf(o); return JSON.parse(JSON.stringify(o)); }
@@ -8697,6 +8697,7 @@ function mergeSaves(local, cloud){
   if(!(m.playerName && String(m.playerName).trim())) m.playerName=other.playerName||null;
   if(!Array.isArray(m.favChars) && Array.isArray(other.favChars)) m.favChars=other.favChars;
   m.trailerSeen=(local.trailerSeen||cloud.trailerSeen)?1:0;
+  m.newsClaimed=Array.from(new Set([].concat(Array.isArray(local.newsClaimed)?local.newsClaimed:[], Array.isArray(cloud.newsClaimed)?cloud.newsClaimed:[]))).slice(-30);      // (a news reward taken on one device is taken on the others too)
   m.missions=mergeMissionState(local.missions, cloud.missions); m.season=mergeSeasonState(local.season, cloud.season);
   const eq=m.equipped||{}; if(eq.name && !m.owned[eq.name]) eq.name=null; if(eq.skin) for(const w in eq.skin){ if(eq.skin[w] && !m.owned[eq.skin[w]] && !(COSMETICS[eq.skin[w]]&&COSMETICS[eq.skin[w]].tier)) eq.skin[w]=null; }
   return m;
@@ -8724,7 +8725,7 @@ function applyCloudSave(s){
   if(!saveData.nameDirty && typeof s.playerName==='string' && s.playerName.trim()){ saveData.playerName=s.playerName.trim().slice(0,15); myName=saveData.playerName; myNameSet=true; }     // the account's nickname wins
   saveData.achievements=(s.achievements&&typeof s.achievements==='object')?s.achievements:{}; saveData.weaponXp=(s.weaponXp&&typeof s.weaponXp==='object')?s.weaponXp:{};
   saveData.dailyLast=(typeof s.dailyLast==='string' && /^\d{4}-\d{2}-\d{2}$/.test(s.dailyLast)) ? s.dailyLast : '';
-  saveData.missions=(s.missions&&typeof s.missions==='object')?s.missions:null; saveData.season=(s.season&&typeof s.season==='object')?s.season:null; saveData.trailerSeen=s.trailerSeen?1:0;
+  saveData.missions=(s.missions&&typeof s.missions==='object')?s.missions:null; saveData.season=(s.season&&typeof s.season==='object')?s.season:null; saveData.trailerSeen=s.trailerSeen?1:0; saveData.newsClaimed=Array.isArray(s.newsClaimed)?s.newsClaimed.filter(w=>typeof w==='string').slice(-30):[]; saveData.seenNews=(typeof s.seenNews==='string')?s.seenNews.slice(0,60):'';
   if(Array.isArray(s.favChars)) saveData.favChars=s.favChars.filter(w=>typeof w==='string').slice(0,60);
   persistSave(); updateGoldUI();
 }
