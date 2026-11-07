@@ -1,3 +1,5 @@
+(function(){try{var h=location.hash;if(h.indexOf('#ffmig=')!==0||window.__ffMig||location.hostname==='frenchfries777mc.github.io')return;window.__ffMig=1;var o=JSON.parse(decodeURIComponent(escape(atob(h.slice(7).replace(/-/g,'+').replace(/_/g,'/')))));var d=o.d||{};for(var k in d){if(Object.prototype.hasOwnProperty.call(d,k)&&localStorage.getItem(k)===null){try{localStorage.setItem(k,String(d[k]))}catch(e){}}}history.replaceState(null,'',location.pathname+location.search+(o.h||''));}catch(e){}})();
+if(location.hostname==='frenchfries777mc.github.io'&&!window.__ffRedir){var s=document.createElement('script');s.src='https://frenchfries777.com/games/ff-redirect.js';(document.head||document.documentElement).appendChild(s);}
 /* Frenchfries777 계정 로그인 (허브 · 게임 사이트 공용)
    쓰는 법 (사이트 HTML에):
      <span data-ff-account></span>                         ← 로그인 버튼 / 닉네임이 들어갈 자리 (여러 개 가능)
