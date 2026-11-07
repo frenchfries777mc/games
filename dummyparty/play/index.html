@@ -1650,7 +1650,7 @@ body.onhome .exitHub{display:block}.exitHub:hover{background:rgba(40,28,16,.9)}
 @media(max-width:900px){.menuR{position:static;transform:none;width:100%;max-width:440px;margin:14px auto 0}}
 .shop{display:none;position:fixed;inset:0;z-index:40;background:rgba(30,18,8,.62);align-items:center;justify-content:center;padding:16px}.shop.on{display:flex}
 .shopBox{background:var(--panel);border-radius:20px;padding:16px;max-width:520px;width:100%;max-height:92vh;overflow:auto;box-shadow:0 14px 40px rgba(0,0,0,.45)}
-.achl{list-style:none;margin:0;padding:0;display:grid;gap:8px}.achl li{background:rgba(0,0,0,.06);border-radius:12px;padding:9px 12px;opacity:.55}.achl li.on{opacity:1;background:rgba(247,168,59,.22)}.achl b{display:block;font-size:15px;color:var(--ink)}.achl span{font-size:13px;color:var(--ink);opacity:.8}
+.achl{list-style:none;margin:0;padding:0;display:grid;gap:8px}.achl li{background:rgba(0,0,0,.06);border-radius:12px;padding:9px 12px;opacity:.55}.achl li.on{opacity:1;background:rgba(247,168,59,.22)}.achl li{display:flex;align-items:center;gap:10px}.achl .achi{width:44px;height:44px;flex:none}.achl .achx{min-width:0}.achl li:not(.on) .achi{filter:grayscale(1)}.achl b{display:block;font-size:15px;color:var(--ink)}.achl span{font-size:13px;color:var(--ink);opacity:.8}
 .shopHead{display:flex;align-items:center;gap:10px;margin-bottom:8px}.shopHead h2{margin:0;font-size:24px;font-weight:900;color:var(--ink)}.shopHead #walBox{flex:1;margin:0;font-size:14px}.shopHead .pb{padding:8px 14px;font-size:14px}
 #walBox{margin:0 0 8px;padding:7px 12px;border-radius:14px;background:rgba(255,255,255,.55);font-size:13px;color:#3a2410;text-align:center}
 #walBox b{font-weight:900}#walBox span{opacity:.7;margin:0 4px}#walBox a{color:inherit;font-weight:800}
@@ -1721,9 +1721,11 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b96)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b97)</summary>
    <b>2026-11-04 · v0.1 · b96 · 스킨 값 14배</b>
    <ul><li>상점의 스킨(얼굴, 모자, 안경, 승리 춤) 값이 14배로 올랐어요. 칭호 값은 그대로예요</li><li>허브 코인 1개는 이제 7dC로 바뀌어요</li></ul>
+   <b>2026-11-07 · v0.1 · b97 · 업적 목록 아이콘</b>
+   <ul><li>업적 목록에 업적마다 전용 그림이 들어갔어요. 못 딴 업적은 흑백이에요</li></ul>
    <b>2026-11-02 · v0.1 · b95 · 게임 안 이모지 그림 유지</b>
    <ul><li>게임 안의 이모지는 계속 허브와 같은 그림으로 보여요 (사이트 화면만 원래 이모지)</li></ul>
    <b>2026-11-02 · v0.1 · b93 · 이모지 그림 배경 제거</b>
@@ -1910,7 +1912,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 · b1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 39개 미니게임 중 7개 · v0.1 b96 · <a href="../">← Dummy Party 사이트로</a></p>
+  <p class="foot">2~8명 · 판마다 39개 미니게임 중 7개 · v0.1 b97 · <a href="../">← Dummy Party 사이트로</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -7722,6 +7724,7 @@ var ACH = [
   ['emote30', '말보다 이모티콘', '이모티콘을 30번 써요.'],
   ['rich', 'dC 부자 마네킹', 'dC를 1000 모아요.']
 ];
+var ACH_IMG = 'https://frenchfries777.com/games/dummyparty/ach/';
 var ACH_MG_WIN = { rope: 'rope_win', ramen: 'ramen_win', fartrace: 'fart_win', hotdog: 'hotdog_win', shell: 'shell_win', crowd: 'crowd_win' };
 var achQ = [], achBusy = false, achSyncT = 0;
 function achLoad() { var a = {}; try { a = JSON.parse(lsGet('dummyparty.ach') || '{}') || {}; } catch (e) { } a.d = a.d || {}; a.wm = a.wm || {}; a.pm = a.pm || {}; a.emo = a.emo | 0; a.buy = a.buy | 0; a.strk = a.strk | 0; return a; }
@@ -7850,7 +7853,7 @@ function renderAch() {
   $('achSum').innerHTML = emoHtml('trophy') + ' ' + n + ' / ' + ACH.length;
   box.innerHTML = ACH.map(function (r) {
     var on = !!a.d[r[0]];
-    return '<li class="' + (on ? 'on' : '') + '"><b>' + emoHtml(on ? 'trophy' : 'lock') + ' ' + esc(r[1]) + '</b><span>' + esc(r[2]) + '</span></li>';
+    return '<li class="' + (on ? 'on' : '') + '"><img class="achi" src="' + ACH_IMG + r[0] + '.svg" alt="" draggable="false" onerror="this.style.display=\'none\'"><div class="achx"><b>' + esc(r[1]) + '</b><span>' + esc(r[2]) + '</span></div></li>';
   }).join('');
 }
 
@@ -7929,7 +7932,7 @@ var PREFIX = 'ff-dummyparty-', CODE_CH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', MAX
 var PTS = [5, 3, 2, 1];
 var T_INTRO = 6, T_COUNT = 3, T_END = 4.0, T_RESULT = 6;
 // 게임 버전(0.x)과 빌드. 버전이 다르면 같은 방에 못 들어와요 (빌드가 달라도 괜찮아요). dp_config 의 min_build 보다 낮은 빌드는 dC를 못 받아요
-var DP_VER = '0.1', DP_BUILD = 95;
+var DP_VER = '0.1', DP_BUILD = 97;
 function dpNotice(msg) { dpAsk(msg, '확인', function () { }); }
 var BOT_NAMES = ['방귀쟁이', '홀쭉이', '바보1', '멍청이', '10급 공무원', '교무실 단골', '벌점부자', '말썽이', '김개똥'];
 var qs = new URLSearchParams(location.search);
