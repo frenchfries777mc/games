@@ -559,7 +559,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 174</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 175</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div><p class="tagline">사절을 보내 동맹을 맺고, 군대를 보내 왕관을 차지하세요.</p></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -8184,10 +8184,107 @@ const RULERS={
  'ger:gbr':['빅토리아 여왕','여왕',{fem:1,hs:6,hair:'#6a5a4a',col:'#22222a',hat:'none',skin:SKL}],
  'ger:spa':['이사벨 2세','여왕',{fem:1,hs:6,hair:'#3a2a1a',skin:SKM}],
  'ger:ott':['압뒬아지즈','술탄',{hat:'fez',beard:1,hair:BLK,skin:SKM}],
+ 'rome:wro':['발렌티니아누스 3세','황제',{skin:SKM,hair:'#5a3a22',hs:2,beard:0}],
+ 'rome:ero':['마르키아누스','황제',{skin:SKM,hair:'#4a3322',hs:12,beard:0,old:1}],
+ 'rome:hun':['아틸라','왕',{skin:SKT,hair:GRY,bc:GRY,hs:11,beard:5,eb:3,hat:'none',fx:'tunic',col:'#6a3a1a',old:1}],
+ 'rome:van':['가이세리크','왕',{skin:SKL,hair:'#7a5a34',hs:11,beard:7,old:1}],
+ 'rome:vis':['테오도리크 1세','왕',{skin:SKL,hair:'#9a8a6a',hs:11,beard:7,old:1}],
+ 'rome:sas':['야즈데게르드 2세','샤',{skin:SKM,hair:BLK,hs:11,beard:7,eb:2,hat:'empc'}],
+ 'crusade:byz':['알렉시오스 1세 콤니노스','황제',{skin:SKM,hair:'#2b2118',hs:11,beard:6,eb:3,hat:'empc',col:'#7a1c4a'}],
+ 'crusade:pap':['우르바노 2세','교황',{skin:SKL,hair:GRY,hs:3,beard:0,hat:'mitre',col:'#f1ebdc',old:1}],
+ 'crusade:fra':['필리프 1세','국왕',{skin:SKL,hair:'#7a5a34',hs:11,beard:0}],
+ 'crusade:eng':['윌리엄 2세 루푸스','국왕',{skin:SKL,hair:'#a8482a',hs:12,beard:0}],
+ 'crusade:hre':['하인리히 4세','황제',{skin:SKL,hair:'#5a3a22',hs:11,beard:0,hat:'empc'}],
+ 'crusade:rum':['킬리지 아르슬란 1세','술탄',{skin:SKM,hair:BLK,beard:7,eb:2}],
+ 'crusade:sel':['바르키야루크','술탄',{skin:SKM,hair:BLK,beard:7}],
+ 'crusade:fat':['알무스탈리','칼리프',{skin:SKM,hair:BLK,beard:6}],
+ 'crusade:cas':['알폰소 6세','국왕',{skin:SKM,hair:'#5a3a22',hs:11,beard:7}],
+ 'crusade:geo':['다비트 4세','국왕',{skin:SKM,hair:'#3a2a1a',hs:11,beard:7}],
+ 'crusade:hun':['칼만','국왕',{skin:SKL,hair:'#5a3a22',hs:11,beard:7}],
+ 'reconq:leo':['알폰소 5세','국왕',{skin:SKM,hair:'#5a3a22',hs:11,beard:3}],
+ 'reconq:nav':['산초 3세 대왕','국왕',{skin:SKM,hair:'#3a2a1a',hs:12,beard:7}],
+ 'reconq:hre':['콘라트 2세','황제',{skin:SKL,hair:'#7a5a34',hs:11,beard:0,hat:'empc'}],
+ 'reconq:cnu':['크누트 대왕','국왕',{skin:SKL,hair:'#c9a060',hs:11,beard:6}],
+ 'reconq:kie':['야로슬라프 현공','대공',{skin:SKL,hair:'#7a5a34',hs:11,beard:7,hat:'fur'}],
+ 'reconq:byz':['로마노스 3세 아르기로스','황제',{skin:SKM,hair:'#5a3a22',hs:11,beard:6,eb:3,hat:'empc'}],
+ 'reconq:fat':['알자히르','칼리프',{skin:SKM,hair:BLK,beard:3}],
+ 'reconq:pap':['요한네스 19세','교황',{skin:SKL,hair:GRY,hs:3,beard:0,hat:'mitre',col:'#f1ebdc',old:1}],
+ 'reconq:sco':['맬컴 2세','국왕',{skin:SKL,hair:'#9a6a3a',hs:11,beard:7}],
+ 'viking:wfr':['샤를 2세(대머리왕)','국왕',{skin:SKL,hair:'#6a5a4a',hs:3,beard:3}],
+ 'viking:efr':['루트비히 2세(독일왕)','국왕',{skin:SKL,hair:'#7a5a34',hs:11,beard:7,old:1}],
+ 'viking:ita':['루도비코 2세','황제',{skin:SKL,hair:'#7a5a34',hs:11,beard:3}],
+ 'viking:pap':['니콜라오 1세','교황',{skin:SKL,hair:GRY,hs:3,beard:0,hat:'mitre',col:'#f1ebdc',old:1}],
+ 'viking:bul':['보리스 1세','칸',{skin:SKM,hair:'#2b2118',hs:11,beard:3}],
+ 'viking:mer':['버그레드','국왕',{skin:SKL,hair:'#9a7a50',hs:11,beard:7}],
+ 'viking:byz':['미카엘 3세','황제',{skin:SKM,hair:'#4a3322',hs:12,beard:0,hat:'empc'}],
+ 'viking:abb':['알무스타인','칼리프',{skin:SKM,hair:BLK,beard:3}],
+ 'viking:dan':['이바르(뼈 없는 자)','전쟁군주',{skin:SKL,hair:'#d8c27a',hs:11,beard:8,eb:3,hat:'none',fx:'tunic',col:'#6a3a1a'}],
+ 'viking:rur':['류리크','대공',{skin:SKL,hair:'#b09060',hs:11,beard:8,hat:'none'}],
+ 'viking:den':['호리크 2세','국왕',{skin:SKL,hair:'#c9a060',hs:11,beard:8}],
+ 'viking:cor':['무함마드 1세','에미르',{skin:SKM,hair:BLK,beard:3}],
+ 'hyw:eng':['헨리 6세','국왕',{skin:SKL,hair:'#9a7a50',hs:12,beard:0,eb:5}],
+ 'hyw:fra':['샤를 7세','국왕',{skin:SKL,hair:'#7a5a34',hs:12,beard:0}],
+ 'hyw:bur':['필리프 3세(선량공)','공작',{skin:SKL,hair:'#3a2a1a',hs:12,beard:0,hat:'fur',hc:'#7a1c1c'}],
+ 'hyw:ott':['무라드 2세','술탄',{skin:SKM,hair:BLK,beard:3,hat:'turban'}],
+ 'hyw:byz':['요한네스 8세 팔레올로고스','황제',{skin:SKM,hair:'#2b2118',hs:11,beard:6,hat:'empc'}],
+ 'hyw:ara':['알폰소 5세','국왕',{skin:SKM,hair:'#3a2a1a',hs:12,beard:0}],
+ 'hyw:cas':['후안 2세','국왕',{skin:SKM,hair:'#5a3a22',hs:12,beard:0}],
+ 'hyw:por':['주앙 1세','국왕',{skin:SKM,hair:GRY,hs:12,beard:0,old:1}],
+ 'hyw:pap':['마르티노 5세','교황',{skin:SKL,hair:GRY,hs:3,beard:0,hat:'mitre',col:'#f1ebdc',old:1}],
+ 'hyw:pol':['브와디스와프 2세 야기에우워','국왕',{skin:SKL,hair:GRY,hs:12,beard:3,old:1}],
+ 'hyw:hun':['지기스문트','국왕',{skin:SKL,hair:'#9a8a6a',hs:11,beard:7,old:1}],
+ 'hyw:mus':['바실리 2세','대공',{skin:SKL,hair:'#5a3a22',hs:12,beard:0,hat:'fur'}],
+ 'hyw:mam':['바르스바이','술탄',{skin:SKM,hair:BLK,beard:3}],
+ 'hyw:sco':['제임스 1세','국왕',{skin:SKL,hair:'#7a4a2a',hs:12,beard:0}],
+ 'ott1453:ott':['메흐메트 2세','술탄',{skin:SKM,hair:BLK,beard:5,eb:3,hat:'turban'}],
+ 'ott1453:byz':['콘스탄티노스 11세','황제',{skin:SKM,hair:GRY,bc:GRY,hs:11,beard:6,hat:'empc',old:1}],
+ 'ott1453:ven':['프란체스코 포스카리','도제',{skin:SKL,hair:GRY,hs:3,beard:0,hat:'none',old:1}],
+ 'ott1453:mus':['바실리 2세','대공',{skin:SKL,hair:'#5a3a22',hs:12,beard:3,hat:'fur'}],
+ 'ott1453:fra':['샤를 7세','국왕',{skin:SKL,hair:'#6a4a2a',hs:11,beard:0}],
+ 'ott1453:eng':['헨리 6세','국왕',{skin:SKL,hair:'#9a7a50',hs:12,beard:0}],
+ 'ott1453:por':['아폰수 5세','국왕',{skin:SKM,hair:'#3a2a1a',hs:12,beard:0}],
+ 'ott1453:pap':['니콜라오 5세','교황',{skin:SKL,hair:GRY,hs:3,beard:0,hat:'mitre',col:'#f1ebdc',old:1}],
+ 'ott1453:cas':['후안 2세','국왕',{skin:SKM,hair:'#5a3a22',hs:12,beard:0}],
+ 'ott1453:ara':['알폰소 5세','국왕',{skin:SKM,hair:'#3a2a1a',hs:12,beard:0}],
+ 'ott1453:pol':['카지미에시 4세','국왕',{skin:SKL,hair:'#7a5a34',hs:12,beard:3}],
+ '1914:gbr':['조지 5세','국왕',{skin:SKL,hair:GRY,hs:0,beard:6,uni:1,col:'#2a3a6a',old:1}],
+ '1914:fra':['레몽 푸앵카레','대통령',{skin:SKL,hair:'#7a6a5a',hs:5,beard:5,col:'#22222a'}],
+ '1914:deu':['빌헬름 2세','황제',{skin:SKL,hair:'#7a6a5a',hs:0,beard:3,eb:3,hat:'pickel',uni:1,col:'#6a7a8a'}],
+ '1914:aus':['프란츠 요제프 1세','황제',{skin:SKL,hair:WHT,hs:0,beard:4,uni:1,col:'#e8e4d8',old:1}],
+ '1914:rus':['니콜라이 2세','황제',{skin:SKL,hair:'#7a5a3a',hs:0,beard:5,uni:1,col:'#4a5a3a'}],
+ '1914:ott':['메흐메트 5세','술탄',{skin:SKM,hair:WHT,bc:WHT,beard:2,hat:'fez',old:1}],
+ '1914:ita':['비토리오 에마누엘레 3세','국왕',{skin:SKM,hair:'#4a3a2a',hs:0,beard:3,uni:1,col:'#2a3a6a'}],
+ '1914:usa':['우드로 윌슨','대통령',{skin:SKL,hair:GRY,hs:10,beard:0,gl:1,col:'#22222a',old:1}],
+ '1914:jpn':['다이쇼 천황','천황',{skin:SKE,hair:BLK,hs:0,beard:3,uni:1,col:'#2a3a6a'}],
+ '1914:chn':['위안스카이','대총통',{skin:SKE,hair:BLK,hs:9,beard:3,uni:1,col:'#3a4a5a',hat:'none'}],
+ '1914:bel':['알베르 1세','국왕',{skin:SKL,hair:'#7a5a3a',hs:0,beard:0,uni:1,col:'#4a5a3a'}],
+ '1914:nld':['빌헬미나 여왕','여왕',{fem:1,hs:6,hair:'#7a5a3a',col:'#22222a',skin:SKL}],
+ '1914:spa':['알폰소 13세','국왕',{skin:SKM,hair:'#3a2a1a',hs:0,beard:3,uni:1,col:'#2a3a6a'}],
+ '1914:swe':['구스타프 5세','국왕',{skin:SKL,hair:GRY,hs:3,beard:3,col:'#22222a',old:1}],
+ '1914:srb':['페타르 1세','국왕',{skin:SKL,hair:WHT,bc:WHT,hs:3,beard:7,uni:1,col:'#3a4a3a',old:1}],
+ '1914:bul':['페르디난트 1세','차르',{skin:SKL,hair:GRY,hs:3,beard:5,uni:1,col:'#3a4a5a',old:1}],
+ '1939:deu':['아돌프 히틀러','총통',{skin:SKL,hair:'#3a2a1a',hs:10,beard:10,eb:3,hat:'none',col:'#6a5a3a'}],
+ '1939:ita':['베니토 무솔리니','두체',{skin:SKM,hair:'#2a2018',hs:3,beard:0,eb:2,hat:'none',col:'#3a3f2c'}],
+ '1939:sov':['이오시프 스탈린','서기장',{skin:SKM,hair:GRY,hs:0,beard:3,eb:2,hat:'none',col:'#4a5a3a'}],
+ '1939:jpn':['쇼와 천황','천황',{skin:SKE,hair:BLK,hs:0,beard:10,gl:1,uni:1,col:'#4a4a2a'}],
+ '1939:usa':['프랭클린 D. 루스벨트','대통령',{skin:SKL,hair:GRY,hs:10,beard:0,gl:1,col:'#22222a',old:1}],
+ '1939:gbr':['네빌 체임벌린','총리',{skin:SKL,hair:GRY,hs:10,beard:3,col:'#22222a',old:1}],
+ '1939:chn':['장제스','총통',{skin:SKE,hair:BLK,hs:9,beard:0,uni:1,col:'#6a6a3a',hat:'none'}],
+ '1939:spa':['프란시스코 프랑코','총통',{skin:SKM,hair:'#2a2018',hs:10,beard:3,uni:1,col:'#4a5a3a',hat:'none'}],
+ '1939:fra':['에두아르 달라디에','총리',{skin:SKM,hair:'#3a2a1a',hs:10,beard:0,col:'#22222a'}],
+ '1939:tur':['이스메트 이뇌뉘','대통령',{skin:SKM,hair:GRY,hs:10,beard:3,col:'#22222a',old:1}],
+ '1939:por':['안토니우 살라자르','총리',{skin:SKM,hair:'#3a2a1a',hs:10,beard:0,gl:1,col:'#22222a'}],
+ 'korea:rok':['이승만','대통령',{skin:SKE,hair:WHT,hs:5,beard:0,gl:1,col:'#22222a',old:1}],
+ 'korea:prk':['김일성','수상',{skin:SKE,hair:BLK,hs:10,beard:0,col:'#4a5a3a'}],
+ 'korea:chn':['마오쩌둥','주석',{skin:SKE,hair:BLK,hs:10,beard:0,eb:4,col:'#4a5a3a'}],
+ 'korea:sov':['이오시프 스탈린','서기장',{skin:SKM,hair:GRY,hs:0,beard:3,eb:2,hat:'none',col:'#4a5a3a'}],
+ 'korea:usa':['해리 트루먼','대통령',{skin:SKL,hair:GRY,hs:10,beard:0,gl:1,col:'#22222a'}],
+ 'korea:tai':['장제스','총통',{skin:SKE,hair:BLK,hs:9,beard:0,uni:1,col:'#6a6a3a',hat:'none'}],
  'civil:uni':['에이브러햄 링컨','대통령',{hs:0,hair:'#2a2018',beard:6,hat:'none',col:'#22222a',skin:SKM,old:1}],
  'civil:con':['제퍼슨 데이비스','대통령',{hs:0,hair:GRY,beard:6,hat:'none',col:'#6a6a70',skin:SKL,old:1}]};
 const hashS=s=>{let h=7;for(const c of String(s))h=(Math.imul(h,31)+c.charCodeAt(0))>>>0;return h;};
 
+const yrOf=v=>{const t=v&&v.tplId&&TEMPLATES.find(x=>x.id===v.tplId);return t&&t.year!=null?t.year:null;};
 function rulerOf(v,p){const reign=Math.floor((v.round||0)/40);let seed=p.id*131+reign*977+7,cur=null;
   if(v.tplId&&p.nk){seed=hashS(v.tplId+':'+p.nk)+reign*977;if(!reign)cur=RULERS[v.tplId+':'+p.nk]||null;}
   const g=GOV[p.gov]||GOV.mon;if(cur)return {title:cur[1]||g.r,name:cur[0],seed,look:cur[2]};
@@ -8205,7 +8302,7 @@ function pickGov(tpl,n){const nm=String(n.name||''),k=n.k,T=String(tpl.id).repla
 window.CERuler={pick(tpl,n){const key=tpl.id+':'+n.k,gov=pickGov(tpl,n),cur=RULERS[key]||null,seed=hashS(key);
   let cu=n.cult;if(!cu||cu==='mix'){try{cu=(TDEF[n.cap]||{}).cu||'mix';}catch(e){cu='mix';}}
   const g=GOV[gov]||GOV.mon,r=rng(seed);const nm=NAMES_A[Math.floor(r()*NAMES_A.length)]+NAMES_B[Math.floor(r()*NAMES_B.length)]+((gov==='mon'||gov==='emp')?' 1세':'');
-  return {svg:portrait(seed,gov,n.color,cu,cur?cur[2]:null),name:cur?cur[0]:nm,title:cur&&cur[1]||g.r,known:!!cur};}};
+  return {svg:portrait(seed,gov,n.color,cu,cur?cur[2]:null,tpl.year!=null?tpl.year:null),name:cur?cur[0]:nm,title:cur&&cur[1]||g.r,known:!!cur};}};
 /* 민족(문화)에 따라 피부색과 머리색 범위가 달라진다 */
 const SK_N=['sca','ger','eng','nld','bal','rus','slav','ukr','pol','irl','gau','cze','fra'],SK_S=['lat','ibe','spa','por','ita','grc','rom','alb','hun','cau','heb'],SK_M=['ara','per','tur','pun'],SK_E=['chn','kor','jpn','mon'];
 const SKIN={n:['#f6dcc0','#f1cfa8','#f4d6bd'],s:['#e3b88a','#dcad7a','#e8c29a'],m:['#c99468','#b98558','#d3a074'],e:['#ecce9f','#e6c394','#f0d4aa'],x:['#f1cfa8','#e3b88a','#c99468','#a9703f','#f6dcc0']};
@@ -8213,22 +8310,42 @@ const HAIR={n:['#d8c27a','#b9b2a6','#7a5a34','#4a3322','#9a6a3a'],s:['#2b2118','
 const grpOf=c=>SK_N.includes(c)?'n':SK_S.includes(c)?'s':SK_M.includes(c)?'m':SK_E.includes(c)?'e':'x';
 /* 통치자 초상화: 인물 특징(look)으로 덮어쓰기. look = {skin,hair,bc(수염색),hs,beard,hat,hc(모자색),col,fem,old,uni}
    hs 4=가발 5=벗겨진 이마 6=긴 머리(여성) / beard 3=콧수염 4=구레나룻+콧수염 5=염소수염+콧수염 6=턱수염 */
-function portrait(seed,gov,col,cult,L){L=L||{};const r=rng(seed*7919+3);const pk=a=>a[Math.floor(r()*a.length)];const G2=grpOf(cult);
+function portrait(seed,gov,col,cult,L,yr){L=L||{};const r=rng(seed*7919+3);const pk=a=>a[Math.floor(r()*a.length)];const G2=grpOf(cult);
   let skin=pk(SKIN[G2]),hair=pk(HAIR[G2]);
-  let beard=pk([0,1,2,0,1]),hs=pk([0,1,2,3]);const ey=pk([0,1,2]),mo=pk([0,1,2]);
-  if(L.skin)skin=L.skin;if(L.hair)hair=L.hair;if(L.beard!=null)beard=L.beard;if(L.hs!=null)hs=L.hs;if(L.col)col=L.col;
+  /* 시대(ER): 0 고대 1 초기 중세 2 중세 3 르네상스 4 바로크 5 19세기 6 현대. 연도를 모르면 현대 */
+  const ER=yr==null?6:yr<500?0:yr<1000?1:yr<1500?2:yr<1650?3:yr<1800?4:yr<1920?5:6;
+  const HP=G2==='e'?(ER<=5?[0,1,7,7,9,0]:[0,1,9,10]):ER<=1?[2,3,8,11,12,0,2]:ER===2?[2,12,11,0,3,8,2]:ER===3?[2,0,1,8,10,12]:ER===4?[2,0,10,8,1]:ER===5?[0,1,10,2,9,8]:[0,1,9,10,2,0];
+  const BP=G2==='e'?[0,0,3,5,6,0]:ER===0?[0,0,1,3,6,0]:ER<=2?[1,2,3,5,6,7,8,6,1]:ER===3?[1,5,3,6,0,7]:ER===4?[0,0,0,3,1]:ER===5?[0,3,4,4,6,1,5]:[0,0,0,3,9,1,0];
+  let beard=pk(BP),hs=pk(HP),eb=pk([0,1,2,3,4,5]);const ey=pk([0,1,2]),mo=pk([0,1,2]);
+  if(L.eb!=null)eb=L.eb;if(L.skin)skin=L.skin;if(L.hair)hair=L.hair;if(L.beard!=null)beard=L.beard;if(L.hs!=null)hs=L.hs;if(L.col)col=L.col;
   const bc=L.bc||hair,fem=!!L.fem,hat=L.hat||'',hc=L.hc;if(fem)beard=0;
+  if(ER===4&&G2!=='e'&&G2!=='m'&&L.hs==null&&!fem&&r()<.7){hs=4;hair=pk(['#e8e4da','#cfc8bb','#e8e4da','#8a6a4a']);}
   let s=`<svg viewBox="0 0 88 104" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><rect width="88" height="104" fill="#dbc88f"/><rect y="70" width="88" height="34" fill="#c9b27a"/>`;
   s+=`<path d="M4 104Q8 76 44 72Q80 76 84 104Z" fill="${col}" stroke="#0005"/>`;
-  if(gov==='mon'||gov==='emp')s+=`<path d="M22 79Q44 96 66 79L61 73Q44 85 27 73Z" fill="#f4efe2"/><circle cx="34" cy="83" r="1.3" fill="#222"/><circle cx="44" cy="87" r="1.3" fill="#222"/><circle cx="54" cy="83" r="1.3" fill="#222"/>`;
+  const gE=G2==='e',gM=G2==='m';
+  const FX=L.fx||((gov==='tot'||gov==='com'||ER===6)?'suit':gE?'rE':gM?(ER===0?'tunic':'rA'):ER===0?'toga':ER<=2?'tunic':ER===3?'ruff':ER===4?'coat':'frock');
+  const royal=gov==='mon'||gov==='emp';let post='';
+  if(FX==='suit'){    if(royal)s+=`<path d="M22 79Q44 96 66 79L61 73Q44 85 27 73Z" fill="#f4efe2"/><circle cx="34" cy="83" r="1.3" fill="#222"/><circle cx="44" cy="87" r="1.3" fill="#222"/><circle cx="54" cy="83" r="1.3" fill="#222"/>`;
   else if(gov==='rep'||gov==='par')s+=`<path d="M35 72L44 92L53 72Z" fill="#f4efe2"/><path d="M42 80h4l2 16h-8z" fill="#8a1c1c"/>`;
   else if(gov==='tot')s+=`<rect x="26" y="75" width="10" height="5" fill="#d8b24a"/><rect x="52" y="75" width="10" height="5" fill="#d8b24a"/><circle cx="30" cy="92" r="2.5" fill="#d8b24a"/><circle cx="38" cy="94" r="2.5" fill="#c0392b"/>`;
   else s+=`<path d="M33 72h22v9H33z" fill="${col}" stroke="#0006"/><circle cx="44" cy="86" r="1.4" fill="#222"/><circle cx="44" cy="93" r="1.4" fill="#222"/>`;
+  }
+  else if(FX==='toga'){s+=`<path d="M6 104Q10 78 30 74L62 100L84 104Z" fill="${royal?'#7a2c8a':'#f1ebdc'}" stroke="#0004"/><path d="M30 74L62 100" stroke="${royal?'#e2b73c':col}" stroke-width="3" fill="none"/>`;if(royal)s+=`<circle cx="62" cy="81" r="3.4" fill="#e2b73c" stroke="#7a5a10"/>`;post=`<path d="M34 73Q44 80 54 73" stroke="#0005" fill="none"/>`;}
+  else if(FX==='tunic'){s+=`<path d="M32 72Q44 86 56 72" stroke="#d8b24a" stroke-width="3.4" fill="none"/>`;if(royal)s+=`<path d="M4 104Q8 78 44 74Q80 78 84 104L76 104Q70 87 44 85Q18 87 12 104Z" fill="#ece4d2" stroke="#0004"/><g fill="#222"><circle cx="20" cy="94" r="1.2"/><circle cx="30" cy="88" r="1.2"/><circle cx="58" cy="88" r="1.2"/><circle cx="68" cy="94" r="1.2"/></g><circle cx="44" cy="88" r="2.6" fill="#e2b73c" stroke="#7a5a10"/>`;else s+=`<path d="M12 104Q16 92 44 90Q72 92 76 104" stroke="#0004" fill="none"/>`;post='';}
+  else if(FX==='ruff'){s+=`<path d="M24 80Q44 98 64 80" stroke="#e2b73c" stroke-width="${royal?2.4:0}" fill="none"/><path d="M44 80V104" stroke="#0005"/><g fill="#d8b24a"><circle cx="44" cy="86" r="1.3"/><circle cx="44" cy="93" r="1.3"/><circle cx="44" cy="100" r="1.3"/></g>`;post=`<ellipse cx="44" cy="71" rx="17" ry="6" fill="#f4efe2" stroke="#8a8478"/><path d="M30 70L31 76M35 72L36 78M40 73L41 79M46 73L47 79M52 72L53 78M57 70L58 76" stroke="#8a8478" stroke-width=".8"/>`;}
+  else if(FX==='coat'){s+=`<path d="M4 104Q8 76 44 72Q80 76 84 104L64 104L44 82L24 104Z" fill="#0003"/><path d="M26 76L44 100L40 104H20Z M62 76L44 100L48 104H68Z" fill="#fff" fill-opacity=".16" stroke="#0005"/><g fill="#d8b24a"><circle cx="44" cy="92" r="1.4"/><circle cx="44" cy="99" r="1.4"/></g>`;if(royal)s+=`<path d="M12 100L60 74" stroke="#2f6fd0" stroke-width="5"/>`;post=`<path d="M38 72Q41 80 44 76Q47 80 50 72L50 80Q44 92 38 80Z" fill="#f4efe2" stroke="#8a8478" stroke-width=".8"/>`;}
+  else if(FX==='frock'){s+=`<path d="M26 76L44 102L62 76L58 72L44 90L30 72Z" fill="#0004"/><g fill="#d8b24a"><circle cx="44" cy="94" r="1.3"/><circle cx="44" cy="100" r="1.3"/></g>${royal?'<circle cx="30" cy="94" r="3" fill="#e2b73c" stroke="#7a5a10"/><path d="M14 102L58 76" stroke="#2f6fd0" stroke-width="4" opacity=".85"/>':''}`;post=`<path d="M37 70L39 79L44 74L49 79L51 70L51 74L44 82L37 74Z" fill="#f4efe2" stroke="#8a8478" stroke-width=".7"/><path d="M41 78h6l-1.5 5h-3z" fill="#1c1c22"/>`;}
+  else if(FX==='rE'){s+=`<path d="M28 72L44 100L60 72L55 70L44 88L33 70Z" fill="#f4efe2" stroke="#0005"/><path d="M33 72L58 104M55 72L30 104" stroke="#0004" fill="none"/>${royal?'<circle cx="44" cy="98" r="5" fill="none" stroke="#e2b73c" stroke-width="1.6"/>':''}`;post='';}
+  else if(FX==='rA'){s+=`<path d="M32 72Q44 90 56 72" fill="#f4efe2" stroke="#0004"/><path d="M44 82V104" stroke="#d8b24a" stroke-width="2"/><path d="M6 94Q44 84 82 94" stroke="#d8b24a" stroke-width="${royal?2.4:0}" fill="none"/>`;post='';}
   if(L.uni)s+=`<path d="M6 92Q8 80 22 77L27 85Q16 86 11 96Z M82 92Q80 80 66 77L61 85Q72 86 77 96Z" fill="#d8b24a" stroke="#0006"/><path d="M30 76L44 94L58 76" stroke="#d8b24a" stroke-width="2.4" fill="none"/>`;
-  s+=`<rect x="38" y="58" width="12" height="16" fill="${skin}"/><ellipse cx="27" cy="46" rx="3" ry="5" fill="${skin}"/><ellipse cx="61" cy="46" rx="3" ry="5" fill="${skin}"/>`;
+  s+=`<rect x="38" y="58" width="12" height="16" fill="${skin}"/>${post}<ellipse cx="27" cy="46" rx="3" ry="5" fill="${skin}"/><ellipse cx="61" cy="46" rx="3" ry="5" fill="${skin}"/>`;
   if(hs===4)s+=`<path d="M24 46Q20 18 44 16Q68 18 64 46Q68 60 60 64L58 52Q44 28 30 52L28 64Q20 60 24 46Z" fill="${hair}"/><g fill="${hair}" stroke="#0003"><circle cx="24" cy="48" r="4.5"/><circle cx="24" cy="57" r="4.5"/><circle cx="64" cy="48" r="4.5"/><circle cx="64" cy="57" r="4.5"/></g>`;
   else if(hs===5)s+=`<path d="M26 40Q24 52 28 58Q28 48 30 42Z M62 40Q64 52 60 58Q60 48 58 42Z" fill="${hair}"/>`;
   else if(hs===6)s+=`<path d="M24 44Q22 18 44 18Q66 18 64 44Q68 64 60 80L54 70L34 70L28 80Q20 64 24 44Z" fill="${hair}"/>`;
+  else if(hs===7)s+=`<path d="M26 44Q24 20 44 20Q64 20 62 44Q60 30 44 30Q28 30 26 44Z" fill="${hair}"/><circle cx="44" cy="15" r="5.5" fill="${hair}"/><path d="M38 20H50" stroke="#d8b24a" stroke-width="1.6"/>`;
+  else if(hs===11)s+=`<path d="M25 44Q23 18 44 18Q65 18 63 44Q65 60 61 70L57 60L31 60L27 70Q23 60 25 44Z" fill="${hair}"/>`;
+  else if(hs===12)s+=`<path d="M25 46Q22 18 44 17Q66 18 63 46Q61 40 60 37L28 37Q27 40 25 46Z" fill="${hair}"/>`;
+  else if(hs===8||hs===9||hs===10)s+=`<path d="M26 44Q24 20 44 20Q64 20 62 44Q60 30 44 30Q28 30 26 44Z" fill="${hair}"/>`;
   else if(hs!==3||(gov!=='mon'&&gov!=='emp'))s+=`<path d="M26 44Q24 20 44 20Q64 20 62 44Q60 30 44 30Q28 30 26 44Z" fill="${hair}"/>`;
   s+=`<ellipse cx="44" cy="45" rx="17" ry="21" fill="${skin}"/>`;
   if(hs===0)s+=`<path d="M27 40Q28 24 44 24Q60 24 61 40Q56 31 44 31Q32 31 27 40Z" fill="${hair}"/>`;
@@ -8237,6 +8354,12 @@ function portrait(seed,gov,col,cult,L){L=L||{};const r=rng(seed*7919+3);const pk
   else if(hs===4)s+=`<path d="M27 40Q28 22 44 21Q60 22 61 40Q56 30 44 29Q32 30 27 40Z" fill="${hair}"/>`;
   else if(hs===5)s+=`<path d="M32 31Q44 24 56 31Q50 28 44 28Q38 28 32 31Z" fill="${hair}"/>`;
   else if(hs===6)s+=`<path d="M27 40Q28 24 44 24Q60 24 61 40Q56 31 44 31Q32 31 27 40Z" fill="${hair}"/><path d="M44 24V31" stroke="#0004"/>`;
+  else if(hs===7)s+=`<path d="M27 40Q28 24 44 24Q60 24 61 40Q56 31 44 31Q32 31 27 40Z" fill="${hair}"/>`;
+  else if(hs===8)s+=`<g fill="${hair}"><circle cx="31" cy="33" r="4.2"/><circle cx="37" cy="29" r="4.4"/><circle cx="44" cy="27" r="4.6"/><circle cx="51" cy="29" r="4.4"/><circle cx="57" cy="33" r="4.2"/></g>`;
+  else if(hs===9)s+=`<path d="M27 39Q28 28 44 27Q60 28 61 39Q56 32 44 32Q32 32 27 39Z" fill="${hair}" opacity=".75"/>`;
+  else if(hs===10)s+=`<path d="M27 40Q28 22 44 21Q58 21 61 38Q52 28 38 31Q31 33 27 40Z" fill="${hair}"/><path d="M36 22Q37 28 34 32" stroke="#0004" fill="none"/>`;
+  else if(hs===11)s+=`<path d="M27 40Q28 24 44 24Q60 24 61 40Q58 31 50 29Q44 33 38 29Q30 31 27 40Z" fill="${hair}"/>`;
+  else if(hs===12)s+=`<path d="M27 38Q44 22 61 38L61 34Q44 20 27 34Z" fill="${hair}"/><path d="M27 34Q44 26 61 34L61 38Q44 28 27 38Z" fill="${hair}"/>`;
   if(L.old)s+=`<path d="M35 33Q44 31 53 33M36 36Q44 34 52 36M36 53Q37 58 39 60M52 53Q51 58 49 60" stroke="#0003" stroke-width="1" fill="none"/>`;
   const MU=`<path d="M34 56Q39 52 44 55Q49 52 54 56Q49 59 44 57Q39 59 34 56Z" fill="${bc}"/>`;
   if(beard===1)s+=`<path d="M29 52Q32 66 44 67Q56 66 59 52Q54 58 44 58Q34 58 29 52Z" fill="${bc}"/>`;
@@ -8245,12 +8368,22 @@ function portrait(seed,gov,col,cult,L){L=L||{};const r=rng(seed*7919+3);const pk
   else if(beard===4)s+=`<path d="M27 40Q26 56 33 62Q31 50 31 42Z M61 40Q62 56 55 62Q57 50 57 42Z" fill="${bc}"/>`+MU;
   else if(beard===5)s+=MU+`<path d="M40 62Q44 74 48 62Q44 65 40 62Z" fill="${bc}"/>`;
   else if(beard===6)s+=`<path d="M28 52Q30 68 44 70Q58 68 60 52Q58 60 44 62Q30 60 28 52Z" fill="${bc}"/>`;
-  const ex=ey===0?3:ey===1?2.4:3.4;
+  else if(beard===7)s+=`<path d="M27 46Q26 74 44 78Q62 74 61 46Q58 62 44 63Q30 62 27 46Z" fill="${bc}"/>`+MU;
+  else if(beard===8)s+=`<path d="M30 54Q32 66 44 68L39 84L44 77L49 84L44 68Q56 66 58 54Q54 60 44 61Q34 60 30 54Z" fill="${bc}"/>`+MU;
+  else if(beard===10)s+=`<path d="M40 55H48V58.4H40Z" fill="${bc}"/>`;
+  else if(beard===9)s+=`<path d="M29 52Q32 66 44 67Q56 66 59 52Q54 62 44 62Q34 62 29 52Z" fill="${bc}" opacity=".4"/>`;
+  const ex=ey===0?3:ey===1?2.4:3.4;const BROW=[c=>`<path d="M32 39Q37 36 42 39M46 39Q51 36 56 39" stroke="${c}" stroke-width="1.8" fill="none"/>`,c=>`<path d="M32 39L42 38M46 38L56 39" stroke="${c}" stroke-width="3.2" fill="none"/>`,c=>`<path d="M31 40Q37 35 43 38M45 38Q51 35 57 40" stroke="${c}" stroke-width="3.8" fill="none" stroke-linecap="round"/>`,c=>`<path d="M32 36L42 40M46 40L56 36" stroke="${c}" stroke-width="2.6" fill="none"/>`,c=>`<path d="M32 40Q37 33 42 38M46 38Q51 33 56 40" stroke="${c}" stroke-width="1.4" fill="none"/>`,c=>`<path d="M33 40Q37 39 41 40M47 40Q51 39 55 40" stroke="${c}" stroke-width="1.4" fill="none"/>`];const old=!!L.old;
   s+=`<ellipse cx="37" cy="44" rx="${ex}" ry="1.8" fill="#fff"/><ellipse cx="51" cy="44" rx="${ex}" ry="1.8" fill="#fff"/><circle cx="37" cy="44" r="1.3" fill="#222"/><circle cx="51" cy="44" r="1.3" fill="#222"/>`;
-  s+=`<path d="M32 39Q37 36 42 39M46 39Q51 36 56 39" stroke="${hair}" stroke-width="1.8" fill="none"/><path d="M44 46L42 54H46" stroke="#0007" stroke-width="1" fill="none"/>`;
+  s+=`${BROW[eb](old?'#8a8378':hair)}<path d="M44 46L42 54H46" stroke="#0007" stroke-width="1" fill="none"/>`;
+  if(L.gl)s+=`<g fill="#fff" fill-opacity=".18" stroke="#222" stroke-width="1.1"><circle cx="37" cy="44" r="5.2"/><circle cx="51" cy="44" r="5.2"/><path d="M42.2 44h3.6M31.8 43L28 41.5M56.2 43L60 41.5" fill="none"/></g>`;
   if(fem)s+=`<path d="M40 59Q44 62 48 59Q44 57.5 40 59Z" fill="#b04a55"/><path d="M33 43L31 41M55 43L57 41" stroke="#222" stroke-width="1"/><circle cx="27" cy="52" r="1.7" fill="#e2b73c"/><circle cx="61" cy="52" r="1.7" fill="#e2b73c"/>`;
   else s+=mo===0?`<path d="M39 58Q44 61 49 58" stroke="#7a2e2e" stroke-width="1.6" fill="none"/>`:mo===1?`<path d="M39 59H49" stroke="#7a2e2e" stroke-width="1.6"/>`:`<path d="M39 60Q44 57 49 60" stroke="#7a2e2e" stroke-width="1.6" fill="none"/>`;
-  const H=hat||(gov==='mon'?'crown':gov==='emp'?'empc':gov==='tot'?'tot':gov==='com'?'com':'');
+  let H=hat;if(!H){H=gov==='tot'?'tot':gov==='com'?'com':'';
+    if(!H&&gE){const Y2=yr==null?2000:yr;H=cult==='chn'?(Y2<1644?'mian':Y2<1912?'qing':''):cult==='kor'?(Y2<1910?'wing':''):cult==='jpn'?(Y2<1868?'eboshi':''):cult==='mon'?(Y2<1900?'fur':''):'';if(!H&&royal&&Y2>=1912)H=gov==='emp'?'empc':'crown';}
+    else if(!H&&gM){H=ER===6?(royal?(gov==='emp'?'empc':'crown'):''):(cult==='ara'||cult==='pun')?(ER===0?(royal?'diadem':''):'keff'):'turban';}
+    else if(!H&&royal)H=ER===0?'diadem':gov==='emp'?'empc':'crown';
+    else if(!H&&ER===0&&(gov==='rep'||gov==='par'))H='laurel';}
+  if(H==='none')H='';
   if(H==='crown')s+=`<path d="M28 24L31 10L37 19L44 7L51 19L57 10L60 24Z" fill="#e2b73c" stroke="#7a5a10"/><circle cx="44" cy="12" r="2" fill="#c0392b"/>`;
   else if(H==='empc')s+=`<path d="M26 25L29 11L36 20L44 5L52 20L59 11L62 25Z" fill="#e2b73c" stroke="#7a5a10"/><circle cx="44" cy="10" r="2.4" fill="#2f6fd0"/><path d="M44 0V6M41 3H47" stroke="#7a5a10" stroke-width="1.6"/>`;
   else if(H==='tot')s+=`<path d="M25 28Q44 12 63 28L63 33H25Z" fill="#3a3f2c" stroke="#0007"/><circle cx="44" cy="25" r="3" fill="#d8b24a"/><rect x="25" y="29" width="38" height="4" fill="#222"/>`;
@@ -8265,6 +8398,10 @@ function portrait(seed,gov,col,cult,L){L=L||{};const r=rng(seed*7919+3);const pk
   else if(H==='mian')s+=`<path d="M28 26Q44 15 60 26V31H28Z" fill="#1c1c1c" stroke="#0008"/><path d="M16 15H72V21H16Z" fill="#1c1c1c" stroke="#d8b24a"/><path d="M26 21V33M32 21V33M38 21V33M50 21V33M56 21V33M62 21V33" stroke="#d8c27a" stroke-width="1.2"/>`;
   else if(H==='wing')s+=`<path d="M30 30Q30 11 44 11Q58 11 58 30Q44 24 30 30Z" fill="#1c1c1c" stroke="#0008"/><path d="M30 20Q14 17 6 22Q14 27 30 26Z M58 20Q74 17 82 22Q74 27 58 26Z" fill="#1c1c1c" stroke="#d8b24a" stroke-width=".6"/>`;
   else if(H==='qing')s+=`<path d="M26 32Q26 10 44 10Q62 10 62 32Q44 25 26 32Z" fill="#1c1c1c" stroke="#0008"/><path d="M26 28Q44 22 62 28V32Q44 27 26 32Z" fill="#7a1c1c"/><circle cx="44" cy="9" r="3.4" fill="#c0392b"/><path d="M44 9L37 21M44 9L51 21M44 9V22" stroke="#c0392b" stroke-width="1.2"/>`;
+  else if(H==='diadem')s+=`<path d="M28 27Q44 20 60 27V31Q44 24 28 31Z" fill="#e2b73c" stroke="#7a5a10"/><circle cx="44" cy="24" r="2" fill="#2f6fd0"/>`;
+  else if(H==='laurel')s+=`<g fill="#5f8a3a" stroke="#2f4a1c" stroke-width=".5"><ellipse cx="29" cy="32" rx="4" ry="2" transform="rotate(-50 29 32)"/><ellipse cx="31" cy="26" rx="4" ry="2" transform="rotate(-30 31 26)"/><ellipse cx="36" cy="22" rx="4" ry="2" transform="rotate(-10 36 22)"/><ellipse cx="44" cy="21" rx="4" ry="2"/><ellipse cx="52" cy="22" rx="4" ry="2" transform="rotate(10 52 22)"/><ellipse cx="57" cy="26" rx="4" ry="2" transform="rotate(30 57 26)"/><ellipse cx="59" cy="32" rx="4" ry="2" transform="rotate(50 59 32)"/></g>`;
+  else if(H==='keff')s+=`<path d="M21 42Q20 9 44 9Q68 9 67 42L68 68L58 58L58 38Q44 24 30 38L30 58L20 68Z" fill="#f4efe2" stroke="#9a8f78"/><path d="M24 25Q44 12 64 25" stroke="#1c1c1c" stroke-width="3.2" fill="none"/>`;
+  else if(H==='mitre')s+=`<path d="M28 31Q30 20 44 2Q58 20 60 31Q44 25 28 31Z" fill="#f4efe2" stroke="#9a8f78"/><path d="M44 3V27M30 28Q44 22 58 28" stroke="#d8b24a" stroke-width="2" fill="none"/>`;
   else if(H==='eboshi')s+=`<path d="M30 32Q27 14 40 8Q52 3 60 9Q57 20 60 32Q44 26 30 32Z" fill="#14141a" stroke="#0008"/>`;
   s+=`</svg>`;return s;}
 
@@ -8306,7 +8443,7 @@ function renderCard(v){const p=v.players[NC.id];if(!p)return '';const me=v.playe
     if(p.isBot&&me.over==null&&p.over==null&&!p.landless&&v.phase==='plan'&&!v.spec)acts+=`<div class="nc-acts"><button data-b158="sph" data-to="${p.id}" class="${p.mysc?'on':''}">${p.mysc?'영향력 행사 중단':'영향력 행사 (매턴 12금)'}</button></div>`;}
   acts+=`<div class="nc-acts"><button data-b158="cmp" data-to="${p.id}">⚖ 국가 비교</button></div>`;
   return `<div class="wlbox"><div class="wlhead"><button class="btn sm" data-b158="back">← 뒤로</button><h2>국가 정보</h2></div><div class="nc-body">
-    <div class="nc-head"><div class="nc-port">${portrait(R.seed,p.gov,p.color,p.cult,R.look)}</div><div style="min-width:0"><div style="font-size:18px;font-weight:700">${fl(p)} ${esc(p.kingdom)}</div><div style="margin-top:4px">${g.n} · ${esc(R.title)} <b>${esc(R.name)}</b></div><div class="muted" style="font-size:12px;margin-top:2px">${FAITH[p.fai]?FAITH[p.fai].ic+' '+FAITH[p.fai].n:''}${p.persona?' · '+esc(p.persona):''}</div></div></div>
+    <div class="nc-head"><div class="nc-port">${portrait(R.seed,p.gov,p.color,p.cult,R.look,yrOf(v))}</div><div style="min-width:0"><div style="font-size:18px;font-weight:700">${fl(p)} ${esc(p.kingdom)}</div><div style="margin-top:4px">${g.n} · ${esc(R.title)} <b>${esc(R.name)}</b></div><div class="muted" style="font-size:12px;margin-top:2px">${FAITH[p.fai]?FAITH[p.fai].ic+' '+FAITH[p.fai].n:''}${p.persona?' · '+esc(p.persona):''}</div></div></div>
     <div style="margin-top:10px">${rel}${METR.map(([l,get])=>row(v,l,p,get,mxOf(get))).join('')}</div>${acts}</div></div>`;}
 function renderCmp(v){const al=v.players.filter(z=>z.alive);const A=v.players[NC.a],B=v.players[NC.b];if(!A||!B)return '';
   const opt=sel=>al.map(z=>`<option value="${z.id}" ${z.id===sel?'selected':''}>${esc(String(z.kingdom).split('(')[0])}</option>`).join('');
@@ -8314,7 +8451,7 @@ function renderCmp(v){const al=v.players.filter(z=>z.alive);const A=v.players[NC
     return `<div class="nc-cmp"><b style="text-align:left">${num(a)}</b><div class="bl"><i style="width:${a==null?0:Math.max(2,Math.round(a/mx*100))}%;background:${cl?'#b02a2a':A.color}"></i></div><span class="m">${l}</span><div class="br"><i style="width:${b==null?0:Math.max(2,Math.round(b/mx*100))}%;background:${cl?'#b02a2a':B.color}"></i></div><b style="text-align:right">${num(b)}</b></div>`;}).join('');
   const RA=rulerOf(v,A),RB=rulerOf(v,B);
   return `<div class="wlbox"><div class="wlhead"><button class="btn sm" data-b158="back">← 뒤로</button><h2>국가 비교</h2></div><div class="nc-body">
-    <div class="nc-sel"><div class="nc-pt">${portrait(RA.seed,A.gov,A.color,A.cult,RA.look)}</div><select data-b158sel="a">${opt(NC.a)}</select><span>vs</span><select data-b158sel="b">${opt(NC.b)}</select><div class="nc-pt">${portrait(RB.seed,B.gov,B.color,B.cult,RB.look)}</div></div>${rows}</div></div>`;}
+    <div class="nc-sel"><div class="nc-pt">${portrait(RA.seed,A.gov,A.color,A.cult,RA.look,yrOf(v))}</div><select data-b158sel="a">${opt(NC.a)}</select><span>vs</span><select data-b158sel="b">${opt(NC.b)}</select><div class="nc-pt">${portrait(RB.seed,B.gov,B.color,B.cult,RB.look,yrOf(v))}</div></div>${rows}</div></div>`;}
 function render(){const b=box();const v=C.view;if(!v||!v.players){return;}b.innerHTML=NC.mode==='cmp'?renderCmp(v):renderCard(v);}
 function show(){const b=box();UI.navPush('ncard');b.classList.remove('hidden');NC.on=true;render();}
 function openCard(id){NC.mode='card';NC.id=id;show();}
