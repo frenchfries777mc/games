@@ -605,7 +605,7 @@ function useSkill(G, p, si, inp) {
       break;
     }
     case 'maceslam': p.slT = MS_DELAY; p.animT = MS_DELAY + 0.3; break;   // 머리 위에서 돌리다 뛰어올라 내려치는 순간(MS_DELAY 뒤) 맞아요
-    case 'maceswirl': p.mh = { t: 2.5, tick: 0.25, gap: 0.5, dmg: 22, r: 4.6, fx: 'maceswirlfx', push: 3.5, st: 0.3 }; p.animT = 2.5; break;   // 2.5초 동안 몸째 돌며 0.5초마다 둘레를 쳐요 (움직일 수 있어요)
+    case 'maceswirl': p.mh = { t: 3, tick: 0.25, gap: 0.5, dmg: 22, r: 4.6, fx: 'maceswirlfx', push: 3.5, st: 0.3 }; p.animT = 3; break;   // 3초 동안 몸째 돌며 0.5초마다 둘레를 쳐요 (움직일 수 있어요)
     case 'necrodoom': { // 네트로멘서 R: 넓은 원 안의 상대를 1초 기절시키고 피해를 주고, 3초 동안 이동속도를 반으로 줄여요
       const q = aimPoint(p, inp, 10);
       ev(G, 'skill', { id: p.id, s: 'necrofx', x: q.x, z: q.z, a: p.a, r: 6.5 });

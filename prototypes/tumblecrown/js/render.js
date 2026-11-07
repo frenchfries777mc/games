@@ -1756,7 +1756,7 @@ const ease = u => u < 0 ? 0 : u > 1 ? 1 : u * u * (3 - 2 * u);
 const seg = (u, a, b) => ease((u - a) / (b - a));
 // 역할마다 공격·기술 동작. 몸 전체(허리 비틀기, 내딛기, 뛰어오르기)가 같이 움직여요
 const VK_T = { bloodlust: 1.7 };   // 바이킹은 도끼를 던져 받는 동안 기술 동작이 조금 더 길어요
-const ANIM_T = { atk: 0.32, hv: 0.95, big: 0.6, skill: 0.8 }, SK_T = { kill: 0.55, whirl: 1.0, storm: 1.5, flurry: 0.7, leap: 0.9, bloodlust: 1.4, shadow: 0.6, scatter: 0.7, chainpull: 0.9, maceslam: 1.25, maceswirl: 2.5, lunge: 0.7 };
+const ANIM_T = { atk: 0.32, hv: 0.95, big: 0.6, skill: 0.8 }, SK_T = { kill: 0.55, whirl: 1.0, storm: 1.5, flurry: 0.7, leap: 0.9, bloodlust: 1.4, shadow: 0.6, scatter: 0.7, chainpull: 0.9, maceslam: 1.25, maceswirl: 3, lunge: 0.7 };
 // 기사 베기 좌우 방향 (1이면 화면 오른쪽에서 시작)
 const KS = 1, KR = 1, KH_T = 0.5;
 // 기사 베기 자세. 1타: 오른쪽 위에서 감았다가 왼쪽 아래로 / 2타: 1타가 끝난 왼쪽 아래에서 조금 더 감았다가 오른쪽 아래로 낮게
@@ -1913,7 +1913,7 @@ function animHero(E, p, dt, t, view) {
           T.jy = hop(0.54, L1, 1.3); T.sq = (0.35 * seg(v, 0.44, 0.54) * (1 - jp) - 0.2 * jp * (1 - seg(v, 0.72, L1)) + land(L1, 0.8)); T.lg = (0.6 * seg(v, 0.44, 0.54) * (1 - jp) + 0.9 * jp) * x; T.by = (-0.3 * seg(v, 0.44, 0.54) * (1 - jp) - 0.35 * jp) * x; T.hx = 0.35 * jp * x; break; }
         case 'maceswirl': { // 철퇴 병사 R: 손잡이를 두 손으로 잡고 몸째 팽이처럼 빙글빙글 돌아요 (움직일 수 있어요)
           const ms = seg(v, 0, 0.06) * (1 - seg(v, 0.95, 1)), sp = seg(v, 0.04, 0.96);
-          T.spin = -Math.PI * 2 * 5 * sp; T.rx = base[0] * (1 - ms) - 1.55 * ms; T.lx = base[1] * (1 - ms) - 1.5 * ms; T.rz = -0.5 * ms; T.lz = 0.5 * ms; T.bx = 0.25 * ms; T.brz = 0.12 * ms * Math.sin(v * 31); T.jy = ms * 0.08 * (1 + Math.sin(v * 50)); T.lg = 0.5 * ms; T.sq = 0.1 * ms; T.hx = 0.1 * ms; break; }
+          T.spin = -Math.PI * 2 * 6 * sp; T.rx = base[0] * (1 - ms) - 1.55 * ms; T.lx = base[1] * (1 - ms) - 1.5 * ms; T.rz = -0.5 * ms; T.lz = 0.5 * ms; T.bx = 0.25 * ms; T.brz = 0.12 * ms * Math.sin(v * 31); T.jy = ms * 0.08 * (1 + Math.sin(v * 50)); T.lg = 0.5 * ms; T.sq = 0.1 * ms; T.hx = 0.1 * ms; break; }
         case 'block': // 방패를 땅에 쾅 박으며 버텨요
           T.lx = (-0.4 * cr - 1.75 * go) * hold + base[1] * (1 - hold); T.lz = 0.35 * pk; T.rx = -0.3 * pk + base[0] * (1 - pk); T.bx = -0.25 * cr + 0.35 * pk; T.jy = hop(0.06, 0.3, 0.6); T.sq = land(0.3, 0.5) + 0.12 * pk; T.by = -0.35 * pk; T.lg = 0.8 * pk; T.bz = 0.4 * pk; break;
         case 'dash': // 칼을 뒤로 빼고 몸을 쭉 뻗어 날아가요
@@ -2045,11 +2045,11 @@ function animHero(E, p, dt, t, view) {
     m.updateWorldMatrix(true, true);
     const ap = m.worldToLocal(m.flail.ch.localToWorld(m.flail.anchor.clone())), rest = new THREE.Vector3(ap.x, Math.max(0.5, ap.y - 2.3), ap.z + 0.5), tg = rest.clone(), a = E.ak, lp = (A, B, f) => A.clone().lerp(B, f), V = (x, y, z) => new THREE.Vector3(x, y, z);
     if (a === 'atk' && !p.dn) {
-      const wi = V(0.3, 3.9, -0.9), far = V(0, 1.5, 5.2), up = seg(v, 0, 0.18), rl = seg(v, 0.3, 0.46), bk = seg(v, 0.66, 1);
-      let q = lp(rest, wi, up); q = lp(q, far, rl); q.y += Math.sin(rl * Math.PI) * 0.9 * (1 - bk); tg.copy(lp(q, rest, bk));
+      const wi = V(0.3, 3.9, -0.9), far = V(0, 0.45, 5.2), up = seg(v, 0, 0.18), rl = seg(v, 0.3, 0.46), bk = seg(v, 0.66, 1);
+      let q = lp(rest, wi, up); q = lp(q, far, rl); q.y += Math.sin(rl * Math.PI) * 2.2 * (1 - bk); tg.copy(lp(q, rest, bk));
     } else if (a === 'chainpull') {
-      const wi = V(0.3, 3.5, -0.8), far = V(0, 1.3, 9.2), near = V(0, 1.2, 2.3), up = seg(v, 0, 0.14), th = seg(v, 0.14, 0.28), pu = seg(v, 0.42, 0.84), bk = seg(v, 0.84, 1);
-      let q = lp(rest, wi, up); q = lp(q, far, th); q.y += Math.sin(th * Math.PI) * 0.7 * (1 - pu); q = lp(q, near, pu); tg.copy(lp(q, rest, bk));
+      const wi = V(0.3, 3.5, -0.8), far = V(0, 0.45, 9.2), near = V(0, 0.45, 2.3), up = seg(v, 0, 0.14), th = seg(v, 0.14, 0.28), pu = seg(v, 0.42, 0.84), bk = seg(v, 0.84, 1);
+      let q = lp(rest, wi, up); q = lp(q, far, th); q.y += Math.sin(th * Math.PI) * 2.6 * (1 - pu); q = lp(q, near, pu); tg.copy(lp(q, rest, bk));
     } else if (a === 'maceslam') {
       const L1 = 0.76, up = seg(v, 0, 0.08), jp = seg(v, 0.54, L1), bk = seg(v, 0.9, 1), th = v * 1.25 * 26, orb = V(0.4 + Math.sin(th) * 2.4, 4.0 + 0.25 * Math.sin(th * 0.5), Math.cos(th) * 2.4), gr = V(0, 0.45, 2.8);
       let q = lp(rest, orb, up); q = lp(q, gr, jp); q.y += Math.sin(jp * Math.PI) * 1.2; tg.copy(lp(q, rest, bk));
