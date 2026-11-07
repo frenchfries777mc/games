@@ -10950,7 +10950,7 @@ function modFillVar(o,depth,box){   // fill %{pos1}% %{pos2}% to %{block}%: 좌�
   let c=o.c;
   if(Array.isArray(o.v)){const n=[];for(const k of o.v){const t=String(modVGet(k)==null?'':modVGet(k)).trim().split(/\s+/);n.push(+t[0],+t[1]);}
     if(n.length!==4||n.some(q=>!isFinite(q))){modSay('Set position first ('+o.v.join(', ')+')');return;}
-    c=n.map(q=>[1,q]);}
+    c=n.map(q=>[0,q]);}   // %player_location% 은 게임 안의 실제 좌표라서 캠프 기준으로 다시 옮기지 않아요
   let a2;
   if(o.tv){
     const raw=String(modVGet(o.tv)==null?'':modVGet(o.tv)).trim(),v=raw.toLowerCase();
