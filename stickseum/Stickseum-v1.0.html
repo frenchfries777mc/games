@@ -6024,7 +6024,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-07-v743';
+const GAME_BUILD='build 2026-11-07-v744';
 const GAME_VERSION='1.0', GAME_VERSION_NAME='신화의 전설';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -15506,12 +15506,12 @@ function botBand(p){ // how far from the enemy this weapon likes to fight: stay 
     case 'vacuum':  return {min:60, max:w.range*0.6, fire:w.range*0.9};
     case 'flame':   return {min:50, max:w.range*0.6, fire:w.range*0.9};
     case 'shotgun': return {min:100, max:260, fire:380};
-    case 'explosive': return {min:260, max:480, fire:640};
-    case 'gamble':  return {min:120, max:420, fire:900};
-    case 'cards':   return {min:180, max:420, fire:560};
-    case 'boomerang': return {min:180, max:420, fire:480};
+    case 'explosive': return {min:300, max:500, fire:660};
+    case 'gamble':  return {min:200, max:440, fire:900};
+    case 'cards':   return {min:260, max:460, fire:600};
+    case 'boomerang': return {min:240, max:440, fire:500};
     case 'potion':  return {min:150, max:380, fire:560};
-    default: return w.id==='smg' ? {min:150,max:380,fire:520} : (w.id==='bow' ? {min:260,max:520,fire:760} : (w.id==='tell' ? {min:430,max:720,fire:950} : {min:200,max:450,fire:650}));
+    default: return w.id==='smg' ? {min:240,max:420,fire:560} : (w.id==='bow' ? {min:320,max:560,fire:780} : (w.id==='tell' ? {min:450,max:720,fire:950} : {min:300,max:500,fire:680}));
   }
 }
 // Melee bots (knight, bat, gloves, dagger, Dracula) used to fight like gun bots: at the "right range" they shuffled 130px to one side and back, and
@@ -15524,7 +15524,7 @@ let BOT_MELEE_STICK=true, BOT_MELEE_DASH=true;
 // like they were dancing back and forth. Now a retreat lasts at most BOT_RETREAT_MAX_SEC, after which the bot has to stand its ground for
 // BOT_RETREAT_HOLD_SEC, and the side-to-side shuffle is shorter and less frequent.
 let BOT_CALM=true;
-const BOT_RETREAT_MAX_SEC=1.2, BOT_RETREAT_HOLD_SEC=1.8, BOT_STRAFE_PX=60, BOT_STRAFE_MIN_SEC=2.8, BOT_STRAFE_SPAN_SEC=2.4;
+const BOT_RETREAT_MAX_SEC=2.4, BOT_RETREAT_HOLD_SEC=0.8, BOT_STRAFE_PX=60, BOT_STRAFE_MIN_SEC=2.8, BOT_STRAFE_SPAN_SEC=2.4;
 const BOT_ARC_LEAD=0.45, BOT_ARC_ERR=2.6;
 function botAimAngle(p, T, ai){
   const w=WEAPONS[p.weapon]||WEAPONS.pistol, ox=p.x, oy=p.y-40;
@@ -16011,7 +16011,7 @@ function botThink(p, t, dt){
       else if(gameMode==='conquest' && cq && !BOT_CONQUEST_FOCUS && d>=420){ goalX=cq.zone.x; goalY=cq.zone.y; }   // (the old rule: only when nobody is close)
       else if(lowHp && d<380 && retreat){ goalX=p.x-Math.sign(dx||1)*240; goalY=p.y; if(!navBusy && Math.random()<0.2) inp.dash=true; } // hurt: back off
       else if(d>band.max || (BOT_CALM && ai.rangeMode==='close' && d>band.max*0.8)){ ai.rangeMode='close'; goalX=target.x; goalY=target.y; }   // too far: close in (and keep going until comfortably inside, so it does not turn around at the very edge of its range)
-      else if(retreat && (d<band.min || (BOT_CALM && ai.rangeMode==='back' && d<band.min*1.25))){ ai.rangeMode='back'; goalX=p.x-Math.sign(dx||1)*220; goalY=p.y; }   // too close: give some room (until a little beyond the minimum)
+      else if(retreat && (d<band.min || (BOT_CALM && ai.rangeMode==='back' && d<band.min*1.25))){ ai.rangeMode='back'; goalX=p.x-Math.sign(dx||1)*220; goalY=p.y; if(!botCloseRange(p.weapon) && d<band.min*0.7 && !navBusy && Math.random()<0.12) inp.dash=true; }      // (a far-range bot also dashes away from somebody who has stuck to it)   // too close: give some room (until a little beyond the minimum)
       else if(w.kind==='melee' && BOT_MELEE_STICK){ ai.rangeMode='hold'; goalX=target.x; goalY=target.y; }       // melee, in reach: stay on the target (shuffling away only made it miss)
       else { ai.rangeMode='hold'; if(BOT_CALM && tSec<(ai.standUntil||0)) { goalX=p.x; goalY=p.y; } else { if(BOT_CALM && tSec>=ai.strafeUntil-0.05 && Math.random()<0.35) ai.standUntil=tSec+1+Math.random()*1.5; goalX=p.x+ai.strafe*(BOT_CALM?BOT_STRAFE_PX:130); goalY=p.y; } }              // right range: shuffle side to side
       const blocked=!w.pierce && botLineBlocked(p.x,p.y-40,target.x,target.y-29);                              // (a piercing shot - the wizard's fireball - flies through platforms, so a target behind one is still fair game)
