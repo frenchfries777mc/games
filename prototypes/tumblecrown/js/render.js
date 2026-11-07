@@ -1833,7 +1833,7 @@ function animHero(E, p, dt, t, view) {
   // 동작 시작: 동작 번호가 바뀌면 처음부터
   // 앞 동작이 아직 남아 있으면 그 자세에서 이어서 시작해요 (blT 동안 천천히 따라가요)
   if (p.aN !== E.aN) { E.aN = p.aN; if (E.aN != null && p.ak) { if (E.ak || E.kh) E.blT = 0.1; E.ak = p.ak; E.aT = 0; E.kc = (p.ac | 0) % 2; E.kh = null; } }
-  const kind = E.ak ? (E.ak === 'atk' || E.ak === 'hv' || E.ak === 'big' ? E.ak : 'skill') : '', D0 = kind === 'atk' && p.role === 'spearman' ? 0.45 : kind === 'atk' && p.role === 'chainer' ? 0.95 : kind === 'big' && role === 'priest' ? 0.9 : kind === 'skill' && p.role === 'viking' && VK_T[E.ak] ? VK_T[E.ak] : kind === 'skill' && SK_T[E.ak] ? SK_T[E.ak] : ANIM_T[kind] || 0.5;
+  const kind = E.ak ? (E.ak === 'atk' || E.ak === 'hv' || E.ak === 'big' ? E.ak : 'skill') : '', D0 = kind === 'atk' && p.role === 'spearman' ? 0.45 : kind === 'atk' && p.role === 'chainer' ? 0.85 : kind === 'big' && role === 'priest' ? 0.9 : kind === 'skill' && p.role === 'viking' && VK_T[E.ak] ? VK_T[E.ak] : kind === 'skill' && SK_T[E.ak] ? SK_T[E.ak] : ANIM_T[kind] || 0.5;
   // 기사 베기가 끝나면 끝 자세를 잠깐 들고 있다가 (연타가 이어질 수 있는 동안) 천천히 돌아와요
   const slow = p.role === 'knight' || p.role === 'priest' || p.role === 'archer' || p.role === 'chainer' ? 1 : 1.15, D = D0 * slow;   // 기사·사제·궁수 말고는 동작을 조금 느리고 부드럽게 해요
   if (E.ak) { E.aT += dt; if (E.aT > D) { if ((role === 'knight' || CHAIN[role]) && E.ak === 'atk' && p.role !== 'chainer') E.kh = { c: E.kc, t: 0 }; E.ak = null; } }
@@ -1887,7 +1887,7 @@ function animHero(E, p, dt, t, view) {
         const pre = seg(v, 0, 0.25), go = seg(v, 0.25, 0.42), rc = seg(v, 0.62, 1), x = 1 - rc;
         T.lx = base[1] + (0.5 * pre - 2.9 * go) * x; T.rx = base[0] + (0.4 * pre - 2.7 * go) * x; T.lz = 0.2 * go * x; T.rz = -0.2 * go * x; T.bx = (-0.2 * pre + 0.9 * go) * x; T.bz = 1.1 * go * x; T.lg = 0.9 * go * x; T.sq = 0.12 * pre * x; T.by = -0.3 * go * x; T.hx = 0.2 * go * x;
       } else if (p.role === 'chainer') { // 철퇴 병사 기본 공격: 철퇴를 들어 올렸다가 팔을 아래로 내리며 앞으로 던지고, 사슬을 거둬요
-        const up = seg(v, 0, 0.3), dn = seg(v, 0.3, 0.46), rc = seg(v, 0.66, 1), x = 1 - rc;
+        const up = seg(v, 0, 0.14), dn = seg(v, 0.14, 0.27), rc = seg(v, 0.62, 1), x = 1 - rc;
         T.rx = base[0] + (-1.6 * up + 2.3 * dn) * x * (1 - 0 * rc); T.rz = -0.15 * up * x; T.lx = base[1] - 0.5 * up * x; T.bx = (-0.3 * up + 0.8 * dn) * x; T.bry = (0.35 * up - 0.5 * dn) * x; T.bz = 0.5 * dn * x; T.lg = 0.7 * dn * x; T.sq = (0.12 * up - 0.05 * dn) * x; T.hx = 0.1 * dn * x;
       } else if (p.role === 'spearman') { // 창병 찌르기: 창을 뒤로 빼며 몸을 비틀어 웅크렸다가, 한 발 크게 내딛으며 앞으로 내질러요 (뒤로 쭉 빼면 창끝이 앞을 가리켜요)
         // 준비(0~0.3): 창을 눕혀 뒤로 빼며 몸을 낮춰요 → 찌름(0.3~0.42): 창이 앞으로 쭉 나가요 → 회수(0.62~1): 창을 당겨 자세로 돌아와요. 창끝 각도는 그대로고 창이 앞뒤로 미끄러져요
@@ -2045,7 +2045,7 @@ function animHero(E, p, dt, t, view) {
     m.updateWorldMatrix(true, true);
     const ap = m.worldToLocal(m.flail.ch.localToWorld(m.flail.anchor.clone())), rest = new THREE.Vector3(ap.x, Math.max(0.5, ap.y - 2.3), ap.z + 0.5), tg = rest.clone(), a = E.ak, lp = (A, B, f) => A.clone().lerp(B, f), V = (x, y, z) => new THREE.Vector3(x, y, z);
     if (a === 'atk' && !p.dn) {
-      const wi = V(0.3, 3.9, -0.9), far = V(0, 0.45, 5.2), up = seg(v, 0, 0.18), rl = seg(v, 0.3, 0.46), bk = seg(v, 0.66, 1);
+      const wi = V(0.3, 3.9, -0.9), far = V(0, 0.45, 5.2), up = seg(v, 0, 0.12), rl = seg(v, 0.14, 0.27), bk = seg(v, 0.62, 1);
       let q = lp(rest, wi, up); q = lp(q, far, rl); q.y += Math.sin(rl * Math.PI) * 2.2 * (1 - bk); tg.copy(lp(q, rest, bk));
     } else if (a === 'chainpull') {
       const wi = V(0.3, 3.5, -0.8), far = V(0, 0.45, 9.2), near = V(0, 0.45, 2.3), up = seg(v, 0, 0.14), th = seg(v, 0.14, 0.28), pu = seg(v, 0.42, 0.84), bk = seg(v, 0.84, 1);

@@ -605,7 +605,7 @@ function useSkill(G, p, si, inp) {
       break;
     }
     case 'maceslam': p.slT = MS_DELAY; p.animT = MS_DELAY + 0.3; break;   // 머리 위에서 돌리다 뛰어올라 내려치는 순간(MS_DELAY 뒤) 맞아요
-    case 'maceswirl': p.mh = { t: 3, tick: 0.25, gap: 0.5, dmg: 22, r: 4.6, fx: 'maceswirlfx', push: 3.5, st: 0.3 }; p.animT = 3; break;   // 3초 동안 몸째 돌며 0.5초마다 둘레를 쳐요 (움직일 수 있어요)
+    case 'maceswirl': p.mh = { t: 3, tick: 0.25, gap: 0.5, dmg: 32, r: 4.6, fx: 'maceswirlfx', push: 3.5, st: 0.3 }; p.animT = 3; break;   // 3초 동안 몸째 돌며 0.5초마다 둘레를 쳐요 (움직일 수 있어요)
     case 'necrodoom': { // 네트로멘서 R: 넓은 원 안의 상대를 1초 기절시키고 피해를 주고, 3초 동안 이동속도를 반으로 줄여요
       const q = aimPoint(p, inp, 10);
       ev(G, 'skill', { id: p.id, s: 'necrofx', x: q.x, z: q.z, a: p.a, r: 6.5 });
@@ -943,17 +943,18 @@ function stepPlayer0(G, p, inp, dt) {
   const fl = hasFlag(G, p);
   if (p.snipeT > 0) { p.snipeT -= dt; if (p.snipeT <= 0) { p.snipeT = 0; const a = p.a; G.projs.push({ id: G.uid++, k: 'pierce', own: p.id, x: p.x + Math.cos(a) * 0.8, z: p.z + Math.sin(a) * 0.8, vx: Math.cos(a) * 60, vz: Math.sin(a) * 60, dmg: 110, life: 0.9, pierce: true, hit: [], team: 0, snipe: 1 }); ev(G, 'skill', { id: p.id, s: 'snipefx', x: p.x, z: p.z, a }); } }
   if (inp.aim != null && isFinite(inp.aim)) p.a = inp.aim;
+  const swirl = !!(p.mh && p.mh.fx === 'maceswirlfx');   // 회오리 철퇴로 도는 동안에는 공격·기술·구르기를 못 해요 (동작이 끊겨 멈춘 것처럼 보이지 않게)
   const ox = p.x, oz = p.z;
   if (inp.px != null && isFinite(inp.px)) {
     // 원격 플레이어: 자기 화면에서 움직인 위치를 믿되, 너무 멀리 뛰면 막아요
     const d = Math.hypot(inp.px - p.x, inp.pz - p.z), maxd = 22 * dt + 1.2;
     if (d <= maxd) { p.x = inp.px; p.z = inp.pz; } else { p.x += (inp.px - p.x) / d * maxd; p.z += (inp.pz - p.z) / d * maxd; }
     collide(G, p, 0.6);
-    if (inp.roll && !fl && p.rollCd <= 0) { p.roll = 0.35; p.rollCd = 1.2 * (hasB(p, 'roll') ? 0.6 : 1); p.tkHit = {}; ev(G, 'roll', { id: p.id }); }
+    if (inp.roll && !fl && !swirl && p.rollCd <= 0) { p.roll = 0.35; p.rollCd = 1.2 * (hasB(p, 'roll') ? 0.6 : 1); p.tkHit = {}; ev(G, 'roll', { id: p.id }); }
     if (p.roll > 0) p.roll -= dt;
   } else {
     let mx = inp.mx || 0, mz = inp.mz || 0; const ml = Math.hypot(mx, mz); if (ml > 1) { mx /= ml; mz /= ml; }
-    if (inp.roll && !fl && p.rollCd <= 0 && p.roll <= 0 && !(p.hvT > 0)) {
+    if (inp.roll && !fl && !swirl && p.rollCd <= 0 && p.roll <= 0 && !(p.hvT > 0)) {
       p.roll = 0.35; p.rollCd = 1.2 * (hasB(p, 'roll') ? 0.6 : 1);
       const ra = ml > 0.1 ? Math.atan2(mz, mx) : p.a; p.rdx = Math.cos(ra); p.rdz = Math.sin(ra); p.tkHit = {}; ev(G, 'roll', { id: p.id });
     }
@@ -980,9 +981,9 @@ function stepPlayer0(G, p, inp, dt) {
     else if (p.chg > 0) { p.qShot = p.chg >= CHG_T[1] ? 3 : p.chg >= CHG_T[0] ? 2 : 1; p.qT = 0.4; p.chg = 0; }
     if (p.qShot && p.cd.atk <= 0) { basicAttack(G, p, inp, p.qShot); p.qShot = 0; }
     if (p.qShot && (p.qT -= dt) <= 0) p.qShot = 0;
-  } else if ((inp.atk || inp.atkR) && p.cd.atk <= 0 && p.block <= 0) basicAttack(G, p, inp);
+  } else if ((inp.atk || inp.atkR) && p.cd.atk <= 0 && p.block <= 0 && !swirl) basicAttack(G, p, inp);
   // 횃불을 든 동안은 기술을 못 써요 (기본 공격은 돼요)
-  if (!p.torch && !fl) { if (inp.q) useSkill(G, p, 0, inp); if (inp.e) useSkill(G, p, 1, inp); if (inp.r) useSkill(G, p, 2, inp); }
+  if (!p.torch && !fl && !swirl) { if (inp.q) useSkill(G, p, 0, inp); if (inp.e) useSkill(G, p, 1, inp); if (inp.r) useSkill(G, p, 2, inp); }
   if (!inp.f) p.flNo = false;
   if (fe && fl) { dropFlag(G, p); p.flNo = true; }
   else if (fe) interact(G, p);
