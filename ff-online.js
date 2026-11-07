@@ -6,9 +6,9 @@ var bar=document.getElementById('onlineBar'); if(!bar||!window.FFAuth) return;
 if(!document.getElementById('ff-online-css')){
   var st=document.createElement('style'); st.id='ff-online-css';
   st.textContent='#onlineBar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-top:18px;font-size:14.5px;color:var(--dim,#a39c8c);} #onlineBar:empty{display:none;} #onlineBar>b{color:var(--text,#ece6d8);}'
-   +'.on-dot{width:9px;height:9px;border-radius:50%;background:var(--fry,#d9b45f);box-shadow:0 0 0 0 rgba(217,180,95,.6);animation:onp 2s infinite;} @keyframes onp{70%{box-shadow:0 0 0 8px rgba(217,180,95,0);}100%{box-shadow:0 0 0 0 rgba(217,180,95,0);}}'
-   +'.on-c{padding:3px 10px;border-radius:99px;border:1px solid var(--fry,#d9b45f);background:transparent;} .on-c b{color:var(--text,#ece6d8);} .on-f{display:flex;flex-wrap:wrap;align-items:center;gap:6px;}'
-   +'.on-p{display:inline-flex;align-items:baseline;gap:5px;padding:3px 10px;border-radius:99px;background:transparent;border:1px solid var(--fry,#d9b45f);color:var(--text,#ece6d8);text-decoration:none;} .on-i{width:20px;height:20px;border-radius:50%;object-fit:cover;flex:none;align-self:center;} .on-p small{color:var(--dim,#a39c8c);font-size:11.5px;}';
+   +'.on-dot{width:9px;height:9px;border-radius:50%;background:#3fe0c5;box-shadow:0 0 0 0 rgba(63,224,197,.6);animation:onp 2s infinite;} @keyframes onp{70%{box-shadow:0 0 0 8px rgba(63,224,197,0);}100%{box-shadow:0 0 0 0 rgba(63,224,197,0);}} html[data-ff-theme=light] .on-dot{background:#333;}'
+   +'.on-c{padding:3px 10px;border-radius:99px;border:1px solid var(--line,#2e2b25);background:var(--panel,#171717);} .on-c b{color:var(--text,#ece6d8);} .on-f{display:flex;flex-wrap:wrap;align-items:center;gap:6px;}'
+   +'.on-p{display:inline-flex;align-items:baseline;gap:5px;padding:3px 10px;border-radius:99px;background:rgba(63,224,197,.1);border:1px solid rgba(63,224,197,.3);color:var(--text,#ece6d8);text-decoration:none;} .on-i{width:20px;height:20px;border-radius:50%;object-fit:cover;flex:none;align-self:center;} .on-p small{color:var(--dim,#a39c8c);font-size:11.5px;}';
   document.head.appendChild(st);
 }
 var names={}, sb=null, T=null;
@@ -27,7 +27,9 @@ async function paint(){
   var r=await sb.rpc('ff_online'); if(r.error){ bar.innerHTML=''; return; }
   var c={}; (r.data||[]).forEach(function(x){ c[x.place]=x.people; });
   var html='<span class="on-dot"></span><b>'+esc(L()[0].replace('{0}',c.all||0))+'</b>';
-  ['hub'].concat((window.FF_REG||[]).map(function(e){ return e.id; }).filter(function(id){ return id!=='hub'; })).concat((window.FF_SITES||[]).map(function(e){ return e.id; })).forEach(function(g){ if(c[g]) html+='<span class="on-c"><span>'+esc(gname(g))+'</span> <b>'+c[g]+'</b></span>'; });
+  var order=['hub','games'].concat((window.FF_REG||[]).map(function(e){ return e.id; }).filter(function(id){ return id!=='hub'; }),(window.FF_SITES||[]).map(function(e){ return e.id; }));
+  Object.keys(c).sort().forEach(function(g){ if(g!=='all'&&order.indexOf(g)<0) order.push(g); });
+  order.forEach(function(g){ if(c[g]) html+='<span class="on-c"><span>'+esc(gname(g))+'</span> <b>'+c[g]+'</b></span>'; });
   var u=FFAuth.user&&FFAuth.user();
   if(u){ var f=await sb.rpc('ff_online_friends'), rows=((f&&!f.error&&f.data)||[]).filter(function(x){ return !(FFAuth.isBlocked&&FFAuth.isBlocked(x.user_id)); });
     if(rows.length){ await loadNames(rows.map(function(x){ return x.user_id; })); await loadAv(rows.slice(0,8).map(function(x){ return x.user_id; }));
@@ -35,6 +37,7 @@ async function paint(){
   bar.innerHTML=html;
 }
 function start(){ sb=FFAuth.client&&FFAuth.client(); if(!sb) return; paint(); setInterval(function(){ if(document.visibilityState==='visible') paint(); },20000);
-  document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible') paint(); }); }
+  document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible') paint(); });
+  window.addEventListener('ffpresence',function(){ setTimeout(paint,600); }); setTimeout(paint,4000); }
 Promise.resolve(FFAuth.ready).then(start,start);
 })();

@@ -818,6 +818,7 @@ var hubPT=null;
 function hubPing(){ if(me&&sb){ try{ sb.rpc('ff_hub_ping').then(function(){},function(){}); }catch(e){} } }      // 다른 탭에 가 있어도 접속으로 쳐요 (옛 코드는 화면이 보일 때만 보냈어요)
 function onlineLoop(){ clearInterval(onlT); clearInterval(hubPT); hubPing(); online(); onlT=setInterval(function(){ if(document.visibilityState==='visible'){ hubPing(); online(); } },20000); hubPT=setInterval(function(){ if(document.visibilityState!=='visible') hubPing(); },50000); }
 document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible'){ hubPing(); online(); } });
+window.addEventListener('ffpresence',function(){ setTimeout(online,600); });
 /* 허브를 닫으면 바로 접속 표시에서 빠져요 (ff_leave) */
 window.addEventListener('pagehide',function(){ try{ var t=JSON.parse(localStorage.getItem('sb-kebsbuvuutilitwlvxzv-auth-token')||'null'); if(t&&t.access_token) fetch('https://kebsbuvuutilitwlvxzv.supabase.co/rest/v1/rpc/ff_leave',{method:'POST',headers:{'apikey':'sb_publishable_4Egu0zm3p6cxWGvP_-GlIw_mlCpO1Nf','Authorization':'Bearer '+t.access_token,'Content-Type':'application/json'},body:'{}',keepalive:true}).catch(function(){}); }catch(e){} });
 
