@@ -472,7 +472,10 @@ const PROJECTS=[
  {id:'beacon',n:P('항구 등불','Harbor lantern'),goal:3000,d:P('모두의 배가 12% 빨라져요','All ships +12% speed')},
  {id:'market',n:P('시장 확장','Market expansion'),goal:8000,d:P('판 뒤 값이 더 빨리 회복되고 덜 떨어져요','Prices recover faster and fall less')},
  {id:'fair',n:P('무역 박람회','Trade fair'),goal:20000,d:P('모두가 팔 때 5% 더 받아요','Everyone gets +5% when selling')},
- {id:'fleet',n:P('대항해 선단','Grand fleet'),goal:50000,d:P('모든 배 짐칸이 15% 늘어요','All ships carry 15% more')}];
+ {id:'fleet',n:P('대항해 선단','Grand fleet'),goal:50000,d:P('모든 배 짐칸이 15% 늘어요','All ships carry 15% more')},
+ {id:'plaza',n:P('마을 광장 분수','Plaza fountain'),goal:15000,d:P('활동 보너스가 25% 늘어요','Activity bonus +25%')},
+ {id:'bridge',n:P('섬을 잇는 다리','Island bridge'),goal:30000,d:P('주민 심부름 보상이 20% 늘어요','Errand rewards +20%')}];
+function projFix(){while(PROJ.done.length<PROJECTS.length)PROJ.done.push(0);while(PROJ.amt.length<PROJECTS.length)PROJ.amt.push(0);}
 /* 퀘스트 */
 const QUESTS=[
  [P('아무 작물이나 한 번 심어 보세요','Plant any crop once'),s=>s.stats.planted>=1,50],
@@ -497,7 +500,7 @@ const TUT=[
  [P('다 자라면 ▼ 표시의 밭을 눌러 수확해요','When it is grown, tap the field with the ▼ to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=85;
+const OUTMAX=12,BUILD=89;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const CASTLE_T=[
  {n:P('망루','Watchtower'),d:P('돌로 쌓은 망루를 세워요. 세금이 걷히기 시작해요','A stone watchtower. Taxes start to come in'),cost:6000,rank:1},
@@ -605,7 +608,7 @@ A('auc_win',P('낙찰','Winning bid'),P('경매에서 낙찰받기','Win an auct
 A('donate',P('후원자','Patron'),P('공공 공사에 기부하기','Donate to a project'),s=>s.stats.donated>=1);
 A('donate5k',P('큰 후원자','Grand patron'),P('공사에 5,000 넘게 기부하기','Donate over 5,000 to projects'),s=>s.stats.donated>=5000);
 A('proj1',P('공사 완료','Project done'),P('공공 공사 하나 끝내기','See a project completed'),s=>PROJ.done.some(Boolean));
-A('proj4',P('모두의 섬','Everyone’s isle'),P('공공 공사 네 개 모두 끝내기','Complete all four projects'),s=>PROJ.done.every(Boolean));
+A('proj4',P('모두의 섬','Everyone’s isle'),P('공공 공사 네 개 모두 끝내기','Complete all four projects'),s=>PROJ.done.slice(0,4).every(Boolean));
 A('chat',P('수다쟁이','Chatterbox'),P('채팅 보내기','Send a chat message'),s=>s.stats.chats>=1);
 A('plots48',P('끝없는 밭','Endless fields'),P('밭을 48칸까지 모두 열기','Open all 48 fields'),s=>s.pu>=48);
 A('crops17',P('작물 박사','Crop expert'),P('열일곱 작물을 모두 수확하기','Harvest all seventeen crops'),s=>CROPK17.every(c=>s.stats.crops[c]));
@@ -642,6 +645,10 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-11-07',build:'v0.2 build 89',title:P('공동 건설 두 가지 더','Two more shared projects'),items:[P('공공 공사에 마을 광장 분수와 섬을 잇는 다리가 생겼어요','Shared projects now include the plaza fountain and the island bridge'),P('마을 광장 분수를 지으면 모두의 활동 보너스가 25% 늘어요','Building the plaza fountain adds 25% to everyone\'s activity bonus'),P('섬을 잇는 다리를 지으면 모두의 주민 심부름 보상이 20% 늘어요','Building the island bridge adds 20% to everyone\'s errand rewards')]},
+ {date:'2026-11-07',build:'v0.2 build 88',title:P('항해 일지','Voyage log'),items:[P('메뉴에 항해 일지가 생겼어요. 배가 항구에 닿을 때마다 항구, 배, 판 돈, 사 온 짐이 한 줄씩 적혀요','The menu has a new voyage log. Each time a ship reaches port, the port, ship, gold earned and goods bought are written down'),P('최근 30번이 남고, 가장 많이 번 항해도 보여요','The latest 30 voyages are kept, along with your best one')]},
+ {date:'2026-11-07',build:'v0.2 build 87',title:P('주민 친밀도','Villager friendship'),items:[P('주민의 심부름을 맡기고 전해 줄 때마다 그 주민들과 친밀도가 쌓여요','Taking and delivering errands for a villager builds your friendship with them'),P('낯선 사이에서 안면, 친구, 단짝으로 올라가고, 단계마다 그 주민의 심부름 보상이 10%씩 늘어요','Friendship goes from strangers to acquaintances, friends and best friends, and each level adds 10% to that villager\'s errand rewards'),P('주민에게 말을 걸면 친밀도 단계가 보여요','Talk to a villager to see your friendship level')]},
+ {date:'2026-11-07',build:'v0.2 build 86',title:P('선술집 주사위 내기','Tavern dice game'),items:[P('선술집에서 선원과 주사위 내기를 할 수 있어요. 50, 200, 1,000 금화 중에 골라 걸고, 합이 큰 쪽이 이겨요','You can play dice against the sailor at the tavern. Bet 50, 200 or 1,000 gold; the higher total wins'),P('이기면 건 돈의 두 배를 받고, 비기면 돌려받아요. 하루 10판까지 할 수 있어요','A win pays double your bet and a tie returns it. Up to 10 rounds a day')]},
  {date:'2026-11-03',build:'v0.2 build 85',title:P('유머 쪽지 여러 나라 말 보기','Newspaper jokes in more languages'),items:[P('시세 신문의 유머가 고른 나라 말로 보여요','The joke box in the price paper now shows in your language'),P('프로필 창의 개수와 번 표시 영어를 고쳤어요','Fixed the English labels for counts in the profile window')]},
  {date:'2026-11-03',build:'v0.2 build 84',title:P('다른 나라 말 문구 번역 보강','More in-game text translated'),items:[
   P('개척지 시설, 영주의 성, 주민 심부름, 특산 요리 등 게임 안 문구가 더 많은 나라 말로 보여요','Frontier buildings, the lord\'s castle, villager errands and specialty dishes now show in more languages')
@@ -1183,6 +1190,7 @@ function arrive(s){const p=s.port;let total=0;const parts=[];
   for(const k in (s.buy||{})){const gi=GI[k].i;let n=Math.min(s.buy[k],shipCap(s)-cargoN(ret));while(n>0&&buyCost(p,gi,n)>S.money)n--;if(n<=0)continue;const c=buyCost(p,gi,n);S.money-=c;cost+=c;ret[k]=n;bought+=n;S.codex[k]=1;
     DEM[p][gi]=Math.min(1.8,DEM[p][gi]*Math.pow(BUYRISE,n));if(MP.on&&!MP.host)MP.send({t:'sell',p,g:gi,n:-n});}
   S.stats.bought+=bought;
+  {const lg=S.vlog||(S.vlog=[]);lg.unshift({t:NOW(),p:p,ty:s.ty,v:total,b:bought,c:cost,n:parts.length});if(lg.length>30)lg.pop();}
   if(total>0)toast(T('{0}에서 <b style="color:var(--gold)">+{1}</b> ({2})','{0}: <b style="color:var(--gold)">+{1}</b> ({2})',tx(PORTS[p].n),fmt(total),parts.join(', ')));
   if(bought>0)toast(T('{0}에서 {1}개를 샀어요 (-{2} 금화)','Bought {1} goods at {0} (-{2} gold)',tx(PORTS[p].n),bought,fmt(cost)));
   if(total>0)sfx('coin');
@@ -1628,9 +1636,13 @@ function erOffer(k,j){const o=erOffer0(k,j);if(!o)return o;const er=S.er,c=erCh(
 function erOffer0(k,j){S.er=S.er||{act:[],cd:{},done:0};if(S.er.act.length>=3||NOW()<(S.er.cd[k+':'+j]||0))return null;
   const rk=rankOf(S.stats.earned),cs=[];for(let q=0;q<6;q++)if(q!==k&&ISLNPC[q]&&ISLNPC[q].length&&rk>=PORTS[q].rank)cs.push(q);if(!cs.length)return null;
   const to=cs[Math.floor(Math.random()*cs.length)],tj=Math.floor(Math.random()*ISLNPC[to].length);
-  return {from:k,fj:j,to,tj,it:Math.floor(Math.random()*ERITEM.length),rw:Math.round((180+rk*120)*(.8+Math.random()*.5)/10)*10};}
+  return {from:k,fj:j,to,tj,it:Math.floor(Math.random()*ERITEM.length),rw:Math.round((180+rk*120)*(.8+Math.random()*.5)*(1+0.1*frLv(frOf(k,j)))/10)*10};}
 function erAccept(off){if(!off||S.er.act.length>=3)return false;S.er.act.push(off);S.er.cd[off.from+':'+off.fj]=NOW()+300000;sfx('coin');toast(T('심부름을 맡았어요','You took the errand'));return true;}
-function erDeliver(idx){const e=S.er.act[idx];if(!e)return false;S.er.act.splice(idx,1);S.money+=e.rw;S.stats.earned+=e.rw;S.er.done=(S.er.done||0)+1;sfx('ach');toast(T('심부름 완료! 보상 {0}','Errand done! Reward {0}',fmt(e.rw)+UG()));
+const FRN=[P('낯선 사이','Strangers'),P('안면이 있는 사이','Acquaintances'),P('친구','Friends'),P('단짝','Best friends')],FRT=[0,3,7,13];
+function frOf(k,j){const f=(S.er=S.er||{act:[],cd:{},done:0}).fr||(S.er.fr={});return f[k+':'+j]||0;}
+function frLv(n){let l=0;FRT.forEach((t,i)=>{if(n>=t)l=i;});return l;}
+function frAdd(k,j,v){const f=(S.er.fr=S.er.fr||{}),id=k+':'+j,b=frLv(f[id]||0);f[id]=(f[id]||0)+v;const a=frLv(f[id]);if(a>b)toast(T('{0}와(과) 사이가 가까워졌어요: <b>{1}</b>','You grew closer to {0}: <b>{1}</b>',tx(NPCNM[(k*4+j)%NPCNM.length]),tx(FRN[a])));}
+function erDeliver(idx){const e=S.er.act[idx];if(!e)return false;S.er.act.splice(idx,1);frAdd(e.from,e.fj,1);frAdd(e.to,e.tj,1);if(PROJ.done[5])e.rw=Math.round(e.rw*1.2);S.money+=e.rw;S.stats.earned+=e.rw;S.er.done=(S.er.done||0)+1;sfx('ach');toast(T('심부름 완료! 보상 {0}','Errand done! Reward {0}',fmt(e.rw)+UG()));
   if(e.ch!=null){const c=erCh();c[e.ch]=(e.st||0)+1;if(c[e.ch]>=3){const b=Math.round((1500+rankOf(S.stats.earned)*500)/10)*10;S.money+=b;S.stats.earned+=b;toast(T('이야기 완결! {0} 보너스 {1}','Story complete! {0} bonus {1}',tx(ERCH[e.ch].end),fmt(b)+UG()));}}return true;}
 
 /* ---- 영주의 성 ---- */
@@ -1644,7 +1656,7 @@ let LASTACT=0,ACTPREV=0;['keydown','pointerdown','touchstart'].forEach(e=>window
 function actTick(){if(!S)return;const n=performance.now(),dtr=Math.min(2000,n-(ACTPREV||n));ACTPREV=n;if(document.visibilityState!=='visible')return;
   const a=S.act||(S.act={acc:0,streak:0,total:0});
   if(n-LASTACT<20000)a.acc+=dtr;else if(n-LASTACT>90000&&a.streak){a.streak=0;a.acc=0;}
-  if(a.acc>=60000){a.acc-=60000;a.streak=Math.min(5,a.streak+1);const v=Math.round((10+netWorth()*0.0001)*(1+a.streak*0.3));S.money+=v;S.stats.earned+=v;a.total=(a.total||0)+v;sfx('coin');
+  if(a.acc>=60000){a.acc-=60000;a.streak=Math.min(5,a.streak+1);const v=Math.round((10+netWorth()*0.0001)*(1+a.streak*0.3)*(PROJ.done[4]?1.25:1));S.money+=v;S.stats.earned+=v;a.total=(a.total||0)+v;sfx('coin');
     toast(T('활동 보너스 +{0} ({1}분 연속)','Activity bonus +{0} ({1} min streak)',fmt(v)+UG(),a.streak));}}
 
 function castleFeast(){const c=castleOf();if(c.t<3||NOW()<(c.fe||0)+FEAST_CD||inv('bread')<3)return false;S.inv.bread=inv('bread')-3;c.fe=NOW();const v=FEAST_PAY[c.t];S.money+=v;S.stats.earned+=v;sfx('coin');toast(T('성에서 연회를 열었어요! +{0}','The castle held a feast! +{0}',fmt(v)+UG()));return true;}
@@ -1785,8 +1797,8 @@ function aucMin(a){return a.bid?Math.ceil(a.bid*1.05):a.start;}
 function listAuction(g,n,start,secs){if(n<=0||inv(g)<n||start<1)return false;S.inv[g]=inv(g)-n;toHost({t:'aucNew',g,n,start,secs});toast(T('경매에 올렸어요','Listed at auction'));return true;}
 function bidAuction(id,amt){const a=MP.auc.find(x=>x.id===id);if(!a||a.seller===MP.me||amt<aucMin(a)||S.money<amt){toast(T('입찰할 수 없어요','Cannot bid'));return false;}S.money-=amt;toHost({t:'aucBid',id,amt});sfx('click');return true;}
 /* ---- 공공 공사 ---- */
-function applyDon(i,v,name){if(PROJ.done[i])return;PROJ.amt[i]+=v;PROJ.don[name]=(PROJ.don[name]||0)+v;if(PROJ.amt[i]>=PROJECTS[i].goal){PROJ.done[i]=1;toast(T('공사 완료: <b>{0}</b>','Project complete: <b>{0}</b>',tx(PROJECTS[i].n)));sfx('fanfare');}}
-function donate(i,goldAmt,g,n){if(PROJ.done[i])return false;let v=0;
+function applyDon(i,v,name){projFix();if(PROJ.done[i])return;PROJ.amt[i]+=v;PROJ.don[name]=(PROJ.don[name]||0)+v;if(PROJ.amt[i]>=PROJECTS[i].goal){PROJ.done[i]=1;toast(T('공사 완료: <b>{0}</b>','Project complete: <b>{0}</b>',tx(PROJECTS[i].n)));sfx('fanfare');}}
+function donate(i,goldAmt,g,n){projFix();if(PROJ.done[i])return false;let v=0;
   if(g){if(n<=0||inv(g)<n)return false;S.inv[g]=inv(g)-n;v=GI[g].base*n;}else{if(goldAmt<=0||S.money<goldAmt)return false;S.money-=goldAmt;v=goldAmt;}
   S.stats.donated+=v;if(MP.on)toHost({t:'projDon',i,v});else applyDon(i,v,myName0());sfx('coin');return true;}
 const myName0=()=>UNAME||T('나','Me');
@@ -2925,7 +2937,7 @@ ACT.aulist=()=>{const sel=$('auG');if(sel)AU2.g=sel.value;if(!listAuction(AU2.g,
 ACT.bid=a=>{const x=MP.auc.find(q=>q.id===a);if(x&&bidAuction(a,aucMin(x)))renderModal();updateHud();};
 /* 공공 공사 */
 let PD={g:'wheat',n:10};
-MODS.proj=()=>{let h=`<h2>${T('공공 공사','Shared projects')}</h2><div class="muted">${MP.on?T('방 사람들이 함께 금화나 물건을 모아 지어요. 다 지으면 모두가 혜택을 받아요','Everyone in the room donates gold or goods. Once finished, everyone benefits'):T('금화나 물건을 모아 지어요. 멀티플레이에서는 방 사람들과 함께 지어요','Donate gold or goods to build. In multiplayer the whole room builds together')}</div>`;
+MODS.proj=()=>{projFix();let h=`<h2>${T('공공 공사','Shared projects')}</h2><div class="muted">${MP.on?T('방 사람들이 함께 금화나 물건을 모아 지어요. 다 지으면 모두가 혜택을 받아요','Everyone in the room donates gold or goods. Once finished, everyone benefits'):T('금화나 물건을 모아 지어요. 멀티플레이에서는 방 사람들과 함께 지어요','Donate gold or goods to build. In multiplayer the whole room builds together')}</div>`;
   PROJECTS.forEach((p,i)=>{const pc=Math.min(100,PROJ.amt[i]/p.goal*100);h+=`<div class="card"><div class="grow"><b>${PROJ.done[i]?'✔ ':''}${tx(p.n)}</b><div class="muted">${tx(p.d)}</div><div class="prog" style="margin-top:3px"><i style="width:${pc}%"></i></div><div class="muted">${fmt(PROJ.amt[i])} / ${fmt(p.goal)}</div></div>${PROJ.done[i]?'':`<div class="btns" style="flex-direction:column;margin:0"><button class="pb sm" data-act="don:${i}:100" ${S.money<100?'disabled':''}>100</button><button class="pb sm" data-act="don:${i}:1000" ${S.money<1000?'disabled':''}>1,000</button></div>`}</div>`;});
   h+=`<h5>${T('물건으로 기부','Donate goods')}</h5><div class="row"><select id="pdG" style="flex:2">${GOODS.filter(q=>inv(q.id)>0).map(q=>`<option value="${q.id}" ${q.id===PD.g?'selected':''}>${GN(q.id)} (${inv(q.id)}) ${q.base}/ea</option>`).join('')}</select><input id="pdN" type="number" min="1" value="${PD.n}" style="flex:1"></div><div class="btns">${PROJECTS.map((p,i)=>PROJ.done[i]?'':`<button class="pb sm" data-act="dong:${i}">${tx(p.n)}</button>`).join('')}</div>`;
   const dn=Object.entries(PROJ.don).sort((a,b)=>b[1]-a[1]).slice(0,8);if(dn.length){h+=`<h5>${T('기부 순위','Top donors')}</h5>`+dn.map((d,r)=>`<div class="row"><span>${r+1}. ${esc(d[0])}</span><b class="gd">${fmt(d[1])}</b></div>`).join('');}
@@ -3362,6 +3374,7 @@ MODS.errand=m=>{const o=m.wk,R0=NPCRL[o.role],er=S.er=S.er||{act:[],cd:{},done:0
   if(m.off===undefined)m.off=erOffer(ISL.k,o.j);
   const here=er.act.map((e,i)=>({e,i})).filter(x=>x.e.to===ISL.k&&(x.e.tj===o.j||!ISL.walkers.some(w=>w.j===x.e.tj)));
   let h=`<h2>${tx(o.nm)} <small>${tx(R0.n)}</small></h2><div class="muted">${m.line||''}</div>`;
+  {const fp=frOf(ISL.k,o.j),fl=frLv(fp),nx=FRT[fl+1];h+=`<div class="card"><div class="grow">${T('친밀도: {0}','Friendship: {0}',tx(FRN[fl]))}<div class="prog" style="margin-top:3px"><i style="width:${nx?Math.round((fp-FRT[fl])/(nx-FRT[fl])*100):100}%"></i></div><div class="muted">${nx?T('심부름 {0}번 더 하면 다음 단계예요 · ','{0} more errands to the next level · ',nx-fp):''}${T('이 주민의 심부름 보상 +{0}%','Errand rewards from this villager +{0}%',fl*10)}</div></div></div>`;}
   here.forEach(x=>{h+=`<div class="card"><div class="grow">${T('{0}을(를) 전해 줘요','Deliver the {0}',tx(ERITEM[x.e.it]))}<div class="muted">${T('보상 {0}','Reward {0}',fmt(x.e.rw)+UG())}</div></div><button class="pb sm gold" data-act="erdeliver:${x.i}">${T('전해 주기','Deliver')}</button></div>`;});
   if(m.off){const t=erTo(m.off);h+=`<div class="card"><div class="grow">${m.off.ch!=null?`<div class="muted">「${tx(ERCH[m.off.ch].n)}」 ${m.off.st+1}/3 · ${tx(ERCH[m.off.ch].s[m.off.st])}</div>`:''}${T('{0}을(를) {1}({2})에게 전해 줄래요?','Could you take this {0} to {1} ({2})?',tx(ERITEM[m.off.it]),tx(t.name)+' · '+tx(t.role),islName(m.off.to))}<div class="muted">${T('보상 {0}','Reward {0}',fmt(m.off.rw)+UG())}</div></div><button class="pb sm gold" data-act="eraccept">${T('맡기','Accept')}</button></div>`;}
   if(er.act.length){h+=`<h5>${T('받은 심부름 {0}/3','Errands {0}/3',er.act.length)}</h5>`+er.act.map(e=>{const t=erTo(e);return `<div class="muted">${e.ch!=null?'「'+tx(ERCH[e.ch].n)+'」 '+(e.st+1)+'/3 · ':''}${tx(ERITEM[e.it])} → ${tx(t.name)} (${tx(t.role)}), ${islName(e.to)} · ${fmt(e.rw)}${UG()}</div>`;}).join('');}
@@ -3384,7 +3397,7 @@ ACT.opload=a=>{opLoad(MOD.ik,+a);updateHud();renderModal();};
 ACT.opget=a=>{opCollect(MOD.ik,+a);updateHud();renderModal();};
 MODS.stale=()=>`<h2>${T('새 버전이 나왔어요','A new version is out')}</h2><div class="muted">${T('이 창은 옛 버전이라 재산 순위와 업적이 올라가지 않아요. 새로고침하면 새 버전으로 이어서 할 수 있어요. 저장은 그대로예요.','This window runs an old version, so the wealth ranking and goals will not update. Refresh to continue with the new version. Your save is kept.')}</div><div class="btns" style="margin-top:12px"><button class="pb gold" data-act="stalego">${T('새로고침','Refresh')}</button><button class="pb dark" data-act="mclose">${T('나중에','Later')}</button></div>`;
 ACT.stalego=()=>{try{save();}catch(e){}location.reload();};
-MODS.menu=()=>{const it=[['wh',P('창고','Warehouse')],['fleet',P('배','Ships')],['contracts',P('계약','Contracts')],['proj',P('공공 공사','Projects')]];
+MODS.menu=()=>{const it=[['wh',P('창고','Warehouse')],['fleet',P('배','Ships')],['contracts',P('계약','Contracts')],['proj',P('공공 공사','Projects')],['voyage',P('항해 일지','Voyage log')]];
   if(MP.on)it.push(['mp',P('상회 순위','Ranking')],['auction',P('경매장','Auction house')],['chat',P('채팅','Chat')]);
   it.push(['tech',P('연구','Research')],['bank',P('은행','Bank')],['codex',P('도감','Codex')],['stats',P('통계','Stats')],['ach',P('업적','Goals')],['settings',P('설정','Settings')],['help',P('하는 법','How to play')]);
   return `<h2>${T('메뉴','Menu')}</h2><div class="mgrid">${it.map(x=>`<button class="pb" data-act="m:${x[0]}">${tx(x[1])}</button>`).join('')}<button class="pb gold" data-act="harvestAll">${T('모두 수확','Collect all')}</button><button class="pb dark" data-act="menu">${MP.on?T('나가기','Leave'):T('처음으로','Title')}</button></div>`;};
@@ -3472,8 +3485,23 @@ function tavText(q){if(q.k==='map')return T('선원이 낡은 지도 조각을 �
 MODS.tav=()=>{const V=S.tav,t=NOW(),cd=Math.max(0,Math.ceil((V.cd-t)/1000));
   return `<h2>${T('선술집','Tavern')}</h2><div class="muted">${T('한 잔 사면 선원이 소문을 들려줘요. 시세 좋은 항구와 수요가 몰린 물건, 폭풍 소식이 섞여 나와요. 지금까지 {0}잔','Buy a drink and sailors share rumors: well-paying ports, hot demand and storms. {0} drinks so far',V.n)}</div>
   <div class="btns" style="margin:8px 0"><button class="pb gold" data-act="tavdrink" ${S.money<TAVC||cd>0?'disabled':''}>${T('한 잔 사기','Buy a drink')} ${TAVC}${UG()}${cd>0?' · '+cd+'s':''}</button></div>
-  <h5>${T('들은 소문','Rumors')}</h5>${V.log.length?V.log.map(q=>`<div class="card"><div class="grow">${tavText(q)}</div></div>`).join(''):`<div class="muted">${T('아직 들은 소문이 없어요','No rumors yet')}</div>`}`;};
+  <h5>${T('주사위 내기','Dice game')}</h5>${(()=>{const D=diceDay(),L=D.last,left=DICE_MAX-D.n;return `<div class="muted">${T('선원과 주사위 두 개를 굴려 합이 큰 쪽이 이겨요. 이기면 건 돈의 두 배, 비기면 돌려받아요. 오늘 {0}판 남았어요','Roll two dice against the sailor. The higher total wins double your bet, a tie returns it. {0} rounds left today',left)}</div>`+(L?`<div class="card"><div class="grow">${T('나 {0} · 선원 {1}','Me {0} · Sailor {1}',L.a,L.b)}<div class="muted">${L.res==='win'?T('이겼어요! +{0}','You won! +{0}',fmt(L.bet)+UG()):L.res==='lose'?T('졌어요. -{0}','You lost. -{0}',fmt(L.bet)+UG()):T('비겼어요. 건 돈을 돌려받았어요','A tie. Your bet is returned')}</div></div></div>`:'')+`<div class="btns" style="margin:6px 0">${DICE_BETS.map(b=>`<button class="pb sm gold" data-act="dice:${b}" ${S.money<b||left<=0?'disabled':''}>${fmt(b)}${UG()}</button>`).join('')}</div>`;})()}<h5>${T('들은 소문','Rumors')}</h5>${V.log.length?V.log.map(q=>`<div class="card"><div class="grow">${tavText(q)}</div></div>`).join(''):`<div class="muted">${T('아직 들은 소문이 없어요','No rumors yet')}</div>`}`;};
 ACT.tavdrink=()=>{if(tavDrink()){updateHud();}renderModal();};
+/* 항해 일지: 배가 항구에 닿을 때마다 한 줄씩 쌓여요 (최근 30번) */
+const agoTx=ms=>{const m=Math.floor(Math.max(0,ms)/60000);return m<1?T('방금','Just now'):m<60?T('{0}분 전','{0} min ago',m):T('{0}시간 전','{0} h ago',Math.floor(m/60));};
+MODS.voyage=()=>{const L=S.vlog||[],st=S.stats;let h=`<h2>${T('항해 일지','Voyage log')}</h2><div class="muted">${T('지금까지 배를 {0}번 보냈어요. 항구에 닿을 때마다 한 줄씩 적혀요. 최근 30번까지 남아요','You have sent ships {0} times. A line is added each time a ship reaches port. The latest 30 are kept',st.sailed)}</div>`;
+  if(!L.length)return h+`<div class="muted" style="margin-top:8px">${T('아직 적힌 항해가 없어요','No voyages logged yet')}</div>`;
+  const best=L.reduce((a,b)=>b.v>a.v?b:a,L[0]);
+  h+=`<div class="card"><div class="grow">${T('가장 많이 번 항해: {0} +{1}','Best voyage: {0} +{1}',tx(PORTS[best.p].n),fmt(best.v)+UG())}</div></div>`;
+  return h+L.map(e=>`<div class="card"><div class="grow"><b>${tx(PORTS[e.p].n)}</b> <small class="muted">${tx(SHIPS[e.ty||0].n)} · ${agoTx(NOW()-e.t)}</small><div class="muted">${e.v>0?T('판 돈 +{0}','Sold +{0}',fmt(e.v)+UG()):T('판 짐이 없어요','Nothing sold')}${e.b>0?' · '+T('사 온 짐 {0}개','Bought {0}',e.b):''}</div></div></div>`).join('');};
+/* 선술집 주사위 내기: 선원과 주사위 두 개를 굴려 합이 큰 쪽이 이겨요 (하루 10판) */
+const DICE_BETS=[50,200,1000],DICE_MAX=10;
+function diceDay(){const V=S.tav,d=new Date().toDateString();if(!V.dc||V.dc.d!==d)V.dc={d,n:0,w:0,l:0,last:null};return V.dc;}
+function diceRoll(bet){const D=diceDay();if(D.n>=DICE_MAX||S.money<bet||DICE_BETS.indexOf(bet)<0)return false;S.money-=bet;D.n++;
+  const r=()=>1+Math.floor(Math.random()*6),a=r()+r(),b=r()+r();let res='tie';
+  if(a>b){res='win';S.money+=bet*2;D.w++;}else if(a<b){res='lose';D.l++;}else S.money+=bet;
+  D.last={a,b,bet,res};sfx(res==='win'?'coin':'click');return true;}
+ACT.dice=a=>{if(!diceRoll(+a))toast(T('지금은 할 수 없어요','You cannot play right now'));updateHud();renderModal();};
 
 /* ================= 섬 상륙 맵: 섬마다 모양과 풍경이 달라요 ================= */
 const ISC=perf().low?3.5:4.6,IW=Math.round(520*ISC),IH=Math.round(340*ISC),ICNT=perf().low?6:11;let SPOTR=0;
