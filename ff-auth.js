@@ -339,9 +339,9 @@ CSS+=
  WB+'{background:var(--bg);border:1px solid var(--fry);border-left:8px solid var(--fry);border-radius:16px;box-shadow:none;padding-bottom:30px}'+
  W+'#ffaWelcome .w{background:var(--bg);border:1px solid var(--fry);border-left:8px solid var(--fry);border-radius:16px;box-shadow:none}'+
  WB+':before{background:none;height:0}'+
- WB+':after{content:"";position:absolute;left:18px;bottom:0;width:70px;height:3px;background:var(--fry)}'+
+ WB+':after{display:none!important}'+
  W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) h3{font-family:"Oswald","Noto Sans KR",sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--fry);font-size:22px}'+
- W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) h3:after{content:"";display:block;width:60px;height:4px;background:var(--fry);margin-top:6px}'+
+ W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) h3:after{display:none!important}'+
  W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) :is(h4,h5){color:var(--fry)}'+
  W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) :is(input,textarea,select){background:transparent;color:var(--text);border:1px solid var(--fry);border-radius:12px}'+
  W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) :is(input,textarea)::placeholder{color:var(--dim)}'+
