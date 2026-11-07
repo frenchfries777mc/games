@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head><style id="ffTap">html,body{touch-action:manipulation}</style>
+<meta charset="UTF-8">
+<meta name="copyright" content="© 2026 Frenchfries777. CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script src="https://frenchfries777.com/games/ff-lang.js"></script>
+<title>Gatecrash</title>
+<meta name="description" content="건물과 공항을 달려 먼저 도착하는 옆면 픽셀 레이스. 무기로 방해하고, 엘리베이터와 지름길을 골라 가요. 설치 없이 브라우저에서 친구와 함께.">
+<meta property="og:title" content="Gatecrash"><meta property="og:description" content="수단과 방법을 가리지 않고 누구보다 빠르게 도착하는 옆면 픽셀 레이스."><meta property="og:type" content="website"><meta property="og:url" content="https://frenchfries777.com/games/gatecrash/"><meta property="og:site_name" content="Frenchfries777"><meta property="og:image" content="https://frenchfries777.com/games/gatecrash/shots/mall.jpg"><meta name="twitter:card" content="summary_large_image"><meta name="theme-color" content="#1b1530">
+<link rel="icon" href="../gamelogo/gatecrash.svg" type="image/svg+xml">
+<style>
+@font-face{font-family:Galmuri;src:url(../isleport/Galmuri11.woff2) format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:Galmuri;src:url(../isleport/Galmuri11-Bold.woff2) format('woff2');font-weight:700;font-display:swap}
+:root{--ink:#1b1530;--ink2:#262045;--line:#ffcf7a;--tx:#fff3df;--mu:#d8c6b0;--or:#ff8a3d;--red:#e8483b;--blue:#4a8ad0;--grn:#5ac878;--yel:#ffd36b}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:20px;background:var(--ink)}
+body{margin:0;color:var(--tx);font:15px/1.8 Galmuri,'Noto Sans KR','Malgun Gothic',monospace;background:var(--ink)}
+img,canvas{image-rendering:pixelated}
+a{color:inherit}
+.wrap{max-width:980px;margin:0 auto;padding:0 max(18px,env(safe-area-inset-left,0px))}
+/* 하늘 히어로: 노을 하늘 + 달리는 네 명 (캔버스) */
+.sky{position:relative;min-height:max(560px,92svh);overflow:hidden;background:linear-gradient(180deg,#3b2c5c 0%,#9a4f6a 38%,#ff9a5a 70%,#ffd49a 100%)}
+#run{position:absolute;inset:0;width:100%;height:100%;display:block}
+.sky::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(27,21,48,.78) 0%,rgba(27,21,48,.45) 45%,rgba(27,21,48,0) 75%)}
+.sky .in{position:relative;z-index:2;padding:16px max(18px,env(safe-area-inset-left,0px)) 0;height:100%}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.bar .sp{flex:1}
+.px{display:inline-block;padding:9px 14px;border:3px solid #000;background:var(--ink2);color:var(--tx);font:700 14px/1.2 Galmuri,monospace;text-decoration:none;box-shadow:4px 4px 0 #000;cursor:pointer}
+.px:hover{background:var(--yel);color:#2a1503}
+.px:active{transform:translate(3px,3px);box-shadow:1px 1px 0 #000}
+.px.big{font-size:clamp(18px,3vw,26px);padding:16px 30px;background:var(--or);color:#2a1503;border-color:#000}
+.px.big:hover{background:var(--yel)}
+.title{margin:clamp(40px,12vh,120px) 0 0}
+.title h1{margin:0;font:700 clamp(46px,12vw,128px)/1 Galmuri,monospace;letter-spacing:.06em;color:#ffcf7a;text-shadow:0 5px 0 #8a4310,0 10px 0 #2a1408}
+.title p{margin:22px 0 26px;font-size:clamp(15px,2.4vw,21px);max-width:24em;text-shadow:2px 2px 0 #000}
+.stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.stats span{border:3px solid #000;background:#000a;padding:4px 12px;box-shadow:3px 3px 0 #000;font-size:14px}
+.stats b{color:var(--yel);font-size:20px;margin-right:6px}
+/* 길 위의 섹션: 도로 모양 구분선 */
+.road{height:36px;background:#2a2540;border-top:4px solid #000;border-bottom:4px solid #000;position:relative}
+.road::after{content:"";position:absolute;left:0;right:0;top:14px;height:6px;background:repeating-linear-gradient(90deg,var(--yel) 0 26px,transparent 26px 52px)}
+section{padding:54px 0 6px}
+.stage{display:inline-block;margin:0 0 10px;padding:3px 12px;background:var(--red);color:#fff;border:3px solid #000;box-shadow:3px 3px 0 #000;font-size:13px;font-weight:700;letter-spacing:.1em}
+h2{margin:0 0 8px;font:700 clamp(24px,4.2vw,36px)/1.25 Galmuri,monospace;text-shadow:3px 3px 0 #000}
+.lead{margin:0 0 22px;color:var(--mu);max-width:38em}
+.panel{border:4px solid #000;background:var(--ink2);box-shadow:6px 6px 0 #000;padding:16px 20px}
+/* 맵: 가로로 넘기는 사진 */
+.strip{display:flex;gap:14px;overflow-x:auto;padding:4px 4px 16px;scroll-snap-type:x mandatory}
+.strip figure{flex:0 0 min(74vw,380px);margin:0;border:4px solid #000;background:var(--ink2);box-shadow:6px 6px 0 #000;scroll-snap-align:start}
+.strip img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;border-bottom:4px solid #000}
+.strip figcaption{padding:8px 12px 12px}.strip b{display:block;color:var(--yel);font-size:16px}.strip span{font-size:13px;color:var(--mu);line-height:1.6;display:block}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 0;padding:0;list-style:none}
+.tags li{border:3px solid #000;background:var(--ink2);padding:1px 10px;font-size:13px;box-shadow:2px 2px 0 #000}
+/* 특징: 인벤토리 칸 */
+.inv{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px}
+.slot{border:4px solid #000;background:var(--ink2);box-shadow:5px 5px 0 #000;padding:12px 16px 14px 62px;position:relative;min-height:86px}
+.slot i{position:absolute;left:12px;top:14px;width:36px;height:36px;border:3px solid #000;display:grid;place-items:center;font-style:normal;font-size:20px}
+.slot b{display:block;color:var(--yel);font-size:16px}.slot span{font-size:13.5px;color:var(--mu);line-height:1.65;display:block}
+/* 노는 법: 출발선에서 결승선까지 */
+.track{position:relative;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;padding-top:14px}
+.chk{border:4px solid #000;background:var(--ink2);box-shadow:5px 5px 0 #000;padding:14px 16px}
+.chk em{display:inline-block;font-style:normal;font-weight:700;background:var(--yel);color:#2a1503;border:3px solid #000;padding:0 8px;margin-bottom:6px;font-size:13px}
+.chk b{display:block;font-size:16px}.chk span{font-size:13.5px;color:var(--mu);display:block;line-height:1.65}
+.keys{width:100%;border-collapse:collapse;border:4px solid #000;background:var(--ink2);box-shadow:6px 6px 0 #000}
+.keys td{padding:8px 14px;border-bottom:3px solid #000}.keys tr:last-child td{border-bottom:0}.keys td:first-child{width:8.5em;color:var(--yel);font-weight:700;white-space:nowrap}
+.go{margin:54px 0 0;text-align:center;padding:36px 16px;border:4px solid #000;box-shadow:6px 6px 0 #000;background:repeating-conic-gradient(#2a2540 0 25%,#1b1530 0 50%) 0 0/32px 32px}
+.go h2{margin:0 0 6px}.go p{margin:0 0 20px;color:var(--mu)}
+/* 버전 · 패치노트 */
+.ver{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between}
+.ver .n{font-size:38px;font-weight:700;color:var(--yel);line-height:1.1;text-shadow:3px 3px 0 #000}
+.ver .t{font-size:17px;font-weight:700;margin-left:10px}.ver small{display:block;color:var(--mu)}
+details.note{border:4px solid #000;background:var(--ink2);box-shadow:4px 4px 0 #000;margin-bottom:10px;padding:0 16px}
+details.note summary{cursor:pointer;font-weight:700;padding:10px 0}
+details.note ul{margin:0 0 12px;padding-left:20px;color:var(--mu)}
+footer{margin-top:60px;padding:24px 0 50px;text-align:center;color:var(--mu);font-size:13px;border-top:4px solid #000;background:#150f26}
+footer a{color:var(--yel)}
+@media(max-width:640px){.px{padding:7px 10px;font-size:13px}.sky{min-height:max(520px,88svh)}}
+</style>
+<script src="https://frenchfries777.com/games/ff-hubbar.js?v=1" defer></script>
+</head>
+<body>
+<div class="sky"><canvas id="run" aria-hidden="true"></canvas>
+<div class="in wrap">
+<div class="bar"><a class="px" href="#maps">맵</a><a class="px" href="#feat">특징</a><a class="px" href="#how">노는 법</a><a class="px" href="#notes">패치노트</a><span class="sp"></span><span data-ff-account></span></div>
+<div class="title"><h1>GATECRASH</h1>
+<p>건물과 공항을 달려 먼저 도착해요.<br>수단과 방법을 가리지 않는 옆면 픽셀 레이스.</p>
+<a class="px big" href="play/" target="_blank" rel="noopener">▶ 지금 플레이</a>
+<div class="stats"><span><b>12</b>맵</span><span><b>2~4</b>명 + 봇</span><span><b>17</b>무기와 아이템</span></div></div>
+</div></div>
+<div class="road"></div>
+
+<main class="wrap">
+<section id="vers"><span class="stage">VERSION</span><h2>지금 버전</h2>
+<div class="panel ver"><div><span class="n">v0.1</span><span class="t">첫 정식 공개</span><small>마지막 빌드 b32 · 2026-11-06</small><small style="margin-top:4px">12개 맵, 무기와 아이템 17가지, 봇과 연습, 온라인 대전</small></div><a class="px big" href="play/" target="_blank" rel="noopener">▶ 플레이</a></div></section>
+
+<section id="maps"><span class="stage">STAGE 1</span><h2>맵마다 길이 달라요</h2><p class="lead">엘리베이터와 계단, 미끄러운 바닥, 컨베이어, 구덩이 지름길. 옆으로 넘겨서 보세요.</p>
+<div class="strip">
+<figure><img src="shots/mall.jpg" alt="백화점 맵" loading="lazy"><figcaption><b>백화점</b><span>층마다 화장품, 의류, 가구, 식품, 가전 매장이에요.</span></figcaption></figure>
+<figure><img src="shots/office.jpg" alt="오피스 맵" loading="lazy"><figcaption><b>오피스 빌딩</b><span>책상과 복사기를 뛰어넘어 엘리베이터를 타요.</span></figcaption></figure>
+<figure><img src="shots/subway.jpg" alt="지하철역 맵" loading="lazy"><figcaption><b>지하철역</b><span>가로로 긴 승강장을 상자를 넘으며 달려요.</span></figcaption></figure>
+<figure><img src="shots/airport.jpg" alt="공항 맵" loading="lazy"><figcaption><b>공항</b><span>체크인과 보안 검색, 무빙워크를 지나 탑승교까지.</span></figcaption></figure>
+<figure><img src="shots/hotel.jpg" alt="호텔 맵" loading="lazy"><figcaption><b>호텔</b><span>로비에서 연회장까지 층을 올라가요.</span></figcaption></figure>
+<figure><img src="shots/lobby.jpg" alt="Gatecrash 로비" loading="lazy"><figcaption><b>로비</b><span>온라인 대전, 친구와 대결, 코드로 입장, 봇과 연습.</span></figcaption></figure>
+</div>
+<ul class="tags"><li>오피스</li><li>공항</li><li>지하철</li><li>백화점</li><li>병원</li><li>학교</li><li>호텔</li><li>도서관</li><li>박물관</li><li>경기장</li><li>방송국</li><li>공장</li></ul></section>
+
+<section id="feat"><span class="stage">STAGE 2</span><h2>달리고, 막고, 먼저 도착해요</h2><p class="lead">먼저 도착하면 끝이에요. 가는 길에 서로 방해해도 돼요.</p>
+<div class="inv">
+<div class="slot"><i style="background:var(--red)">🏏</i><b>무기와 아이템</b><span>방망이, 프라이팬, 바주카, 폭죽 발사기부터 바나나 껍질, 압정, 끈끈이까지 17가지예요.</span></div>
+<div class="slot"><i style="background:var(--or)">🚀</i><b>꼴찌의 역전</b><span>뒤처지면 가끔 로켓 신발이 나와서 3초 동안 빨라져요.</span></div>
+<div class="slot"><i style="background:var(--blue)">🛗</i><b>길을 골라요</b><span>안전하고 긴 길, 실패하면 한 층 내려가는 지름길 중에 골라요.</span></div>
+<div class="slot"><i style="background:#8a60c8">⚠️</i><b>맵 이벤트</b><span>엘리베이터 점검, 물청소, 컨베이어 역회전이 갑자기 일어나요.</span></div>
+<div class="slot"><i style="background:var(--grn)">👥</i><b>친구와 함께</b><span>방 코드나 링크로 친구를 불러요. 혼자 해도 봇이 함께 달려요.</span></div>
+<div class="slot"><i style="background:var(--yel)">👑</i><b>꾸미기</b><span>경기 보상 gC로 스킨 9종을 사서 입어요.</span></div>
+</div></section>
+
+<section id="how"><span class="stage">STAGE 3</span><h2>설치 없이 바로 출발해요</h2><p class="lead">가입 없이도 되고, Frenchfries777 계정으로 로그인하면 코인과 꾸미기가 저장돼요.</p>
+<div class="track"><div class="chk"><em>START</em><b>모드 고르기</b><span>온라인 대전, 친구와 대결, 코드로 입장, 봇과 연습 중에 골라요.</span></div><div class="chk"><em>3 · 2 · 1</em><b>맵 훑어보기</b><span>출발선에서 도착지점까지 맵을 보여 준 뒤 카운트다운이 시작돼요.</span></div><div class="chk"><em>GOAL</em><b>먼저 도착하기</b><span>무기를 주워 방해하고, 엘리베이터와 지름길로 결승선까지 달려요.</span></div></div>
+<h3 style="margin:34px 0 12px;font-size:18px">조작</h3>
+<table class="keys"><tr><td>A / D</td><td>왼쪽, 오른쪽으로 이동</td></tr><tr><td>W / Space</td><td>점프 (길게 누르면 더 높이)</td></tr><tr><td>마우스</td><td>조준하고 클릭해서 무기 사용</td></tr><tr><td>F</td><td>바닥의 무기와 바꾸기</td></tr><tr><td>폰</td><td>화면의 이동, 점프, 교체 버튼과 화면 터치 조준</td></tr></table>
+<div class="go"><h2>출발선에서 기다리고 있어요</h2><p>설치도 가입도 없이, 지금 바로.</p><a class="px big" href="play/" target="_blank" rel="noopener">▶ 지금 플레이</a></div></section>
+
+<section id="notes"><span class="stage">PATCH NOTES</span><h2>패치노트</h2><p class="lead">새 소식이 위에 있어요.</p><details class="note" open><summary>2026-11-06 · v0.1 · b32 · 엘리베이터와 구덩이 길 정리</summary><ul><li>구덩이 지름길(징검다리/컨베이어 다리)이 올라온 곳과 올라갈 곳 사이, 실제로 지나가는 길에 놓여요</li><li>봇은 위험한 징검돌을 밟지 않고 안전한 길로 가요</li></ul></details><details class="note"><summary>2026-11-03 · v0.1 · b31 · 로켓 신발, 압정, 끈끈이</summary><ul><li>꼴찌일 때 아이템을 주우면 가끔 로켓 신발이 나와요. 클릭하면 3초 동안 빨라져요</li><li>압정: 바닥에 놓으면 밟은 사람이 아파하며 튀어 올라요</li><li>끈끈이: 바닥에 놓으면 지나가는 사람이 잠깐 느려져요</li></ul></details><details class="note"><summary>2026-11-02 · v0.1 · b30 · 맵 미리보기, 점프, 폰 화면 정리</summary><ul><li>맵 고르는 화면에 맵 모양 미리보기가 보여요</li><li>짧게 눌러도 3칸 높이 장애물을 넘을 수 있고, 길게 누르면 더 높이 뛰어요</li><li>출발선에서 캐릭터 사이를 넓히고 이름표가 겹치면 위로 쌓아요</li><li>인트로의 시작 안내가 잘 보이도록 바탕을 깔았어요</li><li>긴 맵 소개 시간을 최대 8초로 줄였어요</li><li>폰 세로 로비에서 버전과 저작권 글자가 겹치지 않아요</li></ul></details><details class="note"><summary>2026-11-01 · v0.1 · b29 · 로비 버튼 정리</summary><ul><li>로비 버튼을 6개로 줄이고, 무기·조작, 패치노트, 최적화, 사이트로 돌아가기는 더보기 안으로 옮겼어요</li></ul></details><details class="note"><summary>2026-11-01 · v0.1 · b28 · 파쿠르 더 늘리기, 랜덤 맵</summary><ul><li>층마다 상자 넘기와 떠 있는 발판 길이 생겼어요</li><li>구덩이는 징검다리로 건너면 빠르지만 떨어지면 아래층이고, 위쪽 컨베이어 다리로 가면 안전하지만 느려요</li><li>맵 고르는 화면에 랜덤 맵이 생겼어요</li></ul></details><details class="note"><summary>2026-11-01 · v0.1 · b27 · 백화점 새 단장</summary><ul><li>백화점이 흰색 고급 분위기로 바뀌었어요</li><li>층마다 화장품, 의류, 가구, 식품, 가전 매장으로 진열대와 벽 장식이 달라요</li><li>층마다 천장에 층 안내판이 걸려 있어요</li></ul></details><details class="note"><summary>2026-10-31 · v0.1 · b26 · 부드러운 이동, 파쿠르, 층마다 다른 배경</summary><ul><li>화면이 빠른 기기에서도 캐릭터와 카메라가 끊기지 않고 이어져요</li><li>긴 맵은 소개 때 도착 지점까지 더 천천히 보여 줘요</li><li>층마다 구덩이 징검다리와 상자 넘기 같은 파쿠르 구간이 생겼어요</li><li>층마다 벽 색, 창문, 조명 모양이 달라졌어요</li></ul></details><details class="note"><summary>2026-10-31 · v0.1 · b25 · 온라인 대전에 방장이 없어요</summary><ul><li>온라인 대전 대기실에서 방장이라는 말이 없어지고, 누구든 시작 버튼을 눌러 시작할 수 있어요</li></ul></details><details class="note"><summary>2026-10-31 · v0.1 · b24 · 새 로고</summary><ul><li>돌 아치 성문 모양의 새 로고를 써요</li></ul></details><details class="note"><summary>2026-10-31 · v0.1 · b23 · 엘리베이터 높이</summary><ul><li>엘리베이터가 더 높이 올라가요</li></ul></details><details class="note"><summary>2026-10-31 · v0.1 · b22 · 닉네임을 눌러 프로필 보기</summary><ul><li>대기실에서 계정으로 들어온 사람의 닉네임을 누르면 그 사람의 Gatecrash 프로필 카드가 열려요</li></ul></details><details class="note"><summary>2026-10-31 · v0.1 · b21 · 최적화</summary><ul><li>로비에 「최적화」 버튼 추가: 켜면 화질을 낮추고 화면을 초당 30번만 그려요</li><li>달리는 동안 화면이 계속 느리면 로비로 돌아왔을 때 최적화를 켜 보라고 한 번 알려 줘요</li><li>허브 설정의 최적화와 같은 값을 써요</li></ul></details><details class="note"><summary>2026-10-31 · v0.1 · b20 · 엘리베이터 정원, 이벤트 경고등</summary><ul><li>엘리베이터가 더 천천히 올라가요</li><li>엘리베이터는 먼저 탄 2명만 올라가고 나머지는 못 타요</li><li>이벤트가 시작되기 3초 전에 천장 경고등이 깜빡여요</li></ul></details><details class="note"><summary>2026-10-30 · v0.1 · b19 · 맵 구조 변경, 새 원거리 무기</summary><ul><li>맵마다 위층으로 가는 길의 위치와 종류가 달라졌어요</li><li>지하철, 박물관, 경기장이 가로로 길고 단상을 오르내리는 맵으로 바뀌었어요</li><li>점프 높이를 일정하게 고쳐서 장애물을 올라가다 마는 일이 없어졌어요</li><li>새 무기 산탄총, 장난감 활, 장난감 기관총</li><li>봇과 연습할 때는 gC를 받지 않아요</li></ul></details><details class="note"><summary>2026-10-30 · v0.1 · b18 · 함정, 이벤트, 이모티콘, 포토 피니시</summary><ul><li>새 무기 바나나 껍질: 바닥에 설치하면 밟은 사람이 미끄러져 넘어져요</li><li>맵 이벤트: 경기 중 엘리베이터 점검, 물청소, 컨베이어 역회전이 때때로 일어나요</li><li>화면 왼쪽 위 이모티콘 버튼 4개로 머리 위에 표정을 띄울 수 있어요</li><li>결승선을 통과한 순간의 사진이 결과 화면에 나오고 저장할 수 있어요</li><li>엘리베이터 가장자리에 들어간 봇이 끼던 문제를 고쳤어요</li></ul></details><details class="note"><summary>2026-10-30 · v0.1 · b17 · gC와 스킨</summary><ul><li>재화 gC를 추가했어요. 경기를 마치면 순위에 따라 받아요 (봇과 연습은 절반)</li><li>로비에 꾸미기를 만들고 스킨 9종을 넣었어요 (고양이 귀, 토끼 귀, 선글라스, 안전모, 닌자 복면, 붉은 망토, 천사 링, 왕관, 황금 옷)</li><li>스킨은 온라인에서 다른 사람에게도 보여요</li><li>허브 코인을 gC로 바꿀 수 있게 준비했어요 (1코인 = 20gC)</li></ul></details><details class="note"><summary>2026-10-30 · v0.1 · b16 · 더 큰 맵과 새 맵, 새 무기</summary><ul><li>맵 크기를 약 1.8배로 늘렸어요 (경기 시간은 2분 안팎)</li><li>새 맵 5개: 호텔, 도서관, 박물관, 경기장, 방송국</li><li>새 무기 5개: 해머, 대걸레, 새총, 소방 호스, 폭죽 발사기</li><li>공항에 면세점 거리와 탑승구 구간을 크게 늘렸어요</li></ul></details><details class="note"><summary>2026-10-29 · v0.1 · b15 · 허브 퀘스트 연결</summary><ul><li>한 판을 끝까지 마치고 결과 화면에서 나갈 때만 허브 퀘스트에 집계돼요 (들어가기만 하거나 중간에 나가면 세지 않아요)</li></ul></details><details class="note"><summary>2026-10-29 · v0.1 · b15 · 허브 퀘스트 연결</summary><ul><li>한 판을 끝까지 마치고 결과 화면에서 나갈 때만 허브 퀘스트에 집계돼요 (들어가기만 하거나 중간에 나가면 세지 않아요)</li></ul></details><details class="note"><summary>2026-10-29 · v0.1 · b14 · 로비 배경</summary><ul><li>로비 배경을 인트로와 같은 공항 레이스 장면으로 바꿨어요</li></ul></details><details class="note"><summary>2026-10-29 · v0.1 · b13 · 모바일 조작</summary><ul><li>모바일에서 화면 버튼으로 이동, 점프, 무기 교체를 할 수 있어요</li><li>화면을 누르면 그쪽으로 조준해서 무기를 써요</li><li>세로 화면에서는 가로로 돌려 달라고 안내하고, 로비 메뉴를 작은 화면에 맞췄어요</li></ul></details><details class="note"><summary>2026-10-29 · v0.1 · b12 · 더 길고 다른 맵</summary><ul><li>건물 맵을 더 길게 늘리고 층마다 가구 배치가 달라지게 했어요</li><li>엘리베이터를 넣었어요. 타면 위층까지 올라가요</li><li>미끄러운 바닥, 바닥 구멍, 가구 위 선반 같은 맵 기믹을 층마다 다르게 넣었어요</li><li>공항에 면세점과 탑승구 구간을 늘리고 미끄러운 바닥을 넣었어요</li></ul></details><details class="note"><summary>2026-10-29 · v0.1 · b11 · 코드 입장과 무기 위치</summary><ul><li>로비에 코드로 입장 화면을 따로 만들었어요</li><li>가구 속에 나와 먹을 수 없던 무기를 가까운 빈 바닥으로 옮겼어요</li><li>온라인 대전의 15초 자동 시작을 없앴어요. 방장이 시작을 눌러요</li></ul></details><details class="note"><summary>2026-10-29 · v0.1 · b10 · 인트로</summary><ul><li>인트로 곡이 클릭 없이 자동으로 나오게 했어요 (브라우저가 막으면 화면을 누르면 시작해요)</li><li>인트로 문구를 다른 게임과 같게 Made by Frenchfries777, With Claude AI로 바꿨어요</li></ul></details><details class="note"><summary>2026-10-29 · v0.1 · b9 · 창밖 풍경</summary><ul><li>창밖 풍경을 맵마다 다르게, 창마다 이어지는 파노라마로 그렸어요 (도시, 공항 활주로, 거리, 광장, 공원, 운동장, 공장 굴뚝)</li><li>로비 오른쪽 위의 허브 메뉴(알림, 투표, 계정 상자)를 없애고 이름과 로그인만 남겼어요</li></ul></details><details class="note"><summary>2026-10-29 · v0.1 · b8 · 인트로 곡과 봇</summary><ul><li>인트로에 기존 인트로 곡을 넣었어요 (인트로 길이도 곡에 맞췄어요)</li><li>봇이 실수를 덜해요</li></ul></details><details class="note"><summary>2026-10-29 · v0.1 · b7 · 장애물과 봇전</summary><ul><li>장애물에 테두리와 그림자를 넣어 배경과 구분이 잘 되게 했어요</li><li>봇과 연습에서는 맵을 직접 골라요 (온라인과 친구 대결은 무작위)</li><li>경기 중 &#x27;나가기&#x27; 버튼으로 중간에 나갈 수 있어요</li></ul></details><details class="note"><summary>2026-10-29 · v0.1 · b6 · 인트로와 직접 조준</summary><ul><li>처음 열 때 인트로 추가: 네 명이 달리고 부딪치는 장면 위에 제목이 나와요 (건너뛸 수 없어요)</li><li>무기를 마우스 방향으로 직접 조준해서 쏴요 (조준선 표시)</li></ul></details><details class="note"><summary>2026-10-29 · v0.1 · b5 · 로비 음악</summary><ul><li>로비 음악 Top of the Leaderboard 추가 (경기 중에는 Pixel Sprint)</li><li>두 곡과 효과음의 소리 크기를 맞췄어요</li></ul></details><details class="note"><summary>2026-10-29 · v0.1 · b4 · 맵 소개와 리플레이</summary><ul><li>맵은 모두 무작위로 정해져요 (봇전, 온라인 대전, 친구와 대결)</li><li>시작 전에 출발점에서 목표 지점까지 카메라가 맵을 소개해요</li><li>한 명이 도착하면 우승자 시점으로 리플레이를 보여 줘요</li><li>스페이스나 W를 꾹 누르면 계속 점프해요</li><li>봇이 가끔 실수해요 (망설이기, 점프 타이밍 놓치기, 엉뚱한 길)</li><li>결과 창의 &#x27;다시 하기&#x27; 버튼 삭제</li></ul></details><details class="note"><summary>2026-10-29 · v0.1 · b3 · 맵 5개와 음악</summary><ul><li>새 맵 5개: 지하철역, 백화점, 병원, 학교, 공장 (공장은 반대로 움직이는 컨베이어 벨트)</li><li>배경음악 Pixel Sprint 추가, 효과음과 소리 크기를 맞췄어요</li></ul></details><details class="note"><summary>2026-10-29 · v0.1 · b2 · 폰트·맵 고르기·소리·점프</summary><ul><li>픽셀 폰트(Galmuri)로 바꿨어요</li><li>맵을 직접 골라요 (온라인 대전도 고른 맵끼리 매칭, 무작위 없음)</li><li>효과음 추가: 점프, 타격, 총, 폭발, 줍기, 카운트다운, 도착</li><li>점프가 가끔 씹히던 문제 수정</li><li>그래픽: 창밖 도시와 먼 풍경, 천장 조명, 벽 장식, 방마다 다른 무늬, 그림자</li></ul></details><details class="note"><summary>2026-10-29 · v0.1 · b1 · 첫 공개</summary><ul><li>오피스 빌딩과 공항 두 맵</li><li>무기 5종: 방망이, 프라이팬, 고무탄 권총, 소화기, 바주카</li><li>봇과 연습, 온라인 대전, 친구와 대결</li></ul></details></section>
+</main>
+<footer><span data-notr>Created by Frenchfries777</span> · <span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></footer>
+<script>
+/* 히어로: 노을 도시와 달리는 네 명 */
+(function(){
+var c=document.getElementById('run'),x=c.getContext('2d'),W,H,S=4,gy,t0=performance.now(),red=matchMedia('(prefers-reduced-motion:reduce)').matches;
+function rn(i){var v=Math.sin(i*127.1+311.7)*43758.5453;return v-Math.floor(v)}
+function size(){var r=c.getBoundingClientRect();S=r.width<600?3:4;W=c.width=Math.ceil(r.width/S);H=c.height=Math.ceil(r.height/S);gy=H-14}
+function R(a,b,w,h,col){x.fillStyle=col;x.fillRect(Math.round(a),Math.round(b),w,h)}
+var COL=['#e8483b','#5ac878','#4a8ad0','#e8b830'],HAIR=['#2a2430','#d8b050','#6a3a1a','#8a2a2a'];
+function runner(px,py,i,t,jump){var ph=Math.floor(t*10+i)%2,y=py-jump;R(px+1,y-22,8,7,'#e8c39a');R(px,y-23,10,3,HAIR[i]);R(px,y-15,10,8,COL[i]);
+ if(jump>0){R(px-1,y-7,3,6,'#2a2f3a');R(px+7,y-9,3,6,'#2a2f3a')}else if(ph){R(px+1,y-7,3,7,'#2a2f3a');R(px+6,y-7,3,5,'#2a2f3a')}else{R(px+2,y-7,3,5,'#2a2f3a');R(px+5,y-7,3,7,'#2a2f3a')}
+ R(px+6,y-18,3,2,'#e8c39a');R(px+7,y-20,2,2,'#111')}
+function draw(now){var t=(now-t0)/1000;
+ var g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,'#3b2c5c');g.addColorStop(.38,'#9a4f6a');g.addColorStop(.72,'#ff9a5a');g.addColorStop(1,'#ffd49a');x.fillStyle=g;x.fillRect(0,0,W,H);
+ R(W*.72,H*.36,26,26,'#ffe8b0');R(W*.72+2,H*.36+2,22,22,'#fff3d0');
+ for(var l=0;l<2;l++){var sp=(l?9:4),base=gy-(l?0:8),col=l?'#3a3568':'#5a4a80',off=(t*sp)%520;
+  for(var i=-2;i<W/14+30;i++){var k=i+Math.floor(off/20),w=12+rn(k+l*50)*16|0,h=(l?26:44)+rn(k*3+l)*(l?46:60)|0,bx=(i*20-off%20)+ (l?6:0);
+   R(bx,base-h,w,h,col);for(var wy=base-h+4;wy<base-4;wy+=7)for(var wx=bx+3;wx<bx+w-3;wx+=5)if(rn(wx*7+wy+k)>.55)R(wx,wy,2,3,l?'#ffcf7a':'#ffd9a0')}}
+ R(0,gy,W,H-gy,'#2a2540');R(0,gy,W,2,'#000');R(0,gy+2,W,2,'#4a4070');
+ for(var m=0;m<W;m+=18)R(m-((t*40)|0)%18,gy+9,9,2,'#ffd36b');
+ var cx=W*.68;for(var i=0;i<4;i++){var bx=((t*(26+i*2)+i*40)%(W+60))-30,jump=0,jx=bx%220;
+  var hurdle=[90,150][i%2]+i*37;
+  var px=bx;var cyc=(t*(26+i*2)+i*40);var hx=((cyc+i*70)%(W+60))-30;
+  var near=Math.abs(((cyc%130)-65)); if(near<14){var u=1-near/14;jump=Math.sin(u*Math.PI)*16}
+  runner(px,gy+1,i,t+i*.3,jump)}
+ for(var q=0;q<3;q++){var qx=((q*140+W*.3)-(t*26)%(W+140));var wx=((qx%(W+140))+W+140)%(W+140)-20;R(wx,gy-10,12,11,'#9a6a30');R(wx,gy-10,12,2,'#d0a060');R(wx+5,gy-10,2,11,'#7a5020')}
+ if(!red)requestAnimationFrame(draw)}
+size();addEventListener('resize',function(){size()});draw(performance.now());
+})();
+</script>
+<script src="../ff-pnsearch.js"></script>
+<script>if(window.FFPN)FFPN.mountDom('notes','details.note');</script>
+<script src="https://frenchfries777.com/games/ff-auth.js?v=20261107g"></script>
+</body></html>
