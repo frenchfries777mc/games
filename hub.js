@@ -968,7 +968,8 @@ var SGAMES=[['stickseum','Stickseum','g1','https://frenchfries777.com/games/stic
   ['beaconfall','Beaconfall','g3','https://frenchfries777.com/games/beaconfall/','외계 행성에서 살아남아 탈출하는 생존 제작','생존 제작 픽셀 survival crafting pixel'],
   ['isleport','Isleport','g3','https://frenchfries777.com/games/isleport/','섬을 가꾸고 배로 교역하는 섬 경영','섬 경영 교역 타이쿤 픽셀 tycoon trade island pixel'],
   ['vowkeep','Vowkeep','g3','https://frenchfries777.com/games/vowkeep/','기사 넷이 서약을 지키러 던전으로 내려가는 협동 액션','기사 던전 협동 액션 픽셀 knight dungeon co-op action pixel'],
-  ['dummyparty','Dummy Party','g3','https://frenchfries777.com/games/dummyparty/','마네킹들이 벌이는 병맛 미니게임 파티','마네킹 미니게임 파티 병맛 mannequin minigame party']];
+  ['dummyparty','Dummy Party','g3','https://frenchfries777.com/games/dummyparty/','마네킹들이 벌이는 병맛 미니게임 파티','마네킹 미니게임 파티 병맛 mannequin minigame party'],
+  ['gatecrash','Gatecrash','g3','https://frenchfries777.com/games/gatecrash/','건물과 공항을 달려 먼저 도착하는 옆면 픽셀 레이스','레이스 달리기 픽셀 옆면 race run pixel platformer']];
 function sfnv(s){ var h=0x811c9dc5; for(var i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,0x01000193)>>>0; } return ('0000000'+h.toString(16)).slice(-8); }
 function smark(t,q){ var e=esc(t); if(!q) return e; var r=esc(q).replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); try{ return e.replace(new RegExp(r,'gi'),function(x){ return '<mark>'+x+'</mark>'; }); }catch(_){ return e; } }
 function splain(b){ return String(b||'').replace(/^::.*$/gm,'').replace(/\*\*/g,'').replace(/^#{2,3}\s+|^\s*[-•]\s+|^\s*\d+[.)]\s+/gm,'').replace(/\s+/g,' ').trim(); }
