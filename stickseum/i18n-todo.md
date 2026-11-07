@@ -51,3 +51,5 @@ patchnotes.json | v740 title | 토너먼트 관전 화살표 로비 표시 수�
 patchnotes.json | v740 items[0] | 토너먼트 관전 ◀ ▶ 버튼이 로비에서도 보이던 문제 수정 | build 740 | 2026-11-07
 patchnotes.json | v741 title+items | 탈락 화면 마스터리 증가량 표시 | build 741 | 2026-11-07
 patchnotes.json | v742 title+items | 금고 약탈 봇 방어 개선 | build 742 | 2026-11-07
+patchnotes.json | v743 title | 용살자 드래곤 위치 수정 | build 743 | 2026-11-07
+patchnotes.json | v743 items[0] | 용살자 드래곤이 맵의 가장 높은 발판 조금 위에서 나오도록 변경 | build 743 | 2026-11-07
