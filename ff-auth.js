@@ -91,7 +91,7 @@ async function setUser(u){
   setTimeout(noticeAck,300);
 }
 /* 확인 창: 지정한 사용자가 접속하면 체크해야 닫히는 창을 띄우고, 닫으면 ff_notice_ack 에 기록해요 */
-var NOTICE={id:'cc4-credit-1',names:['수령동지'],text:'이 체크박스를 클릭하면 이제부터 본인은 이 사이트 개발에 참여하지 않았다는 데에 동의하고, 이 사이트를 본인, 혹은 본인을 포함한 단체로 소개하는 것이 CC 4.0에 위배된다는 것을 인정합니다',btn:'확인합니다',thanks:'잘했습니다!',reward:'+100 hC'};
+var NOTICE={id:'cc4-credit-1',names:[],text:'이 체크박스를 클릭하면 이제부터 본인은 이 사이트 개발에 참여하지 않았다는 데에 동의하고, 이 사이트를 본인, 혹은 본인을 포함한 단체로 소개하는 것이 CC 4.0에 위배된다는 것을 인정합니다',btn:'확인합니다',thanks:'잘했습니다!',reward:'+100 hC'};
 var noticeOpen=false;
 async function noticeAck(){
   if(noticeOpen||!user||!prof||!sb) return;
