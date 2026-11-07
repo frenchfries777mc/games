@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.2', BUILD = 307;
+export const VERSION = 'v0.2', BUILD = 308;
 
 export const ROLES = {
   knight: {
@@ -182,6 +182,17 @@ export const ROLES = {
     st: [3, 3, 3, 3], atkTxt: T('앞으로 길게 찌르기'),
     role: T('긴 창으로 멀리서 찌르고, 다가오는 상대를 돌진과 휩쓸기로 밀어내요.')
   },
+  chainer: {
+    name: T('철퇴 병사'), type: T('근접 딜러'), color: '#8a2a24', hp: 350, speed: 6.4,
+    atk: { kind: 'melee', range: 5, w: 0.5, dmg: 38, cd: 0.7 },
+    skills: [
+      { id: 'chainpull', name: T('사슬 당기기'), key: 'Q', cd: 12, desc: T('사슬을 던져 맞은 상대 한 명을 내 앞까지 끌어와요. 22 피해.') },
+      { id: 'maceslam', name: T('철퇴 내려치기'), key: 'E', cd: 14, desc: T('머리 위에서 철퇴를 돌리다 뛰어올라 내려쳐요. 앞쪽 둘레 상대에게 64 피해를 주고 0.6초 기절시켜요.') },
+      { id: 'maceswirl', name: T('회오리 철퇴'), key: 'R', cd: 28, desc: T('두 손으로 철퇴를 잡고 2.5초 동안 몸째 빙글빙글 돌아요. 움직일 수 있고, 맞은 상대는 22 피해를 받고 살짝 밀려나며 잠깐 기절해요.') }
+    ],
+    st: [4, 3, 4, 4], atkTxt: T('철퇴를 던졌다 거두는 긴 직선 공격'),
+    role: T('철퇴를 던져 끌어오고, 내려치기와 회오리로 몰아붙이는 근접 딜러예요.')
+  },
   court: {
     name: T('궁정 마법사'), type: T('유틸리티'), color: '#7a4ab8', hp: 165, speed: 6.0,
     atk: { kind: 'orb', dmg: 10, cd: 0.55, speed: 17 },
@@ -215,7 +226,7 @@ export const COLORS = [
 ];
 export const BOT_NAMES = ['데굴이', '휘청이', '꽈당이', '비틀이', '아슬이', '쿵쾅이', '덜렁이', '허둥이', '깜빡이', '뒤뚱이'];
 export const MAX_PLAYERS = 10;
-export const ROLE_IDS = ['knight', 'priest', 'archer', 'viking', 'mamluk', 'witch', 'skeleton', 'warden', 'assassin', 'crossbow', 'bomber', 'bard', 'spearman', 'court', 'necro', 'streltsy', 'wellington', 'telaris'];
+export const ROLE_IDS = ['knight', 'priest', 'archer', 'viking', 'mamluk', 'witch', 'skeleton', 'warden', 'assassin', 'crossbow', 'bomber', 'bard', 'spearman', 'court', 'necro', 'streltsy', 'wellington', 'telaris', 'chainer'];
 
 export const ENEMIES = {
   skel: { name: T('해골 병사'), hp: 130, speed: 4.4, r: 0.6, dmg: 32, range: 1.8, windup: 0.42, cd: 0.9, honor: 1 },

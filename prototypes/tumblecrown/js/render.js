@@ -151,6 +151,23 @@ function dressHero(g, cos) {
   }
 }
 // 사람 모양 (주인공과 사람 모양 적이 같이 써요)
+// 철퇴 사슬: 손잡이 끝(anchor)에서 쇠공(tc)까지 고리 14개를 이어 놓아요. 팽팽하면 곧게, 느슨하면 아래(down)로 처져요
+const _fa = new THREE.Vector3(), _fb = new THREE.Vector3(), _fq = new THREE.Quaternion(), _fq2 = new THREE.Quaternion(), _Y = new THREE.Vector3(0, 1, 0);
+function layoutFlail(fl, tc, down) {
+  fl.bl.position.copy(tc); const A = fl.anchor, N = fl.links.length, d = A.distanceTo(tc), sag = Math.sqrt(Math.max(0, 3.2 * 3.2 - d * d)) * 0.4;
+  const at = u => _fa.copy(A).lerp(tc, u).addScaledVector(down, sag * 4 * u * (1 - u));
+  for (let k = 0; k < N; k++) {
+    const u = (k + 0.5) / N, L = fl.links[k]; L.position.copy(at(u)); _fb.copy(at(Math.min(1, u + 0.04))); at(Math.max(0, u - 0.04)); _fb.sub(_fa).normalize();
+    _fq.setFromUnitVectors(_Y, _fb); _fq2.setFromAxisAngle(_Y, k % 2 ? 0 : Math.PI / 2); L.quaternion.copy(_fq).multiply(_fq2);
+  }
+}
+const _fw = new THREE.Vector3();
+// 몸 기준(figure) 좌표의 쇠공 위치 tF로 사슬을 맞춰요
+function updateFlail(m, tF) {
+  const fl = m.flail; m.updateWorldMatrix(true, true);
+  const tc = fl.ch.worldToLocal(m.localToWorld(_fw.copy(tF))).clone(), w0 = fl.ch.getWorldPosition(new THREE.Vector3()), dn = fl.ch.worldToLocal(w0.clone().add(new THREE.Vector3(0, -1, 0))).sub(fl.ch.worldToLocal(w0.clone()));
+  layoutFlail(fl, tc, dn);
+}
 function makeFigure(o) {
   const g = new THREE.Group(), body = new THREE.Group(); g.add(body);
   const lg = matOf(o.leg), am = matOf(o.arm);
@@ -325,11 +342,12 @@ function makeFigure(o) {
     cyl(0.56, 0.7, 1.5, 12, mail, 0, 1.5, 0, body);
     box(0.7, 1.5, 0.05, rd, 0, 1.5, 0.66, body); box(0.7, 1.5, 0.05, rd, 0, 1.5, -0.66, body);
     for (const ar of [armR, armL]) { cyl(0.21, 0.21, 0.82, 8, mail, 0, -0.45, 0, ar); cyl(0.22, 0.22, 0.2, 8, lt, 0, -0.8, 0, ar); }
-    const ch = new THREE.Group(); ch.position.set(0, -0.9, 0.1); armR.add(ch);   // 사슬 철퇴: 짧은 자루 끝에서 굵은 사슬이 앞으로 늘어져 가시 쇠공이 매달려요
-    cyl(0.08, 0.08, 0.9, 6, wd, 0, 0.35, 0, ch); cyl(0.11, 0.11, 0.1, 6, ir, 0, 0.82, 0, ch);
-    const lkG = geo('chLink', () => new THREE.TorusGeometry(0.15, 0.05, 5, 10));
-    for (let k = 0; k < 8; k++) { const t = k / 7, lk = mesh(lkG, ir, 0, 0.8 - 1.9 * Math.pow(t, 1.4), 0.2 + 0.85 * t, ch); lk.rotation.y = k % 2 ? 0 : Math.PI / 2; lk.scale.set(0.7, 1.3, 1); }
-    { const bl = new THREE.Group(); bl.position.set(0, -1.25, 1.15); ch.add(bl); sph(0.4, 10, 8, dk, 0, 0, 0, bl); for (let k = 0; k < 8; k++) { const a = k / 8 * 6.283, sp = cone(0.08, 0.2, 4, ir, Math.cos(a) * 0.42, (k % 2 ? 0.14 : -0.14), Math.sin(a) * 0.42, bl); sp.rotation.set(Math.sin(a) * 1.2, 0, -Math.cos(a) * 1.2); } cone(0.08, 0.2, 4, ir, 0, 0.44, 0, bl); cone(0.08, 0.2, 4, ir, 0, -0.44, 0, bl).rotation.x = Math.PI; }
+    const ch = new THREE.Group(); ch.position.set(0, -0.9, 0.1); armR.add(ch);   // 철퇴: 손잡이는 손에서 팔 쪽 바깥으로 뻗고, 그 끝에서 사슬이 늘어져 가시 쇠공이 매달려요 (사슬 모양은 동작마다 updateFlail이 매 프레임 다시 맞춰요)
+    cyl(0.08, 0.08, 1.0, 6, wd, 0, -0.35, 0, ch); cyl(0.11, 0.11, 0.1, 6, ir, 0, -0.9, 0, ch); sph(0.1, 6, 5, ir, 0, 0.17, 0, ch);
+    const lkG = geo('chLink', () => new THREE.TorusGeometry(0.15, 0.05, 5, 10)), links = [];
+    for (let k = 0; k < 14; k++) { const lk = mesh(lkG, ir, 0, -1 - k * 0.15, 0.1, ch); lk.scale.set(0.7, 1.3, 1); links.push(lk); }
+    const bl = new THREE.Group(); bl.position.set(0, -2.6, 0.9); ch.add(bl); sph(0.4, 10, 8, dk, 0, 0, 0, bl); for (let k = 0; k < 8; k++) { const a = k / 8 * 6.283, sp = cone(0.08, 0.2, 4, ir, Math.cos(a) * 0.42, (k % 2 ? 0.14 : -0.14), Math.sin(a) * 0.42, bl); sp.rotation.set(Math.sin(a) * 1.2, 0, -Math.cos(a) * 1.2); } cone(0.08, 0.2, 4, ir, 0, 0.44, 0, bl); cone(0.08, 0.2, 4, ir, 0, -0.44, 0, bl).rotation.x = Math.PI;
+    g.flail = { ch, bl, links, anchor: new THREE.Vector3(0, -0.95, 0) }; layoutFlail(g.flail, bl.position, new THREE.Vector3(0, -1, 0));
   }
 
 
@@ -1638,7 +1656,7 @@ export class View {
     } else if (k === 'self') {
       U.disc.position.set(px, 0.14, pz); U.ring.position.set(px, 0.15, pz); U.disc.scale.setScalar(sp.r); U.ring.scale.setScalar(sp.r);
     } else {
-      const dx = ax - px, dz = az - pz, d = Math.hypot(dx, dz) || 1, kk = Math.min(1, sp.range / d), cx = px + dx * kk, cz = pz + dz * kk;
+      const dx = ax - px, dz = az - pz, d = Math.hypot(dx, dz) || 1, kk = Math.min(1, sp.range / d), cx = sp.fix ? px + ox * sp.fix : px + dx * kk, cz = sp.fix ? pz + oz * sp.fix : pz + dz * kk;   // fix: 항상 바라보는 쪽 그 거리에 놓여요 (철퇴 내려치기)
       U.disc.position.set(cx, 0.14, cz); U.ring.position.set(cx, 0.15, cz); U.disc.scale.setScalar(sp.r); U.ring.scale.setScalar(sp.r);
     }
   }
@@ -1738,7 +1756,7 @@ const ease = u => u < 0 ? 0 : u > 1 ? 1 : u * u * (3 - 2 * u);
 const seg = (u, a, b) => ease((u - a) / (b - a));
 // 역할마다 공격·기술 동작. 몸 전체(허리 비틀기, 내딛기, 뛰어오르기)가 같이 움직여요
 const VK_T = { bloodlust: 1.7 };   // 바이킹은 도끼를 던져 받는 동안 기술 동작이 조금 더 길어요
-const ANIM_T = { atk: 0.32, hv: 0.95, big: 0.6, skill: 0.8 }, SK_T = { kill: 0.55, whirl: 1.0, storm: 1.5, flurry: 0.7, leap: 0.9, bloodlust: 1.4, shadow: 0.6, scatter: 0.7, lunge: 0.7 };
+const ANIM_T = { atk: 0.32, hv: 0.95, big: 0.6, skill: 0.8 }, SK_T = { kill: 0.55, whirl: 1.0, storm: 1.5, flurry: 0.7, leap: 0.9, bloodlust: 1.4, shadow: 0.6, scatter: 0.7, chainpull: 0.9, maceslam: 1.1, maceswirl: 2.5, lunge: 0.7 };
 // 기사 베기 좌우 방향 (1이면 화면 오른쪽에서 시작)
 const KS = 1, KR = 1, KH_T = 0.5;
 // 기사 베기 자세. 1타: 오른쪽 위에서 감았다가 왼쪽 아래로 / 2타: 1타가 끝난 왼쪽 아래에서 조금 더 감았다가 오른쪽 아래로 낮게
@@ -1815,10 +1833,10 @@ function animHero(E, p, dt, t, view) {
   // 동작 시작: 동작 번호가 바뀌면 처음부터
   // 앞 동작이 아직 남아 있으면 그 자세에서 이어서 시작해요 (blT 동안 천천히 따라가요)
   if (p.aN !== E.aN) { E.aN = p.aN; if (E.aN != null && p.ak) { if (E.ak || E.kh) E.blT = 0.1; E.ak = p.ak; E.aT = 0; E.kc = (p.ac | 0) % 2; E.kh = null; } }
-  const kind = E.ak ? (E.ak === 'atk' || E.ak === 'hv' || E.ak === 'big' ? E.ak : 'skill') : '', D0 = kind === 'atk' && p.role === 'spearman' ? 0.45 : kind === 'big' && role === 'priest' ? 0.9 : kind === 'skill' && p.role === 'viking' && VK_T[E.ak] ? VK_T[E.ak] : kind === 'skill' && SK_T[E.ak] ? SK_T[E.ak] : ANIM_T[kind] || 0.5;
+  const kind = E.ak ? (E.ak === 'atk' || E.ak === 'hv' || E.ak === 'big' ? E.ak : 'skill') : '', D0 = kind === 'atk' && p.role === 'spearman' ? 0.45 : kind === 'atk' && p.role === 'chainer' ? 0.55 : kind === 'big' && role === 'priest' ? 0.9 : kind === 'skill' && p.role === 'viking' && VK_T[E.ak] ? VK_T[E.ak] : kind === 'skill' && SK_T[E.ak] ? SK_T[E.ak] : ANIM_T[kind] || 0.5;
   // 기사 베기가 끝나면 끝 자세를 잠깐 들고 있다가 (연타가 이어질 수 있는 동안) 천천히 돌아와요
-  const slow = p.role === 'knight' || p.role === 'priest' || p.role === 'archer' ? 1 : 1.15, D = D0 * slow;   // 기사·사제·궁수 말고는 동작을 조금 느리고 부드럽게 해요
-  if (E.ak) { E.aT += dt; if (E.aT > D) { if ((role === 'knight' || CHAIN[role]) && E.ak === 'atk') E.kh = { c: E.kc, t: 0 }; E.ak = null; } }
+  const slow = p.role === 'knight' || p.role === 'priest' || p.role === 'archer' || p.role === 'chainer' ? 1 : 1.15, D = D0 * slow;   // 기사·사제·궁수 말고는 동작을 조금 느리고 부드럽게 해요
+  if (E.ak) { E.aT += dt; if (E.aT > D) { if ((role === 'knight' || CHAIN[role]) && E.ak === 'atk' && p.role !== 'chainer') E.kh = { c: E.kc, t: 0 }; E.ak = null; } }
   if (E.kh && (E.kh.t += dt) > KH_T) E.kh = null;
   if (E.blT > 0) E.blT -= dt;
   const v = E.ak ? E.aT / D : 1, side = (E.aN || 0) % 2 ? 1 : -1;
@@ -1868,6 +1886,9 @@ function animHero(E, p, dt, t, view) {
       } else if (role === 'telaris') { // 텔라리스 기본 공격: 방패를 몸 앞으로 끌어당겼다가 온몸으로 쾅 밀어요
         const pre = seg(v, 0, 0.25), go = seg(v, 0.25, 0.42), rc = seg(v, 0.62, 1), x = 1 - rc;
         T.lx = base[1] + (0.5 * pre - 2.9 * go) * x; T.rx = base[0] + (0.4 * pre - 2.7 * go) * x; T.lz = 0.2 * go * x; T.rz = -0.2 * go * x; T.bx = (-0.2 * pre + 0.9 * go) * x; T.bz = 1.1 * go * x; T.lg = 0.9 * go * x; T.sq = 0.12 * pre * x; T.by = -0.3 * go * x; T.hx = 0.2 * go * x;
+      } else if (p.role === 'chainer') { // 철퇴 병사 기본 공격: 철퇴를 들어 올렸다가 팔을 아래로 내리며 앞으로 던지고, 사슬을 거둬요
+        const up = seg(v, 0, 0.3), dn = seg(v, 0.3, 0.46), rc = seg(v, 0.66, 1), x = 1 - rc;
+        T.rx = base[0] + (-1.6 * up + 2.3 * dn) * x * (1 - 0 * rc); T.rz = -0.15 * up * x; T.lx = base[1] - 0.5 * up * x; T.bx = (-0.3 * up + 0.8 * dn) * x; T.bry = (0.35 * up - 0.5 * dn) * x; T.bz = 0.5 * dn * x; T.lg = 0.7 * dn * x; T.sq = (0.12 * up - 0.05 * dn) * x; T.hx = 0.1 * dn * x;
       } else if (p.role === 'spearman') { // 창병 찌르기: 창을 뒤로 빼며 몸을 비틀어 웅크렸다가, 한 발 크게 내딛으며 앞으로 내질러요 (뒤로 쭉 빼면 창끝이 앞을 가리켜요)
         // 준비(0~0.3): 창을 눕혀 뒤로 빼며 몸을 낮춰요 → 찌름(0.3~0.42): 창이 앞으로 쭉 나가요 → 회수(0.62~1): 창을 당겨 자세로 돌아와요. 창끝 각도는 그대로고 창이 앞뒤로 미끄러져요
         const lv = seg(v, 0, 0.14) * (1 - seg(v, 0.8, 1)), pl = seg(v, 0.04, 0.3) * (1 - seg(v, 0.3, 0.4)), st = seg(v, 0.3, 0.42) * (1 - seg(v, 0.6, 0.95));
@@ -1882,6 +1903,17 @@ function animHero(E, p, dt, t, view) {
     } else { // 기술: 모두 예비 동작(0~0.2) → 크게 터뜨리기 → 버티기 → 돌아오기
       const pre = seg(v, 0, 0.2), go = seg(v, 0.2, 0.34), hold = 1 - seg(v, 0.72, 1), pk = go * hold, cr = pre * (1 - go);
       switch (a) {
+        case 'chainpull': { // 철퇴 병사 Q: 철퇴를 뒤로 젖혔다 멀리 던지고, 두 손으로 사슬을 번갈아 잡으며 끌어와요
+          const wd = seg(v, 0, 0.14), th = seg(v, 0.14, 0.28), gr = seg(v, 0.34, 0.42), pu = seg(v, 0.42, 0.84), ph = Math.sin((v - 0.4) * 38), x = 1 - seg(v, 0.84, 1);
+          T.rx = (base[0] + (-1.3 * wd + 1.9 * th) * (1 - gr) + (-0.4 + 0.45 * ph * pu) * gr) * x + base[0] * (1 - x); T.lx = (base[1] + (-0.9 * gr + -0.35 * ph * pu) - 0.4 * gr) * x + base[1] * (1 - x); T.rz = -0.1 * gr * x; T.lz = 0.12 * gr * x;
+          T.bx = (-0.2 * wd + 0.5 * th - 0.65 * pu * (1 - 0.3 * Math.abs(ph))) * x; T.bz = (0.4 * th - 0.35 * pu) * x; T.lg = 0.8 * (th + pu * 0.6) * x; T.sq = (0.12 * wd + 0.08 * pu) * x; T.hx = -0.1 * pu * x; break; }
+        case 'maceslam': { // 철퇴 병사 E: 팔을 높이 들어 머리 위에서 철퇴를 빙글빙글 돌리다가 (0~0.5), 뛰어올라 (0.5~0.73) 앞 땅에 내려쳐요
+          const L1 = 0.727, up = seg(v, 0, 0.1), jp = seg(v, 0.5, L1), rc = seg(v, 0.88, 1), x = 1 - rc;
+          T.rx = base[0] + (-1.7 * up * (1 - jp) + 0.6 * jp) * x; T.lx = base[1] - 0.2 * up * x; T.rz = (0.25 * up - 0.25 * jp) * x; T.bx = (-0.1 * up - 0.2 * seg(v, 0.5, 0.62) + 0.6 * seg(v, 0.62, L1)) * x; T.bry = 0.3 * Math.sin(v * 22) * up * (1 - jp) * x;
+          T.jy = hop(0.5, L1, 1.3); T.sq = (0.35 * seg(v, 0.4, 0.5) * (1 - jp) - 0.2 * jp * (1 - seg(v, 0.7, L1)) + land(L1, 0.8)); T.lg = (0.6 * seg(v, 0.4, 0.5) * (1 - jp) + 0.9 * jp) * x; T.by = (-0.3 * seg(v, 0.4, 0.5) * (1 - jp) - 0.35 * jp) * x; T.hx = 0.35 * jp * x; break; }
+        case 'maceswirl': { // 철퇴 병사 R: 손잡이를 두 손으로 잡고 몸째 팽이처럼 빙글빙글 돌아요 (움직일 수 있어요)
+          const ms = seg(v, 0, 0.06) * (1 - seg(v, 0.95, 1)), sp = seg(v, 0.04, 0.96);
+          T.spin = -Math.PI * 2 * 5 * sp; T.rx = base[0] * (1 - ms) - 1.55 * ms; T.lx = base[1] * (1 - ms) - 1.5 * ms; T.rz = -0.5 * ms; T.lz = 0.5 * ms; T.bx = 0.25 * ms; T.brz = 0.12 * ms * Math.sin(v * 31); T.jy = ms * 0.08 * (1 + Math.sin(v * 50)); T.lg = 0.5 * ms; T.sq = 0.1 * ms; T.hx = 0.1 * ms; break; }
         case 'block': // 방패를 땅에 쾅 박으며 버텨요
           T.lx = (-0.4 * cr - 1.75 * go) * hold + base[1] * (1 - hold); T.lz = 0.35 * pk; T.rx = -0.3 * pk + base[0] * (1 - pk); T.bx = -0.25 * cr + 0.35 * pk; T.jy = hop(0.06, 0.3, 0.6); T.sq = land(0.3, 0.5) + 0.12 * pk; T.by = -0.35 * pk; T.lg = 0.8 * pk; T.bz = 0.4 * pk; break;
         case 'dash': // 칼을 뒤로 빼고 몸을 쭉 뻗어 날아가요
@@ -2009,6 +2041,25 @@ function animHero(E, p, dt, t, view) {
     u.armL.rotation.set(-0.6 * (1 - f) + 0.2 * f, 0, -0.9 * f); u.armR.rotation.set(-0.6 * (1 - f) + 0.2 * f, 0, 0.9 * f); u.head.rotation.set(0.5 * f, 0, 0.2 * f); u.legL.rotation.x = u.legR.rotation.x = 0.3 * f; u.legL.rotation.z = 0.25 * f; u.legR.rotation.z = -0.25 * f;
     if (q >= 1 && !E.dnD && view) { E.dnD = 1; view.burst(E.x, 0.2, E.z, 0xb8aa94, 10, 4, 0.5, 0.16); }
   } else { E.dnT = 0; E.dnD = 0; if (u.legL.rotation.z) u.legL.rotation.z = u.legR.rotation.z = 0; }
+  if (m.flail) {   // 철퇴 병사: 동작마다 쇠공이 어디에 있는지(몸 기준 좌표) 정해서 사슬을 이어요
+    m.updateWorldMatrix(true, true);
+    const ap = m.worldToLocal(m.flail.ch.localToWorld(m.flail.anchor.clone())), rest = new THREE.Vector3(ap.x, Math.max(0.5, ap.y - 2.3), ap.z + 0.5), tg = rest.clone(), a = E.ak, lp = (A, B, f) => A.clone().lerp(B, f), V = (x, y, z) => new THREE.Vector3(x, y, z);
+    if (a === 'atk' && !p.dn) {
+      const wi = V(0.3, 3.9, -0.9), far = V(0, 1.5, 5.2), up = seg(v, 0, 0.18), rl = seg(v, 0.3, 0.46), bk = seg(v, 0.66, 1);
+      let q = lp(rest, wi, up); q = lp(q, far, rl); q.y += Math.sin(rl * Math.PI) * 0.9 * (1 - bk); tg.copy(lp(q, rest, bk));
+    } else if (a === 'chainpull') {
+      const wi = V(0.3, 3.5, -0.8), far = V(0, 1.3, 9.2), near = V(0, 1.2, 2.3), up = seg(v, 0, 0.14), th = seg(v, 0.14, 0.28), pu = seg(v, 0.42, 0.84), bk = seg(v, 0.84, 1);
+      let q = lp(rest, wi, up); q = lp(q, far, th); q.y += Math.sin(th * Math.PI) * 0.7 * (1 - pu); q = lp(q, near, pu); tg.copy(lp(q, rest, bk));
+    } else if (a === 'maceslam') {
+      const L1 = 0.727, up = seg(v, 0, 0.1), jp = seg(v, 0.5, L1), bk = seg(v, 0.88, 1), th = v * 1.1 * 20, orb = V(Math.sin(th) * 1.7, 4.3, Math.cos(th) * 1.7), gr = V(0, 0.45, 2.8);
+      let q = lp(rest, orb, up); q = lp(q, gr, jp); q.y += Math.sin(jp * Math.PI) * 1.2; tg.copy(lp(q, rest, bk));
+    } else if (a === 'maceswirl') {
+      const ms = seg(v, 0, 0.06) * (1 - seg(v, 0.94, 1)), sp = T.spin, orb = V(Math.sin(sp) * 3.6, 1.45 + 0.25 * Math.sin(v * 40), Math.cos(sp) * 3.6);
+      tg.copy(lp(rest, orb, ms));
+    }
+    updateFlail(m, tg);
+    if (m.flail.bl.children[0]) m.flail.bl.rotation.x += dt * (a === 'maceswirl' ? 12 : 3);
+  }
   floorGuard(m, u);
   if (u.light) u.light.intensity = (p.dn ? 3 : 15);
 }
