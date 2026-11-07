@@ -547,8 +547,49 @@ function parseScript(text,lenient){
       if(!(pos<L.length&&L[pos].ind>0))throw PE(l.n,'nothing is written under this line');
       var dind=L[pos].ind,df={k:m[1].toLowerCase(),n:m[2]};out.defs=out.defs||[];
       if(out.defs.length>=1000)throw PE(l.n,'define can be written 1000 times at most');
+      var grp=null,gind=0,hasIA=false,GRPK={weapon:'item',place:'item',tool:'item',spawn:'mob'};
       while(pos<L.length&&L[pos].ind>=dind){
         var dl=L[pos++],dm;
+        if(grp&&dl.ind<=gind)grp=null;
+        if(df.k!=='biome'&&(dm=dl.t.match(/^(weapon|place|spawn|tool)\s*:$/i))){   // weapon: / place: / spawn: / tool: 묶음
+          var gn=dm[1].toLowerCase();
+          if(GRPK[gn]!==df.k)throw PE(dl.n,gn+':  can only be written under  define '+GRPK[gn]);
+          if(!(pos<L.length&&L[pos].ind>dl.ind))throw PE(dl.n,'nothing is written under  '+gn+':');
+          grp=gn;gind=dl.ind;
+          if(gn==='weapon'&&df.wp===undefined)df.wp=true;if(gn==='place'&&df.pl===undefined)df.pl=true;if(gn==='spawn'&&df.ns===undefined)df.ns=true;if(gn==='tool'&&df.tl===undefined)df.tl=true;
+          continue;
+        }
+        if(grp){
+          var gk=dl.t.match(/^([a-z_]+)\s*:?\s*(.*)$/i);
+          if(!gk)throw PE(dl.n,'under '+grp+':  write it like  name: value');
+          var gkn=gk[1].toLowerCase(),gv=gk[2].trim();
+          var GB=function(){if(!/^(true|false|yes|no)$/i.test(gv))throw PE(dl.n,gkn+' must be true or false');return /^(true|yes)$/i.test(gv);};
+          var GN=function(lo,hi){if(!/^\d+(\.\d+)?$/.test(gv)||+gv<lo||+gv>hi)throw PE(dl.n,gkn+' must be '+lo+' to '+hi);return +gv;};
+          var GT=function(ln,txt,allowCustom){var r=[];txt.split(',').forEach(function(t){t=t.trim();if(!t)return;var tm=t.match(/^-?\s*(axe|pickaxe)$/i),cq=allowCustom&&t.match(/^-?\s*"([^"]{1,20})"$/);if(tm){if(r.indexOf(tm[1].toLowerCase())<0)r.push(tm[1].toLowerCase());}else if(cq){if(r.indexOf('@'+cq[1])<0)r.push('@'+cq[1]);}else throw PE(ln,"unknown tool '"+t+"'. You can write: -axe, -pickaxe"+(allowCustom?', "my item name"':''));});return r;};
+          if(grp==='weapon'&&gkn==='weaponable')df.wp=GB();
+          else if(grp==='weapon'&&gkn==='item_damage')df.dg=GN(0,10000);
+          else if(grp==='weapon'&&gkn==='item_attack_speed')df.cd=GN(0.05,600);
+          else if(grp==='weapon'&&gkn==='rune'){var rn=gv.replace(/"/g,'').toLowerCase();if(['fire','ice','venom','life'].indexOf(rn)<0)throw PE(dl.n,"unknown rune '"+gv+"'. You can use: fire, ice, venom, life");df.ru=rn;}
+          else if(grp==='place'&&gkn==='placeable')df.pl=GB();
+          else if(grp==='place'&&gkn==='placed_image'){var pq=gv.match(/^"([^"]{1,40})"$/);if(!pq)throw PE(dl.n,'write it like  placed_image: "my_picture"');df.pimage=pq[1].trim();df.pii=itemId(df.pimage)||undefined;}
+          else if(grp==='place'&&gkn==='interaction'){
+            if(gv)throw PE(dl.n,'write the commands under  interaction:  on the next lines');if(hasIA)throw PE(dl.n,'interaction can be written once in place:');hasIA=true;
+            out.events.push({on:'interaction',target:'@'+df.n,do:sub(dl,0)});}
+          else if(grp==='place'&&gkn==='destroy_time')df.pdt=GN(0.1,600);
+          else if(grp==='place'&&gkn==='destroy_tool'){df.pdtl=GT(dl.n,gv,true);if(!df.pdtl.length)throw PE(dl.n,'write a tool after destroy_tool, like  destroy_tool: -axe');}
+          else if(grp==='spawn'&&gkn==='natural_spawnable')df.ns=GB();
+          else if(grp==='spawn'&&gkn==='biome'){var BIOG=['start','forest','desert','volcano','jungle','mesa','rock','mangrove','ice'];df.bi=[];gv.split(',').forEach(function(bn){var bw=bn.trim().toLowerCase(),bx=BIOG.indexOf(bw);if(bx<0){var bg=guess(bw,BIOG);throw PE(dl.n,"unknown biome '"+bw+"'."+(bg?" Did you mean '"+bg+"'?":" You can use: "+BIOG.join(', ')));}if(df.bi.indexOf(bx)<0)df.bi.push(bx);});}
+          else if(grp==='spawn'&&gkn==='max_spawn_count')df.mx=GN(1,1000)|0;
+          else if(grp==='tool'&&gkn==='toolable')df.tl=GB();
+          else if(grp==='tool'&&gkn==='max_damage')df.mdm=GN(0,100000)|0;
+          else if(grp==='tool'&&gkn==='destroy_time')df.tdt=GN(0.1,600);
+          else if(grp==='tool'&&gkn==='quick_destroy_blocks'){
+            var qs=GT(dl.n,gv,false);
+            while(pos<L.length&&L[pos].ind>dl.ind){var ql=L[pos++];GT(ql.n,ql.t,false).forEach(function(t){if(qs.indexOf(t)<0)qs.push(t);});}
+            if(!qs.length)throw PE(dl.n,'write the tools under  quick_destroy_blocks:  like  -axe  or  -pickaxe');df.qb=qs;}
+          else throw PE(dl.n,'under '+grp+': you can write: '+({weapon:'weaponable, item_damage, item_attack_speed, rune',place:'placeable, placed_image, interaction, destroy_time, destroy_tool',spawn:'natural_spawnable, biome, max_spawn_count',tool:'toolable, max_damage, quick_destroy_blocks, destroy_time'})[grp]);
+          continue;
+        }
         if(df.k==='biome'){
           if(dm=dl.t.match(/^base\s*:?\s*(\w+)$/i)){var bn=dm[1].toLowerCase(),bix=BIOMES.indexOf(bn);if(bix<0){var bg=guess(bn,BIOMES);throw PE(dl.n,"unknown biome '"+dm[1]+"'."+(bg?" Did you mean '"+bg+"'?":" You can use: "+BIOMES.join(', ')));}df.bs=bix;}
           else if(dm=dl.t.match(/^ground\s*:?\s*"?(#[0-9a-f]{6})"?$/i)){df.gd=dm[1].toLowerCase();}
@@ -587,8 +628,13 @@ function parseScript(text,lenient){
           var rcs=[];dm[1].split(',').forEach(function(pt){var mm=pt.trim().match(/^(.+?)(?:\s+(\d+))?$/);if(!mm)throw PE(dl.n,'write it like  recipe iron 3, log 2');var cn=mm[2]?+mm[2]:1;if(cn<1||cn>7)throw PE(dl.n,'each ingredient count must be 1 to 7');var iid=item(dl,mm[1].trim());for(var ci=0;ci<cn;ci++)rcs.push(iid);});
           if(rcs.length<1||rcs.length>7)throw PE(dl.n,'a recipe can use 1 to 7 ingredient slots');df.rc=rcs;}
         else if(df.k==='item'&&(dm=dl.t.match(/^makes\s+(\d+)$/i))){if(+dm[1]<1||+dm[1]>999)throw PE(dl.n,'makes must be 1 to 999');df.mk=+dm[1];}
-        else throw PE(dl.n,df.k==='mob'?'under define mob you can write: base, image, hp, dmg, speed, color, drop, biome, rate, max, hostile':df.k==='ore'?'under define ore you can write: base, color, drop, biome, chance':df.k==='structure'?'under define structure you can write: block <item> <x> <y>':df.k==='world'?'under define world you can write: seed':'under define item you can write: base, image, recipe, makes, placeable, weapon, damage, cooldown, wearable, add_inventory, eatable, heal, effect, max_item_count, held');
+        else throw PE(dl.n,df.k==='mob'?'under define mob you can write: base, image, hp, dmg, speed, color, drop, biome, rate, max, hostile, spawn:':df.k==='ore'?'under define ore you can write: base, color, drop, biome, chance':df.k==='structure'?'under define structure you can write: block <item> <x> <y>':df.k==='world'?'under define world you can write: seed':'under define item you can write: base, image, recipe, makes, placeable, weapon, damage, cooldown, wearable, add_inventory, eatable, heal, effect, max_item_count, held, weapon:, place:, tool:');
       }
+      if(df.wp===false&&df.k==='item'){delete df.dg;delete df.cd;delete df.ru;}   // 꺼져 있으면 그 아래 값은 효과가 없어요
+      if(df.pl===false){delete df.pimage;delete df.pii;delete df.pdt;delete df.pdtl;}
+      if(df.tl===false){delete df.mdm;delete df.qb;delete df.tdt;}
+      if(df.ns===false){delete df.bi;delete df.mx;}
+      if(df.k==='mob'&&df.ns===true&&!(df.bi&&df.bi.length))throw PE(l.n,'spawn: needs a  biome:  line, like  biome: forest, desert  (or write  natural_spawnable: false)');
       if(df.k==='structure'){if(!df.bl||!df.bl.length)throw PE(l.n,'define structure needs  block  lines');}else if(df.k==='world'){if(!df.sd)throw PE(l.n,'define world needs a  seed: 123  line');}else if(df.k!=='biome'&&!df.base)throw PE(l.n,'define '+df.k+' needs a  base  line');
       if(df.k==='item'&&df.pl===true&&!df.pimage)throw PE(l.n,'placeable: true needs a second  image  line for the placed picture, like  image: "'+df.n+'_place"');
       if((df.k==='mob'||df.k==='item')&&!df.image)throw PE(l.n,'define '+df.k+' needs an  image  line, like  image: "my_picture"  (a PNG name in the folder, or an in-game item/mob name)');
