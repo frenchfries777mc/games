@@ -408,7 +408,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.6<br>build 199</p>
+    <p class="foot">v0.6<br>build 200</p>
   </nav>
 </div>
 
@@ -4270,8 +4270,10 @@ function iconURL(id){
   return ICONURL[id];
 }
 const haveN=id=>inv.reduce((a,q)=>a+(q&&q.id===id?q.n:0),0);
+let bulkEx=null;   // 한꺼번에 만들 때: 제작칸에 올려 둔 재료도 재료로 써요
 function resolveRecipe(r,real){
   const rem={};for(const q of inv)if(q)rem[q.id]=(rem[q.id]||0)+q.n;
+  if(bulkEx)for(const q of bulkEx)if(q)rem[q.id]=(rem[q.id]||0)+q.n;
   if(!real){const st=lkStock();if(st)for(const k in st)rem[k]=(rem[k]||0)+st[k];}
   const pat=[],miss={};
   for(const q of r.pat){
@@ -4345,6 +4347,7 @@ function consumePat(pat){
   for(const q of pat){
     if(!q)continue;
     let left=q.n;
+    if(bulkEx)for(let j=0;j<bulkEx.length&&left>0;j++){const z=bulkEx[j];if(z&&z.id===q.id){const t=Math.min(z.n,left);z.n-=t;left-=t;if(z.n<=0)bulkEx[j]=null;}}
     for(let j=0;j<inv.length&&left>0;j++){const z=inv[j];if(z&&z.id===q.id){const t=Math.min(z.n,left);z.n-=t;left-=t;if(z.n<=0)inv[j]=null;}}
   }
 }
@@ -4352,24 +4355,24 @@ function craftMax(r){
   if(!r){toast('만들 레시피를 고르거나 재료를 올려 주세요.');return;}
   if(!recipeOk(r)){toast(WHERE_HINT[r.st||'bench']);return;}
   if(held){toast('손에 든 아이템을 먼저 내려놓아 주세요.');return;}
-  for(let i=0;i<7;i++){
-    const q=craft[i];if(!q)continue;
-    if(!roomFor(q.id,q.n)){toast('인벤토리가 가득 차서 만들 수 없어요.');return;}
-    addStack(q.id,q.n,q.d);craft[i]=null;
-  }
-  bulk=true;let made=0,guard=0;const total={};
-  while(guard++<500){
-    linkPull(r);const rs=resolveRecipe(r,true);if(!rs.can)break;
-    const outL=typeof r.out==='function'?r.out(rs.pat):r.out;
-    const snap=inv.map(cp);
-    consumePat(rs.pat);
-    if(!outL.every(o=>roomFor(o.id,o.n))){for(let i=0;i<7;i++)inv[i]=snap[i];break;}
-    for(const o of outL){addStack(o.id,o.n);total[o.id]=(total[o.id]||0)+o.n;achCraft(o.id);}
-    made++;
-  }
-  bulk=false;computeOut();persist();renderInv();
+  // 제작칸의 재료도 함께 쓰고, 결과물이 먼저 가방(늘어난 칸 포함)에 들어가요.
+  // 남은 재료는 자리가 있는 만큼만 제작칸 앞 순서부터 가방으로 돌아가고, 나머지는 제작칸에 그대로 남아요.
+  bulk=true;bulkEx=craft;let made=0,guard=0;const total={};
+  try{
+    while(guard++<500){
+      linkPull(r);const rs=resolveRecipe(r,true);if(!rs.can)break;
+      const outL=typeof r.out==='function'?r.out(rs.pat):r.out;
+      const snap=inv.map(cp),snapC=craft.map(cp);
+      consumePat(rs.pat);
+      if(!outL.every(o=>roomFor(o.id,o.n))){for(let i=0;i<inv.length;i++)inv[i]=snap[i];for(let i=0;i<craft.length;i++)craft[i]=snapC[i];break;}
+      for(const o of outL){addStack(o.id,o.n);total[o.id]=(total[o.id]||0)+o.n;achCraft(o.id);}
+      made++;
+    }
+    for(let i=0;i<7;i++){const q=craft[i];if(!q)continue;const t=Math.min(q.n,roomN(q.id));if(t<=0)continue;addStack(q.id,t,q.d);q.n-=t;if(q.n<=0)craft[i]=null;}
+  }finally{bulk=false;bulkEx=null;}
+  computeOut();persist();renderInv();
   if(made)toast(Object.keys(total).map(id=>ITEMS[id].name+' ×'+total[id]).join(', ')+' 제작');
-  else{const rs=resolveRecipe(r);toast(rs.can?'가방이 가득 차서 만들 수 없어요.':'재료가 부족해요: '+Object.keys(rs.miss).map(lb=>lb+' '+rs.miss[lb]+'개').join(', '));}
+  else{bulkEx=craft;const rs=resolveRecipe(r);bulkEx=null;toast(rs.can?'가방이 가득 차서 만들 수 없어요.':'재료가 부족해요: '+Object.keys(rs.miss).map(lb=>lb+' '+rs.miss[lb]+'개').join(', '));}
 }
 function craftMaxAction(){
   if(!crafting||craftMode==='chest')return;
@@ -8876,6 +8879,7 @@ function linkPull(r){
   const need={},have={};
   for(const q of rs.pat)if(q)need[q.id]=(need[q.id]||0)+q.n;
   for(const q of inv)if(q)have[q.id]=(have[q.id]||0)+q.n;
+  if(bulkEx)for(const q of bulkEx)if(q)have[q.id]=(have[q.id]||0)+q.n;
   let moved=false;
   for(const id in need){
     let def=need[id]-(have[id]||0);if(def<=0)continue;
