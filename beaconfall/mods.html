@@ -309,7 +309,7 @@ function opn(o){o=String(o).toLowerCase().replace(/\s+/g,' ');return o==='is'?'=
 function PE(n,m){var e=new Error('line '+n+': '+m);e.script=1;return e;}
 var BIOMES=['start','forest','desert','volcano','jungle','mesa','rock','mangrove','ice'];
 var POS=['top left','top right','bottom left','bottom right','center'];
-function keyCode(w){var u=String(w).toUpperCase();if(/^[A-Z]$/.test(u))return 'Key'+u;if(/^[0-9]$/.test(u))return 'Digit'+u;if(/^F([1-9]|1[0-2])$/.test(u))return u;return '';}
+function keyCode(w){var u=String(w).toUpperCase();if(/^[A-Z]$/.test(u))return 'Key'+u;if(/^[0-9]$/.test(u))return 'Digit'+u;if(/^F([1-9]|1[0-2])$/.test(u))return u;if(u==='SPACE')return 'Space';return '';}
 function parseScript(text,lenient){
   var raw=String(text).replace(/\r/g,'').split('\n'),L=[],i;
   for(i=0;i<raw.length;i++){var t=raw[i];if(/^\s*(#|$)/.test(t))continue;var m=t.match(/^[ \t]*/)[0].replace(/\t/g,'    ').length;bareVar(i+1,t);L.push({n:i+1,ind:m,t:t.trim().replace(/\bvariable\s+\{:([a-z0-9_]{1,17}):\}/gi,'variable s__$1').replace(/\bvariable\s+\{([a-z0-9_]{1,20})\}/gi,'variable $1')});}
@@ -367,7 +367,7 @@ function parseScript(text,lenient){
     if(m=c.match(/^(not\s+)?mod\s+"([^"]{1,40})"$/i))return {md:{n:m[2],not:!!m[1]}};
     if(m=c.match(/^(player|world)\s+(max\s*hp|hp|x|y|z|biome|dimen[st]ion|item|name|day|hour|players)\s*(>=|<=|!=|>|<|=|is\s+not|is)\s*(.+)$/i))return gameCond(l,m);
     if(m=c.match(/^(not\s+)?(left[_\s]|right[_\s])?click\s+press$/i))return {mouse:{b:m[2]?(/right/i.test(m[2])?2:0):-1,not:!!m[1]}};
-    if(m=c.match(/^(not\s+)?key\s+"([^"]+)"\s+press$/i)){var kc0=keyCode(m[2]);if(!kc0)throw PE(l.n,"unknown key '"+m[2]+"'. Use A-Z, 0-9 or F1-F12");return {key:{c:kc0,not:!!m[1]}};}
+    if(m=c.match(/^(not\s+)?key\s+"([^"]+)"\s+press$/i)){var kc0=keyCode(m[2]);if(!kc0)throw PE(l.n,"unknown key '"+m[2]+"'. Use A-Z, 0-9, F1-F12 or Space");return {key:{c:kc0,not:!!m[1]}};}
     if(m=c.match(/^(not\s+)?(.+?)\s+in\s+player_hand$/i)){var hq1=m[2].trim().match(/^"([^"]{1,20})"$/);return {hand:{item:hq1?'@'+hq1[1]:item(l,m[2].trim()),not:!!m[1]}};}
     if(m=c.match(/^has\s+(?:(\d+)\s+)?(.+)$/i)){var hq0=m[2].trim().match(/^"([^"]{1,20})"$/);return {has:{item:hq0?'@'+hq0[1]:item(l,m[2].trim()),n:m[1]?+m[1]:1}};}
     if(m=c.match(/^%(attacker|victim)%\s+is\s+(not\s+)?player$/i))return {ifp:{w:m[1].toLowerCase(),not:!!m[2]}};
@@ -383,6 +383,8 @@ function parseScript(text,lenient){
       if(l.ind>ind)throw PE(l.n,'indent does not match the line above');
       pos++;var m;
       if(/^(set|add|subtract|multiply|divide|reset|loop|if\s+(variable|player|world|signal)|signal|every)\b/i.test(l.t))l={n:l.n,ind:l.ind,t:nb(l.t)};   // {변수} 는 {} 를 떼고 읽어요
+      var fvar=null,fvm=l.t.match(/^fill\s+%\{([a-z0-9_]{1,20})\}%\s+%\{([a-z0-9_]{1,20})\}%\s+(?:to\s+)?(.+)$/i);   // fill %{pos1}% %{pos2}% land: 변수에 담긴 'x z' 두 점으로 채워요
+      if(fvm){fvar=[fvm[1].toLowerCase(),fvm[2].toLowerCase()];l={n:l.n,ind:l.ind,t:'fill 0 0 0 0 to '+fvm[3]};}
       var pe=null,em=l.t.match(/^else(?:\s+if\s+(.+?))?\s*:$/i);
       if(em){
         var tl=acts[acts.length-1];
@@ -444,7 +446,7 @@ function parseScript(text,lenient){
       }else if(m=l.t.match(/^if\s+(not\s+)?(left[_\s]|right[_\s])?click\s+press\s*:$/i)){
         acts.push({mouse:{b:m[2]?(/right/i.test(m[2])?2:0):-1,not:!!m[1]},do:sub(l,depth)});
       }else if(m=l.t.match(/^if\s+(not\s+)?key\s+"([^"]+)"\s+press\s*:$/i)){
-        var kc1=keyCode(m[2]);if(!kc1)throw PE(l.n,"unknown key '"+m[2]+"'. Use A-Z, 0-9 or F1-F12");acts.push({key:{c:kc1,not:!!m[1]},do:sub(l,depth)});
+        var kc1=keyCode(m[2]);if(!kc1)throw PE(l.n,"unknown key '"+m[2]+"'. Use A-Z, 0-9, F1-F12 or Space");acts.push({key:{c:kc1,not:!!m[1]},do:sub(l,depth)});
       }else if(m=l.t.match(/^if\s+(not\s+)?(.+?)\s+in\s+player_hand\s*:$/i)){
         var hq2=m[2].trim().match(/^"([^"]{1,20})"$/);acts.push({hand:{item:hq2?'@'+hq2[1]:item(l,m[2].trim()),not:!!m[1]},do:sub(l,depth)});
       }else if(m=l.t.match(/^if\s+has\s+(?:(\d+)\s+)?(.+?)\s*:$/i)){
@@ -478,12 +480,12 @@ if(nv===''||nv==='-')nv=0;fc.push([rel?1:0,+nv]);}
         if(/^(land|beach|ocean|mountain|paint)$/.test(ftg)){
           var fcb=null,fb=m[6]?m[6].toLowerCase():null;if(m[6]&&m[6].charAt(0)==='"'){fcb=m[6].slice(1,-1);fb=null;}if(fb&&BIOMES.indexOf(fb)<0)throw PE(l.n,"unknown biome '"+fb+"'. You can use: "+BIOMES.join(', '));
           if(ftg==='paint'&&!fb&&!fcb)throw PE(l.n,'paint needs a biome: fill 0 0 100 100 to paint "road"');
-          var fa={c:fc,mode:ftg,b:fb};if(fcb)fa.cb=fcb;if(m[8])fa.rp=/^land$/i.test(m[8])?2:1;if(fchn!==null&&fchn<100)fa.ch=fchn;acts.push({fill:fa});
+          var fa={c:fc,mode:ftg,b:fb};if(fcb)fa.cb=fcb;if(m[8])fa.rp=/^land$/i.test(m[8])?2:1;if(fchn!==null&&fchn<100)fa.ch=fchn;if(fvar)fa.v=fvar;acts.push({fill:fa});
         }else{
           if(m[6])throw PE(l.n,"'"+m[6]+"' can't come after '"+m[5]+"'. Use: fill 0 0 99 99 to "+ftg+" chance 30%");
           if(m[8])throw PE(l.n,"replace works with land, beach, ocean, mountain and paint only");
-          if(/^(tree|rock|iron|gold|copper|zinc)$/.test(ftg)){acts.push({fillx:{k:ftg,c:fc,ch:fchn===null?100:fchn}});}
-          else{var fit=ftg.charAt(0)==='"'?'@'+ftg.slice(1,-1):item(l,m[5]);acts.push({fillb:{it:fit,c:fc,ch:fchn===null?100:fchn}});}
+          if(/^(tree|rock|iron|gold|copper|zinc)$/.test(ftg)){acts.push({fillx:{k:ftg,c:fc,ch:fchn===null?100:fchn,v:fvar||undefined}});}
+          else{var fit=ftg.charAt(0)==='"'?'@'+ftg.slice(1,-1):item(l,m[5]);acts.push({fillb:{it:fit,c:fc,ch:fchn===null?100:fchn,v:fvar||undefined}});}
         }
       }else if((m=l.t.match(/^load\s+(~?-?\d*)\s+(~?-?\d*)\s+(~?-?\d*)\s+(~?-?\d*)$/i))&&m[1]&&m[2]&&m[3]&&m[4]){
         var lc=[];for(var li=1;li<=4;li++){var lk=m[li],lrel=lk.charAt(0)==='~',lv=lk.replace('~','');if(lv===''||lv==='-')lv=0;lc.push([lrel?1:0,+lv]);}
@@ -544,7 +546,7 @@ if(nv===''||nv==='-')nv=0;fc.push([rel?1:0,+nv]);}
     else if(m=l.t.match(/^every\s+%\{([a-z0-9_]{1,20})\}%\s+seconds?\s*:$/i)){out.events.push({on:'every',n:1,nv:m[1].toLowerCase(),do:sub(l,0)});}
     else if(m=l.t.match(/^every\s+(\S+)\s+seconds?\s*:$/i)){if(!/^\d+$/.test(m[1])||+m[1]<1)throw PE(l.n,'every needs a whole number of seconds, 1 or more');if(+m[1]>3600)throw PE(l.n,'every can be at most 3600 seconds');out.events.push({on:'every',n:+m[1],do:sub(l,0)});}
     else if(m=l.t.match(/^on\s+join\s*:$/i)){out.events.push({on:'join',do:sub(l,0)});}
-    else if(m=l.t.match(/^on\s+key\s+("[^"]+"(?:\s+or\s+"[^"]+")*)\s+press\s*:$/i)){var kl=m[1].match(/"([^"]+)"/g).map(function(x){return x.slice(1,-1);}),kd=sub(l,0);kl.forEach(function(kn){var kc=keyCode(kn);if(!kc)throw PE(l.n,"unknown key '"+kn+"'. Use A-Z, 0-9 or F1-F12");out.events.push({on:'key',target:kc,do:kd});});}
+    else if(m=l.t.match(/^on\s+key\s+("[^"]+"(?:\s+or\s+"[^"]+")*)\s+press\s*:$/i)){var kl=m[1].match(/"([^"]+)"/g).map(function(x){return x.slice(1,-1);}),kd=sub(l,0);kl.forEach(function(kn){var kc=keyCode(kn);if(!kc)throw PE(l.n,"unknown key '"+kn+"'. Use A-Z, 0-9, F1-F12 or Space");out.events.push({on:'key',target:kc,do:kd});});}
     else if(m=l.t.match(/^on\s+signal\s+"([^"]{1,40})"\s*:$/i)){out.events.push({on:'signal',target:m[1],do:sub(l,0)});}
     else if(m=l.t.match(/^on\s+(.+?)\s*:$/i)){
       var body=m[1],ofRaw='',byRaw='',om=body.match(/^(.*?)\s+of\s+(.+)$/i);if(om){body=om[1];ofRaw=om[2];}
