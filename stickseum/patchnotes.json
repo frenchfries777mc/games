@@ -2,6 +2,22 @@
  "notes": [
   {
    "date": "2026-11-07",
+   "build": "v732",
+   "title": "신문 보상 중복 수령 수정",
+   "items": [
+    "신문 보상을 받은 뒤 새로고침하면 또 받을 수 있던 문제를 고쳤어요 (받은 기록이 저장되지 않았어요)"
+   ],
+   "tr": {
+    "en": {
+     "title": "News reward could be claimed again",
+     "items": [
+      "Fixed the news reward being claimable again after a refresh (the claimed record was not saved)."
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-11-07",
    "build": "v731",
    "title": "맵 공개 시작 위치 2개부터",
    "items": [
