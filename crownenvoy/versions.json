@@ -1,19 +1,30 @@
 {
  "name": "Crown Envoy",
- "latest": "0.6",
- "latestFile": "CrownEnvoy-v0.6.html",
+ "latest": "0.7",
+ "latestFile": "CrownEnvoy-v0.7.html",
  "updated": "2026-11-07",
  "versions": [
+  {
+   "version": "0.7",
+   "date": "2026-11-07",
+   "file": "CrownEnvoy-v0.7.html",
+   "title": "보라색 화면의 시대",
+   "summary": "데스크톱 화면이 보라색 디자인으로 바뀌고, 영토 바·영토 창·아래 탭 바로 정리\n세계 정세 창(전쟁 쌍 우세 막대·강대국 순위 그래프), 샌드박스 모드, 후퇴 방향\n시나리오 편집기 병종 배율, 도전과제 전용 아이콘",
+   "latest": true,
+   "size": 7936722,
+   "sha256": "5befc6635caf",
+   "build": "b157"
+  },
   {
    "version": "0.6",
    "date": "2026-10-30",
    "file": "CrownEnvoy-v0.6.html",
    "title": "병종과 정예 부대의 시대",
    "summary": "시대별로 달라지는 병종 단계(연도·기술·금화)와 나라 특수 병종 23종, 병종마다 다른 모습\n시대 전환 알림, 정예 승급, 대승 부대기, 도감 해금, 연도별 군복 색\n이전 버전은 다운로드만, 큰 전투 소개 연출",
-   "latest": true,
-   "size": 7936722,
-   "sha256": "63169898afde",
-   "build": "b200"
+   "latest": false,
+   "size": 7927832,
+   "sha256": "143f8dce386b",
+   "build": "b156"
   },
   {
    "version": "0.5",
