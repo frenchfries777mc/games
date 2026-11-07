@@ -281,6 +281,13 @@ input[type=text],input[type=number],input[type=search],textarea,select{backgroun
 #game.ce-mod input[type=text],#game.ce-mod input[type=number],#game.ce-mod select{background:#120c20}
 #sideDesel{display:none;margin:0 16px 16px;padding:13px;text-align:center;font-weight:800;font-size:15px;border:2px solid #8a6ad0;border-radius:12px;background:#120c20;color:#efe8ff;cursor:pointer;flex:none}
 #game.ce-mod.ce-hassel #sideDesel{display:block}
+/* b162: 같은 창 안 버튼 크기 통일, 떠 있는 버튼이 나라 창을 가리지 않게 */
+.row:has(>button[data-act="spy"]){gap:6px;flex-wrap:wrap}
+.row:has(>button[data-act="spy"])>span.sm.muted{flex:0 0 100%}
+.row:has(>button[data-act="spy"])>button[data-act="spy"]{flex:1 1 calc(50% - 6px);min-height:34px;display:flex;align-items:center;justify-content:center;text-align:center}
+#dipSide .btn.sm,#tpanel .btn.sm{min-height:34px}
+body:has(#dipSide:not([style*="display: none"])) :is(#trepChip,#trep,#tutfab){display:none!important}
+@media(min-width:1001px){body:has(#dipSide:not([style*="display: none"])) #tutbox{left:356px!important;right:auto!important;bottom:104px!important}}
 #tbar{display:none;position:absolute;left:50%;transform:translateX(-50%);bottom:92px;width:min(900px,calc(100vw - 24px));padding:14px 20px;align-items:center;gap:24px;z-index:19;border:2px solid #8a6ad0;border-radius:14px;background:rgba(24,18,38,.93);box-shadow:0 8px 24px #0009;cursor:pointer;color:#ece5f7}
 #game.ce-mod.ce-tbar #tbar{display:flex}
 #tbar>*{flex:none;white-space:nowrap}
@@ -529,7 +536,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 162</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 163</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -6681,7 +6688,7 @@ Object.assign(UI,{
     if(p.hostile){const tcA=(v.tc||[]).find(c=>c.you===p.id),tcR=(v.tcq||[]).find(r=>r.a===p.id||r.b===p.id),pend=!!tcR;
       h=`<div class="row" style="gap:8px;margin-bottom:6px;justify-content:flex-start;align-items:center;flex-wrap:wrap"><span class="tag hot" style="background:#7a2b2b;color:#ffdada">전쟁 중</span>${goalHTML}${tcA?`<button class="btn sm primary" data-act="tcopen" data-id="${tcA.id}">휴전회의장 열기</button>`:pend?'<span class="sm muted">휴전회의 요청함 (다음 턴이 시작될 때 열려요)</span>':`<button class="btn sm" data-act="peaceScr" data-to="${p.id}">휴전회의 요청</button>`}</div>${(pend||tcA)?'':'<div class="sm muted" style="margin:-2px 0 6px">회의는 다음 턴이 시작될 때 열려요. 점령한 영토도 토큰으로 지키지 않으면 돌려줘야 하고, 우세한 쪽은 잘 받아들이지 않아요.</div>'}${(!pend&&/^cede\|/.test((C.tmSel||{})[p.id]||''))?`<div style="margin-bottom:8px"><div class="sm" style="margin:2px 0">${C.tmSel[p.id].split('|')[1]==='ask'?'요구할 영토 (상대 영토)':'내줄 영토 (내 영토)'} · 최대 3곳</div>${UI.landPick('tm'+p.id,C.tmSel[p.id].split('|')[1]==='ask'?p.id:v.me,3)}</div>`:''}`;}
     else if(p.ally)h='<div class="sm muted" style="margin-bottom:6px">동맹국 — 선전포고하려면 먼저 동맹을 해제하세요</div>';
-    else h=`<div class="row" style="gap:6px;margin-bottom:6px;justify-content:flex-start;align-items:center;flex-wrap:wrap"><select id="goal${p.id}" style="max-width:170px" title="이루면 사기가 오르고, 못 이룬 채 휴전하면 사기가 떨어져요" onchange="(C.goalSel=C.goalSel||{})[${p.id}]=this.value"><option value="">목표 없음</option>${Object.entries(UI.GOALS_C).map(([k,g])=>`<option value="${k}" ${((C.goalSel||{})[p.id])===k?'selected':''}>목표: ${g.n}</option>`).join('')}</select><button class="btn sm danger" data-act="declare" data-to="${p.id}">${C.decArm===p.id?'정말 선전포고? 한 번 더':'선전포고'}</button><span class="sm muted">선전포고해야 이 나라를 공격할 수 있어요</span></div>`;
+    else h=`<div class="row" style="gap:6px;margin-bottom:6px;justify-content:flex-start;align-items:center;flex-wrap:wrap"><select id="goal${p.id}" style="max-width:170px" title="이루면 사기가 오르고, 못 이룬 채 휴전하면 사기가 떨어져요" onchange="(C.goalSel=C.goalSel||{})[${p.id}]=this.value"><option value="">목표 없음</option>${Object.entries(UI.GOALS_C).map(([k,g])=>`<option value="${k}" ${((C.goalSel||{})[p.id])===k?'selected':''}>목표: ${g.n}</option>`).join('')}</select><button class="btn sm danger" data-act="declare" data-to="${p.id}">${C.decArm===p.id?'정말 선전포고? 한 번 더':'선전포고'}</button><span class="sm muted" style="flex:0 0 100%">선전포고해야 이 나라를 공격할 수 있어요</span></div>`;
     return vas+h+spyRow;},
   GOALS_C:{land:{n:'영토 확보 (3곳 점령)'},capital:{n:'복수 (수도 함락)'},liberate:{n:'해방 (내 땅 2곳 수복)'},tribute:{n:'조공 (속국화)'}},
 
