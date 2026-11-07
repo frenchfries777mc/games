@@ -103,6 +103,7 @@ button{font:inherit;color:inherit;cursor:pointer}input,select{font:inherit}
 .natlist{display:grid;gap:6px;margin-top:6px}
 .natcard{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;text-align:left;padding:8px 10px;background:var(--panel2);border:1.5px solid var(--line);border-radius:4px;color:var(--text)}
 .natcard .sw{width:14px;height:14px;border-radius:50%;border:1.5px solid #0008}
+.pkhead{display:flex;gap:12px;align-items:flex-start;margin-bottom:8px}.pkport{flex:none;width:76px;height:90px;border:2px solid #8a6ad0;border-radius:6px;overflow:hidden;background:#2a2142}
 .natcard b{font-size:13.5px}.natcard small{color:var(--muted);font-size:11.5px;display:block}
 .natcard:not(:disabled):hover{border-color:var(--gold2)}.natcard.on{border-color:var(--gold);background:#371e62}.natcard:disabled{opacity:.45;cursor:default}
 .fl{display:inline-block;flex:none;width:14px;height:14px;border-radius:50%;background-size:cover;background-position:center;background-color:#556;border:1.5px solid #000a;vertical-align:-3px}
@@ -558,7 +559,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 170</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 171</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div><p class="tagline">사절을 보내 동맹을 맺고, 군대를 보내 왕관을 차지하세요.</p></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -6119,7 +6120,8 @@ const UI={
     const takenBy={};d.picks.forEach((k,i)=>{if(k!=null)takenBy[k]=i;});
     let h=`<div class="row" style="margin-bottom:8px"><button class="btn sm" data-act="draftBack">← ${me===0?'로비로 돌아가기':'나가기'}</button></div><h3>${tpl.year?tpl.year+' · ':''}${esc(tpl.name)}</h3>${UI.tplInfoHTML(tpl,true)}<div class="card ${mine?'':'mv'}"><b>${mine?'플레이할 나라를 고르세요':esc(d.names[cur]||('지휘관 '+(cur+1)))+'이(가) 고르는 중'}</b><div class="sm muted" style="margin-top:4px">${mine?'목록이나 지도에서 나라를 눌러 살펴본 뒤 선택하세요. 나머지 나라는 AI가 맡아요.':'기다리는 동안 나라들을 둘러보세요.'}</div></div>`;
     if(C.tplSel!=null){const n=tpl.nations[C.tplSel],tk=takenBy[C.tplSel];
-      h+=`<div class="card" style="border-left-color:${n.color}"><div class="nat">${fl(n)}${esc(n.name)}</div><div class="sm muted" style="margin:3px 0">지역 ${n.count}곳 · 수도 ${esc(TDEF[n.cap].name)}${n.inc>1?` · 경제력 ×${n.inc}`:''}${n.neu?' · 중립 성향':''}</div>${UI.tplRelHTML(tpl,C.tplSel)}${UI.diffHTML(tpl,n)}
+      const pr=window.CERuler?CERuler.pick(tpl,n):null;
+      h+=`<div class="card" style="border-left-color:${n.color}"><div class="pkhead">${pr?`<div class="pkport">${pr.svg}</div>`:''}<div style="min-width:0;flex:1"><div class="nat">${fl(n)}${esc(n.name)}</div>${pr?`<div class="sm" style="margin:3px 0;color:var(--gold2)">${esc(pr.title)} ${esc(pr.name)}${pr.known?'':' <span class="muted">· 가상 인물</span>'}</div>`:''}<div class="sm muted" style="margin:3px 0">지역 ${n.count}곳 · 수도 ${esc(TDEF[n.cap].name)}${n.inc>1?` · 경제력 ×${n.inc}`:''}${n.neu?' · 중립 성향':''}</div></div></div>${UI.tplRelHTML(tpl,C.tplSel)}${UI.diffHTML(tpl,n)}
         ${mine&&tk==null?`<div class="row" style="margin-top:8px"><button class="btn primary wide" data-act="pickNation" data-k="${C.tplSel}">이 나라로 시작</button></div>`:(tk!=null?`<div class="sm" style="margin-top:6px;color:var(--gold2)">${esc(d.names[tk]||'')}이(가) 선택했어요.</div>`:'')}</div>`;}
     h+=`<h3>나라 목록 <span class="muted sm">${tpl.nations.length}개</span></h3><div class="natlist">`+tpl.nations.map((n,i)=>({n,i})).sort((a,b)=>b.n.count-a.n.count).map(({n,i})=>{const tk=takenBy[i];
       return `<button class="natcard ${C.tplSel===i?'on':''}" data-act="tplSel" data-k="${i}" ${tk!=null&&tk!==me?'':''}>${fl(n)}<div><b>${esc(n.name)}</b>${UI.diffTag(UI.diffOf(tpl,n))}<small>지역 ${n.count}곳${n.neu?' · 중립 성향':''}</small></div>${tk!=null?`<span class="chip ${tk===me?'me':'host'}">${tk===me?'내 나라':esc(d.names[tk]||'선택됨')}</span>`:''}</button>`;}).join('')+`</div>`;
@@ -8083,7 +8085,7 @@ extBot=function(pid){_eb(pid);try{botSph(pid);const ov=overlordOf(pid);if(ov!=nu
 const _mkv=makeView;
 makeView=function(pid,opts){const v=_mkv(pid,opts);
   try{const me=pid!=null?G.players[pid]:null;
-    v.players.forEach(o=>{const p=G.players[o.id];o.inf=Math.round(p.inf||0);o.vlv=lvOf(o.id);
+    v.tplId=G.tplId||null;v.players.forEach(o=>{const p=G.players[o.id];o.nk=p.nkey||null;o.inf=Math.round(p.inf||0);o.vlv=lvOf(o.id);
       let top=null;G.players.forEach(z=>{const pt=(z.sph&&z.sph[o.id])||0;if(pt>=20&&(!top||pt>top[1]))top=[z.id,Math.round(pt)];});if(top)o.spo=top;
       if(me&&o.id!==pid){const mp=(me.sph||{})[o.id];if(mp)o.mysph=Math.round(mp);if((me.sc||[]).includes(o.id))o.mysc=1;}
       if(me&&o.id===pid)o.scN=(me.sc||[]).length;});
@@ -8095,41 +8097,160 @@ const NC={on:false,mode:'card',id:null,a:null,b:null};
 const NAMES_A=['아','에','이','오','카','벨','마','세','라','도','알','칼','티','로','레','다'];
 const NAMES_B=['르덴','시안','로스','미르','리크','단','벤','토르','넬','반','디르','마르','센','큐스','렌'];
 function rng(seed){let s=(Math.abs(Math.floor(seed))>>>0)||1;return()=>(s=(Math.imul(s,1664525)+1013904223)>>>0)/4294967296;}
-function rulerOf(v,p){const reign=Math.floor((v.round||0)/40);const r=rng(p.id*131+reign*977+7);
-  const nm=NAMES_A[Math.floor(r()*NAMES_A.length)]+NAMES_B[Math.floor(r()*NAMES_B.length)];const g=GOV[p.gov]||GOV.mon;
+/* 역사 템플릿 통치자: '템플릿:나라키' → [이름, 직함(비우면 정치체제 기본), 외모]. 확실한 인물만 넣고 나머지는 시드 무작위 */
+const SKL='#f6dcc0',SKM='#e8c29a',SKT='#d3a074',SKD='#b98558',SKE='#ecce9f',WHT='#e8e4da',GRY='#cfc8bb',BLK='#1c1c1c';
+const WIG={hs:4,hair:WHT,beard:0,hat:'none',skin:SKL};
+const RULERS={
+ 'punic:car':['한니발 바르카','장군',{skin:SKT,hair:BLK,hs:0,beard:0,hat:'helmet'}],
+ 'sam:wei':['조예','황제',{skin:SKE,hair:BLK,hs:0,beard:3,hat:'mian'}],
+ 'sam:wu':['손권','황제',{skin:SKE,hair:BLK,hs:0,beard:2,bc:'#5a3a6a',hat:'mian'}],
+ 'sam:shu':['유선','황제',{skin:SKE,hair:BLK,hs:0,beard:3,hat:'mian'}],
+ 'age:spa1':['이사벨 1세','여왕',{fem:1,hs:6,hair:'#8a4a2a',skin:SKL}],
+ 'age:spa':['페르난도 2세','국왕',{hs:2,hair:'#5a3a22',beard:0,skin:SKM}],
+ 'age:fra':['샤를 8세','국왕',{hs:2,hair:'#9a7a50',beard:0,skin:SKL}],
+ 'age:eng1':['헨리 7세','국왕',{hs:2,hair:'#7a6a5a',beard:0,old:1,skin:SKL}],
+ 'age:eng':['제임스 4세','국왕',{hs:2,hair:'#8a5a32',beard:0,skin:SKL}],
+ 'age:por':['주앙 2세','국왕',{hs:2,hair:'#2b2118',beard:1,skin:SKM}],
+ 'age:ott':['바예지드 2세','술탄',{hat:'turban',beard:2,hair:'#4a3322',bc:'#6a5a4a',skin:SKM}],
+ 'age:rus':['이반 3세','대공',{hat:'fur',beard:2,hair:'#6a4a2a',old:1,skin:SKL}],
+ 'age:ming':['홍치제','황제',{hat:'wing',beard:3,hair:BLK,skin:SKE,col:'#d6a82a'}],
+ 'age:kor':['성종','국왕',{hat:'wing',beard:2,hair:BLK,skin:SKE,col:'#a82a2a'}],
+ 'age:pol':['얀 1세 알브레히트','국왕',{hs:2,hair:'#7a5a3a',beard:0,skin:SKL}],
+ 'age:swe':['스텐 스투레','섭정',{hs:2,hair:'#6a4a2a',beard:1,hat:'none',skin:SKL}],
+ '1775:gbr':['조지 3세','국왕',{...WIG}],
+ '1775:fra':['루이 16세','국왕',{...WIG}],
+ '1775:spa':['카를로스 3세','국왕',{...WIG,old:1}],
+ '1775:pru':['프리드리히 2세(대왕)','국왕',{hs:4,hair:GRY,hat:'bicorn',uni:1,col:'#2a3a6a',old:1,skin:SKL}],
+ '1775:rus':['예카테리나 2세','여제',{fem:1,hs:6,hair:GRY,skin:SKL}],
+ '1775:hab':['요제프 2세','황제',{...WIG}],
+ '1775:ott':['압뒬하미트 1세','술탄',{hat:'turban',beard:2,hair:'#4a3322',bc:'#8a7a6a',old:1,skin:SKM}],
+ '1775:swe':['구스타브 3세','국왕',{...WIG}],
+ '1775:qing':['건륭제','황제',{hat:'qing',beard:3,hair:BLK,skin:SKE,old:1,col:'#d6a82a'}],
+ '1775:kor':['영조','국왕',{hat:'wing',beard:2,hair:BLK,bc:GRY,old:1,skin:SKE,col:'#a82a2a'}],
+ '1775:usa':['조지 워싱턴','총사령관',{hs:4,hair:WHT,beard:0,hat:'none',uni:1,col:'#2a3a6a',skin:SKL}],
+ 'imjin:jpn':['도요토미 히데요시','관백',{hat:'eboshi',beard:5,hair:BLK,skin:SKE,old:1}],
+ 'imjin:kor':['선조','국왕',{hat:'wing',beard:1,hair:BLK,skin:SKE,col:'#a82a2a'}],
+ 'imjin:mng':['만력제','황제',{hat:'wing',beard:3,hair:BLK,skin:SKE,col:'#d6a82a'}],
+ '1618:hab':['페르디난트 2세','대공',{hs:2,hair:'#5a4028',beard:5,skin:SKL}],
+ '1618:swe':['구스타브 2세 아돌프','국왕',{hs:2,hair:'#c9a060',beard:5,hat:'none',skin:SKL}],
+ '1618:fra':['루이 13세','국왕',{hs:2,hair:'#3a2a1a',beard:3,hat:'none',skin:SKL}],
+ '1618:spa':['펠리페 3세','국왕',{hs:2,hair:'#6a4a2a',beard:5,hat:'none',col:'#22222a',skin:SKM}],
+ '1618:eng':['제임스 1세','국왕',{hs:2,hair:'#6a5a4a',beard:5,hat:'none',skin:SKL}],
+ '1701:fra':['루이 14세','국왕',{hs:4,hair:'#2a2018',beard:3,hat:'none',skin:SKL}],
+ '1701:spa':['펠리페 5세','국왕',{hs:4,hair:'#4a3a2a',beard:0,hat:'none',skin:SKM}],
+ '1701:rus':['표트르 1세','차르',{hs:2,hair:'#2a2018',beard:3,hat:'none',uni:1,col:'#2a5a3a',skin:SKL}],
+ '1701:swe':['카를 12세','국왕',{hs:0,hair:'#7a5a3a',beard:0,hat:'tri',uni:1,col:'#2a3a6a',skin:SKL}],
+ '1701:gbr':['윌리엄 3세','국왕',{hs:4,hair:'#4a3a2a',beard:0,hat:'none',skin:SKL}],
+ '1701:hab':['레오폴트 1세','황제',{hs:4,hair:'#2a2018',beard:3,hat:'none',skin:SKL}],
+ '1701:ott':['무스타파 2세','술탄',{hat:'turban',beard:3,hair:'#2b2118',skin:SKM}],
+ '1701:pls':['아우구스트 2세','국왕',{hs:4,hair:'#4a3a2a',beard:3,hat:'none',skin:SKL}],
+ '1701:mor':['이스마일 이븐 샤리프','술탄',{hat:'turban',beard:2,hair:BLK,bc:WHT,skin:SKD,old:1}],
+ '1803:fra':['나폴레옹 보나파르트','제1통령',{hs:1,hair:'#5a3a22',beard:0,hat:'bicorn',uni:1,col:'#1f3a6a',skin:SKM}],
+ '1803:rus':['알렉산드르 1세','황제',{hs:1,hair:'#b09060',beard:4,hat:'none',uni:1,col:'#2a5a3a',skin:SKL}],
+ '1803:gbr':['조지 3세','국왕',{hs:0,hair:WHT,beard:0,hat:'none',old:1,skin:SKL}],
+ '1803:hab':['프란츠 2세','황제',{hs:0,hair:'#7a5a3a',beard:0,hat:'none',uni:1,col:'#e8e4d8',skin:SKL}],
+ '1803:ott':['셀림 3세','술탄',{hat:'turban',beard:1,hair:BLK,skin:SKM}],
+ '1803:swe':['구스타브 4세 아돌프','국왕',{hs:0,hair:'#7a5a3a',beard:0,hat:'none',uni:1,col:'#2a3a6a',skin:SKL}],
+ '1803:saf':['파트흐 알리 샤','샤',{hat:'fur',hc:'#141414',beard:2,hair:'#0e0c0a',skin:SKM}],
+ 'crimea:rus':['니콜라이 1세','황제',{hs:5,hair:'#7a6a5a',beard:3,hat:'none',uni:1,col:'#2a5a3a',skin:SKL}],
+ 'crimea:ott':['압뒬메지트 1세','술탄',{hat:'fez',beard:3,hair:BLK,skin:SKM}],
+ 'crimea:fra':['나폴레옹 3세','황제',{hs:5,hair:'#5a4a3a',beard:5,hat:'none',uni:1,col:'#1f3a6a',skin:SKL}],
+ 'crimea:gbr':['빅토리아 여왕','여왕',{fem:1,hs:6,hair:'#6a5a4a',col:'#22222a',hat:'none',skin:SKL}],
+ 'crimea:hab':['프란츠 요제프 1세','황제',{hs:0,hair:'#5a4a3a',beard:4,hat:'none',uni:1,col:'#e8e4d8',skin:SKL}],
+ 'crimea:sar':['비토리오 에마누엘레 2세','국왕',{hs:0,hair:'#5a4a3a',beard:3,hat:'none',uni:1,col:'#2a3a6a',skin:SKM}],
+ 'crimea:spa':['이사벨 2세','여왕',{fem:1,hs:6,hair:'#3a2a1a',skin:SKM}],
+ 'ger:pru':['빌헬름 1세','국왕',{hs:5,hair:'#e0dcd4',beard:4,hat:'pickel',uni:1,col:'#2a3a6a',old:1,skin:SKL}],
+ 'ger:hab':['프란츠 요제프 1세','황제',{hs:0,hair:'#5a4a3a',beard:4,hat:'none',uni:1,col:'#e8e4d8',skin:SKL}],
+ 'ger:fra':['나폴레옹 3세','황제',{hs:5,hair:'#5a4a3a',beard:5,hat:'none',uni:1,col:'#1f3a6a',skin:SKL}],
+ 'ger:ita':['비토리오 에마누엘레 2세','국왕',{hs:0,hair:'#5a4a3a',beard:3,hat:'none',uni:1,col:'#2a3a6a',skin:SKM}],
+ 'ger:rus':['알렉산드르 2세','황제',{hs:5,hair:'#5a4a3a',beard:4,hat:'none',uni:1,col:'#2a5a3a',skin:SKL}],
+ 'ger:gbr':['빅토리아 여왕','여왕',{fem:1,hs:6,hair:'#6a5a4a',col:'#22222a',hat:'none',skin:SKL}],
+ 'ger:spa':['이사벨 2세','여왕',{fem:1,hs:6,hair:'#3a2a1a',skin:SKM}],
+ 'ger:ott':['압뒬아지즈','술탄',{hat:'fez',beard:1,hair:BLK,skin:SKM}],
+ 'civil:uni':['에이브러햄 링컨','대통령',{hs:0,hair:'#2a2018',beard:6,hat:'none',col:'#22222a',skin:SKM,old:1}],
+ 'civil:con':['제퍼슨 데이비스','대통령',{hs:0,hair:GRY,beard:6,hat:'none',col:'#6a6a70',skin:SKL,old:1}]};
+const hashS=s=>{let h=7;for(const c of String(s))h=(Math.imul(h,31)+c.charCodeAt(0))>>>0;return h;};
+
+function rulerOf(v,p){const reign=Math.floor((v.round||0)/40);let seed=p.id*131+reign*977+7,cur=null;
+  if(v.tplId&&p.nk){seed=hashS(v.tplId+':'+p.nk)+reign*977;if(!reign)cur=RULERS[v.tplId+':'+p.nk]||null;}
+  const g=GOV[p.gov]||GOV.mon;if(cur)return {title:cur[1]||g.r,name:cur[0],seed,look:cur[2]};
+  const r=rng(seed);const nm=NAMES_A[Math.floor(r()*NAMES_A.length)]+NAMES_B[Math.floor(r()*NAMES_B.length)];
   const num=(p.gov==='mon'||p.gov==='emp')?` ${(reign%5)+1}세`:'';
-  return {title:g.r,name:nm+num,seed:p.id*131+reign*977+7};}
+  return {title:g.r,name:nm+num,seed,look:null};}
+/* 나라 고르는 화면용: 정치체제를 이름으로 어림하고, 알려진 통치자면 그 외모로, 아니면 시드 무작위로 그린다 */
+function pickGov(tpl,n){const nm=String(n.name||''),k=n.k,T=String(tpl.id).replace(/eu$/,'');
+  if(/인민|소비에트|소련/.test(nm))return 'com';if(T==='1939'&&['deu','ita','spa'].includes(k))return 'tot';
+  if(T==='korea')return ['prk','chn','sov','sovf','mon','vnm'].includes(k)?'com':k==='jpn'?'par':'rep';
+  if(T==='2026')return ['mar','jor'].includes(k)?'mon':/왕국/.test(nm)?'mon':'par';
+  if(k==='usa')return 'rep';if(/제국/.test(nm))return 'emp';if(/왕국/.test(nm))return 'mon';if(/공화|대륙회의|연방|연맹|연합/.test(nm))return 'rep';
+  if(/왕조|술탄|공국|칸국|차르|군주국|토후|이맘|베일릭|총독|교황/.test(nm))return 'mon';
+  if((tpl.year||0)>=1920)return ['eng','sca','nld','irl'].includes(n.cult)?'par':'rep';return 'mon';}
+window.CERuler={pick(tpl,n){const key=tpl.id+':'+n.k,gov=pickGov(tpl,n),cur=RULERS[key]||null,seed=hashS(key);
+  let cu=n.cult;if(!cu||cu==='mix'){try{cu=(TDEF[n.cap]||{}).cu||'mix';}catch(e){cu='mix';}}
+  const g=GOV[gov]||GOV.mon,r=rng(seed);const nm=NAMES_A[Math.floor(r()*NAMES_A.length)]+NAMES_B[Math.floor(r()*NAMES_B.length)]+((gov==='mon'||gov==='emp')?' 1세':'');
+  return {svg:portrait(seed,gov,n.color,cu,cur?cur[2]:null),name:cur?cur[0]:nm,title:cur&&cur[1]||g.r,known:!!cur};}};
 /* 민족(문화)에 따라 피부색과 머리색 범위가 달라진다 */
 const SK_N=['sca','ger','eng','nld','bal','rus','slav','ukr','pol','irl','gau','cze','fra'],SK_S=['lat','ibe','spa','por','ita','grc','rom','alb','hun','cau','heb'],SK_M=['ara','per','tur','pun'],SK_E=['chn','kor','jpn','mon'];
 const SKIN={n:['#f6dcc0','#f1cfa8','#f4d6bd'],s:['#e3b88a','#dcad7a','#e8c29a'],m:['#c99468','#b98558','#d3a074'],e:['#ecce9f','#e6c394','#f0d4aa'],x:['#f1cfa8','#e3b88a','#c99468','#a9703f','#f6dcc0']};
 const HAIR={n:['#d8c27a','#b9b2a6','#7a5a34','#4a3322','#9a6a3a'],s:['#2b2118','#4a3322','#1c1c1c','#5a3a22'],m:['#1c1c1c','#2b2118','#1a1410'],e:['#1c1c1c','#2b2118','#15110d'],x:['#2b2118','#4a3322','#7a5a34','#b9b2a6','#d8c27a','#1c1c1c']};
 const grpOf=c=>SK_N.includes(c)?'n':SK_S.includes(c)?'s':SK_M.includes(c)?'m':SK_E.includes(c)?'e':'x';
-function portrait(seed,gov,col,cult){const r=rng(seed*7919+3);const pk=a=>a[Math.floor(r()*a.length)];const G2=grpOf(cult);
-  const skin=pk(SKIN[G2]),hair=pk(HAIR[G2]);
-  const beard=pk([0,1,2,0,1]),hs=pk([0,1,2,3]),ey=pk([0,1,2]),mo=pk([0,1,2]);
+/* 통치자 초상화: 인물 특징(look)으로 덮어쓰기. look = {skin,hair,bc(수염색),hs,beard,hat,hc(모자색),col,fem,old,uni}
+   hs 4=가발 5=벗겨진 이마 6=긴 머리(여성) / beard 3=콧수염 4=구레나룻+콧수염 5=염소수염+콧수염 6=턱수염 */
+function portrait(seed,gov,col,cult,L){L=L||{};const r=rng(seed*7919+3);const pk=a=>a[Math.floor(r()*a.length)];const G2=grpOf(cult);
+  let skin=pk(SKIN[G2]),hair=pk(HAIR[G2]);
+  let beard=pk([0,1,2,0,1]),hs=pk([0,1,2,3]);const ey=pk([0,1,2]),mo=pk([0,1,2]);
+  if(L.skin)skin=L.skin;if(L.hair)hair=L.hair;if(L.beard!=null)beard=L.beard;if(L.hs!=null)hs=L.hs;if(L.col)col=L.col;
+  const bc=L.bc||hair,fem=!!L.fem,hat=L.hat||'',hc=L.hc;if(fem)beard=0;
   let s=`<svg viewBox="0 0 88 104" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><rect width="88" height="104" fill="#dbc88f"/><rect y="70" width="88" height="34" fill="#c9b27a"/>`;
   s+=`<path d="M4 104Q8 76 44 72Q80 76 84 104Z" fill="${col}" stroke="#0005"/>`;
   if(gov==='mon'||gov==='emp')s+=`<path d="M22 79Q44 96 66 79L61 73Q44 85 27 73Z" fill="#f4efe2"/><circle cx="34" cy="83" r="1.3" fill="#222"/><circle cx="44" cy="87" r="1.3" fill="#222"/><circle cx="54" cy="83" r="1.3" fill="#222"/>`;
   else if(gov==='rep'||gov==='par')s+=`<path d="M35 72L44 92L53 72Z" fill="#f4efe2"/><path d="M42 80h4l2 16h-8z" fill="#8a1c1c"/>`;
   else if(gov==='tot')s+=`<rect x="26" y="75" width="10" height="5" fill="#d8b24a"/><rect x="52" y="75" width="10" height="5" fill="#d8b24a"/><circle cx="30" cy="92" r="2.5" fill="#d8b24a"/><circle cx="38" cy="94" r="2.5" fill="#c0392b"/>`;
   else s+=`<path d="M33 72h22v9H33z" fill="${col}" stroke="#0006"/><circle cx="44" cy="86" r="1.4" fill="#222"/><circle cx="44" cy="93" r="1.4" fill="#222"/>`;
+  if(L.uni)s+=`<path d="M6 92Q8 80 22 77L27 85Q16 86 11 96Z M82 92Q80 80 66 77L61 85Q72 86 77 96Z" fill="#d8b24a" stroke="#0006"/><path d="M30 76L44 94L58 76" stroke="#d8b24a" stroke-width="2.4" fill="none"/>`;
   s+=`<rect x="38" y="58" width="12" height="16" fill="${skin}"/><ellipse cx="27" cy="46" rx="3" ry="5" fill="${skin}"/><ellipse cx="61" cy="46" rx="3" ry="5" fill="${skin}"/>`;
-  if(hs!==3||(gov!=='mon'&&gov!=='emp'))s+=`<path d="M26 44Q24 20 44 20Q64 20 62 44Q60 30 44 30Q28 30 26 44Z" fill="${hair}"/>`;
+  if(hs===4)s+=`<path d="M24 46Q20 18 44 16Q68 18 64 46Q68 60 60 64L58 52Q44 28 30 52L28 64Q20 60 24 46Z" fill="${hair}"/><g fill="${hair}" stroke="#0003"><circle cx="24" cy="48" r="4.5"/><circle cx="24" cy="57" r="4.5"/><circle cx="64" cy="48" r="4.5"/><circle cx="64" cy="57" r="4.5"/></g>`;
+  else if(hs===5)s+=`<path d="M26 40Q24 52 28 58Q28 48 30 42Z M62 40Q64 52 60 58Q60 48 58 42Z" fill="${hair}"/>`;
+  else if(hs===6)s+=`<path d="M24 44Q22 18 44 18Q66 18 64 44Q68 64 60 80L54 70L34 70L28 80Q20 64 24 44Z" fill="${hair}"/>`;
+  else if(hs!==3||(gov!=='mon'&&gov!=='emp'))s+=`<path d="M26 44Q24 20 44 20Q64 20 62 44Q60 30 44 30Q28 30 26 44Z" fill="${hair}"/>`;
   s+=`<ellipse cx="44" cy="45" rx="17" ry="21" fill="${skin}"/>`;
   if(hs===0)s+=`<path d="M27 40Q28 24 44 24Q60 24 61 40Q56 31 44 31Q32 31 27 40Z" fill="${hair}"/>`;
   else if(hs===1)s+=`<path d="M27 38Q30 22 44 22Q58 22 61 38Q50 28 38 34Q32 36 27 38Z" fill="${hair}"/>`;
   else if(hs===2)s+=`<path d="M27 42Q26 24 44 23Q62 24 61 42Q58 30 44 30Q30 30 27 42Z" fill="${hair}"/><path d="M26 40Q23 52 27 60Q26 48 29 42Z M62 40Q65 52 61 60Q62 48 59 42Z" fill="${hair}"/>`;
-  if(beard===1)s+=`<path d="M29 52Q32 66 44 67Q56 66 59 52Q54 58 44 58Q34 58 29 52Z" fill="${hair}"/>`;
-  else if(beard===2)s+=`<path d="M28 50Q30 74 44 76Q58 74 60 50Q54 60 44 60Q34 60 28 50Z" fill="${hair}"/>`;
+  else if(hs===4)s+=`<path d="M27 40Q28 22 44 21Q60 22 61 40Q56 30 44 29Q32 30 27 40Z" fill="${hair}"/>`;
+  else if(hs===5)s+=`<path d="M32 31Q44 24 56 31Q50 28 44 28Q38 28 32 31Z" fill="${hair}"/>`;
+  else if(hs===6)s+=`<path d="M27 40Q28 24 44 24Q60 24 61 40Q56 31 44 31Q32 31 27 40Z" fill="${hair}"/><path d="M44 24V31" stroke="#0004"/>`;
+  if(L.old)s+=`<path d="M35 33Q44 31 53 33M36 36Q44 34 52 36M36 53Q37 58 39 60M52 53Q51 58 49 60" stroke="#0003" stroke-width="1" fill="none"/>`;
+  const MU=`<path d="M34 56Q39 52 44 55Q49 52 54 56Q49 59 44 57Q39 59 34 56Z" fill="${bc}"/>`;
+  if(beard===1)s+=`<path d="M29 52Q32 66 44 67Q56 66 59 52Q54 58 44 58Q34 58 29 52Z" fill="${bc}"/>`;
+  else if(beard===2)s+=`<path d="M28 50Q30 74 44 76Q58 74 60 50Q54 60 44 60Q34 60 28 50Z" fill="${bc}"/>`;
+  else if(beard===3)s+=MU;
+  else if(beard===4)s+=`<path d="M27 40Q26 56 33 62Q31 50 31 42Z M61 40Q62 56 55 62Q57 50 57 42Z" fill="${bc}"/>`+MU;
+  else if(beard===5)s+=MU+`<path d="M40 62Q44 74 48 62Q44 65 40 62Z" fill="${bc}"/>`;
+  else if(beard===6)s+=`<path d="M28 52Q30 68 44 70Q58 68 60 52Q58 60 44 62Q30 60 28 52Z" fill="${bc}"/>`;
   const ex=ey===0?3:ey===1?2.4:3.4;
   s+=`<ellipse cx="37" cy="44" rx="${ex}" ry="1.8" fill="#fff"/><ellipse cx="51" cy="44" rx="${ex}" ry="1.8" fill="#fff"/><circle cx="37" cy="44" r="1.3" fill="#222"/><circle cx="51" cy="44" r="1.3" fill="#222"/>`;
   s+=`<path d="M32 39Q37 36 42 39M46 39Q51 36 56 39" stroke="${hair}" stroke-width="1.8" fill="none"/><path d="M44 46L42 54H46" stroke="#0007" stroke-width="1" fill="none"/>`;
-  s+=mo===0?`<path d="M39 58Q44 61 49 58" stroke="#7a2e2e" stroke-width="1.6" fill="none"/>`:mo===1?`<path d="M39 59H49" stroke="#7a2e2e" stroke-width="1.6"/>`:`<path d="M39 60Q44 57 49 60" stroke="#7a2e2e" stroke-width="1.6" fill="none"/>`;
-  if(gov==='mon')s+=`<path d="M28 24L31 10L37 19L44 7L51 19L57 10L60 24Z" fill="#e2b73c" stroke="#7a5a10"/><circle cx="44" cy="12" r="2" fill="#c0392b"/>`;
-  else if(gov==='emp')s+=`<path d="M26 25L29 11L36 20L44 5L52 20L59 11L62 25Z" fill="#e2b73c" stroke="#7a5a10"/><circle cx="44" cy="10" r="2.4" fill="#2f6fd0"/><path d="M44 0V6M41 3H47" stroke="#7a5a10" stroke-width="1.6"/>`;
-  else if(gov==='tot')s+=`<path d="M25 28Q44 12 63 28L63 33H25Z" fill="#3a3f2c" stroke="#0007"/><circle cx="44" cy="25" r="3" fill="#d8b24a"/><rect x="25" y="29" width="38" height="4" fill="#222"/>`;
-  else if(gov==='com')s+=`<path d="M26 28Q44 14 62 28L62 31H26Z" fill="#4a5a3a" stroke="#0007"/><path d="M42 21l2-3 2 3-2 2z" fill="#c0392b"/>`;
+  if(fem)s+=`<path d="M40 59Q44 62 48 59Q44 57.5 40 59Z" fill="#b04a55"/><path d="M33 43L31 41M55 43L57 41" stroke="#222" stroke-width="1"/><circle cx="27" cy="52" r="1.7" fill="#e2b73c"/><circle cx="61" cy="52" r="1.7" fill="#e2b73c"/>`;
+  else s+=mo===0?`<path d="M39 58Q44 61 49 58" stroke="#7a2e2e" stroke-width="1.6" fill="none"/>`:mo===1?`<path d="M39 59H49" stroke="#7a2e2e" stroke-width="1.6"/>`:`<path d="M39 60Q44 57 49 60" stroke="#7a2e2e" stroke-width="1.6" fill="none"/>`;
+  const H=hat||(gov==='mon'?'crown':gov==='emp'?'empc':gov==='tot'?'tot':gov==='com'?'com':'');
+  if(H==='crown')s+=`<path d="M28 24L31 10L37 19L44 7L51 19L57 10L60 24Z" fill="#e2b73c" stroke="#7a5a10"/><circle cx="44" cy="12" r="2" fill="#c0392b"/>`;
+  else if(H==='empc')s+=`<path d="M26 25L29 11L36 20L44 5L52 20L59 11L62 25Z" fill="#e2b73c" stroke="#7a5a10"/><circle cx="44" cy="10" r="2.4" fill="#2f6fd0"/><path d="M44 0V6M41 3H47" stroke="#7a5a10" stroke-width="1.6"/>`;
+  else if(H==='tot')s+=`<path d="M25 28Q44 12 63 28L63 33H25Z" fill="#3a3f2c" stroke="#0007"/><circle cx="44" cy="25" r="3" fill="#d8b24a"/><rect x="25" y="29" width="38" height="4" fill="#222"/>`;
+  else if(H==='com')s+=`<path d="M26 28Q44 14 62 28L62 31H26Z" fill="#4a5a3a" stroke="#0007"/><path d="M42 21l2-3 2 3-2 2z" fill="#c0392b"/>`;
+  else if(H==='tri')s+=`<path d="M17 32L44 11L71 32Q44 25 17 32Z" fill="#1b1b22" stroke="#d8b24a" stroke-width="1"/>`;
+  else if(H==='bicorn')s+=`<path d="M6 33Q20 12 44 16Q68 12 82 33Q66 25 44 27Q22 25 6 33Z" fill="#14141a" stroke="#0008"/><circle cx="44" cy="22" r="2.2" fill="#c0392b"/><path d="M44 20v4" stroke="#fff" stroke-width=".8"/>`;
+  else if(H==='turban')s+=`<path d="M23 32Q25 8 44 8Q63 8 65 32Q44 22 23 32Z" fill="#f4efe2" stroke="#9a8f78"/><path d="M25 26Q44 14 63 26M24 30Q44 19 64 30" stroke="#9a8f78" fill="none"/><circle cx="44" cy="17" r="2.2" fill="#c0392b"/><path d="M44 9Q50 -1 57 4Q51 6 47 11Z" fill="#c0392b"/>`;
+  else if(H==='fez')s+=`<path d="M28 31L31 10Q44 6 57 10L60 31Q44 27 28 31Z" fill="#b02a2a" stroke="#0007"/><path d="M44 8Q58 6 62 20" stroke="#1a1a1a" fill="none" stroke-width="1.4"/>`;
+  else if(H==='fur')s+=`<path d="M23 33Q21 6 44 6Q67 6 65 33Q44 24 23 33Z" fill="${hc||'#5a4636'}" stroke="#0007"/><path d="M28 24Q44 17 60 24" stroke="#0004" fill="none"/>`;
+  else if(H==='pickel')s+=`<path d="M26 31Q26 14 44 13Q62 14 62 31Q44 25 26 31Z" fill="#2a2f3a" stroke="#0008"/><path d="M44 0L47 13H41Z" fill="#d8b24a"/><path d="M26 29Q44 24 62 29V33Q44 28 26 33Z" fill="#d8b24a"/>`;
+  else if(H==='helmet')s+=`<path d="M25 36Q24 10 44 9Q64 10 63 36L59 36Q58 20 44 18Q30 20 29 36Z" fill="#a8844a" stroke="#4a3515"/><path d="M44 9Q50 -2 58 6Q52 6 48 10Z" fill="#b02a2a"/>`;
+  else if(H==='mian')s+=`<path d="M28 26Q44 15 60 26V31H28Z" fill="#1c1c1c" stroke="#0008"/><path d="M16 15H72V21H16Z" fill="#1c1c1c" stroke="#d8b24a"/><path d="M26 21V33M32 21V33M38 21V33M50 21V33M56 21V33M62 21V33" stroke="#d8c27a" stroke-width="1.2"/>`;
+  else if(H==='wing')s+=`<path d="M30 30Q30 11 44 11Q58 11 58 30Q44 24 30 30Z" fill="#1c1c1c" stroke="#0008"/><path d="M30 20Q14 17 6 22Q14 27 30 26Z M58 20Q74 17 82 22Q74 27 58 26Z" fill="#1c1c1c" stroke="#d8b24a" stroke-width=".6"/>`;
+  else if(H==='qing')s+=`<path d="M26 32Q26 10 44 10Q62 10 62 32Q44 25 26 32Z" fill="#1c1c1c" stroke="#0008"/><path d="M26 28Q44 22 62 28V32Q44 27 26 32Z" fill="#7a1c1c"/><circle cx="44" cy="9" r="3.4" fill="#c0392b"/><path d="M44 9L37 21M44 9L51 21M44 9V22" stroke="#c0392b" stroke-width="1.2"/>`;
+  else if(H==='eboshi')s+=`<path d="M30 32Q27 14 40 8Q52 3 60 9Q57 20 60 32Q44 26 30 32Z" fill="#14141a" stroke="#0008"/>`;
   s+=`</svg>`;return s;}
+
 
 const CSS=`#ncard{position:fixed;inset:0;z-index:9000;background:rgba(6,10,18,.88);display:flex;align-items:center;justify-content:center}#ncard.hidden{display:none}
 #ncard .nc-body{overflow:auto;padding:12px 16px}
@@ -8168,7 +8289,7 @@ function renderCard(v){const p=v.players[NC.id];if(!p)return '';const me=v.playe
     if(p.isBot&&me.over==null&&p.over==null&&!p.landless&&v.phase==='plan'&&!v.spec)acts+=`<div class="nc-acts"><button data-b158="sph" data-to="${p.id}" class="${p.mysc?'on':''}">${p.mysc?'영향력 행사 중단':'영향력 행사 (매턴 12금)'}</button></div>`;}
   acts+=`<div class="nc-acts"><button data-b158="cmp" data-to="${p.id}">⚖ 국가 비교</button></div>`;
   return `<div class="wlbox"><div class="wlhead"><button class="btn sm" data-b158="back">← 뒤로</button><h2>국가 정보</h2></div><div class="nc-body">
-    <div class="nc-head"><div class="nc-port">${portrait(R.seed,p.gov,p.color,p.cult)}</div><div style="min-width:0"><div style="font-size:18px;font-weight:700">${fl(p)} ${esc(p.kingdom)}</div><div style="margin-top:4px">${g.n} · ${esc(R.title)} <b>${esc(R.name)}</b></div><div class="muted" style="font-size:12px;margin-top:2px">${FAITH[p.fai]?FAITH[p.fai].ic+' '+FAITH[p.fai].n:''}${p.persona?' · '+esc(p.persona):''}</div></div></div>
+    <div class="nc-head"><div class="nc-port">${portrait(R.seed,p.gov,p.color,p.cult,R.look)}</div><div style="min-width:0"><div style="font-size:18px;font-weight:700">${fl(p)} ${esc(p.kingdom)}</div><div style="margin-top:4px">${g.n} · ${esc(R.title)} <b>${esc(R.name)}</b></div><div class="muted" style="font-size:12px;margin-top:2px">${FAITH[p.fai]?FAITH[p.fai].ic+' '+FAITH[p.fai].n:''}${p.persona?' · '+esc(p.persona):''}</div></div></div>
     <div style="margin-top:10px">${rel}${METR.map(([l,get])=>row(v,l,p,get,mxOf(get))).join('')}</div>${acts}</div></div>`;}
 function renderCmp(v){const al=v.players.filter(z=>z.alive);const A=v.players[NC.a],B=v.players[NC.b];if(!A||!B)return '';
   const opt=sel=>al.map(z=>`<option value="${z.id}" ${z.id===sel?'selected':''}>${esc(String(z.kingdom).split('(')[0])}</option>`).join('');
@@ -8176,7 +8297,7 @@ function renderCmp(v){const al=v.players.filter(z=>z.alive);const A=v.players[NC
     return `<div class="nc-cmp"><b style="text-align:left">${num(a)}</b><div class="bl"><i style="width:${a==null?0:Math.max(2,Math.round(a/mx*100))}%;background:${cl?'#b02a2a':A.color}"></i></div><span class="m">${l}</span><div class="br"><i style="width:${b==null?0:Math.max(2,Math.round(b/mx*100))}%;background:${cl?'#b02a2a':B.color}"></i></div><b style="text-align:right">${num(b)}</b></div>`;}).join('');
   const RA=rulerOf(v,A),RB=rulerOf(v,B);
   return `<div class="wlbox"><div class="wlhead"><button class="btn sm" data-b158="back">← 뒤로</button><h2>국가 비교</h2></div><div class="nc-body">
-    <div class="nc-sel"><div class="nc-pt">${portrait(RA.seed,A.gov,A.color,A.cult)}</div><select data-b158sel="a">${opt(NC.a)}</select><span>vs</span><select data-b158sel="b">${opt(NC.b)}</select><div class="nc-pt">${portrait(RB.seed,B.gov,B.color,B.cult)}</div></div>${rows}</div></div>`;}
+    <div class="nc-sel"><div class="nc-pt">${portrait(RA.seed,A.gov,A.color,A.cult,RA.look)}</div><select data-b158sel="a">${opt(NC.a)}</select><span>vs</span><select data-b158sel="b">${opt(NC.b)}</select><div class="nc-pt">${portrait(RB.seed,B.gov,B.color,B.cult,RB.look)}</div></div>${rows}</div></div>`;}
 function render(){const b=box();const v=C.view;if(!v||!v.players){return;}b.innerHTML=NC.mode==='cmp'?renderCmp(v):renderCard(v);}
 function show(){const b=box();UI.navPush('ncard');b.classList.remove('hidden');NC.on=true;render();}
 function openCard(id){NC.mode='card';NC.id=id;show();}
