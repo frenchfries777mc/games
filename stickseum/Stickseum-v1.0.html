@@ -570,7 +570,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
     text-shadow:0 0 10px rgba(0,0,0,.5); white-space:nowrap;
     animation:splashPulse 1.1s ease-in-out infinite;
   }
-  .brand .splash{ position:absolute !important; left:95% !important; top:50% !important; z-index:5 !important; text-shadow:0 0 3px #000, 0 0 3px #000, 0 1px 6px rgba(0,0,0,.9) !important; opacity:1 !important; right:auto !important; bottom:auto !important; margin:0 !important; max-width:none !important; white-space:nowrap !important; text-align:left !important; transform-origin:0 100% !important; transform:translate(0,-100%) rotate(-30deg) !important; animation:splashPulseR 1.1s ease-in-out infinite !important; }      /* always: at the lower right end of the text logo, tilted 30 degrees (owner 11-06) */
+  .brand .splash{ position:absolute !important; left:95% !important; top:68% !important; z-index:5 !important; text-shadow:0 0 3px #000, 0 0 3px #000, 0 1px 6px rgba(0,0,0,.9) !important; opacity:1 !important; right:auto !important; bottom:auto !important; margin:0 !important; max-width:none !important; white-space:nowrap !important; text-align:left !important; transform-origin:0 100% !important; transform:translate(0,-100%) rotate(-30deg) !important; animation:splashPulseR 1.1s ease-in-out infinite !important; }      /* always: at the lower right end of the text logo, tilted 30 degrees (owner 11-06) */
   @keyframes splashPulseR{ 0%,100%{transform:translate(0,-100%) rotate(-30deg) scale(1);} 50%{transform:translate(0,-100%) rotate(-30deg) scale(1.1);} }
   @media (max-width:600px){ .brand .splash{ font-size:11px !important; left:100% !important; top:100% !important; transform-origin:100% 50% !important; transform:translate(-100%,-50%) rotate(-30deg) !important; animation:splashPulseM 1.1s ease-in-out infinite !important; } }      /* (a narrow screen: the text ends at the logo's lower right end so it stays on the screen) */
   @keyframes splashPulseM{ 0%,100%{transform:translate(-100%,-50%) rotate(-30deg) scale(1);} 50%{transform:translate(-100%,-50%) rotate(-30deg) scale(1.1);} }
@@ -1458,8 +1458,8 @@ const WEAPONS = {
             desc:'근거리 펠릿당 최대 13(5발 다 맞으면 65), 멀어질수록 최소 9까지 감소 · 쿨타임 1.2초 · 넓게 퍼지는 산탄'},
   rifle:   {id:'rifle',   name:'돌격소총', emoji:'🔫', kind:'gun',      dmg:9,  cd:1.2,  bulletSpeed:1000, shape:'bullet', burst:3, burstDelay:0.07,
             desc:'데미지 9(3연발) · 쿨타임 1.2초 · 클릭 한 번에 총알 3발을 빠르게 연사하는 소총'},
-  gloves:  {id:'gloves',  name:'권투글러브',emoji:'🥊', kind:'melee',   dmg:24, cd:0.25, range:70, shape:'fist',
-            desc:'데미지 24 · 쿨타임 0.25초 · 사거리 70 · 매우 빠르게 연타하는 잽'},
+  gloves:  {id:'gloves',  name:'권투글러브',emoji:'🥊', kind:'melee',   dmg:17, cd:0.3, range:70, shape:'fist',
+            desc:'데미지 17 · 쿨타임 0.3초 · 사거리 70 · 빠르게 연타하는 잽'},
   grenade: {id:'grenade', name:'수류탄',   emoji:'💣', kind:'explosive',dmg:56, cd:2.0,  bulletSpeed:600, splash:145, shape:'bomb', arcs:true,
             desc:'데미지 56 · 폭발반경 145 · 쿨타임 2.0초 · 중력에 의해 포물선으로 떨어지며 범위 안 전원에게 피해(자신 포함)'},
   bazooka: {id:'bazooka', name:'바주카포', emoji:'🚀', kind:'explosive',dmg:60, cd:2.8,  bulletSpeed:750, splash:150, shape:'rocket', arcs:true,
@@ -1582,7 +1582,7 @@ const ULTS = {
   bow:      {name:'불화살',       desc:'불화살 3발 동시 발사, 맞으면 지속 피해'},
   boomerang:{name:'부메랑 난무',   desc:'부메랑 5개를 부채꼴로 던짐'},
   shotgun:  {name:'삼연발',       desc:'산탄을 0.2초 간격으로 3연속 발사'},
-  gloves:   {name:'연타 러시',     desc:'3초간 공격 속도 3배'},
+  gloves:   {name:'연타 러시',     desc:'3초간 공격 속도 2배'},
   grenade:  {name:'집속탄',       desc:'소형 수류탄 5개를 부채꼴로 투척'},
   flamethrower:{name:'화염 방패', desc:'내 앞에 최대 60 피해를 막는 방패를 설치 (6초 지속, 나를 따라 이동하며 항상 바라보는 방향 앞에 위치, 그만큼 막으면 소멸) · 관통 공격은 막지 못하지만 데미지가 절반으로 줄고 그만큼 방패 내구도도 깎임'},
   portalgun:{name:'포탈 연결', desc:'현재 위치와 조준한 위치에 보라색 포탈 한 쌍을 생성 · 둘 중 하나에 닿으면 반대쪽으로 순간이동 (아군도 사용 가능, 나올 때 근처 적에게 12 피해와 약한 넉백, 새로 생성하면 기존 포탈은 사라짐)'},
@@ -5999,7 +5999,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-07-v729';
+const GAME_BUILD='build 2026-11-07-v730';
 const GAME_VERSION='1.0', GAME_VERSION_NAME='신화의 전설';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -6044,7 +6044,7 @@ const EMOJI_LOGO={"🚩": "flag", "🤖": "robot", "🧑‍🤝‍🧑": "twopeo
   if(document.body) start(); else document.addEventListener('DOMContentLoaded', start);
 })();
 function bLabel(b){ const n=buildNum(b); return n ? 'b'+n : '오래된 버전'; }          // a build is always shown as b123 (a version as v0.9)
-function verOf(d){ if(d && typeof d.ver==='string' && d.ver) return d.ver; const n=buildNum(d&&d.build); return n>=729 ? '1.0' : (n>=458 ? '0.9' : (n>0 ? '0.8' : '?')); }
+function verOf(d){ if(d && typeof d.ver==='string' && d.ver) return d.ver; const n=buildNum(d&&d.build); return n>=730 ? '1.0' : (n>=458 ? '0.9' : (n>0 ? '0.8' : '?')); }
 const VER_TAG=GAME_VERSION.replace(/\D/g,'');          // (in room names: 0.9 -> '09')
 function verNoteText(other){ return '버전이 달라요 (내 v'+GAME_VERSION+' / 방 v'+(other||'?')+') - 같은 버전끼리만 함께할 수 있어요'; }
 const WEEKLY_EVENTS=[
@@ -13907,7 +13907,7 @@ const SKILLS={
   shuriken: {name:'그림자 이동', kind:'move', desc:'조준 방향으로 짧게 순간이동하고 1초 은신'},
   shotgun:  {name:'충격파',      kind:'hit',  desc:'주변 적에게 18 피해 + 강하게 밀쳐냄'},
   rifle:    {name:'지뢰 설치',   kind:'hit',  desc:'바닥에 지뢰 2개를 설치 (최대 2개, 25초) · 밟은 적은 20 피해와 0.5초 기절 · 지뢰는 상대에게도 보임'},
-  gloves:   {name:'어퍼컷',      kind:'hit',  desc:'가까운 적에게 24 피해를 주고 공중으로 띄움'},
+  gloves:   {name:'어퍼컷',      kind:'hit',  desc:'가까운 적에게 17 피해를 주고 공중으로 띄움'},
   grenade:  {name:'폭발 점프',   kind:'move', desc:'폭발로 높이 뛰어오르며 주변에 56 피해'},
   bazooka:  {name:'3연발',       kind:'hit', desc:'조준 방향으로 로켓을 연속 3발 발사 (발당 피해 30)'},
   dagger:   {name:'암습',        kind:'move', desc:'가까운 적의 뒤로 순간이동, 다음 공격 즉시 가능'},
@@ -14180,7 +14180,7 @@ const SKILL_IMPL={
     pushFx('skillring', p.x, p.y-6, tMs, {color:'#8dff5a', r:60});
     return true;
   },
-  gloves(p,tSec,tMs,ax){ return !!skillHitFront(p,tMs,skillAimDir(p,ax),{range:110, h:90, dmg:24, kb:140, up:620}); },
+  gloves(p,tSec,tMs,ax){ return !!skillHitFront(p,tMs,skillAimDir(p,ax),{range:110, h:90, dmg:17, kb:140, up:620}); },
   grenade(p,tSec,tMs){ p.vy=-820; p.grounded=false; pushFx('explosion', p.x, p.y-10, tMs, {}); const n=skillPulse(p,tMs,{r:110, dmg:56, kb:380, up:260}); if(n>0){ p.pvLand=tSec; p.pvLandMin=tSec+0.3; } return true; },      // 폭발광: if the jump hurt somebody, the landing shoves and stuns (tickPassives)
   bazooka(p,tSec,tMs,ax,ay){      // 3연발: three rockets one after the other along the aim
     const a=aimAngleOf(p,ax,ay), w=WEAPONS.bazooka, w2=Object.assign({}, w, {dmg:BAZ_VOLLEY_DMG});
@@ -14883,8 +14883,8 @@ function tryFire0(p, angle, tMs){
     return;
   }
   const free = (w.kind==='cards' && p.freeVolleys>0 && p.freeUntil>tSec); // combo reward: 3 volleys that ignore the cooldown
-  const rush = (w.id==='gloves' && p.rushUntil>tSec); // ultimate: triple attack speed
-  const cdEff = ((w.id==='harald' && p.hrNoAxe)?0.75:1) * (free ? 0.15 : (rush ? w.cd/3-0.002 : (w.id==='pizarro' ? PZ_ATK_CD[pzStacks(p)] : w.cd))) * (p.isZombie?ZOMBIE_CD_MULT:1) * (gameMode==='hyperbr'?0.5:1) * (w.id==='pizarro'?1:pzCdMult(p)) * (skillHasBuff(p,'rapid',tSec)?0.5:1) * ((w.id==='pel' && pelN(p)>=PEL_MAX)?(1/1.2):1) * ((w.id==='kan' && p.kanWingsUntil>tSec)?KAN_ULT_CD_MULT:1);   // pistol skill: double fire rate
+  const rush = (w.id==='gloves' && p.rushUntil>tSec); // ultimate: double attack speed
+  const cdEff = ((w.id==='harald' && p.hrNoAxe)?0.75:1) * (free ? 0.15 : (rush ? w.cd/2-0.002 : (w.id==='pizarro' ? PZ_ATK_CD[pzStacks(p)] : w.cd))) * (p.isZombie?ZOMBIE_CD_MULT:1) * (gameMode==='hyperbr'?0.5:1) * (w.id==='pizarro'?1:pzCdMult(p)) * (skillHasBuff(p,'rapid',tSec)?0.5:1) * ((w.id==='pel' && pelN(p)>=PEL_MAX)?(1/1.2):1) * ((w.id==='kan' && p.kanWingsUntil>tSec)?KAN_ULT_CD_MULT:1);   // pistol skill: double fire rate
   if(tSec - p.lastShot < cdEff) return;
   if(free) p.freeVolleys--;
   p.lastShot = tSec;
@@ -16570,7 +16570,7 @@ const PASSIVES={
   gambler:{n:'승부사의 감',c:'#ffe27a'}, flamethrower:{n:'불길 질주',c:'#ff8a3d'}, portalgun:{n:'',q:1}, dagger:{n:'그림자 일격',c:'#c0c0ff'},
   dragonslayer:{n:'강인한 정신력',c:'#ffb84d'}, samurai:{n:'일섬 연참',c:'#ff5a6a'}, tionis:{n:'피의 연극',c:'#ff4d6a'}, bow:{n:'추격의 화살',c:'#9ad0ff'}, tell:{n:'당겨진 시위',q:1}, harald:{n:'강인한 맷집',q:1}
 };
-const PASSIVE_DESC={tell:"게이지가 찰수록 화살 피해가 1~64로 커지고, 빨라지고, 점점 일직선으로 날아감 (꽉 차면 완전한 일직선)", dragonslayer:"화염, 독, 전기 피해를 30% 덜 받음", bow:"스킬이 상대에게 맞으면 상대에게 끌려가 밀치고 기절시킴", pistol:"6번째 발사마다 탄환이 붉게 변하고 피해와 크기가 1.25배", smg:"연발을 모두 맞히면 주위 상대를 밀치고 3초 동안 이동속도 1.75배", lightsaber:"공격을 튕겨내면 다음 공격 피해 +20%", horemheb:"모래바람에 맞은 상대를 3초 안에 공격하면 피해 1.5배", pizarro:"4단계가 되면 치유 효과 2배, 이동속도 1.25배", puppeteer:"실이 이어진 상대를 조종하면 자폭 피해 +10", kan:"독이 4번 쌓인 상대는 이동속도 20% 감소", sword:"돌진 베기가 아무도 못 맞히고 끝나면 스킬 쿨타임 절반", bat:"상대를 4번 연속 맞히면 다음 공격이 매우 큰 넉백과 피해 1.25배", boomerang:"돌아오는 길에 맞히면 피해 1.5배", shuriken:"대쉬 후 표창을 맞히면 대쉬 쿨타임 0.3초 감소", shotgun:"알갱이를 모두 맞히면 상대 이동속도 20% 감소 (3초)", rifle:"지뢰를 밟은 상대는 3초 동안 이동속도 10% 감소", gloves:"피격마다 받는 피해가 1%씩 줄고, 10%가 되면 초기화되며 2.5초 동안 이동속도 2배와 공격 피해 1.5배", grenade:"폭발 점프로 피해를 주면 착지 때 근처 상대를 밀치고 기절", bazooka:"스킬 로켓 3발이 모두 맞으면 그 자리에 3초 동안 화염 (닿으면 초당 3 피해)", dagger:"암습 후 첫 일격이 맞으면 1초 동안 은신", dracula:"처치하면 체력 25 회복", gambler:"칩이 3개 이상이면 공격 피해 +10%", magiccard:"스킬 카드 5장이 모두 한 상대에게 맞으면 기절", kurus:"어둠 탈출 후 3초 동안 이동속도 1.5배", wizard:"마법진 안에서는 스킬 밀쳐내는 힘 2배", vacuum:"스택 1개마다 이동속도 +5%", pirate:"대포 비행으로 맞히면 스킬 쿨타임 3초 감소", cleon:"근위병이 살아 있는 동안 받는 피해 15% 감소", pel:"드론 6대가 모두 살아 있으면 드론 공격 속도 1.2배", portalgun:"탄환이 튕길 때마다 피해 증가", flamethrower:"내가 남긴 불길 위에서는 이동속도 1.3배와 초당 체력 3 회복", samurai:"거합으로 2명 이상 베면 거합 쿨타임 절반", tionis:"채혈 주사기가 맞으면 체력 10 회복", harald:"체력이 500 (다른 캐릭터는 300)"};      // the codex lines of the passives (the name comes from PASSIVES)
+const PASSIVE_DESC={tell:"게이지가 찰수록 화살 피해가 1~64로 커지고, 빨라지고, 점점 일직선으로 날아감 (꽉 차면 완전한 일직선)", dragonslayer:"화염, 독, 전기 피해를 30% 덜 받음", bow:"스킬이 상대에게 맞으면 상대에게 끌려가 밀치고 기절시킴", pistol:"6번째 발사마다 탄환이 붉게 변하고 피해와 크기가 1.25배", smg:"연발을 모두 맞히면 주위 상대를 밀치고 3초 동안 이동속도 1.75배", lightsaber:"공격을 튕겨내면 다음 공격 피해 +20%", horemheb:"모래바람에 맞은 상대를 3초 안에 공격하면 피해 1.5배", pizarro:"4단계가 되면 치유 효과 2배, 이동속도 1.25배", puppeteer:"실이 이어진 상대를 조종하면 자폭 피해 +10", kan:"독이 4번 쌓인 상대는 이동속도 20% 감소", sword:"돌진 베기가 아무도 못 맞히고 끝나면 스킬 쿨타임 절반", bat:"상대를 4번 연속 맞히면 다음 공격이 매우 큰 넉백과 피해 1.25배", boomerang:"돌아오는 길에 맞히면 피해 1.5배", shuriken:"대쉬 후 표창을 맞히면 대쉬 쿨타임 0.3초 감소", shotgun:"알갱이를 모두 맞히면 상대 이동속도 20% 감소 (3초)", rifle:"지뢰를 밟은 상대는 3초 동안 이동속도 10% 감소", gloves:"피격마다 받는 피해가 1%씩 줄고, 10%가 되면 초기화되며 2.5초 동안 이동속도 1.5배와 공격 피해 1.25배", grenade:"폭발 점프로 피해를 주면 착지 때 근처 상대를 밀치고 기절", bazooka:"스킬 로켓 3발이 모두 맞으면 그 자리에 3초 동안 화염 (닿으면 초당 3 피해)", dagger:"암습 후 첫 일격이 맞으면 1초 동안 은신", dracula:"처치하면 체력 25 회복", gambler:"칩이 3개 이상이면 공격 피해 +10%", magiccard:"스킬 카드 5장이 모두 한 상대에게 맞으면 기절", kurus:"어둠 탈출 후 3초 동안 이동속도 1.5배", wizard:"마법진 안에서는 스킬 밀쳐내는 힘 2배", vacuum:"스택 1개마다 이동속도 +5%", pirate:"대포 비행으로 맞히면 스킬 쿨타임 3초 감소", cleon:"근위병이 살아 있는 동안 받는 피해 15% 감소", pel:"드론 6대가 모두 살아 있으면 드론 공격 속도 1.2배", portalgun:"탄환이 튕길 때마다 피해 증가", flamethrower:"내가 남긴 불길 위에서는 이동속도 1.3배와 초당 체력 3 회복", samurai:"거합으로 2명 이상 베면 거합 쿨타임 절반", tionis:"채혈 주사기가 맞으면 체력 10 회복", harald:"체력이 500 (다른 캐릭터는 300)"};      // the codex lines of the passives (the name comes from PASSIVES)
 function passiveInfo(wid){ const d=PASSIVE_DESC[wid]; if(!d) return null; const p=PASSIVES[wid]||{}; return {name:p.n||({pistol:'붉은 탄환', wizard:'마법진의 파동', shotgun:'명사수의 위협', portalgun:'튕김 강화'})[wid]||'', desc:d}; }
 function pvPop(p, key, tMs){ const d=PASSIVES[key]; if(!d || d.q || !p || !p.alive || p.isClone) return; const tS=tMs/1000; if(!p.pvAt) p.pvAt={}; if(p.pvAt[key]>tS-1.0) return; p.pvAt[key]=tS; pushFx('passive', p.x, p.y-96, tMs, {name:d.n, color:d.c}); }
 function pvEdge(p, key, on, tMs){ if(!p.pvOn) p.pvOn={}; if(on && !p.pvOn[key]) pvPop(p, key, tMs); p.pvOn[key]=!!on; }
@@ -16601,13 +16601,13 @@ function pvAtkOf(p, tSec){ const a=p.pvAtk; return (a && Math.abs(tSec-a.t)<0.45
 function pvDealtExtra(att, target, dmg, tS){      // extra damage in every hit of a passive (on top of the hit itself)
   let m=0;
   if(att.weapon==='horemheb' && target.pvSandUntil>tS && target.pvSandBy===att.id) m+=0.5;         // 호렘헵: a target the sandstorm hit takes 1.5x for 3 s
-  if(att.pvBurstUntil>tS) m+=0.5;                                                                  // 복서: 1.5x attack damage while the toughness has burst
+  if(att.pvBurstUntil>tS) m+=0.25;                                                                  // 복서: 1.5x attack damage while the toughness has burst
   return dmg*m;
 }
 function pvOnTaken(target, tMs){      // 복서: every hit taken makes the next ones weaker; at 10% it bursts
   if(target.weapon!=='gloves' || !target.alive) return;
   target.pvToughN=(target.pvToughN||0)+1;
-  if(target.pvToughN>=10){ target.pvToughN=0; target.pvBurstUntil=tMs/1000+2.5; pvBoostSpeed(target, 2, 2.5, tMs); pvPop(target, 'gloves', tMs); pushFx('skillring', target.x, target.y-30, tMs, {color:'#ff6a4d', r:80}); }
+  if(target.pvToughN>=10){ target.pvToughN=0; target.pvBurstUntil=tMs/1000+2.5; pvBoostSpeed(target, 1.5, 2.5, tMs); pvPop(target, 'gloves', tMs); pushFx('skillring', target.x, target.y-30, tMs, {color:'#ff6a4d', r:80}); }
 }
 function pvMeleeEnd(p, hitAny, tMs){
   const tS=tMs/1000;
