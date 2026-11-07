@@ -557,7 +557,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 166</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 167</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div><p class="tagline">사절을 보내 동맹을 맺고, 군대를 보내 왕관을 차지하세요.</p></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -7961,7 +7961,7 @@ function sync(){if(!g.classList.contains('ce-mod'))return;const v=C.view;if(!v)r
    const tr=T.troops!=null?fmt(T.troops):'?';
    h=`${o?fl(o):'<span class="fl" style="background:#556"></span>'}<div><h3>${esc(td.name)}</h3><div class="sub">${esc((td.cc?td.cc+' · ':'')+k.tag+' · '+ter)}</div></div><div class="st"><span>병력</span><b>${tr}</b><i><u style="width:${T.troops!=null?Math.min(100,Math.round(T.troops/k.cap*100)):0}%"></u></i></div><div class="st"><span>방어 보정</span><b>+${def}%</b><i><u style="width:${Math.min(100,def/3)}%"></u></i></div><div class="st"><span>수입</span><b>${k.inc}</b><i><u style="width:${Math.min(100,k.inc)}%"></u></i></div>`;
    if(T.owner===v.me&&v.phase==='plan'&&!v.spec)h+='<div class="rec" data-tb="rec">모집</div>';}
-  h+=`<div class="ds" data-tb="ds"${/rec/.test(h)?'':' style="margin-left:auto"'}>선택 해제</div>`;bar.innerHTML=h;}}
+  h+=`<div class="ds" data-tb="dt"${/rec/.test(h)?'':' style="margin-left:auto"'}>자세히</div><div class="ds" data-tb="ds">선택 해제</div>`;bar.innerHTML=h;}}
 bar.addEventListener('click',e=>{if(e.target.closest('[data-tb=ds]')){C.sel=null;C.pend=null;C.win=false;UI.renderAll();return;}C.win=true;UI.renderAll();});
 dsl.addEventListener('click',()=>{C.sel=null;C.pend=null;C.win=false;UI.renderAll();});
 tabs.addEventListener('click',e=>{const b=e.target.closest('button[data-tab]');if(!b||!g.classList.contains('ce-mod'))return;const k=b.dataset.tab;
