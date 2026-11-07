@@ -80,3 +80,9 @@ html[data-ff-theme] .games .game:hover h2,html[data-ff-theme] .games .game:hover
 
 /* remove short gold bottom bars on rows / cards */
 html[data-ff-theme] .games .game::after,html[data-ff-theme] .games .game:hover::after,.games .game::after,.wi-go::after{display:none!important;content:none!important;width:0!important}
+
+/* 접속자 표시 (지금 N명 접속 중): 모든 사이트에서 Games와 똑같이 */
+.onl{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-top:18px;font-size:14.5px;color:var(--dim)} .onl:empty{display:none} .onl>b{color:var(--text)}
+.on-dot{width:9px;height:9px;border-radius:50%;background:#3fe0c5;box-shadow:0 0 0 0 rgba(63,224,197,.6);animation:onp 2s infinite} @keyframes onp{70%{box-shadow:0 0 0 8px rgba(63,224,197,0)}100%{box-shadow:0 0 0 0 rgba(63,224,197,0)}}
+html[data-ff-theme=light] .on-dot{background:#333}
+.on-c{padding:3px 10px;border-radius:99px;border:1px solid var(--line);background:var(--panel)} .on-c b{color:var(--text)}
