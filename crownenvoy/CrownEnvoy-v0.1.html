@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head><script src="https://frenchfries777.com/games/ff-oldguard.js"></script><style id="ffTap">html,body{touch-action:manipulation}</style>
+<head>
+<script id="ff-oldver">/* 이전 버전: 로그인을 뺀 서버(supabase) 연동은 끊는다 */
+(function(){var stub=function(){var p=new Proxy(function(){},{get:function(_,k){if(k==='then')return function(res){res({data:null,error:{message:'이전 버전은 서버에 연결하지 않아요'}});};return p;},apply:function(){return p;}});return p;};
+function wrap(sb){if(!sb||!sb.createClient||sb.__ffold)return;var cc=sb.createClient;sb.createClient=function(){var c=cc.apply(this,arguments);['from','rpc','channel','removeChannel','removeAllChannels','functions','storage'].forEach(function(k){try{Object.defineProperty(c,k,{configurable:true,writable:true,value:(k==='functions'||k==='storage')?stub():function(){return stub();}});}catch(e){}});return c;};sb.__ffold=1;}
+var v=window.supabase;try{Object.defineProperty(window,'supabase',{configurable:true,get:function(){return v;},set:function(x){v=x;wrap(x);}});}catch(e){}if(v)wrap(v);})();
+</script><script src="https://frenchfries777.com/games/ff-oldguard.js"></script><style id="ffTap">html,body{touch-action:manipulation}</style>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Crown Envoy</title>
