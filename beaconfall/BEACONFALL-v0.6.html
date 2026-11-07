@@ -10825,7 +10825,6 @@ function applyTF(tf,wipe){   // 모드가 바꾼 지형을 적용 (구역·나�
   TER.removed.fill(0);TER.brem.fill(0);
   for(const m of [TER.tkey,TER.bkey,TER.tgrid,TER.bgrid,TER.remPend,TER.bremPend,TER.convPend])m.clear();
   buildTreeGrid();
-  try{base=null;}catch(e){}
   if(wipe){
     world.structs=[];world.sgrid=new Map();world.fgrid=new Map();world.cgrid=new Map();world.rgrid=new Map();FIRE.clear();
     buildLandmarks();
