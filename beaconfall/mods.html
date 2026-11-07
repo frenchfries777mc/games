@@ -511,15 +511,15 @@ function parseScript(text,lenient){
 if(nv===''||nv==='-')nv=0;fc.push([rel?1:0,+nv]);}
         var ftg=m[5].toLowerCase(),fchn=m[7]!==undefined?+m[7]:null;
         if(fchn!==null&&(fchn<1||fchn>100))throw PE(l.n,'chance must be 1 to 100% (fill ... to ocean chance 50%)');
-        if(/^(land|beach|ocean|mountain|paint)$/.test(ftg)){
+        if(/^(land|beach|ocean|hills|mountain|paint)$/.test(ftg)){
           var fcb=null,fb=m[6]?m[6].toLowerCase():null;if(m[6]&&m[6].charAt(0)==='"'){fcb=m[6].slice(1,-1);fb=null;}if(fb&&BIOMES.indexOf(fb)<0)throw PE(l.n,"unknown biome '"+fb+"'. You can use: "+BIOMES.join(', '));
           if(ftg==='paint'&&!fb&&!fcb)throw PE(l.n,'paint needs a biome: fill 0 0 100 100 to paint "road"');
           var fa={c:fc,mode:ftg,b:fb};if(fcb)fa.cb=fcb;if(m[8])fa.rp=/^land$/i.test(m[8])?2:1;if(fchn!==null&&fchn<100)fa.ch=fchn;if(fvar)fa.v=fvar;if(ftv)fa.tv=ftv;if(fchv)fa.chv=fchv;if(frv)fa.rv=frv;if(frb){if(!ftv)throw PE(l.n,'replace <block> works when filling with a block: fill 0 0 99 99 to log replace stone');fa.rb=frb;}acts.push({fill:fa});
         }else{
           if(m[6])throw PE(l.n,"'"+m[6]+"' can't come after '"+m[5]+"'. Use: fill 0 0 99 99 to "+ftg+" chance 30%");
-          if(m[8])throw PE(l.n,"replace works with land, beach, ocean, mountain and paint only");
+          if(m[8])throw PE(l.n,"replace works with land, beach, ocean, hills, mountain and paint only");
           if(/^(tree|rock|iron|gold|copper|zinc)$/.test(ftg)){
-            if(frb||frv)throw PE(l.n,'replace works with land, beach, ocean, mountain, paint and block fills');
+            if(frb||frv)throw PE(l.n,'replace works with land, beach, ocean, hills, mountain, paint and block fills');
             if(fvar||fchv)acts.push({fill:{c:fc,mode:'land',b:null,v:fvar||undefined,tl:ftg,ch:fchn===null?undefined:fchn,chv:fchv||undefined}});
             else acts.push({fillx:{k:ftg,c:fc,ch:fchn===null?100:fchn}});}
           else{var fit=ftg.charAt(0)==='"'?'@'+ftg.slice(1,-1):item(l,m[5]);
