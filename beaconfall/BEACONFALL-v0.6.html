@@ -10983,19 +10983,33 @@ function modGenPlace(a){   // generate tree|rock|iron|gold|copper|zinc [x0 z0 x1
   tf.pl.push([box[0],box[1],box[2],box[3],kind,cnt,(Math.random()*2147483647)|0]);
   MOD.tfDirty=1;
 }
+function modFbPump(){   // fill ... to <블록>: 대기 중인 칸을 프레임마다 6ms 안에서 놓아요
+  const Q=MOD.fbQ||[];
+  if(!world||!TER){Q.length=0;MOD.fbRun=0;return;}
+  const t0=performance.now(),bulk=window.__bpBulk;window.__bpBulk=1;
+  try{
+    while(Q.length&&performance.now()-t0<6){
+      const j=Q[0];
+      if(j.gy>j.gy1||j.n>=3000||j.tot>=60000){if(j.n)saveWorld(true);Q.shift();continue;}
+      const gx=j.gx,gy=j.gy;
+      if(++j.gx>j.gx1){j.gx=j.gx0;j.gy++;}
+      j.tot++;
+      try{
+        if(j.ch<100&&(((Math.imul(gx,73856093)^Math.imul(gy,19349663)^0x2f1b)>>>0)%100)>=j.ch)continue;
+        ptShape(gx*GRID+8,gy*GRID+8);if(sV<SEA+0.02||sV>=0.97||(sB&128))continue;
+        if(canPlaceCell(gx,gy,j.k,true)){addStruct(j.k,gx,gy,'host',j.it);j.n++;}
+      }catch(e){}
+    }
+  }finally{window.__bpBulk=bulk;}
+  if(Q.length)requestAnimationFrame(modFbPump);else MOD.fbRun=0;
+}
 function modBuildPend(){const L=MOD.bPend||[];MOD.bPend=[];for(const b0 of L){try{
   if(b0.fb){   // fill ... to <블록>
     let it=b0.fb,k=it;if(it[0]==='@'){it=MODDEF.item[it.slice(1)]||'';k=(it&&ITEMS[it]&&ITEMS[it].place)||'';}else k=(ITEMS[it]&&ITEMS[it].place)||'';
     if(!k||!STRUCT[k])continue;
-    const g=b0.gr,gx0=Math.ceil(g[0]/GRID),gy0=Math.ceil(g[1]/GRID),gx1=Math.floor(g[2]/GRID),gy1=Math.floor(g[3]/GRID),bulk=window.__bpBulk;let n=0,tot=0;
-    window.__bpBulk=1;
-    try{for(let gy=gy0;gy<=gy1&&n<3000&&tot<60000;gy++)for(let gx=gx0;gx<=gx1&&n<3000&&tot<60000;gx++){
-      tot++;
-      if(b0.ch<100&&(((Math.imul(gx,73856093)^Math.imul(gy,19349663)^0x2f1b)>>>0)%100)>=b0.ch)continue;
-      ptShape(gx*GRID+8,gy*GRID+8);if(sV<SEA+0.02||sV>=0.97||(sB&128))continue;
-      if(canPlaceCell(gx,gy,k,true)){addStruct(k,gx,gy,'host',it);n++;}
-    }}finally{window.__bpBulk=bulk;}
-    if(n)saveWorld(true);
+    const g=b0.gr,gx0=Math.ceil(g[0]/GRID),gy0=Math.ceil(g[1]/GRID),gx1=Math.floor(g[2]/GRID),gy1=Math.floor(g[3]/GRID);
+    (MOD.fbQ=MOD.fbQ||[]).push({k,it,gx0,gx1,gy1,gx:gx0,gy:gy0,n:0,tot:0,ch:b0.ch});   // 한 번에 다 놓으면 렉이 걸려서 프레임마다 조금씩 놓아요
+    if(!MOD.fbRun){MOD.fbRun=1;requestAnimationFrame(modFbPump);}
     continue;
   }
   if(b0.gsid){
