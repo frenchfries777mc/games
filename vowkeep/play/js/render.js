@@ -990,14 +990,14 @@ export class View {
   }
 
   /* ----- 스냅숏을 장면에 반영 ----- */
-  sync(S, me, dt, t, exact) {
+  sync(S, me, dt, t, exact, camId) {
     const s = this.scene; if (!s) return;
     const seen = new Set();
     // 플레이어
     for (const p of S.pl) {
       const key = 'p' + p.id; seen.add(key); let E = this.ents.get(key);
       if (!E) { const m = makeHero(p.role, p.cos); s.add(m); E = { m, x: p.x, z: p.z, a: p.a, ph: 0 }; this.ents.set(key, E); E.ring = ringMesh(s, ROLES[p.role].color); E.ward = sph(1.3, 12, 10, M(0x9af0e0, { e: 0x6ad0c0, ei: 0.5, op: 0.08, uniq: true }), 0, 1.5, 0, m); E.ward.castShadow = false; }
-      const k = exact || p.id === me ? 1 : Math.min(1, dt * 12);
+      const k = exact || p.id === me || p.id === camId ? 1 : Math.min(1, dt * 12);
       E.x += (p.x - E.x) * k; E.z += (p.z - E.z) * k; E.a = lerpA(E.a, p.a, Math.min(1, dt * 18));
       animHero(E, p, dt, t); E.hy = hy(E, exact ? 1 : dt); E.m.position.y += E.hy; E.ring.position.set(E.x, 0.12 + E.hy, E.z); E.ring.visible = !p.dd;
       E.ward.visible = p.sh > 0; E.m.visible = !p.dd;
@@ -1042,7 +1042,7 @@ export class View {
     if (!es && this.escOn) { this.escOn = false; if (this.exitG) { this.exitG.children.forEach(c => { if (!c.isLight) c.visible = false; }); this.exitL.intensity = 0; } }
     if (this.escOn) { this.exitG.rotation.y += dt; this.exitM.opacity = 0.22 + Math.sin(t * 5) * 0.08; this.shake = Math.max(this.shake, 0.18); if ((this.dustT = (this.dustT || 0) - dt) <= 0) { this.dustT = 0.08; this.burst(this.camT.x + (Math.random() - .5) * 34, 9 + Math.random() * 4, this.camT.z + (Math.random() - .5) * 20, [0x8a7a6a, 0x6a5e54, 0xa09080][Math.random() * 3 | 0], 2, 1, 1.2, 0.16); } }
     // 카메라: 내 캐릭터를 부드럽게 따라가요
-    const mp = this.ents.get('p' + me);
+    const mp = this.ents.get('p' + (camId == null ? me : camId));
     if (mp) {
       if (!this.camInit) { this.camT.set(mp.x, 0, mp.z); this.camInit = true; }
       let tx = mp.x, tz = mp.z - 1.5, zm = 1;
