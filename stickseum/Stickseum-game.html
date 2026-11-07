@@ -6019,7 +6019,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-07-v740';
+const GAME_BUILD='build 2026-11-07-v741';
 const GAME_VERSION='1.0', GAME_VERSION_NAME='신화의 전설';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -10629,7 +10629,9 @@ function elimFigStart(me){      // the defeat screen shows my own character slum
     if(!noRewards() && SELECTABLE_WEAPONS.includes(wid) && !(MODES[gameMode]||{}).noWeapon){
       const kc=charKillsFor(wid), rk=charRankFor(kc), idx=CHAR_RANKS.findIndex(r=>r.name===rk.name), nx=CHAR_RANKS[idx+1], mi=masteryInfo(wid), nm=WEAPON_PERSONA_NAME[wid]||wid;
       const frac=nx?clamp((kc-rk.min)/Math.max(1,nx.min-rk.min),0,1):1;
-      mEl.innerHTML='🏅 '+escapeHtmlText(nm)+' 마스터리 · 숙련도 Lv.'+mi.lv+
+      const bigm=Object.values(players).filter(q=>q && !q.isMinion && !q.isBoss).length>=TIER_PT_BIG_PLAYERS && !!MODES[gameMode] && !MODES[gameMode].elim, kpt=(gameMode==='duel')?TIER_PT_DUEL_KILL:(brLike(gameMode)?TIER_PT_BR_KILL:(bigm?TIER_PT_BIG_KILL:TIER_PT_KILL));
+      const gk=Math.max(0,me.kills||0), ga=Math.max(0,matchAssists||0), gain=gk*kpt+ga*TIER_PT_ASSIST+TIER_PT_MATCH, gparts=[]; if(gk>0) gparts.push('처치 '+gk+'×'+kpt); if(ga>0) gparts.push('어시스트 '+ga+'×'+TIER_PT_ASSIST); gparts.push('완주 '+TIER_PT_MATCH);
+      mEl.innerHTML='🏅 '+escapeHtmlText(nm)+' 마스터리 포인트 <b style="color:#ffd34d">+'+gain+'</b> <span style="color:#9aa0a6">('+gparts.join(' + ')+')</span> · 숙련도 Lv.'+mi.lv+
         '<div style="display:flex; align-items:center; gap:12px; justify-content:center; margin-top:6px;">'+rankEmblemSvg(rk,56)+'<div style="text-align:left; min-width:190px;"><div style="font-weight:800; font-size:15px; color:'+rk.color+';">'+rankNameHtml(rk.name)+'</div>'+
         '<div style="height:8px; margin:4px 0 3px; background:#232733; border-radius:5px; overflow:hidden;"><div style="height:100%; width:'+Math.round(frac*100)+'%; background:'+rk.color+';"></div></div>'+
         '<div style="font-size:11px; color:#9aa0a6;">'+kc+'점'+(nx?' · 다음 '+nx.name+'까지 '+(nx.min-kc)+'점':' · 최고 계급')+'</div></div></div>';
