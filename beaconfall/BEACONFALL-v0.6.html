@@ -10547,13 +10547,13 @@ function modSet(t,setName){
 }
 function modAnchor(of,gen){if(gen||of==='spawn'||mode!=='play'){const c=world.camp;return {x:c.x+10,y:c.y+7};}return {x:P.x,y:P.y};}
 function modFreeSpot(a,min,max){for(let t=0;t<14;t++){const ang=Math.random()*6.2832,r=min+Math.random()*(max-min),x=a.x+Math.cos(ang)*r,y=a.y+Math.sin(ang)*r;if(inW(x,y)&&walkable(x,y))return {x,y};}return null;}
-const MODCOL={a:'#55ff55',b:'#55ffff',e:'#ffff55',f:'#ffffff','0':'#000000','1':'#0000aa','2':'#00aa00','3':'#00aaaa','4':'#aa0000','5':'#aa00aa','6':'#ffaa00','7':'#aaaaaa','8':'#555555',d:'#ff55ff'};
-function modPlain(t){return String(t).replace(/\\[abef0-8udlr]/g,'');}
+const MODCOL={a:'#55ff55',b:'#55ffff',e:'#ffff55',f:'#ffffff',c:'#ff5555','9':'#5555ff','0':'#000000','1':'#0000aa','2':'#00aa00','3':'#00aaaa','4':'#aa0000','5':'#aa00aa','6':'#ffaa00','7':'#aaaaaa','8':'#555555',d:'#ff55ff'};
+function modPlain(t){return String(t).replace(/\\[abcef0-9udlr]/g,'');}
 function modRich(t){   // 글자 안의 \a(초록) \b(하늘) \e(노랑) \f(하양) \0~\8(색) \d(보라) \u(밑줄) \l(볼드) \r(지움)
   t=String(t);let col='',ul=false,bd=false,out='',buf='';
   const flush=()=>{if(!buf)return;const st=(col?'color:'+col+';':'')+(ul?'text-decoration:underline;':'')+(bd?'font-weight:900;':'');out+=st?'<span style="'+st+'">'+esc(buf)+'</span>':esc(buf);buf='';};
   for(let i=0;i<t.length;i++){const c=t[i];
-    if(c==='\\'&&i+1<t.length&&/[abef0-8udlr]/.test(t[i+1])){flush();const k=t[++i];if(k==='r'){col='';ul=false;bd=false;}else if(k==='u')ul=true;else if(k==='l')bd=true;else col=MODCOL[k];}
+    if(c==='\\'&&i+1<t.length&&/[abcef0-9udlr]/.test(t[i+1])){flush();const k=t[++i];if(k==='r'){col='';ul=false;bd=false;}else if(k==='u')ul=true;else if(k==='l')bd=true;else col=MODCOL[k];}
     else buf+=c;}
   flush();return out;
 }
@@ -11634,7 +11634,7 @@ function chatSend(t){
   if(isGuest())sendHost({t:'chat',x:t});else bcastAll({t:'chat',id:'host',n:myName(),x:t});
 }
 function chatAdd(id,name,t){
-  if(id==='mod'){const raw=String(t||'').replace(/[\u0000-\u001f\u007f]/g,' ').replace(/\s+/g,' ').trim();t=raw.slice(0,CHAT_MAX+2*((raw.match(/\\[abef0-8udlr]/g)||[]).length));}else t=chatClean(t);if(!t)return;chatUI();
+  if(id==='mod'){const raw=String(t||'').replace(/[\u0000-\u001f\u007f]/g,' ').replace(/\s+/g,' ').trim();t=raw.slice(0,CHAT_MAX+2*((raw.match(/\\[abcef0-9udlr]/g)||[]).length));}else t=chatClean(t);if(!t)return;chatUI();
   name=String(name||'').slice(0,15)||'???';
   const d=document.createElement('div');d.innerHTML=`<b>${esc(name)}</b>${id==='mod'?modRich(t):esc(t)}`;
   chatEl.appendChild(d);while(chatEl.children.length>8)chatEl.firstChild.remove();
@@ -14730,7 +14730,7 @@ function bstPost(o){try{if(parent&&parent!==window)parent.postMessage(o,'*');}ca
 function bstParser(){
   if(bstFrameP)return bstFrameP;
   return bstFrameP=new Promise((res,rej)=>{
-    const f=document.createElement('iframe');f.style.display='none';f.src='mods.html?bsparse=1';bstFrame=f;
+    const f=document.createElement('iframe');f.style.display='none';f.src='mods.html?bsparse=1&v='+Date.now();bstFrame=f;
     const t=setTimeout(()=>{bstFrameP=null;rej(new Error('parser timeout'));},15000);
     const h=e=>{if(e.source===f.contentWindow&&e.data&&e.data.type==='bs-parser-ready'){clearTimeout(t);removeEventListener('message',h);res(f);}};
     addEventListener('message',h);document.body.appendChild(f);
@@ -14743,6 +14743,35 @@ function bstParse(code){
     addEventListener('message',h);f.contentWindow.postMessage({type:'bs-parse',code:String(code),id},'*');
   }));
 }
+/* Fry Code 설정에서 켠 API: bs-apply 의 apis:['potato'] 를 읽어서 그 API 모드를 같이 적용해요 (꺼진 API 는 적용 안 돼요) */
+const BST_API={potato:{id:'6b2b1a90-c35e-4484-934a-c21f14ce791c',name:'Potato API',dir:'apis/potato-api/',files:['main.bs','events.bs','mode.bs']}};
+const bstApiCache={};
+function bstApiLoad(k){
+  if(bstApiCache[k])return bstApiCache[k];
+  const A=BST_API[k];
+  return bstApiCache[k]=(async()=>{
+    const M={events:[],sets:[]};
+    for(const f of A.files){
+      const code=await (await fetch(A.dir+f+'?v='+Date.now(),{cache:'no-store'})).text(),d=(await bstParse(code)).data||{};
+      if(d.events)M.events=M.events.concat(d.events);
+      if(d.sets)M.sets=M.sets.concat(d.sets);
+      if(d.pa)M.pa=(M.pa||[]).concat(d.pa);
+      if(d.defs)M.defs=(M.defs||[]).concat(d.defs);
+      if(d.names){M.names=M.names||{};Object.assign(M.names,d.names);}
+      if(d.col){M.col=M.col||{};Object.assign(M.col,d.col);}
+      if(d.remap){M.remap=M.remap||{};Object.assign(M.remap,d.remap);}
+      if(d.wins){M.wins=M.wins||{};Object.assign(M.wins,d.wins);}
+      if(d.api)M.api=d.api;
+    }
+    return {id:A.id,kind:'mod',name:A.name,descr:'',data:M};
+  })().catch(e=>{delete bstApiCache[k];throw e;});
+}
+function bstApiKeys(v){   // apis: ['potato'] 또는 {potato:true} (대소문자·'potato api' 도 읽어요)
+  const o=[];const add=x=>{const k=String(x).toLowerCase().replace(/[^a-z0-9]/g,'');for(const n in BST_API){if(k===n||k===n+'api'){if(!o.includes(n))o.push(n);}}};
+  if(Array.isArray(v))v.forEach(x=>{if(typeof x==='string')add(x);else if(x&&typeof x==='object'&&x.on!==false&&x.enabled!==false)add(x.id||x.name||'');});
+  else if(v&&typeof v==='object')for(const k in v)if(v[k])add(k);
+  return o;
+}
 async function bstRun(d){
   if(bstBusy){bstNext=d;return;}
   bstBusy=true;
@@ -14752,10 +14781,12 @@ async function bstRun(d){
       const ps=await bstParse(d.code);
       ent={id:'bstest',kind:ps.kind||'mod',name:ps.name||'테스트',descr:ps.descr||'',data:ps.data};
     }
+    const lst=[];for(const k of bstApiKeys(d&&d.apis))lst.push(await bstApiLoad(k));
+    if(ent)lst.push(ent);
     if(d&&d.reset===false&&world&&mode==='play'){
-      modApply(ent?[ent]:[]);
+      modApply(lst);
     }else{
-      modApply(ent?[ent]:[]);
+      modApply(lst);
       closeModal();
       const seed=randSeedNum().replace(/^0+(?=\d)/,'');
       const w={id:'bst'+Date.now().toString(36),name:'테스트',seed,sz:2,created:Date.now()};
