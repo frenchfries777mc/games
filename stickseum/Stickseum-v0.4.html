@@ -2925,8 +2925,14 @@ let avatarEditorOpen=false;
 /* ================= SOCIAL (Supabase: accounts, friends, presence, invites) ================= */
 const SUPABASE_URL='https://kebsbuvuutilitwlvxzv.supabase.co';
 const SUPABASE_KEY='sb_publishable_4Egu0zm3p6cxWGvP_-GlIw_mlCpO1Nf';
+/* OLD VERSION: only the login (auth) talks to the server; every other server call (profiles, friends, clans, ranking, invites ...) is cut and answers "offline", so nothing here can change anybody's data (owner 11-07) */
+function ffOldSb(c){
+  const off={data:null,error:{message:'이전 버전에서는 서버 기능을 쓸 수 없어요'},count:null,status:0};
+  const mk=()=>{ const f=function(){ return mk(); }; return new Proxy(f,{ get(t,k){ if(k==='then') return (ok,ng)=>Promise.resolve(off).then(ok,ng); if(k==='catch') return ng=>Promise.resolve(off); if(k==='finally') return fn=>Promise.resolve(off).finally(fn); if(typeof k==='symbol') return undefined; return mk(); }, apply(){ return mk(); } }); };
+  return new Proxy(c,{ get(t,k){ if(k==='auth') return t.auth; if(k==='then' || typeof k==='symbol') return undefined; return mk(); } });
+}
 let sb=null;
-try{ if(window.supabase) sb=window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); }catch(e){ console.error('[social] supabase init failed', e); }
+try{ if(window.supabase) sb=ffOldSb(window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)); }catch(e){ console.error('[social] supabase init failed', e); }
 let sbUser=null; // {id, username}
 let presenceChannel=null, friendReqChannel=null, inviteChannel=null;
 let friendsCache=[];
