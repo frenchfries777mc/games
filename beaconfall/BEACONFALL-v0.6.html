@@ -10312,7 +10312,7 @@ function openAnimalDex(){
 const stObj=()=>(settings.st=settings.st&&typeof settings.st==='object'?settings.st:{});
 /* ---------- 모드 / 리소스팩 (사이트 mods.html 에서 적용한 목록) ---------- */
 let MODX={eaten:'',actor:'',touched:'',dmg:0,attacker:'',victim:'',ap:false,vp:false,crafted:'',placed:'',destroyed:'',mn:'',mid:'',loc:{}},LASTHIT={n:'',t:-99};
-const MOD={ev:[],orig:{},on:[],st:{},remap:{},btns:[],tex:{},iorig:{},col:{},potato:false};
+const MOD={ev:[],orig:{},on:[],st:{},remap:{},btns:[],tex:{},iorig:{},col:{},wins:{},potato:false};
 function modLocal(){try{const o=JSON.parse(localStorage.getItem('bf.mods.on')||'{}');return Object.keys(o).slice(0,50).map(id=>({id:String(id).slice(0,40),kind:o[id].kind,name:o[id].name,descr:o[id].descr,author_name:o[id].author_name,data:o[id].data})).filter(m=>m.data&&typeof m.data==='object');}catch(e){return [];}}
 const MOD_KEY=/^(Key[A-Z]|Digit[0-9]|F([1-9]|1[0-2]))$/;
 function modBox(){let b=document.getElementById('modbtns');if(!b){b=document.createElement('div');b.id='modbtns';b.style.cssText='position:fixed;inset:0;z-index:30;pointer-events:none';document.body.appendChild(b);setInterval(()=>{const m=document.getElementById('modal');b.style.display=(mode==='play'&&m&&m.hidden)?'':'none';},400);}return b;}
@@ -10432,7 +10432,7 @@ function modDef(q){   // define mob|item "이름": 기존 것을 바탕(base)으
 function modApply(list){
   MODDEF.mob={};MODDEF.item={};MODDEF.q=[];MODDEF.sp=[];
   for(const k in MOD.orig){if(ITEMS[k])ITEMS[k].name=MOD.orig[k];}
-  MOD.spW=null;MOD.orig={};MOD.ev=[];MOD.on=[];MOD.st={};MOD.remap={};MOD.col={};MOD.pa=[];MOD.sig={};
+  MOD.spW=null;MOD.orig={};MOD.ev=[];MOD.on=[];MOD.st={};MOD.remap={};MOD.col={};MOD.pa=[];MOD.sig={};MOD.wins={};
   for(const k in MOD.iorig){if(ITEMS[k])ITEMS[k].icon=MOD.iorig[k];}
   MOD.iorig={};MOD.tex={};let texN=0;MODPKQ=[];
   const bx=document.getElementById('modbtns');if(bx)bx.innerHTML='';
@@ -10448,6 +10448,7 @@ function modApply(list){
     }}
     if(d.packs&&typeof d.packs==='object')MODPKQ.push(d.packs);
     if(Array.isArray(d.defs)){for(const q of d.defs.slice(0,1000))MODDEF.q.push(q);}
+    if(d.wins&&typeof d.wins==='object'&&!Array.isArray(d.wins)){const ws={};for(const k of Object.keys(d.wins).slice(0,100))ws[k]=d.wins[k];MOD.wins[m.id]=ws;}
     if(Array.isArray(d.pa)){for(const q of d.pa.slice(0,1000)){if(q&&typeof q.a==='string'&&/^[a-z0-9_]{1,30}$/.test(q.a)&&Array.isArray(q.do)){MOD.pa.push({a:q.a,do:q.do,mid:m.id,mn:String(m.name||'').slice(0,40),u:(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(String(q.u||''))?q.u:(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(m.id||''))?String(m.id).toLowerCase():''))});}}}   // publish_aliases: 별칭 정의 (이 모드가 대신 풀어줘요)
     if(d.col&&typeof d.col==='object'&&!Array.isArray(d.col))for(const k of Object.keys(d.col).slice(0,60)){if(/^[a-z_0-9]{1,30}$/.test(k))MOD.col[k]=!!d.col[k];}
     if(Array.isArray(d.sets))for(const t of d.sets.slice(0,100))modSet(t,setName);
@@ -10736,6 +10737,7 @@ function modRun0(acts,depth,box){
     else if(a.button){modButton(a.button);}
     else if(a.window){modWindow(a.window);}
     else if(a.wclose){modWinClose();}
+    else if(typeof a.openw==='string'){let w=(MOD.wins[MODX.mid]||{})[a.openw];if(!w)for(const k in MOD.wins){if(MOD.wins[k][a.openw]){w=MOD.wins[k][a.openw];break;}}if(w)modWindow(w);else modSay('Window not found: '+a.openw.slice(0,30));}
     else if(a.ui&&Array.isArray(a.ui.lines)){const ls=a.ui.lines.slice(0,12).map(x=>'<p>'+modRich(modTxt(x).slice(0,120))+'</p>').join('');openModal('<h2>'+modRich(modTxt(a.ui.title||'').slice(0,40))+'</h2>'+ls+'<div class="actions"><button class="btn sm" data-close>닫기</button></div>',null,'modui');}
     else if(a.set){modSet(a.set);}
     else if(a.setv&&typeof a.setv.n==='string'){
