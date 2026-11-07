@@ -41,7 +41,7 @@
   .langSel:hover{color:var(--text); border-color:var(--teal);}
   .hero{position:relative; padding:150px 0 150px;}
   .heroBg{position:absolute; top:0; left:0; right:0; height:760px; z-index:0; pointer-events:none; overflow:hidden; -webkit-mask-image:linear-gradient(#000 86%, transparent 100%); mask-image:linear-gradient(#000 86%, transparent 100%);}
-  #heroVid{width:100%; height:100%; display:block; object-fit:cover; object-position:center bottom; background:#0d2016;}
+  #heroVid{width:100%; height:100%; display:block; object-fit:cover; object-position:center bottom; background:#0d0f14;}
   .heroBg::after{content:''; position:absolute; inset:0; background:linear-gradient(90deg,rgba(8,12,18,.62),rgba(8,12,18,.28) 55%,rgba(8,12,18,.05));}   /* a dark veil from the left keeps the title readable */
   /* under the video the page keeps the game's faint grid */
   .hero::before{content:''; position:absolute; left:50%; margin-left:-50vw; width:100vw; top:-110px; height:calc(100% + 190px); z-index:-1; pointer-events:none;
@@ -106,7 +106,7 @@ html,body{touch-action:manipulation;}
 <script src="https://frenchfries777.com/games/ff-hubbar.js?v=1" defer></script>
 </head>
 <body>
-<div class="heroBg" aria-hidden="true"><video id="heroVid" autoplay muted loop playsinline preload="auto"><source src="hero-demo.webm?v=3" type="video/webm"><source src="hero-demo.mp4?v=3" type="video/mp4"></video></div>
+<div class="heroBg" aria-hidden="true"><img id="heroVid" src="hero-lobby.jpg?v=1" alt=""></div>
 <div class="wrap">
   <div class="topbar"><a class="wordmark" href="index.html">STICK<b>SEUM</b></a><div class="right"><nav><a href="index.html#play">플레이</a><a href="codex.html">캐릭터 도감</a><a href="ranking.html">순위표</a><a href="balance.html">밸런스</a><a href="index.html#notes">패치노트</a><a href="index.html#help">도움말</a></nav><span data-lang-slot></span><span data-ff-account></span></div></div>
 
@@ -215,15 +215,7 @@ fetch('versions.json',{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject()
 <script src="https://frenchfries777.com/games/ff-auth.js?v=20261104d"></script>
 
 <script>
-/* the banner behind the title is a real recording of the game (bots fighting); it only plays while visible and stays still for reduced motion */
-(function(){
-  var v=document.getElementById('heroVid'); if(!v) return;
-  var still=false; try{ still=window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
-  if(still){ v.removeAttribute('autoplay'); v.pause(); return; }
-  function go(){ var p=v.play(); if(p && p.catch) p.catch(function(){}); }
-  if('IntersectionObserver' in window){ new IntersectionObserver(function(es){ if(es[0].isIntersecting) go(); else v.pause(); }).observe(v); }
-  document.addEventListener('visibilitychange', function(){ if(document.hidden) v.pause(); else go(); });
-})();
+/* (the banner behind the title is the lobby background picture) */
 </script>
 </body>
 </html>
