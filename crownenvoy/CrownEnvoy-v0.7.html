@@ -504,6 +504,27 @@ html:not(.introDone) #tutfab,html:not(.introDone) #langBox,html:not(.introDone) 
 #lobbyWar{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:0;transition:opacity 1.2s;filter:brightness(.78)}
 .introDone #lobby{background:#2f3a26}.introDone #lobbyWar{opacity:1}.introDone #lobbyBg{opacity:0;transition:opacity 1.2s}
 .introDone .brand h1{color:#f6ecd0;text-shadow:0 3px 18px #000c,0 0 6px #000a}.introDone .brand .sub{color:#e9dcb8;text-shadow:0 0 10px #000b}.introDone .brand .sub i{background:#e9dcb8}
+/* b165: 로비 새 디자인 (시안 1): 왼쪽 제목, 오른쪽 보라 유리 카드 메뉴 */
+#lobby::after{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,#0e0a18f0 0%,#0e0a18b0 42%,#0e0a1855 100%)}
+.brand h1{color:#fff!important;text-shadow:0 4px 24px #000c!important}
+.brand .sub{color:#cfc3ea!important}.brand .sub i{background:#cfc3ea!important}
+.brand .tagline{margin:22px 0 0;max-width:520px;font-size:17px;line-height:1.6;color:#d9ceef;text-shadow:0 2px 12px #000a}
+#lobbyHome.modes{gap:12px}
+#lobbyHome .mode{display:grid!important;grid-template-columns:44px 1fr;column-gap:16px;align-items:center!important;text-align:left!important;padding:16px 22px!important;background:#18122ad1!important;border:2px solid #8a6ad0!important;border-radius:14px!important;box-shadow:0 8px 24px #0009;backdrop-filter:blur(6px)}
+#lobbyHome .mode::before{grid-row:1/3;font-size:28px;line-height:1;text-align:center}
+#lobbyHome .mode b,#lobbyHome .mode small{grid-column:2;text-align:left!important;font-family:inherit!important;text-shadow:none!important}
+#lobbyHome .mode b{font-size:21px!important;font-weight:800!important;color:#ece8f7!important}
+#lobbyHome .mode small{font-size:13px!important;color:#a89ac8!important;font-weight:500!important}
+#lobbyHome .mode::after{display:none}
+#lobbyHome .mode:hover,#lobbyHome .mode:focus-visible{transform:translateX(-6px);border-color:#c8aaff!important;background:#2a1d4ad9!important}
+#lobbyHome .mode:hover b{color:#fff!important}
+#lobbyHome #btnAI{order:-1;background:#f0c060!important;border-color:#f0c060!important}
+#lobbyHome #btnAI b{color:#1a1208!important}#lobbyHome #btnAI small{color:#3a2c0a!important}
+#lobbyHome #btnAI:hover{background:#ffd37a!important;border-color:#ffd37a!important}#lobbyHome #btnAI:hover b{color:#1a1208!important}
+#btnAI::before{content:'⚔'}#btnCreateRoom::before{content:'🏰'}#btnJoinRoom::before{content:'🚪'}#btnScen::before{content:'🗺'}#btnSaves::before{content:'💾'}
+@media(max-width:860px){.brand .tagline{display:none}}
+#lobbyHome .modelinks{justify-content:flex-start}
+#lobbyHome .mlink{color:#cfc3ea;text-shadow:none;align-items:flex-start}
 #cpTag{position:absolute;left:50%;transform:translateX(-50%);bottom:8px;white-space:nowrap;z-index:3;font:600 11px system-ui,sans-serif;color:#e9dcb8;opacity:.6;letter-spacing:.04em}#cpTag a{color:inherit}
 #verTag{position:absolute;right:12px;bottom:8px;z-index:3;font:600 11px system-ui,sans-serif;color:#e9dcb8;opacity:.6;letter-spacing:.08em}
 @media(max-width:640px){#cpTag{bottom:44px;font-size:10px}}
@@ -536,8 +557,8 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 164</div>
-  <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 165</div>
+  <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div><p class="tagline">사절을 보내 동맹을 맺고, 군대를 보내 왕관을 차지하세요.</p></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
     <button class="mode" id="btnCreateRoom"><b>방 만들기</b><small>공개 방이나 비공개 방을 열고 사람을 모아요.</small></button>
