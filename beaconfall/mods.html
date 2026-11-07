@@ -318,6 +318,25 @@ function parseScript(text,lenient){
   function mon(l,w){w=w.toLowerCase();if(MONS.indexOf(w)<0){var g=guess(w,MONS);throw PE(l.n,"unknown monster '"+w+"'."+(g?" Did you mean '"+g+"'?":''));}return w;}
   function colT(l,w){var k=w.toLowerCase(),M={tree:'tree',trees:'tree',rock:'rock',rocks:'rock',stone:'rock',ore:'ore',ores:'ore',water:'water',sea:'water',ocean:'water',block:'block',blocks:'block'};return M[k]||item(l,w);}
   function toT(l,w){w=w.trim().replace(/^"(.*)"$/,'$1');if(!w||w.length>90)throw PE(l.n,'write who after "to": player, monster, mob or a player name');return w;}
+  function winDef(l,title,depth){   // defined window "이름": 아래 text / input / button 을 읽어요
+        if(!(pos<L.length&&L[pos].ind>l.ind))throw PE(l.n,'nothing is written under this line');
+        var wi=L[pos].ind,w={t:title,tx:[],inp:[],btn:[]};
+        while(pos<L.length&&L[pos].ind>=wi){
+          var wl=L[pos++],wm;
+          if(wl.ind!==wi)throw PE(wl.n,'indent does not match the line above');
+          if(wm=wl.t.match(/^text\s+"([^"]{1,200})"$/i)){if(w.tx.length>=60)throw PE(wl.n,'a window can have 60 text lines at most');w.tx.push(wm[1]);}
+          else if(wm=wl.t.match(/^input\s+"([^"]{1,30})"\s+into\s+\{(:?)([a-z0-9_]{1,17})\2\}$/i)){if(w.inp.length>=20)throw PE(wl.n,'a window can have 20 inputs at most');if(/^_.*_$/.test(wm[3]))throw PE(wl.n,'input needs a {name} or {:name:} variable (not {_name_})');w.inp.push({l:wm[1],v:(wm[2]?'s__':'')+wm[3].toLowerCase()});}
+          else if(wm=wl.t.match(/^button\s+"([^"]{1,20})"([^:]*):$/i)){
+            if(w.btn.length>=40)throw PE(wl.n,'a window can have 40 buttons at most');
+            var ro=wm[2],cm=ro.match(/\bcolor\s+"?(#[0-9a-f]{6})"?/i);if(cm)ro=ro.replace(cm[0],'');
+            var pm2=ro.match(/\bat\s+([a-z ]+?)\s*$/i);if(pm2)ro=ro.replace(pm2[0],'');
+            if(ro.trim())throw PE(wl.n,'write it like  button "OK" at bottom right color "#2a8f5a":');
+            var bp=pm2?pm2[1].toLowerCase().trim():'bottom right';if(POS.indexOf(bp)<0)throw PE(wl.n,"unknown position '"+bp+"'. You can use: "+POS.join(', '));
+            w.btn.push({l:wm[1],p:bp,c:cm?cm[1].toLowerCase():'',do:sub(wl,depth+1)});}
+          else throw PE(wl.n,'under defined window you can write: text "...", input "..." into {name}, button "..." at bottom right color "#2a8f5a":');
+        }
+        return w;
+  }
   function sub(l,depth){if(depth>=12)throw PE(l.n,'blocks are nested too deep');if(!(pos<L.length&&L[pos].ind>l.ind))throw PE(l.n,'nothing is written under this line');return block(L[pos].ind,depth+1);}
   function setStmt(l,m){
     var id=item(l,m[1].trim()),f=m[2].toLowerCase(),v=m[3].trim();
@@ -502,26 +521,9 @@ if(nv===''||nv==='-')nv=0;fc.push([rel?1:0,+nv]);}
       else if(m=l.t.match(/^(disable|enable)\s+collision\s+of\s+(.+)$/i)){acts.push({col:{t:colT(l,m[2].trim()),on:m[1].toLowerCase()==='enable'}});}
       else if(m=l.t.match(/^remove\s+(tree|rock)s?\s+in\s+(\d+)\s+blocks?\s+of\s+(spawn|player)$/i)){var r=+m[2];if(r<1||r>60)throw PE(l.n,'range must be 1 to 60 blocks');acts.push({remove:{what:m[1].toLowerCase(),r:r,of:m[3].toLowerCase()}});}
       else if(/^close\s+window$/i.test(l.t)){acts.push({wclose:1});}   // 열려 있는 창 닫기
-      else if(/^window\s+"[^"]{1,30}"\s*:$/i.test(l.t)){throw PE(l.n,'use  open window "title":  (and  close window  to close it)');}
-      else if(m=l.t.match(/^open\s+window\s+"([^"]{1,30})"\s*:$/i)){
-        if(!(pos<L.length&&L[pos].ind>l.ind))throw PE(l.n,'nothing is written under this line');
-        var wi=L[pos].ind,w={t:m[1],tx:[],inp:[],btn:[]};
-        while(pos<L.length&&L[pos].ind>=wi){
-          var wl=L[pos++],wm;
-          if(wl.ind!==wi)throw PE(wl.n,'indent does not match the line above');
-          if(wm=wl.t.match(/^text\s+"([^"]{1,200})"$/i)){if(w.tx.length>=60)throw PE(wl.n,'a window can have 60 text lines at most');w.tx.push(wm[1]);}
-          else if(wm=wl.t.match(/^input\s+"([^"]{1,30})"\s+into\s+\{(:?)([a-z0-9_]{1,17})\2\}$/i)){if(w.inp.length>=20)throw PE(wl.n,'a window can have 20 inputs at most');if(/^_.*_$/.test(wm[3]))throw PE(wl.n,'input needs a {name} or {:name:} variable (not {_name_})');w.inp.push({l:wm[1],v:(wm[2]?'s__':'')+wm[3].toLowerCase()});}
-          else if(wm=wl.t.match(/^button\s+"([^"]{1,20})"([^:]*):$/i)){
-            if(w.btn.length>=40)throw PE(wl.n,'a window can have 40 buttons at most');
-            var ro=wm[2],cm=ro.match(/\bcolor\s+"?(#[0-9a-f]{6})"?/i);if(cm)ro=ro.replace(cm[0],'');
-            var pm2=ro.match(/\bat\s+([a-z ]+?)\s*$/i);if(pm2)ro=ro.replace(pm2[0],'');
-            if(ro.trim())throw PE(wl.n,'write it like  button "OK" at bottom right color "#2a8f5a":');
-            var bp=pm2?pm2[1].toLowerCase().trim():'bottom right';if(POS.indexOf(bp)<0)throw PE(wl.n,"unknown position '"+bp+"'. You can use: "+POS.join(', '));
-            w.btn.push({l:wm[1],p:bp,c:cm?cm[1].toLowerCase():'',do:sub(wl,depth+1)});}
-          else throw PE(wl.n,'under window you can write: text "...", input "..." into {name}, button "..." at bottom right color "#2a8f5a":');
-        }
-        acts.push({window:w});
-      }
+      else if(m=l.t.match(/^open\s+window\s+"([^"]{1,30})"$/i)){acts.push({openw:m[1]});}   // defined window 로 미리 만든 창 열기
+      else if(/^open\s+window\b/i.test(l.t)){throw PE(l.n,'write it like  open window "name"  (make the window first with  defined window "name":  at the top)');}
+      else if(/^(defined\s+)?window\s+"/i.test(l.t)){throw PE(l.n,'make the window at the top (no indent) with  defined window "name":  then open it with  open window "name"');}
       else if(m=l.t.match(/^button\s+"([^"]{1,20})"(?:\s+at\s+([a-z ]+?))?\s*:$/i)){var ps=m[2]?m[2].toLowerCase().trim():'top right';if(POS.indexOf(ps)<0)throw PE(l.n,"unknown position '"+ps+"'. You can use: "+POS.join(', '));acts.push({button:{label:m[1],pos:ps,do:sub(l,depth)}});}
       else if(m=l.t.match(/^ui\s+"([^"]{1,30})"\s*:$/i)){
         if(!(pos<L.length&&L[pos].ind>l.ind))throw PE(l.n,'nothing is written under this line');
@@ -540,6 +542,7 @@ if(nv===''||nv==='-')nv=0;fc.push([rel?1:0,+nv]);}
     if(l.ind!==0)throw PE(l.n,'this line should not be indented');
     pos++;
     if(m=l.t.match(/^(mod|resource\s*pack|pack)\s+"([^"]{1,40})"$/i)){out.kind=/mod/i.test(m[1])?'mod':'pack';out.name=m[2];}
+    else if(m=l.t.match(/^defined\s+window\s+"([^"]{1,30})"\s*:$/i)){out.wins=out.wins||{};if(out.wins[m[1]])throw PE(l.n,'window "'+m[1]+'" is already defined');if(Object.keys(out.wins).length>=100)throw PE(l.n,'100 windows at most');out.wins[m[1]]=winDef(l,m[1],0);}
     else if(m=l.t.match(/^on\s+kill\s+"([^"]{1,20})"\s*:$/i)){out.events.push({on:'kill',target:'@'+m[1],do:sub(l,0)});}
     else if(m=l.t.match(/^on\s+world\s+generate\s*:$/i)){out.events.push({on:'generate',do:sub(l,0)});}
     else if(m=l.t.match(/^on\s+game\s+load\s*:$/i)){out.events.push({on:'load',do:sub(l,0)});}
@@ -696,7 +699,7 @@ if(nv===''||nv==='-')nv=0;fc.push([rel?1:0,+nv]);}
   }
   if(out.pa&&out.uuid)out.pa.forEach(function(q){q.u=out.uuid;});
   if(out.uuid||out.uses)out.events.forEach(function(e){if(out.uuid)e.u=out.uuid;if(out.uses)e.uu=out.uses;});
-  var data={};if(out.events.length)data.events=out.events;if(out.names)data.names=out.names;if(out.sets.length)data.sets=out.sets;if(out.remap)data.remap=out.remap;if(out.col)data.col=out.col;if(out.api)data.api=out.api;if(out.pa)data.pa=out.pa;if(out.defs)data.defs=out.defs;
+  var data={};if(out.events.length)data.events=out.events;if(out.names)data.names=out.names;if(out.sets.length)data.sets=out.sets;if(out.remap)data.remap=out.remap;if(out.col)data.col=out.col;if(out.api)data.api=out.api;if(out.pa)data.pa=out.pa;if(out.defs)data.defs=out.defs;if(out.wins)data.wins=out.wins;
   if(!Object.keys(data).length&&!lenient)throw PE(1,'nothing to upload: add an "on ...:" block, "rename:", "set ..." or "remap ..."');
   return {kind:out.name?out.kind:null,name:out.name,descr:out.descr||'',data:data};
 }
@@ -747,6 +750,7 @@ $('uf').addEventListener('change',async function(){
       try{
         var ps=parseScript(await readTxt(f),true),d=ps.data;if(ps.descr&&!UDESC)UDESC=ps.descr;
         if(d.events)M.events=M.events.concat(d.events);
+        if(d.wins){M.wins=M.wins||{};for(var wk in d.wins)M.wins[wk]=d.wins[wk];}
         if(d.names){M.names=M.names||{};for(var k in d.names)M.names[k]=d.names[k];}
         if(d.sets)M.sets=M.sets.concat(d.sets);
         if(d.col){M.col=M.col||{};for(var k3 in d.col)M.col[k3]=d.col[k3];}
@@ -768,7 +772,7 @@ $('uf').addEventListener('change',async function(){
   }
   (M.defs||[]).forEach(function(q){if(q.k==='item'&&q.pl===true&&!q.pimg&&!q.pii){line('"'+q.n+'" ✗ 설치 그림 image: "'+q.pimage+'" 를 못 찾았어요','bad');bad++;}if((q.k==='mob'||q.k==='item')&&!q.img&&!q.ii&&!q.im){line('"'+q.n+'" ! image: "'+q.image+'" 를 못 찾았어요 (기본 모양으로 올려요)','warn');warn++;}});
   if(!okc){umsg('폴더 안에 .bs 파일이나 PNG 그림이 없어요.',1);return;}
-    var data={};if(M.events.length)data.events=M.events;if(M.names)data.names=M.names;if(M.sets.length)data.sets=M.sets;if(M.remap)data.remap=M.remap;if(M.col)data.col=M.col;if(M.api)data.api=M.api;if(M.pa)data.pa=M.pa;if(M.defs)data.defs=M.defs;
+    var data={};if(M.events.length)data.events=M.events;if(M.names)data.names=M.names;if(M.sets.length)data.sets=M.sets;if(M.remap)data.remap=M.remap;if(M.col)data.col=M.col;if(M.api)data.api=M.api;if(M.pa)data.pa=M.pa;if(M.defs)data.defs=M.defs;if(M.wins)data.wins=M.wins;
   if(LOGO)data.logo=LOGO;
   if(Object.keys(TEX).length)data.textures=TEX;
   if(PKN){data.packs=PK;line('리소스팩 그림 '+PKN+'장 ✓ ('+Object.keys(PK).join(', ')+')');}
@@ -788,7 +792,7 @@ function check(kind,d){
     if(d.remap&&(typeof d.remap!=='object'||Array.isArray(d.remap)||Object.keys(d.remap).length>30))return '"remap"은 30개까지예요.';
     if(d.textures&&(typeof d.textures!=='object'||Array.isArray(d.textures)))return '"textures" 모양이 올바르지 않아요.';
     if(d.packs){if(typeof d.packs!=='object'||Array.isArray(d.packs))return '"packs" 모양이 올바르지 않아요.';var pn=0;for(var pc in d.packs){if(PKC.indexOf(pc)<0||!d.packs[pc]||typeof d.packs[pc]!=='object')return '"packs"에 모르는 폴더 "'+pc+'"가 있어요.';for(var pk in d.packs[pc]){if(!/^[A-Za-z0-9_\-]{1,40}$/.test(pk)||typeof d.packs[pc][pk]!=='string'||!(pc==='sounds'?/^data:audio\/[a-z0-9.+-]{2,20};base64,[A-Za-z0-9+\/=]{20,}$/.test(d.packs[pc][pk])&&d.packs[pc][pk].length<4400000:/^data:image\/png;base64,[A-Za-z0-9+\/=]{20,32000}$/.test(d.packs[pc][pk])))return '"packs" 그림 "'+pc+'/'+pk+'"이 올바르지 않아요.';pn++;}}if(pn>900)return '리소스팩 그림은 900장까지예요.';}
-    if(!d.names&&!d.sets&&!d.remap&&!d.textures&&!d.packs&&!d.col&&d.api!=='potato'&&!d.pa&&!d.defs&&(!Array.isArray(d.events)||!d.events.length))return '모드에는 규칙(on), 이름 바꾸기, set, remap, 그림 중 하나는 있어야 해요.';
+    if(!d.names&&!d.wins&&!d.sets&&!d.remap&&!d.textures&&!d.packs&&!d.col&&d.api!=='potato'&&!d.pa&&!d.defs&&(!Array.isArray(d.events)||!d.events.length))return '모드에는 규칙(on), 이름 바꾸기, set, remap, 그림 중 하나는 있어야 해요.';
     if(d.defs){for(var di=0;di<d.defs.length;di++){var dq=d.defs[di];if(!dq||(dq.k!=='mob'&&dq.k!=='item'))continue;if(dq.k==='item'&&dq.pl===true&&(typeof dq.pimg!=='string'||!/^data:image\/png;base64,[A-Za-z0-9+\/=]{20,6000}$/.test(dq.pimg))&&typeof dq.pii!=='string')return '설치 아이템 "'+(dq.n||'')+'"의 설치 그림 image: "'+(dq.pimage||'')+'"를 못 찾았어요.';if((typeof dq.img!=='string'||!/^data:image\/png;base64,[A-Za-z0-9+\/=]{20,6000}$/.test(dq.img))&&typeof dq.ii!=='string'&&typeof dq.im!=='string')return '새 '+(dq.k==='mob'?'몹':'아이템')+' "'+(dq.n||'')+'"의 image: "'+(dq.image||'')+'"를 못 찾았어요. 폴더에 같은 이름의 PNG를 넣거나, 게임 속 아이템/몹 이름을 써 주세요.';}}
     if(!d.events)return '';
     if(d.events.length>20000)return '이벤트는 20000개까지예요.';
