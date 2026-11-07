@@ -68,7 +68,7 @@ function ping(force){
         if(r&&!r.ok&&site==='games') return rpc('ff_hub_ping',{},t); });
       return rpc('ff_hub_ping',{},t); }
     wasGuest=true; return rpc('ff_guest_ping',{p_gid:gid(),p_place:place});
-  }).then(function(){ busy=false; },function(){ busy=false; });
+  }).then(function(){ busy=false; try{ window.dispatchEvent(new Event('ffpresence')); }catch(e){} },function(){ busy=false; });
 }
 /* 창을 닫거나 다른 페이지로 가면 바로 접속 표시에서 빠져요 (로그인한 사람만) */
 function leave(){ var t=token(); if(!t) return; last=0; rpc('ff_leave',{},t,true); }
