@@ -10695,7 +10695,7 @@ function modCondOk(c){   // if A or B: 안의 조건 하나
   if(!c||typeof c!=='object')return false;
   if(c.md)return modHasMod(c.md);
   if(c.hand)return modHandOk(c.hand);
-  if(c.mouse)return !!MOUSEB[c.mouse.b]!==!!c.mouse.not;   // if click press: / if right click press:
+  if(c.mouse)return !!(c.mouse.b===-1?(MOUSEB[0]||MOUSEB[2]):MOUSEB[c.mouse.b])!==!!c.mouse.not;   // if click press: / if right click press:
   if(c.key)return keys.has(c.key.c)!==!!c.key.not;   // if key "G" press: (누르고 있는 동안)
   if(c.has){const hid=modIt(c.has.item);return !!(ITEMS[hid]&&modInv(hid)>=Math.max(1,c.has.n|0||1));}
   if(c.ifp){const isp=c.ifp.w==='victim'?MODX.vp:MODX.ap;return isp!==!!c.ifp.not;}
@@ -11085,11 +11085,11 @@ addEventListener('pointerdown',e=>{
   if(e.target!==cv||e.pointerType==='touch'||(e.button!==0&&e.button!==2))return;
   if(mode!=='play'||!$('#modal').hidden)return;
   MOUSEB[e.button]=true;
-  if(MOD.ev.length&&modEvent(e.button===2?'rclick':'click','')){e.stopImmediatePropagation();e.preventDefault();}   // cancel event
+  if(MOD.ev.length){const c1=modEvent('click',''),c2=modEvent(e.button===2?'rclick':'lclick','');if(c1||c2){e.stopImmediatePropagation();e.preventDefault();}}   // cancel event
 },true);
 addEventListener('pointerup',e=>{if(e.button===0||e.button===2)MOUSEB[e.button]=false;},true);
 addEventListener('blur',()=>{MOUSEB[0]=false;MOUSEB[2]=false;});
-cv.addEventListener('contextmenu',e=>{if(MOD.ev.some(q=>q.on==='rclick'))e.preventDefault();});   // 오른쪽 클릭 규칙이 있을 때만 메뉴를 막아요
+cv.addEventListener('contextmenu',e=>{if(MOD.ev.some(q=>q.on==='rclick'||q.on==='click'))e.preventDefault();});   // 오른쪽 클릭 규칙이 있을 때만 메뉴를 막아요
 addEventListener('keydown',e=>modKey(e,true),true);
 addEventListener('keyup',e=>modKey(e,false),true);
 function modAsk(list){
