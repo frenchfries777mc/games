@@ -820,7 +820,7 @@ function onlineLoop(){ clearInterval(onlT); clearInterval(hubPT); hubPing(); onl
 document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible'){ hubPing(); online(); } });
 window.addEventListener('ffpresence',function(){ setTimeout(online,600); });
 /* 허브를 닫으면 바로 접속 표시에서 빠져요 (ff_leave) */
-window.addEventListener('pagehide',function(){ try{ var t=JSON.parse(localStorage.getItem('sb-kebsbuvuutilitwlvxzv-auth-token')||'null'); if(t&&t.access_token) fetch('https://kebsbuvuutilitwlvxzv.supabase.co/rest/v1/rpc/ff_leave',{method:'POST',headers:{'apikey':'sb_publishable_4Egu0zm3p6cxWGvP_-GlIw_mlCpO1Nf','Authorization':'Bearer '+t.access_token,'Content-Type':'application/json'},body:'{}',keepalive:true}).catch(function(){}); }catch(e){} });
+window.addEventListener('pagehide',function(){ try{ var t=JSON.parse(localStorage.getItem('sb-kebsbuvuutilitwlvxzv-auth-token')||'null'); if(t&&t.access_token) fetch('https://kebsbuvuutilitwlvxzv.supabase.co/rest/v1/rpc/ff_leave_at',{method:'POST',headers:{'apikey':'sb_publishable_4Egu0zm3p6cxWGvP_-GlIw_mlCpO1Nf','Authorization':'Bearer '+t.access_token,'Content-Type':'application/json'},body:'{"p_place":"hub"}',keepalive:true}).catch(function(){}); }catch(e){} });
 
 /* ===================== @멘션: 자동완성 · 강조 (알림은 supabase-ff-coin.sql 의 트리거) ===================== */
 function mnHtml(t){ return esc(t).replace(/(^|[\s(])(@[^\s@<>&]{1,24})/g,'$1<b class="mn">$2</b>'); }
