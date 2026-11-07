@@ -50,3 +50,8 @@ footer a{color:var(--text)!important}footer a:hover{color:var(--fry)!important}
 footer{background:var(--bg)!important}
 
 footer,footer *{text-shadow:none!important}
+
+/* top-right button box (coin, bell, vote, account): follows light / dark, gold line instead of a fixed dark fill */
+.tb{background:transparent!important;border:1px solid var(--fry)!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.tb .cc-b,.tb .ffa-bell,.tb .ffa-vote,.tb .ffa-chip,.tb .ffa-set{color:var(--text)!important;background:transparent!important}
+.tb .ffa-vote span,.tb .ffa-bell span{color:var(--text)!important}
