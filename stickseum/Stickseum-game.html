@@ -1598,7 +1598,7 @@ const ULTS = {
 /* ================= GOLD & COSMETICS ================= */
 const SAVE_KEY='arenaClashSave_v1';
 window.addEventListener('DOMContentLoaded', ()=>{ const t=document.getElementById('buildTag'); if(t && typeof GAME_BUILD!=='undefined') t.textContent='v'+GAME_VERSION+' '+GAME_VERSION_NAME; /* the in-match top bar: no build number */ const bv=document.getElementById('brandVer'); if(bv && typeof GAME_BUILD!=='undefined') bv.textContent='v'+GAME_VERSION; const lb=document.getElementById('lobbyBuild'); if(lb && typeof GAME_BUILD!=='undefined') lb.textContent='v'+GAME_VERSION+' '+GAME_VERSION_NAME+' · '+GAME_BUILD.replace(/^build \S*-v(\d+)$/,'b$1'); });
-const KILL_GOLD=5, ASSIST_GOLD=3, ASSIST_WINDOW=10, TERRAIN_KILL_WINDOW=15;
+const KILL_GOLD=5, ASSIST_GOLD=3, ASSIST_WINDOW=10, TERRAIN_KILL_WINDOW=15, SHARED_KILL_SEC=5, SHARED_KILL_SHARE=0.6;
 /* the purple currency: a kill gives SOUL_PER_KILL of them (an assist, a match end or practice give none); they are spent on random boxes only.
    To rename it change the name / icon / colour right here - every text, the shop and the kill feed read it from this one place. */
 const SOUL={name:'영혼석', icon:'💜', color:'#b86bff'};       // (icon = the plain-text stand-in; on screen the picture currency/soulstone.svg is used: soulImg)
@@ -4138,6 +4138,7 @@ function markHit(target, attackerId, t, dmg){
   if(!attackerId || attackerId===target.id) return;
   if(!target.dmgBy) target.dmgBy={};
   target.dmgBy[attackerId]=t/1000;
+  if(dmg>0){ const lg=target.dmgLog||(target.dmgLog=[]), ns=t/1000; lg.push({id:attackerId, d:dmg, t:ns}); while(lg.length && ns-lg[0].t>6) lg.shift(); }      // (who did how much in the last seconds: the shared kill)
   if(dmg>0 && players[attackerId]) players[attackerId].totalDamageDealt=(players[attackerId].totalDamageDealt||0)+dmg;
   if(dmg>0 && target.isVault && players[attackerId]) players[attackerId].vaultDmg=(players[attackerId].vaultDmg||0)+dmg;      // (shown on the MVP card of 금고 약탈)
 }
@@ -6024,7 +6025,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-07-v744';
+const GAME_BUILD='build 2026-11-07-v745';
 const GAME_VERSION='1.0', GAME_VERSION_NAME='신화의 전설';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -17227,10 +17228,16 @@ function handleDeath(p, killer, t, killerNameFallback){
   if(gameMode==='zombie' && killer && killer.isZombie) p.diedToZombie=true;
   p.vx=0; p.vy=0; p.kbX=0; p.spin=0; p.spinAngle=0; // stop the corpse instead of freezing mid-knockback/mid-spin
   if(killer) killer.kills++;
+  const sharedKill=[];      // 공동 처치 (owner 11-07): somebody who did 60% or more of the damage in the last 5 s before the death shares the kill with the one who landed the last hit
+  if(killer && killer.id!==p.id && !p.isBoss && p.dmgLog && p.dmgLog.length){
+    const nowS=t/1000, sum={}; let tot=0;
+    for(const e of p.dmgLog){ if(nowS-e.t<=SHARED_KILL_SEC){ sum[e.id]=(sum[e.id]||0)+e.d; tot+=e.d; } }
+    if(tot>0) for(const aid in sum){ if(aid===killer.id || aid===p.id) continue; let q=players[aid]; if(q && (q.isGuard || q.isClone) && players[q.ownerId]) q=players[q.ownerId]; if(!q || q.id===killer.id || q.id===p.id || q.isMinion || sharedKill.includes(q)) continue; if(q.team!==null && q.team!==undefined && q.team===p.team) continue; if(sum[aid]/tot>=SHARED_KILL_SHARE){ q.kills++; sharedKill.push(q); } }
+  }
   if(p.ai && killer && killer.id!==p.id) p.ai.grudge=killer.id;                       // (only the avenger uses it)
   if(killer && killer.ai && killer.ai.grudge===p.id) killer.ai.grudge=null;         // revenge taken
   const killerName = killer ? killer.name : (killerNameFallback || '지형');       // the kill feed keeps the real name of a disguised 티오니스 (owner 10-29)
-  const msg = killerName+' ▸ '+p.name;
+  const msg = killerName+(sharedKill.length?' + '+sharedKill.map(q=>q.name).join(', '):'')+' ▸ '+p.name;
   const killPayload={t:'kill', msg, killerName, victimName:p.name, hasKiller:!!killer, boss:!!p.isBoss,
     x:killer?killer.x:p.x, y:killer?killer.y:p.y, color:killer?killer.color:p.color,
     killerSnap: snapshotFor(killer), victimSnap: snapshotFor(p),
@@ -17250,13 +17257,14 @@ function handleDeath(p, killer, t, killerNameFallback){
 
   if(!matchEnded && killer && killer.id!==p.id && !(killer.team!==null && killer.team!==undefined && killer.team===p.team)){
     awardGold(killer.id, KILL_GOLD, '처치');
+    for(const q of sharedKill) awardGold(q.id, KILL_GOLD, '처치');
     const nowS=t/1000;
     for(const aid in (p.dmgBy||{})){
-      if(aid===killer.id || aid===p.id || !players[aid]) continue;
+      if(aid===killer.id || aid===p.id || !players[aid] || sharedKill.includes(players[aid])) continue;
       if(nowS-p.dmgBy[aid]<=ASSIST_WINDOW){ players[aid].assistN=(players[aid].assistN||0)+1; awardGold(aid, ASSIST_GOLD, '어시스트'); }
     }
   }
-  p.dmgBy={};
+  p.dmgBy={}; p.dmgLog=[];
 
   if(matchEnded) return;
   const mode = MODES[gameMode] || MODES.ffa;
