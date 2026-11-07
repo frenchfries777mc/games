@@ -559,7 +559,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 173</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 174</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div><p class="tagline">사절을 보내 동맹을 맺고, 군대를 보내 왕관을 차지하세요.</p></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -642,7 +642,7 @@ sting();})();</script>
   <footer id="actionbar"><div id="hint"></div><button class="btn auto hidden" id="btnAuto" title="조용한 달은 명령 없이 자동으로 넘겨요. 전투·사건·외교 제안이 생기면 멈춰요.">⏩ 건너뛰기</button><button class="seal" id="btnReady">계획 확정</button></footer>
  </div>
  <div id="battle" class="hidden"><div id="bwrap"><canvas id="bcanvas"></canvas><div id="bhud"></div><div id="bpop"></div><div id="bresult"></div>
-   <div class="bctl"><button class="btn sm" id="bSound">소리 켬</button><button class="btn sm" id="bSkip">이 전투 건너뛰기</button><button class="btn sm" id="bSkipAll">연출 모두 건너뛰기</button></div></div></div>
+   <div class="bctl"><button class="btn sm" id="bRetreat" style="display:none;background:#f0c060;color:#1a1208;font-weight:800">후퇴하기</button><button class="btn sm" id="bSound">소리 켬</button><button class="btn sm" id="bSkip">이 전투 건너뛰기</button><button class="btn sm" id="bSkipAll">연출 모두 건너뛰기</button></div></div></div>
  <div id="editor" class="screen hidden"></div>
  <div id="warlog" class="hidden"></div>
  <div id="summary" class="hidden"></div>
@@ -1029,7 +1029,7 @@ const rnd=(a,b)=>a+Math.random()*(b-a);
 const ri=(a,b)=>Math.floor(rnd(a,b+1));
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 const hooks={toast:()=>{},delay:(f)=>f()};
-let G=null;
+let G=null;let RS=null;
 
 
 /* ================= 상태 헬퍼 ================= */
@@ -1326,6 +1326,9 @@ function act_(pid,m){
   case 'flag':{const k=String(m.key||'');if(k&&!(typeof FLAGS!=='undefined'&&FLAGS[k]))return fail('없는 국기예요.');G.players[pid].flag=k||null;return ok('국기를 바꿨어요.');}
   case 'kname':{const nm=String(m.name||'').replace(/[<>&"]/g,'').trim().slice(0,16);if(!nm)return fail('이름을 입력하세요.');G.players[pid].kingdom=nm;return ok('나라 이름을 바꿨어요.');}
   case 'policy':{const po=G.pol[pid];const dk=m.key in DLDEF;const v=Math.max(0,Math.min((m.key==='dlch'||m.key==='dlac')?1:2,Math.floor(+m.val)||0));if(!po||!(dk||['conscript','garrison','treaty'].includes(m.key)))return fail('방침 오류');po[m.key]=v;return ok('방침을 바꿨습니다.');}
+  case 'retreat':{if(G.phase!=='report'||!RS||RS.round!==G.round)return fail('지금은 후퇴할 수 없어요.');const tid=+m.tid,k=+m.k;const b=((G.report||{}).battles||[]).find(x=>x.tid===tid&&!x.walkover&&(x.att===pid||x.def===pid));
+    if(!b||!(k>=0&&k<=2)||b.phases.length<=k+1||b.retreat)return fail('후퇴할 수 없는 전투예요.');const key=tid+'|'+b.att;if(RS.rt[key])return fail('이미 후퇴했어요.');
+    RS.rt[key]={side:b.att===pid?'att':'def',k};reResolve();return ok('후퇴 명령을 내렸어요.');}
   case 'undo':{if(!Host.canUndo(pid))return fail('되돌릴 수 없어요. (혼자 하는 대전의 계획 단계에서만 가능)');Host.snaps.pop();G=JSON.parse(Host.snaps[Host.snaps.length-1]);G.phaseEnd=Date.now()+(CFG.dur.plan||0)*1000;G.players.forEach(p=>{p.ready=!p.alive;});botsAct('plan');return ok(`${G.round}턴 계획 단계로 되돌렸어요.`);}
   case 'repeat':{if(G.phase!=='plan')return fail('계획 단계에서만 가능합니다.');const l=sanitizeOrders(pid,G.lastOrders[pid]||[]);if(!l.length)return fail('반복할 지난 명령이 없습니다.');G.orders[pid]=l;return ok(`지난 턴 명령 ${l.length}건을 불러왔습니다.`);}
   case 'clearorders':{if(G.phase!=='plan')return fail('계획 단계에서만 가능합니다.');G.orders[pid]=[];return ok('명령을 모두 지웠습니다.');}
@@ -1387,7 +1390,7 @@ function duelApply(du,A,D,ga,gd,tid){const tn=TDEF[tid].name,pa=du.pa,pd=du.pd;
   genXP(w,2);const f=genFate(l,[0.1,0.2],wp);du.fate=f;
   log(`${tn} 결투: ${pname(wp)}의 ${w.name}${jIga(w.name)} ${pname(lp)}의 ${l.name}을(를) ${du.s[0]===du.s[1]?'판정으로':du.s[attW?0:1]+'대'+du.s[attW?1:0]+'로'} 꺾었다. (승리 사기 +${bonus}, 패배 사기 −12)`,'war');
   if(f!=='escaped'){if(l===ga)A.gen=null;else D.gen=null;}}
-function simulateBattle(A,D){
+function simulateBattle(A,D,rt){
   const fe=formEdge(A,D);
   const F=[0.14,0.26,0.22,0.12];let a=A.troops,d=D.troops;const a0=a,d0=d;
   const tA=A.gen?A.gen.trait:null,tD=D.gen?D.gen.trait:null;
@@ -1404,13 +1407,14 @@ function simulateBattle(A,D){
     const lossD=Math.min(d,Math.round(dealtD)),lossA=Math.min(a,Math.round(dealtA));a-=lossA;d-=lossD;
     mA-=8*lossA/a0*(tA==='stalwart'?0.6:1);mD-=8*lossD/d0*(tD==='stalwart'?0.6:1);if(lossA>lossD){mA-=0.5;mD+=0.3;}else if(lossD>lossA){mD-=0.5;mA+=0.3;}mA=clamp(mA,0,100);mD=clamp(mD,0,100);
     phases.push({a,d,mA:Math.round(mA),mD:Math.round(mD),lossA,lossD,note});
+    if(rt&&i===rt.k){loser=rt.side;phases[phases.length-1].rout=loser;phases[phases.length-1].retreat=1;break;}
     const decided=(a0-a)+(d0-d)>=minDead;const bA=a<=0||(mA<=thr(A)&&decided&&a<d*1.2),bD=d<=0||(mD<=thr(D)&&decided&&d<a*1.2);/* 사기가 기준 아래로 떨어지면 병력과 무관하게 그 자리에서 패주 */if(bA||bD){loser=(bA&&bD)?(mA<mD?'att':'def'):(bA?'att':'def');if(i<3&&phases.length)phases[phases.length-1].rout=loser;break;}
   }
   if(!loser){const [modA,modD]=mods();loser=a*(1+modA)>=d*(1+modD)?'def':'att';phases[phases.length-1].rout=loser;}
   const winner=loser==='att'?'def':'att';const wGen=winner==='att'?A.gen:D.gen;
-  let ls=loser==='att'?a:d;const need=Math.max(0,Math.round(minDead-((a0-a)+(d0-d))));const pl=Math.min(ls,Math.max(Math.round(ls*(0.15+(wGen&&wGen.trait==='pursuer'?0.15:0))),need));ls-=pl;
+  let ls=loser==='att'?a:d;const need=Math.max(0,Math.round(minDead-((a0-a)+(d0-d))));const pl=rt?Math.round(ls*0.05):Math.min(ls,Math.max(Math.round(ls*(0.15+(wGen&&wGen.trait==='pursuer'?0.15:0))),need));ls-=pl;
   let aS=loser==='att'?ls:a,dS=loser==='def'?ls:d;if(winner==='att')aS=Math.max(1,aS);else dS=Math.max(1,dS);
-  return {phases,winner,loser,aSurv:aS,dSurv:dS,pursuit:pl,aStart:a0,dStart:d0,mStart:[Math.round(mA0),Math.round(mD0)],bonus:D.bonus,fm:A.form&&D.form?{a:A.form,d:D.form,w:fe[2]}:null};
+  return {phases,winner,loser,retreat:rt?rt.side:null,aSurv:aS,dSurv:dS,pursuit:pl,aStart:a0,dStart:d0,mStart:[Math.round(mA0),Math.round(mD0)],bonus:D.bonus,fm:A.form&&D.form?{a:A.form,d:D.form,w:fe[2]}:null};
 }
 /* 장군 명성: 전투에서 이기면 경험이 쌓이고(열세에서 이기면 더 많이), 5점마다 가장 약한 능력이 1 오른다(최대 7) */
 const MEDAL=['동성','은성','금성','백금성','대훈장'];
@@ -1574,11 +1578,11 @@ function resolveRound(){
       if(!T.sea&&aGen&&dGen&&aGen.status==='ok'&&dGen.status==='ok'&&dGen.owner!==a.pid&&(G.players[a.pid].isBot?Math.random()<0.6:dlGet(a.pid,'dlch'))){
         duel=duelRun(a.pid,aGen,dGen.owner,dGen);duelApply(duel,A,D,aGen,dGen,tid);
         if(duel.fate&&duel.fate!=='escaped'){if(A.gen===null&&aGen.status!=='ok')aGen=null;if(D.gen===null&&dGen.status!=='ok'){holder.gens=holder.gens.filter(g=>g.id!==dGen.id);dGen=null;}}}
-      const r=simulateBattle(A,D);
+      const r=simulateBattle(A,D,(RS&&RS.rt)?RS.rt[tid+'|'+a.pid]:null);
       if(r.fm){const pa=G.players[a.pid],pd=G.players[holder.pid];(pa.seenF=pa.seenF||{})[holder.pid]=r.fm.d;(pd.seenF=pd.seenF||{})[a.pid]=r.fm.a;if(r.fm.w)log(`${TDEF[tid].name} 전투: ${pname(a.pid)} ${FORMS[r.fm.a].ic}${FORMS[r.fm.a].n} vs ${pname(holder.pid)} ${FORMS[r.fm.d].ic}${FORMS[r.fm.d].n} — ${pname(r.fm.w==='att'?a.pid:holder.pid)} 쪽이 대형 우위`,'war');}
       {const lA=r.aStart-r.aSurv,lD=r.dStart-r.dSurv;if(G.wounded){const wa=Math.round(lA*(techHas(a.pid,'med')?0.45:0.3)),wd=Math.round(lD*((holder.pid!=null&&techHas(holder.pid,'med'))?0.45:0.3));if(wa>0)G.wounded.push({pid:a.pid,tid:(a.srcs&&a.srcs[0])?a.srcs[0].from:G.players[a.pid].cap,n:wa,due:G.round+2});if(wd>0&&holder.pid!=null)G.wounded.push({pid:holder.pid,tid,n:wd,due:G.round+2});}
        [[a.pid,lA/(r.aStart||1),r.winner==='att'],[holder.pid,lD/(r.dStart||1),r.winner==='def']].forEach(([pp,fr,w])=>{if(pp==null)return;const q=G.players[pp];const gn=Math.max(0,Math.min(0.8+Math.min(2.5,fr*6)+(w?0.8:0),4-(q.vg||0)));q.vg=(q.vg||0)+gn;q.vet=Math.min(100,(q.vet||0)+gn);});}
-      const rec={tid,att:a.pid,def:holder.pid,aGen:aGen&&aGen.id,dGen:dGen&&dGen.id,aStart:r.aStart,dStart:r.dStart,phases:r.phases,winner:r.winner,aSurv:r.aSurv,dSurv:r.dSurv,pursuit:r.pursuit,mStart:r.mStart,bonus:r.bonus,pin:pin,sea:T.sea?1:0,mb:D.mbonus||0,gp:holder.gpids||null,trench:holder.original?(T.trench||0):0,captured:r.winner==='att',fates:[],aU:bUnits(a.mix,a.pid),dU:bUnits(holder.mix||mixOfT(T),holder.pid)};
+      const rec={tid,att:a.pid,def:holder.pid,aGen:aGen&&aGen.id,dGen:dGen&&dGen.id,aStart:r.aStart,dStart:r.dStart,phases:r.phases,winner:r.winner,retreat:r.retreat||null,aSurv:r.aSurv,dSurv:r.dSurv,pursuit:r.pursuit,mStart:r.mStart,bonus:r.bonus,pin:pin,sea:T.sea?1:0,mb:D.mbonus||0,gp:holder.gpids||null,trench:holder.original?(T.trench||0):0,captured:r.winner==='att',fates:[],aU:bUnits(a.mix,a.pid),dU:bUnits(holder.mix||mixOfT(T),holder.pid)};
       battleRecs.push(rec);if(duel){rec.aGen=duel.a;rec.dGen=duel.d;rec.duel=duel;}
       {const wg=r.winner==='att'?aGen:dGen;if(wg&&wg.status!=='dead')wg.wins=(wg.wins||0)+1;}
       bigBattle(rec,r,T,a,holder);
@@ -2558,11 +2562,16 @@ function startPhase(ph){
   botsAct(ph);
 }
 function advance(){
-  const _pre=G.terr.map(t=>t.owner);
-  try{advance_();}finally{G.terr.forEach((t,i)=>{if(!t.sea&&_pre[i]!=null&&t.owner==null){const q=G.players[_pre[i]];if(q&&q.alive){t.owner=_pre[i];t.unrest=0;}}});}
+  const _pre=G.terr.map(t=>t.owner);ADV_PRE=_pre;
+  try{advance_();}finally{keepOwners(_pre);}
 }
+let ADV_PRE=null;
+function keepOwners(_pre){G.terr.forEach((t,i)=>{if(!t.sea&&_pre[i]!=null&&t.owner==null){const q=G.players[_pre[i]];if(q&&q.alive){t.owner=_pre[i];t.unrest=0;}}});}
+/* 후퇴: 같은 씨앗으로 계산을 다시 돌리면 후퇴를 누른 전투만 달라진다 (resolveRound 안에서만 Math.random을 씨앗 난수로 바꾼다) */
+function resolveSeeded(seed){const orig=Math.random;let st=seed>>>0;Math.random=()=>{st=(st+0x6D2B79F5)|0;let t=Math.imul(st^(st>>>15),1|st);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296;};try{return resolveRound();}finally{Math.random=orig;}}
+function reResolve(){const pe=G.phaseEnd,rd=G.players.map(p=>p.ready);G=JSON.parse(RS.snap);try{resolveSeeded(RS.seed);}finally{keepOwners(RS.pre);}repairState();G.phase='report';G.phaseEnd=pe;G.players.forEach((p,i)=>{p.ready=rd[i];});}
 function advance_(){
-  if(G.phase==='plan'){try{tcEndAll();}catch(e){}autoChoices();resolveRound();repairState();G.phase='report';const nb=G.report.battles.filter(b=>!b.walkover).length;G.phaseEnd=Date.now()+(10+nb*22)*1000;G.players.forEach(p=>{p.ready=!p.alive||p.isBot;});}
+  if(G.phase==='plan'){try{tcEndAll();}catch(e){}autoChoices();RS={round:G.round,snap:JSON.stringify(G),seed:(Math.random()*4294967296)>>>0,pre:ADV_PRE,rt:{}};resolveSeeded(RS.seed);repairState();G.phase='report';const nb=G.report.battles.filter(b=>!b.walkover).length;G.phaseEnd=Date.now()+(10+nb*22)*1000;G.players.forEach(p=>{p.ready=!p.alive||p.isBot;});}
   else if(G.phase==='report'){if(aliveCount()<=1){finish('conquest');return;}if(alliedVictory()){finish('alliance');return;}settle();if(!G.over)winCheck();if(!G.over&&G.endRound&&G.round>G.endRound)finish('time');if(!G.over&&G.objWin!=null)finish('objectives');if(!G.over)startPhase('plan');}
 }
 /* 숫자가 깨지는 일이 생겨도 게임이 멈추지 않도록 하는 안전장치 */
@@ -4289,7 +4298,7 @@ const Host={seats:[],started:false,timer:null,mapId:0,snaps:[],
     if(this.D&&!G){if(msg.t==='claim')this.claim(i,+msg.tid);else if(msg.t==='pickNation')this.pickNation(i,+msg.k);else if(msg.t==='backlobby'&&i===0)this.backToLobby();return;}
     if(!G||G.over&&msg.t!=='chat'&&msg.t!=='sumreq')return;const p=G.players[i];if(!p)return;
     switch(msg.t){
-      case 'act':{const r=act(i,msg);this.sendTo(i,{t:'res',ok:r.ok,msg:r.msg});if(['repeat','clearorders','undo'].includes(msg.a))this.sendTo(i,{t:'orders',orders:G.orders[i]||[]});this.pushViews(msg.a==='undo');break;}
+      case 'act':{const r=act(i,msg);this.sendTo(i,{t:'res',ok:r.ok,msg:r.msg});if(['repeat','clearorders','undo'].includes(msg.a))this.sendTo(i,{t:'orders',orders:G.orders[i]||[]});this.pushViews(msg.a==='undo'||msg.a==='retreat');break;}
       case 'orders':{const r=setOrders(i,msg);if(!r.ok){this.sendTo(i,{t:'res',ok:false,msg:r.msg});this.sendTo(i,{t:'orders',orders:G.orders[i]||[],seq:msg.seq,drops:[]});}else this.sendTo(i,{t:'orders',orders:G.orders[i],seq:msg.seq,drops:(G.orders[i].drops||[]).slice(0,6)});break;}
       case 'endgame':{if(i===0&&!G.over){finish('score');this.pushViews(true);}break;}
       case 'evhold':{this.evHold=this.evHold||new Set();if(msg.v){this.evHold.add(i);if(!this.evSince)this.evSince=Date.now();}else{this.evHold.delete(i);if(!this.evHold.size)this.evSince=0;}break;}
@@ -4836,7 +4845,7 @@ const Battle={_skip:null,skipAll:false,snd:true,_ac:null,
   else if(k==='win'){tone('triangle',392,392,.2,.22);tone('triangle',523,523,.2,.22,.18);tone('triangle',659,659,.5,.24,.36);}
   else if(k==='lose'){tone('triangle',330,330,.3,.2);tone('triangle',247,247,.6,.2,.28);}
  }catch(e){}},
- play(b,view){return new Promise(resolve=>{
+ play(b,view,opts){return new Promise(resolve=>{
   const BG=!!b.bg,BGF=BG&&!!b.full;const el=$('#battle'),cv=BG?$('#lobbyWar'):$('#bcanvas'),ctx=cv.getContext('2d'),hud=$('#bhud'),pop=$('#bpop'),res=$('#bresult');
   const W=960,H=BG?(b.bgH||460):460,dpr=BG?1:Math.min(2,window.devicePixelRatio||1);cv.width=W*dpr;cv.height=H*dpr;if(!BG)el.classList.remove('hidden');res.className='';res.innerHTML='';pop.className='';
   $('#bSound').textContent=Battle.snd?'소리 켬':'소리 끔';$('#bSound').onclick=()=>{Battle.snd=!Battle.snd;$('#bSound').textContent=Battle.snd?'소리 켬':'소리 끔';};
@@ -4960,6 +4969,11 @@ const Battle={_skip:null,skipAll:false,snd:true,_ac:null,
     if(R()<.5)addDebris(p.x,p.y-8,2);};
   const posOf=(u,side)=>{const dir=side==='a'?1:-1;let x=front(side)-dir*(u.c*(sea?62:26))+dir*adv+u.jx;const y=(sea?300:290)+(u.r-2.5)*(sea?36:30)+u.jy+(u.cav?0:(Math.floor(u.c)%2)*7);if(u.cav&&cavT[side]>0.001)x=lerp(x,480+dir*(18+u.cd),cavT[side]);if(stage==='intro')x-=dir*(1-easeOut(clamp(vt/INTRO,0,1)))*340;if(u.run)x-=dir*u.run*150;if(chase&&!u.run&&side===(b.winner==='att'?'a':'d'))x+=dir*chase;return{x,y};};
   const INTRO=1900,PT=2500;if(BG)vt=BGF?INTRO:INTRO+PT;let chase=0;let stage='intro',pi=-1;
+  const rtBtn=$('#bRetreat');let rtDone=false;const canRt=!!(opts&&opts.live&&!BG&&!b.walkover&&b.phases.length>1&&(b.att===view.me||b.def===view.me)&&!b.retreat);
+  if(rtBtn){rtBtn.style.display='none';rtBtn.onclick=()=>{if(rtDone||stage!=='phase')return;const k=pi;if(k<0||k>2||k>=b.phases.length-1)return;rtDone=true;rtBtn.style.display='none';
+    const side=b.att===view.me?'att':'def';b.phases=b.phases.slice(0,k+1);const ph=b.phases[k];ph.rout=side;ph.retreat=1;b.winner=side==='att'?'def':'att';b.retreat=side;
+    const pl=Math.round((side==='att'?ph.a:ph.d)*0.05);b.aSurv=side==='att'?Math.max(0,ph.a-pl):Math.max(1,ph.a);b.dSurv=side==='def'?Math.max(0,ph.d-pl):Math.max(1,ph.d);b.captured=b.winner==='att';
+    Battle.skipAll=true;try{send({a:'retreat',tid:b.tid,k});}catch(_){}};}
   const spTxt=(U,bb)=>{if(BG||!U||!U.nsp||bb.aStart+bb.dStart<5000)return '';const l=[U.nsp.i,U.nsp.c].filter(Boolean).map(id=>(U.el&&U.el[id]?'★정예 ':'')+NSP[id].n);return l.length?'  ·  ⭐ '+l.join(', '):'';};
   const cut=(o)=>BG?0:cuts.push({t0:vt,dur:o.dur||1300,...o});
   const trait=(g)=>g&&g.trait;
@@ -5127,6 +5141,7 @@ const Battle={_skip:null,skipAll:false,snd:true,_ac:null,
     const tl=vt-INTRO;let u=0;
     if(BG&&(window.__warStop||b.kill||(document.getElementById('lobby').classList.contains('hidden')))){finish();return;}
     if(vt<INTRO)stage='intro';else{const k=b.phases.length;pi=Math.floor(tl/PT);if(pi<k){stage='phase';u=(tl-pi*PT)/PT;}else stage='rout';}
+    if(rtBtn)rtBtn.style.display=(canRt&&!rtDone&&stage==='phase'&&pi>=0&&pi<=2&&pi<b.phases.length-1)?'':'none';
     // 진군량
     if(stage==='intro')adv=0;else if(stage==='phase'){const from=pi===0?0:advT[pi-1],to=advT[pi];adv=lerp(from,to,easeOut(clamp(u/(pi===0?.85:.4),0,1)));}
     if(BG&&!BGF)adv=146;
@@ -5193,7 +5208,7 @@ const Battle={_skip:null,skipAll:false,snd:true,_ac:null,
       if(rt>1300&&!ended){ended=true;try{if(!BG&&!sea&&Math.max(b.aStart,b.dStart)>=BIGB){(window.CE_SHOTS=window.CE_SHOTS||{})[b.tid]=cv.toDataURL('image/jpeg',.72);}}catch(_){}const cap=b.captured;const lossA=b.aStart-b.aSurv,lossD=b.dStart-b.dSurv;
         const medalTx=b.medal?(()=>{const g=view.gens.find(x=>x.id===b.medal);return g?`장군 ${esc(g.name)} 훈장 수여 🎖`:'';})():'';
         const fates=[medalTx].concat((b.fates||[]).filter(f=>f.f!=='escaped').map(f=>{const g=view.gens.find(x=>x.id===f.gid);return g?`장군 ${esc(g.name)} ${f.f==='dead'?'전사':'포로'}`:'';})).filter(Boolean).join(' · ');
-        res.innerHTML=`${cap?`${esc(A.kingdom)} 승리 — ${esc(td.name)} 점령`:`${esc(D.kingdom)} 방어 성공`}<small>손실: 공격 ${lossA.toLocaleString()}명 / 방어 ${lossD.toLocaleString()}명${fates?'<br>'+fates:''}</small>`;res.className='show';}
+        res.innerHTML=`${b.retreat?`${esc(b.retreat==='att'?A.kingdom:D.kingdom)} 후퇴 — ${cap?esc(td.name)+' 점령':'방어 성공'}`:cap?`${esc(A.kingdom)} 승리 — ${esc(td.name)} 점령`:`${esc(D.kingdom)} 방어 성공`}<small>손실: 공격 ${lossA.toLocaleString()}명 / 방어 ${lossD.toLocaleString()}명${fates?'<br>'+fates:''}</small>`;res.className='show';}
       if(BGF){if(rt>7200&&!b._ended){b._ended=1;try{b.onEnd&&b.onEnd();}catch(e){}}}else if(rt>4300+(b.fates&&b.fates.length?800:0)){finish();return;}}
     // 카메라
     zoom=lerp(zoom,zoomT,.06);shake*=Math.pow(.9,ts);flash*=Math.pow(.88,ts);if(BG){shake=Math.min(shake,2.5);flash=Math.min(flash,.07);}
@@ -6237,7 +6252,7 @@ const UI={
       const capBattle=b.def!=null&&players[b.def].cap===b.tid;
       const involvesMe=b.att===v.me||b.def===v.me||(b.gp&&b.gp.includes(v.me));if(involvesMe)C.lastBattleMe=rep.round;
       const big=FX==='full'||(FX==='mine'&&involvesMe)||(FX==='brief'&&(capBattle||b.aStart+b.dStart>=900));
-      if(big&&!Battle.skipAll)await Battle.play(b,pv);
+      if(big&&!Battle.skipAll)await Battle.play(b,pv,{live:true});
       MapView.flash(b.tid,b.winner==='att'?A.color:(b.def!=null?players[b.def].color:'#8b8570'));
       if(FX==='mine'&&!involvesMe){skipped++;await sleep(220);continue;}
       UI.toast(`${td.name}: ${b.captured?A.kingdom+' 점령':(b.def!=null?players[b.def].kingdom:'중립 수비대')+' 방어'}`,b.captured?'bad':'ok');
