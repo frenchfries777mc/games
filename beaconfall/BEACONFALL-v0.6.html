@@ -10665,6 +10665,7 @@ function modToApply(d){   // 다른 플레이어의 모드가 나에게 보낸 c
   if(d.k==='chat')chatAdd('mod',String(d.fr||'MOD').slice(0,15),String(d.x||'').replace(/[\u0000-\u001f\u007f]/g,' ').slice(0,200));
   else if(d.k==='snd')modPlay(String(d.s),P.x,P.y);
   else if(d.k==='fx')modFxMe(String(d.e),+d.sec,60);
+  else if(d.k==='give'&&typeof d.i==='string'&&ITEMS[d.i]&&mode==='play')modGive(d.i,Math.max(1,Math.min(9999,d.n|0||1)),d.s|0);   // to 플레이어이름 으로 받은 아이템
 }
 function modG(k){   // if player/world ... 조건용 게임 값 (읽기는 안 되고 비교만 돼요)
   switch(k){case 'hp':return P.hp;case 'maxhp':return P.maxhp;case 'x':return P.x;case 'y':return P.alt||0;case 'z':return P.y;
@@ -10701,7 +10702,7 @@ function modCondOk(c){   // if A or B: 안의 조건 하나
   if(c.md)return modHasMod(c.md);
   if(c.hand)return modHandOk(c.hand);
   if(c.mouse)return !!(c.mouse.b===-1?(MOUSEB[0]||MOUSEB[2]):MOUSEB[c.mouse.b])!==!!c.mouse.not;   // if click press: / if right click press:
-  if(c.key)return keys.has(c.key.c)!==!!c.key.not;   // if key "G" press: (누르고 있는 동안)
+  if(c.key)return (c.key.c==='ControlLeft'?!!ctrlDown||keys.has('ControlLeft'):keys.has(c.key.c))!==!!c.key.not;   // if key "G" press: (누르고 있는 동안)
   if(c.has){const hid=modIt(c.has.item);return !!(ITEMS[hid]&&modInv(hid)>=Math.max(1,c.has.n|0||1));}
   if(c.ifp){const isp=c.ifp.w==='victim'?MODX.vp:MODX.ap;return isp!==!!c.ifp.not;}
   if(c.ifv)return modVarCmp(c.ifv);
@@ -10719,7 +10720,7 @@ function modRun0(acts,depth,box){
     if(!a||typeof a!=='object'||--box.n<0)return;
     const host=!isGuest();
     if(Array.isArray(a.else)&&Array.isArray(a.do)){const ok=modActCond(a);if(ok!==undefined){if(ok)modRun(a.do,depth+1,box);else modRun(a.else,a.elseIf?depth:depth+1,box);continue;}}
-    if(a.give&&typeof a.give==='object'){const id=modIt(a.give.item),n=Math.max(1,Math.min(9999,a.give.n|0||1));if(ITEMS[id])modGive(id,n,a.give.slot|0);}
+    if(a.give&&typeof a.give==='object'){const id=modIt(a.give.item),n=Math.max(1,Math.min(9999,a.give.n|0||1));if(ITEMS[id]){if(a.give.to===undefined)modGive(id,n,a.give.slot|0);else for(const t of modTargets(a.give.to)){if(t.k==='me')modGive(id,n,a.give.slot|0);else if(t.k==='peer')modSendTo(t,{k:'give',i:String(id).slice(0,40),n,s:a.give.slot|0});}}}
     else if(a.take&&typeof a.take==='object'){const id=modIt(a.take.item);if(ITEMS[id])modTake(id,Math.max(0,Math.min(9999,a.take.n|0)),a.take.slot|0);}
     else if(typeof a.say==='string'){modSay(modTxt(a.say).slice(0,200),a.to);}
     else if(typeof a.chance==='number'&&Array.isArray(a.do)){if(Math.random()*100<Math.max(0,Math.min(100,a.chance)))modRun(a.do,depth+1,box);}
@@ -11132,7 +11133,7 @@ function modKey(e,down){
     const ae=document.activeElement,tg=ae&&ae.tagName;
     if(tg==='INPUT'||tg==='TEXTAREA'||tg==='SELECT')return;
     const m=document.getElementById('modal');if(m&&!m.hidden)return;
-    if(modEvent('key',e.code)){MODCK.add(e.code);e.stopImmediatePropagation();e.preventDefault();}
+    if(modEvent('key',e.code==='ControlRight'?'ControlLeft':e.code)){MODCK.add(e.code);e.stopImmediatePropagation();e.preventDefault();}
   }
 }
 const MOUSEB={0:false,2:false};   // 지금 누르고 있는 마우스 버튼 (0 왼쪽, 2 오른쪽)
@@ -14146,7 +14147,7 @@ function onHostData(c,d){
     if(t&&r&&!(r._ct>now-500)){r._ct=now;const n=r.name||'손님';chatAdd(c.peer,n,t);bcastAll({t:'chat',id:c.peer,n,x:t},c);}
   }else if(d.t==='modto'){
     const r=remotes.get(c.peer),now=performance.now();
-    if(r&&!(r._mt>now-150)){r._mt=now;const to=String(d.to||'').toLowerCase(),m2={t:'modto',k:d.k,x:d.x,s:d.s,e:d.e,sec:d.sec,fr:r.name||'손님'};
+    if(r&&!(r._mt>now-150)){r._mt=now;const to=String(d.to||'').toLowerCase(),m2={t:'modto',k:d.k,x:d.x,s:d.s,e:d.e,sec:d.sec,i:d.i,n:d.n,fr:r.name||'손님'};
       if(to===myName().toLowerCase())modToApply(m2);
       else for(const [id,q] of remotes){if(q&&q.name&&String(q.name).toLowerCase()===to){const cc=net.conns.find(z=>z.peer===id);if(cc&&cc.open)try{cc.send(m2);}catch(e){}break;}}}
   }else if(d.t==='break'){
