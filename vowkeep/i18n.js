@@ -153,6 +153,23 @@ window.I18N = {
 "nw": "The last four knights of an unbuilt order go down into the dungeon together.",
 "gk": "무너진 기사단 의 마지막 기사 넷 이 함께 던전 을 내려가요."
 },
+"b_dl": {
+"ko": "다운로드",
+"en": "Download",
+"es": "Descargar",
+"fr": "Télécharger",
+"de": "Herunterladen",
+"ja": "ダウンロード",
+"zh": "下载",
+"pt": "Baixar",
+"ru": "Скачать",
+"tr": "İndir",
+"it": "Scarica",
+"pl": "Pobierz",
+"ar": "تنزيل",
+"nw": "Download",
+"gk": "아래로 짐"
+},
 "b_play": {
 "ko": "지금 플레이",
 "en": "Play now",
