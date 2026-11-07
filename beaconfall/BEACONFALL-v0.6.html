@@ -10741,6 +10741,7 @@ function modRun0(acts,depth,box){
       if(v&&typeof v==='object'&&Array.isArray(v.r)){const lo=Math.min(+v.r[0]|0,+v.r[1]|0),hi=Math.max(+v.r[0]|0,+v.r[1]|0);modVarSet(a.setv.n,lo+Math.floor(Math.random()*(hi-lo+1)));}
       else if(v&&typeof v==='object'&&typeof v.ref==='string'){const r=modVGet(v.ref);modVarSet(a.setv.n,r===undefined?0:r);}
       else if(v&&typeof v==='object'&&typeof v.src==='string'){modVarSet(a.setv.n,v.src==='uuid'?myUuid():myName());}
+      else if(v&&typeof v==='object'&&typeof v.tx==='string'){modVarSet(a.setv.n,String(modTxt(v.tx)).slice(0,40));}   // %별칭% 의 값을 변수에 넣어요
       else if(v&&typeof v==='object'&&typeof v.dist==='string'){modVarSet(a.setv.n,modDist(v.dist));}
       else modVarSet(a.setv.n,v);
     }
