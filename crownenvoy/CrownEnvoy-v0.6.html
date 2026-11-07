@@ -460,7 +460,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.6 · build 151</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.6 · build 152</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -7565,7 +7565,7 @@ let dirty=false;const touch=()=>{dirty=true;};
 /* ----- 달성 알림 ----- */
 const css=document.createElement('style');css.textContent='#authBar{flex-wrap:wrap;justify-content:flex-end}#achToast{position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:99995;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}#achToast .at{background:linear-gradient(#2a2210,#171206);border:1px solid #e7c873;border-radius:10px;padding:9px 16px;color:#f6e7b8;box-shadow:0 6px 24px #000a;font-size:14px;text-align:center;animation:achIn .35s ease-out}#achToast .at b{display:block;font-size:15px;color:#ffe08a}#achToast .at small{color:#d8c79a}@keyframes achIn{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:none}}'
  +'#achOv{position:fixed;inset:0;background:#000b;z-index:99980;display:flex;align-items:center;justify-content:center;padding:14px}#achOv .ab{background:#0e182b;border:1px solid #c9a24a;border-radius:12px;padding:16px;width:min(94vw,480px);max-height:86vh;overflow:auto;color:#eef1f7;box-shadow:0 10px 40px #000a}#achOv h2{margin:0;font-size:19px}#achOv .ah{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}#achOv .x{background:none;border:0;color:#9fb0c8;font-size:16px;cursor:pointer}#achOv .an{color:#9fb0c8;font-size:12px;margin-bottom:8px}#achOv .bar{height:6px;border-radius:3px;background:#1d2b45;overflow:hidden;margin:4px 0 10px}#achOv .bar i{display:block;height:100%;background:#e7c873}'
- +'#achOv .ar{display:flex;gap:10px;align-items:center;padding:8px;border-radius:8px;background:#13213a;margin:4px 0}#achOv .ar.ok{background:#2a2412;border:1px solid #6d5a25}#achOv .ar .ic{font-size:20px;width:26px;text-align:center;filter:grayscale(1);opacity:.45}#achOv .ar.ok .ic{filter:none;opacity:1}#achOv .ar .tx{flex:1;min-width:0}#achOv .ar .tx b{display:block;font-size:14px}#achOv .ar.ok .tx b{color:#ffe08a}#achOv .ar .tx small{color:#9fb0c8;font-size:12px}#achOv .ar .pg{color:#9fb0c8;font-size:12px;white-space:nowrap}';
+ +'#achOv .ar{display:flex;gap:10px;align-items:center;padding:8px;border-radius:8px;background:#13213a;margin:4px 0}#achOv .ar.ok{background:#2a2412;border:1px solid #6d5a25}#achOv .ar .ic{font-size:20px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;filter:grayscale(1);opacity:.45}#achOv .ar.ok .ic{filter:none;opacity:1}#achOv .ar .ic img{width:100%;height:100%;object-fit:contain}#achOv .ar.ok .ic{filter:none;opacity:1}#achOv .ar .tx{flex:1;min-width:0}#achOv .ar .tx b{display:block;font-size:14px}#achOv .ar.ok .tx b{color:#ffe08a}#achOv .ar .tx small{color:#9fb0c8;font-size:12px}#achOv .ar .pg{color:#9fb0c8;font-size:12px;white-space:nowrap}';
 document.head.appendChild(css);
 function show(id){const a=ACH.find(x=>x.id===id);if(!a)return;let box=$('#achToast');if(!box){box=document.createElement('div');box.id='achToast';document.body.appendChild(box);}
   const d=document.createElement('div');d.className='at';d.innerHTML='<small></small><b></b>';d.querySelector('small').textContent='🏆 도전과제 달성';d.querySelector('b').textContent=a.n;while(box.children.length>=3)box.firstChild.remove();box.appendChild(d);setTimeout(()=>d.remove(),4500);
@@ -7579,7 +7579,7 @@ const fmt=n=>Number(n).toLocaleString();
 function draw(){const o=$('#achOv');if(!o)return;const done=ACH.filter(a=>D.u[a.id]).length;
   const list=ACH.slice().sort((a,b)=>(!!D.u[b.id])-(!!D.u[a.id]));
   let h='<div class="ab"><div class="ah"><h2>🏆 도전과제</h2><button class="x" data-a="close" aria-label="닫기">✕</button></div><div class="an"></div><div class="bar"><i style="width:'+Math.round(done/ACH.length*100)+'%"></i></div>';
-  list.forEach(a=>{const ok=!!D.u[a.id];h+='<div class="ar'+(ok?' ok':'')+'" data-id="'+a.id+'"><div class="ic">🏆</div><div class="tx"><b></b><small></small></div><div class="pg"></div></div>';});
+  list.forEach(a=>{const ok=!!D.u[a.id];h+='<div class="ar'+(ok?' ok':'')+'" data-id="'+a.id+'"><div class="ic"><img src="ach-icons/'+a.id+'.svg" alt="" onerror="this.replaceWith(\'🏆\')"></div><div class="tx"><b></b><small></small></div><div class="pg"></div></div>';});
   h+='</div>';o.innerHTML=h;
   o.querySelector('.an').textContent=done+'/'+ACH.length+' 달성'+(syncUid?' · Frenchfries777 계정에 저장돼요':' · 로그인하면 계정에 저장돼요');
   list.forEach(a=>{const r=o.querySelector('[data-id="'+a.id+'"]');r.querySelector('b').textContent=a.n;r.querySelector('small').textContent=a.d;
