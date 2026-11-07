@@ -10798,7 +10798,7 @@ function modRun0(acts,depth,box){
     else if(a.genx&&host&&box.gen&&box.fresh){modGenThing(a.genx);}
     else if(a.genp&&host&&box.gen&&box.fresh){modGenPlace(a.genp);}
     else if(a.gens&&host&&box.gen&&box.fresh&&GAMEST.includes(a.gens.id)){modGenGame(a.gens);}
-    else if((a.fill||a.fillx||a.fillb)&&Array.isArray((a.fill||a.fillx||a.fillb).v)&&!(a.fill||a.fillx||a.fillb).vd){const o=a.fill||a.fillx||a.fillb,n=[];for(const k of o.v){const t=String(modVGet(k)==null?'':modVGet(k)).trim().split(/\s+/);n.push(+t[0],+t[1]);}if(n.some(q=>!isFinite(q)||q!==q)||n.length!==4){modSay('Set position first ('+o.v.join(', ')+')');}else{const o2=Object.assign({},o,{c:n.map((q,i)=>[1,q]),v:null,vd:1}),a2=a.fill?{fill:o2}:a.fillx?{fillx:o2}:{fillb:o2};modRun0([a2],depth,box);}}
+    else if(a.fill&&(Array.isArray(a.fill.v)||a.fill.tv)&&!a.fill.vd){modFillVar(a.fill,depth,box);}
     else if(a.fill&&host&&world&&TER&&Array.isArray(a.fill.c)&&a.fill.c.length===4){modTf('fill',a.fill);}   // fill 은 아무 때나 (새 월드가 아니어도) 돼요
     else if(a.fillx&&host&&world&&TER&&Array.isArray(a.fillx.c)&&a.fillx.c.length===4){modGenPlace({k:a.fillx.k,c:a.fillx.c,ch:a.fillx.ch});}
     else if(a.fillb&&host&&world&&TER&&Array.isArray(a.fillb.c)&&a.fillb.c.length===4){modFillBlocks(a.fillb);}
@@ -10944,6 +10944,22 @@ function modTfLive(t){
   applyTF(t,false);
   markRemoved(rem);markBrem(brm);markOres(cv,5);world.conv=cv;
   saveWorld(true);
+}
+function modFillVar(o,depth,box){   // fill %{pos1}% %{pos2}% to %{block}%: 좌표·대상을 변수에서 읽어서 실행해요
+  let c=o.c;
+  if(Array.isArray(o.v)){const n=[];for(const k of o.v){const t=String(modVGet(k)==null?'':modVGet(k)).trim().split(/\s+/);n.push(+t[0],+t[1]);}
+    if(n.length!==4||n.some(q=>!isFinite(q))){modSay('Set position first ('+o.v.join(', ')+')');return;}
+    c=n.map(q=>[1,q]);}
+  let a2;
+  if(o.tv){
+    const raw=String(modVGet(o.tv)==null?'':modVGet(o.tv)).trim(),v=raw.toLowerCase();
+    if(/^(land|beach|ocean|mountain)$/.test(v))a2={fill:{c,mode:v,b:null,rp:o.rp,ch:o.ch,vd:1}};
+    else if(/^(tree|rock|iron|gold|copper|zinc)$/.test(v))a2={fillx:{k:v,c,ch:o.ch||100}};
+    else{let id=ITEMS[raw]?raw:ITEMS[v]?v:'';if(!id)for(const k in ITEMS){if(ITEMS[k]&&String(ITEMS[k].name)===raw){id=k;break;}}
+      if(!id){modSay('Unknown block: '+raw.slice(0,30));return;}
+      a2={fillb:{it:id,c,ch:o.ch||100}};}
+  }else a2={fill:Object.assign({},o,{c,v:null,vd:1})};
+  modRun0([a2],depth,box);
 }
 function modFillBlocks(a){   // fill x0 z0 x1 z1 to <블록> [chance N%]: 땅 위 16×16 칸마다 (원래 지형은 그대로 두고 그 위에 세워요)
   const an=modAnchor(null,true),c=a.c.map((p,i)=>{const v=Math.round(+p[1])||0;return p[0]?(i%2?an.y:an.x)+v:v;});

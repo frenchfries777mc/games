@@ -405,6 +405,8 @@ function parseScript(text,lenient){
       if(/^(set|add|subtract|multiply|divide|reset|loop|if\s+(variable|player|world|signal)|signal|every)\b/i.test(l.t))l={n:l.n,ind:l.ind,t:nb(l.t)};   // {변수} 는 {} 를 떼고 읽어요
       var fvar=null,fvm=l.t.match(/^fill\s+%\{([a-z0-9_]{1,20})\}%\s+%\{([a-z0-9_]{1,20})\}%\s+(?:to\s+)?(.+)$/i);   // fill %{pos1}% %{pos2}% land: 변수에 담긴 'x z' 두 점으로 채워요
       if(fvm){fvar=[fvm[1].toLowerCase(),fvm[2].toLowerCase()];l={n:l.n,ind:l.ind,t:'fill 0 0 0 0 to '+fvm[3]};}
+      var ftv=null,ftm=l.t.match(/^(fill\s+.+?\s+to\s+)%\{([a-z0-9_]{1,20})\}%(.*)$/i);   // fill ... to %{block}%: 블록/지형 이름을 변수에서 읽어요
+      if(ftm){ftv=ftm[2].toLowerCase();l={n:l.n,ind:l.ind,t:ftm[1]+'land'+ftm[3]};}
       var pe=null,em=l.t.match(/^else(?:\s+if\s+(.+?))?\s*:$/i);
       if(em){
         var tl=acts[acts.length-1];
@@ -500,7 +502,7 @@ if(nv===''||nv==='-')nv=0;fc.push([rel?1:0,+nv]);}
         if(/^(land|beach|ocean|mountain|paint)$/.test(ftg)){
           var fcb=null,fb=m[6]?m[6].toLowerCase():null;if(m[6]&&m[6].charAt(0)==='"'){fcb=m[6].slice(1,-1);fb=null;}if(fb&&BIOMES.indexOf(fb)<0)throw PE(l.n,"unknown biome '"+fb+"'. You can use: "+BIOMES.join(', '));
           if(ftg==='paint'&&!fb&&!fcb)throw PE(l.n,'paint needs a biome: fill 0 0 100 100 to paint "road"');
-          var fa={c:fc,mode:ftg,b:fb};if(fcb)fa.cb=fcb;if(m[8])fa.rp=/^land$/i.test(m[8])?2:1;if(fchn!==null&&fchn<100)fa.ch=fchn;if(fvar)fa.v=fvar;acts.push({fill:fa});
+          var fa={c:fc,mode:ftg,b:fb};if(fcb)fa.cb=fcb;if(m[8])fa.rp=/^land$/i.test(m[8])?2:1;if(fchn!==null&&fchn<100)fa.ch=fchn;if(fvar)fa.v=fvar;if(ftv)fa.tv=ftv;acts.push({fill:fa});
         }else{
           if(m[6])throw PE(l.n,"'"+m[6]+"' can't come after '"+m[5]+"'. Use: fill 0 0 99 99 to "+ftg+" chance 30%");
           if(m[8])throw PE(l.n,"replace works with land, beach, ocean, mountain and paint only");
