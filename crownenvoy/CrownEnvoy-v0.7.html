@@ -557,7 +557,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 168</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 169</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div><p class="tagline">사절을 보내 동맹을 맺고, 군대를 보내 왕관을 차지하세요.</p></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -1728,10 +1728,10 @@ function monoMul(pid,g,sell){const m=monoOn(g);let f=1;if(m){if(m.owner===pid)f=
 const WONDERS={gwall:{n:'만리장성',ic:'🏯',d:'모든 영토의 요새 방어 +30%',fx:{fort:0.3}},lib:{n:'대도서관',ic:'📚',d:'연구 속도 +15%',fx:{tech:0.15}},palace:{n:'황금 궁전',ic:'👑',d:'수입 +10%',fx:{tax:0.1}},temple:{n:'대신전',ic:'⛩️',d:'외교 설득 +12%',fx:{dip:0.12}},garden:{n:'공중정원',ic:'🌿',d:'식량 소비 -25%',fx:{rsn:-0.25}},arena:{n:'대경기장',ic:'🏟️',d:'장군 경험 +25% · 징집비 -8%',fx:{gxp:0.25,cons:-0.08}}};
 const WCOST=700,WWOOD=30,WTURNS=4,WMAX=2;
 let WDC=null;
-function wdList(pid){if(!WDC||WDC.g!==G||WDC.r!==G.round){WDC={g:G,r:G.round,m:{}};G.terr.forEach(t=>{if(t.wd&&t.owner!=null)(WDC.m[t.owner]=WDC.m[t.owner]||[]).push(t.wd);});}return WDC.m[pid]||[];}
+function wdList(pid){return [];if(!WDC||WDC.g!==G||WDC.r!==G.round){WDC={g:G,r:G.round,m:{}};G.terr.forEach(t=>{if(t.wd&&t.owner!=null)(WDC.m[t.owner]=WDC.m[t.owner]||[]).push(t.wd);});}return WDC.m[pid]||[];}
 const wdTaken=k=>G.terr.some(t=>t.wd===k||(t.wp&&t.wp.k===k));
 const wdBusy=pid=>wdList(pid).length+G.terr.filter(t=>t.wp&&t.owner===pid).length;
-function wdTick(){G.terr.forEach(t=>{if(!t.wp)return;if(t.owner==null||t.wp.by!==t.owner){delete t.wp;return;}if(--t.wp.left>0)return;const k=t.wp.k,p=G.players[t.owner];t.wd=k;delete t.wp;p.vp=(p.vp||0)+5;t.mark={k:'build',t:WONDERS[k].n,until:G.round+3};log(`${p.kingdom}이(가) ${TDEF[t.id].name}에 ${WONDERS[k].n}을(를) 완공했다!`,'sys');});WDC=null;}
+function wdTick(){G.terr.forEach(t=>{delete t.wd;delete t.wp;if(1)return;if(!t.wp)return;if(t.owner==null||t.wp.by!==t.owner){delete t.wp;return;}if(--t.wp.left>0)return;const k=t.wp.k,p=G.players[t.owner];t.wd=k;delete t.wp;p.vp=(p.vp||0)+5;t.mark={k:'build',t:WONDERS[k].n,until:G.round+3};log(`${p.kingdom}이(가) ${TDEF[t.id].name}에 ${WONDERS[k].n}을(를) 완공했다!`,'sys');});WDC=null;}
 /* ===== 휴전회의: 휴전을 요청해 두면 다음 턴이 시작될 때 회의가 열리고, 양쪽(AI 포함)이 실시간으로 요구를 낸다 =====
    점령한 영토도 휴전 때 토큰으로 지키지 않으면 원래 주인에게 돌아간다 (지키는 값 = 요구 값 -1, 최소 1). 토큰으로 지킨 땅은 내 땅으로 인정받는다 */
 const TC_HOLD=150000,TC_VS=6;
@@ -1969,7 +1969,7 @@ function expBot(pid){const p=G.players[pid];if(!p.alive||p.landless||p.exp||p.go
 function formBot(pid){const p=G.players[pid];if(!p.alive||p.landless)return;const seen=p.seenF||{};const foes=Object.keys(seen).filter(o=>G.players[o]&&G.players[o].alive&&isHostile(pid,+o));
   if(foes.length&&Math.random()<0.6){const o=pick(foes),beatIt=Object.keys(FORMS).find(k=>FORMS[k].beats===seen[o]);if(beatIt){p.form=beatIt;return;}}
   if(!p.form||Math.random()<0.5)p.form=pick(Object.keys(FORMS));}
-function wdBot(pid){const p=G.players[pid];if(!p.alive||p.landless||p.gold<WCOST+300||wdBusy(pid)>=WMAX)return;const L=owned(pid).filter(t=>!t.sea&&(t.city||0)>=1&&!t.wd&&!t.wp);const K=Object.keys(WONDERS).filter(k=>!wdTaken(k));if(!L.length||!K.length)return;
+function wdBot(pid){return;const p=G.players[pid];if(!p.alive||p.landless||p.gold<WCOST+300||wdBusy(pid)>=WMAX)return;const L=owned(pid).filter(t=>!t.sea&&(t.city||0)>=1&&!t.wd&&!t.wp);const K=Object.keys(WONDERS).filter(k=>!wdTaken(k));if(!L.length||!K.length)return;
   if(((p.stock||{}).wood||0)<WWOOD){extAct(pid,{a:'mkt',op:'buy',good:'wood',n:WWOOD});return;}extAct(pid,{a:'wonder',tid:pick(L).id,k:pick(K)});}
 function bldSync(){G.terr.forEach(t=>{if(t.sea)return;
   if(t.bl&&t.bl.length){if(t.blO!==t.owner){if(t.blO!=null)t.bl=t.bl.filter(()=>Math.random()<0.4);t.blO=t.owner;}t.bl=t.bl.slice(0,bslots(t));if(!t.bl.length)delete t.bl;}else t.blO=t.owner;
@@ -3438,7 +3438,7 @@ function extAct(pid,m){const p=G.players[pid];const inPlan=G.phase==='plan';if(m
   case 'tcquit':{const c=(G.tcs||[]).find(x=>x.id===+m.id&&x.live);if(!c||(c.a!==pid&&c.b!==pid))return fail('열린 휴전회의가 없어요.');tcEnd(c,`휴전회의가 결렬됐다. (${snm(pid)}이(가) 회의장을 떠났다)`,true);return ok('회의가 결렬됐어요. 전쟁이 계속돼요.');}
   case 'expedition':return expAct(pid,m);
   case 'form':{if(!inPlan)return fail('계획 단계에서만 가능합니다.');if(!FORMS[m.f])return fail('대형 오류');p.form=m.f;return ok(`전투 대형: ${FORMS[m.f].ic} ${FORMS[m.f].n}`);}
-  case 'wonder':{if(!inPlan)return fail('계획 단계에서만 가능합니다.');const T=G.terr[+m.tid];const w=WONDERS[m.k];if(!T||T.sea||T.owner!==pid||!w)return fail('내 도시를 선택하세요.');if(!((T.city||0)>=1))return fail('도시 1단계 이상인 영토에만 지을 수 있어요.');if(T.wd||T.wp)return fail('이 영토에는 이미 불가사의가 있어요.');if(wdTaken(m.k))return fail('그 불가사의는 세상에 하나뿐이고 이미 누군가 지었어요.');if(wdBusy(pid)>=WMAX)return fail(`불가사의는 나라마다 ${WMAX}개까지예요.`);
+  case 'wonder':{return fail('불가사의는 없어졌어요.');if(!inPlan)return fail('계획 단계에서만 가능합니다.');const T=G.terr[+m.tid];const w=WONDERS[m.k];if(!T||T.sea||T.owner!==pid||!w)return fail('내 도시를 선택하세요.');if(!((T.city||0)>=1))return fail('도시 1단계 이상인 영토에만 지을 수 있어요.');if(T.wd||T.wp)return fail('이 영토에는 이미 불가사의가 있어요.');if(wdTaken(m.k))return fail('그 불가사의는 세상에 하나뿐이고 이미 누군가 지었어요.');if(wdBusy(pid)>=WMAX)return fail(`불가사의는 나라마다 ${WMAX}개까지예요.`);
     if(p.gold<WCOST)return fail(`금화가 부족합니다 (필요 ${WCOST})`);p.stock=p.stock||{};if((p.stock.wood||0)<WWOOD)return fail(`목재가 부족합니다 (필요 ${WWOOD})`);
     p.gold-=WCOST;p.stock.wood-=WWOOD;T.wp={k:m.k,left:WTURNS,by:pid};WDC=null;log(`${p.kingdom}이(가) ${TDEF[T.id].name}에서 ${w.n} 건설을 시작했다.`,'sys');return ok(`${TDEF[T.id].name}에서 ${w.ic} ${w.n} 건설을 시작했습니다. ${WTURNS}턴 뒤 완성돼요. (-${WCOST}금)`);}
   case 'mono':{if(!inPlan)return fail('계획 단계에서만 가능합니다.');const g=m.good;if(!GOODS[g])return fail('상품 오류');if(!ownGoods(pid).has(g))return fail('내 영토에서 나는 상품만 독점할 수 있어요.');const cur=monoOn(g);if(cur&&cur.owner!==pid)return fail(`${pname(cur.owner)}이(가) 이미 독점 중이에요.`);
@@ -6327,9 +6327,6 @@ const UI={
     if(!mine&&!L.length&&T.post==null&&!canPost&&!T.wd&&!T.wp)return '';const slots=1+(T.city||0);
     let h=(mine&&T.pop!=null?`<div class="sm" style="margin-top:8px">👥 인구 지수 <b>${T.pop.toFixed(2)}</b> <span class="muted">· 1.0이 보통 · 수입과 징집 한도에 반영 · 전쟁터에서는 줄고 난민이 이웃으로 가요</span></div>`:'')+`<h3>도시 건물 <span class="muted sm">${mine?L.length+'/'+slots+'칸':''}</span></h3><div class="card">`;
     h+=L.length?L.map(b=>`<div class="sm" style="padding:2px 0"><b>${BLD[b].ic} ${BLD[b].n}</b> <span class="muted">${BLD[b].d}</span></div>`).join(''):`<div class="sm muted">${mine?'아직 지은 건물이 없어요.':'알려진 건물이 없어요.'}</div>`;
-    if(T.wd)h+=`<div class="sm" style="padding:2px 0"><b>${WONDERS[T.wd].ic} 불가사의 · ${WONDERS[T.wd].n}</b> <span class="muted">${WONDERS[T.wd].d} (점령하면 가져가요)</span></div>`;
-    if(T.wp)h+=`<div class="sm" style="padding:2px 0"><b>${WONDERS[T.wp.k].ic} ${WONDERS[T.wp.k].n} 건설 중</b> <span class="muted">${T.wp.left}턴 남음</span></div>`;
-    if(mine&&v.phase==='plan'&&!v.spec&&(T.city||0)>=1&&!T.wd&&!T.wp){const busy=v.terr.filter(x=>x.owner===v.me&&(x.wd||x.wp)).length;h+=`<div class="sm muted" style="margin-top:6px">🏛 불가사의 (세상에 하나씩 · 나라당 ${WMAX}개 · ${WCOST}금 · 🪵${WWOOD} · ${WTURNS}턴)</div><div class="row" style="gap:6px;flex-wrap:wrap;margin-top:4px">`+Object.keys(WONDERS).map(k=>{const w=WONDERS[k],taken=v.terr.some(x=>x.wd===k||(x.wp&&x.wp.k===k));return `<button class="btn sm" data-act="wonder" data-tid="${id}" data-k="${k}" ${taken||busy>=WMAX||me.gold<WCOST||((me.gstock||{}).wood||0)<WWOOD?'disabled':''} title="${esc(w.d)}${taken?' (이미 있음)':''}">${w.ic} ${w.n}${taken?' ✓':''}</button>`;}).join('')+`</div>`;}
     if(T.post!=null)h+=`<div class="sm" style="padding:2px 0"><b>🚩 상관</b> <span class="muted">${esc(v.players[T.post].kingdom.split('(')[0])}의 상인들이 머무는 곳 — 매턴 서로 금화를 벌어요</span>${mine&&v.phase==='plan'?` <button class="btn sm" data-act="postx" data-tid="${id}">닫기</button>`:''}</div>`;
     if(mine&&v.phase==='plan'&&!v.spec){h+=`<div class="row" style="gap:6px;flex-wrap:wrap;margin-top:6px">`+Object.keys(BLD).filter(b=>!L.includes(b)&&(b!=='fact'||v.ind)).map(b=>{const d=BLD[b];return `<button class="btn sm" data-act="bld" data-tid="${id}" data-b="${b}" ${L.length>=slots||me.gold<d.cost||((me.gstock||{}).wood||0)<(d.w||0)||(d.port&&!T.port)?'disabled':''} title="${esc(d.d)}${d.port&&!T.port?' (항구 영토만)':''}">${d.ic} ${d.n} · ${d.cost}금 · 🪵${d.w||0}</button>`;}).join('')+`</div>${L.length>=slots?'<div class="sm muted" style="margin-top:4px">칸이 가득 찼어요. 도시를 키우면 칸이 늘어요.</div>':''}`;}
     if(canPost)h+=`<div class="row" style="margin-top:6px"><button class="btn sm" data-act="post" data-tid="${id}" ${me.gold<150?'disabled':''} title="무역 협정이나 동맹을 맺은 나라의 항구에만 세울 수 있어요. 매턴 +12금(상대 +5금)">🚩 상관 세우기 · 150금</button></div>`;
