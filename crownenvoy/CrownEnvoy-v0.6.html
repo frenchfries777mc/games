@@ -222,57 +222,6 @@ input[type=checkbox]{accent-color:var(--gold)}
 .toast.bad{border-left-color:var(--bad)}.toast.ok{border-left-color:var(--good)}
 @keyframes tin{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 @media (max-width:1100px){.stats .stat:nth-child(3){display:none}.score .pc span.k{display:none}}
-/* ===== 보라 디자인 (데스크톱) ===== */
-#game.ce-mod{--ink:#0e0a18;--panel:#181226;--panel2:#1f1830;--line:#3a2f5c;--muted:#a89ac8;--gold:#f0c060;--gold2:#ffe0a0;--goldd:#8a6ad0}
-#game.ce-mod .btn{--bg:#2f2548;--bd:#8a6ad0;--tx:#efe8ff}
-#game.ce-mod .btn:hover:not(:disabled){--bg:#3d3060;--bd:#b39af0}
-#game.ce-mod .btn.primary{--bg:#6a4ab8;--tx:#fff}
-#game.ce-mod .btn.primary:hover:not(:disabled){--bg:#7d5ad4}
-#game.ce-mod .seg{background:#120c20;border-color:#8a6ad0}
-#game.ce-mod .seg button{border-right-color:#3a2f5c}
-#game.ce-mod .seg button:hover{background:#2a2142}
-#game.ce-mod #main{position:absolute;inset:0}
-#game.ce-mod #topbar{position:absolute;left:50%;transform:translateX(-50%);top:12px;height:auto;max-width:calc(100vw - 24px);z-index:20;padding:8px 26px;gap:22px;border:2px solid #8a6ad0;border-radius:14px;background:rgba(24,18,38,.93);box-shadow:0 8px 24px #0009}
-#game.ce-mod:not(.ce-draft) #topbar .ttl,#game.ce-mod:not(.ce-draft) #topbar .phases,#game.ce-mod:not(.ce-draft) #topbar .score,#game.ce-mod #topbar #btnMenu{display:none}
-#game.ce-mod #topbar .timer{color:#f0c060;min-width:0}
-#game.ce-mod .stat{background:none;border:0;padding:0 2px;min-width:0}
-#game.ce-mod .stat small{color:#a89ac8}
-#game.ce-mod #specbar{position:absolute;left:50%;transform:translateX(-50%);top:70px;z-index:20}
-#game.ce-mod #maphint{top:70px;background:#181226e6;border-left-color:#8a6ad0}
-#game.ce-mod #zoomctl{right:auto;left:12px;bottom:12px}
-#game.ce-mod #actionbar{position:absolute;left:50%;transform:translateX(-50%);bottom:14px;height:auto;z-index:20;padding:10px 12px;gap:8px;border:2px solid #8a6ad0;border-radius:14px;background:rgba(24,18,38,.93);box-shadow:0 8px 24px #0009}
-#game.ce-mod #hint,#game.ce-mod #btnAuto{display:none}
-#game.ce-mod #tabs{background:none;border:0;gap:8px}
-#game.ce-mod #tabs button{flex:none;width:60px;padding:6px 0 5px;border:0;border-radius:10px;font-size:11px;color:#a89ac8;background:none}
-#game.ce-mod #tabs button::before{display:block;font-size:20px;line-height:1.2;margin-bottom:1px}
-#game.ce-mod #tabs button[data-tab=map]::before{content:'🗺'}#game.ce-mod #tabs button[data-tab=dip]::before{content:'🤝'}#game.ce-mod #tabs button[data-tab=pol]::before{content:'🏛'}#game.ce-mod #tabs button[data-tab=trade]::before{content:'⚖'}#game.ce-mod #tabs button[data-tab=tech]::before{content:'🔬'}#game.ce-mod #tabs button[data-tab=obj]::before{content:'🎯'}
-#game.ce-mod #tabs button:hover{background:#2a2142;color:#efe8ff}
-#game.ce-mod #tabs button.on{background:#8a6ad0;color:#10091c;font-weight:800}
-#game.ce-mod #tabs .badge{top:2px;right:6px}
-#game.ce-mod #btnMenu{width:60px;min-height:0;padding:6px 0 5px;border:0;border-radius:10px;font-size:11px;background:none;color:#a89ac8;flex-direction:column;gap:0;line-height:1.2;white-space:normal}
-#game.ce-mod #btnMenu::before{content:'📜';font-size:20px;margin-bottom:1px}
-#game.ce-mod #btnMenu:hover{background:#2a2142;color:#efe8ff}
-#game.ce-mod .seal{min-width:0;height:50px;padding:0 40px;margin-left:6px;border:0;border-radius:14px;background:#f0c060;color:#1a1208;font-size:17px;font-weight:900;box-shadow:0 4px 14px #0006}
-#game.ce-mod .seal::after{display:none}
-#game.ce-mod .seal:hover{background:#ffd27a}#game.ce-mod .seal.done{background:#5aa070;color:#0a1a10}
-#game.ce-mod #side{position:absolute;right:14px;top:78px;bottom:14px;width:380px;z-index:15;border:2px solid #8a6ad0;border-radius:14px;background:rgba(24,18,38,.96);box-shadow:0 8px 24px #0009;overflow:hidden}
-#game.ce-mod.ce-sideoff #side{display:none}
-#game.ce-mod #panel{scrollbar-color:#4a3a6e #181226;padding-bottom:16px}
-#game.ce-mod #panel .card{border-left-color:#8a6ad0}
-#game.ce-mod .bar{background:#0e0a18}
-#game.ce-mod input[type=text],#game.ce-mod input[type=number],#game.ce-mod select{background:#120c20}
-#sideDesel{display:none;margin:0 16px 16px;padding:13px;text-align:center;font-weight:800;font-size:15px;border:2px solid #8a6ad0;border-radius:12px;background:#120c20;color:#efe8ff;cursor:pointer;flex:none}
-#game.ce-mod.ce-hassel #sideDesel{display:block}
-#tbar{display:none;position:absolute;left:50%;transform:translateX(-50%);bottom:92px;width:min(900px,calc(100vw - 24px));padding:14px 20px;align-items:center;gap:24px;z-index:19;border:2px solid #8a6ad0;border-radius:14px;background:rgba(24,18,38,.93);box-shadow:0 8px 24px #0009;cursor:pointer;color:#ece5f7}
-#game.ce-mod.ce-tbar #tbar{display:flex}
-#tbar>*{flex:none;white-space:nowrap}
-#tbar .fl{width:52px;height:34px;border-radius:2px;border:1px solid #fff4}
-#tbar h3{margin:0;font-size:22px}#tbar .sub{color:#a89ac8;font-size:12px}
-#tbar .st{min-width:100px}#tbar .st span{font-size:12px;color:#a89ac8}#tbar .st b{display:block;font-size:20px}
-#tbar .st i{display:block;height:6px;background:#2f2548;margin-top:4px;border-radius:3px;overflow:hidden}#tbar .st i u{display:block;height:100%;background:#f0c060}
-#tbar .rec{margin-left:auto;padding:12px 28px;border-radius:10px;background:#f0c060;color:#1a1208;font-weight:900;font-size:16px}
-#tbar .ds{padding:10px 16px;border:2px solid #8a6ad0;border-radius:10px;font-weight:800;font-size:14px}
-#tbar .ds:hover{background:#2a2142}
 @media (max-width:1000px){#side{width:330px}.phases{display:none}}
 @media (max-width:860px){.brand h1{font-size:44px}#lobbyRight{right:12px;width:min(340px,calc(100vw - 24px))}.btn.mode{min-height:78px;padding:12px 18px}}
 @media (max-width:760px){#main{flex-direction:column}#side{width:auto;height:46%;border-left:0;border-top:2px solid var(--goldd)}#topbar{gap:8px;overflow:hidden}#topbar .ttl{display:none}.stats{display:none}#maphint{max-width:80%;font-size:12px}#hint{font-size:12px}.seal{min-width:120px;padding:0 16px}}
@@ -511,7 +460,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.6 · build 200</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.6 · build 156</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -7887,43 +7836,6 @@ function mixed(c,stroke,t,x,y,orig){const px=parseFloat(/([\d.]+)px/.exec(c.font
   c.textAlign='left';try{for(const p of ps){if(p.e){if(!stroke)c.drawImage(p.im,cx,iy,sz,sz);}else orig.call(c,p.t,cx,y);cx+=p.w;}}finally{c.textAlign=al;}}
 P.fillText=function(t,x,y,w){if(typeof t==='string'&&reT.test(t))return mixed(this,false,t,x,y,oF);return oF.apply(this,arguments);};
 P.strokeText=function(t,x,y,w){if(typeof t==='string'&&reT.test(t))return mixed(this,true,t,x,y,oS);return oS.apply(this,arguments);};
-})();
-</script>
-<script>
-/* 보라 디자인: 데스크톱에서만 위 바·아래 영토 바·영토 창·아래 독으로 배치 */
-(function(){
-const mq=window.matchMedia('(min-width:1001px)');
-const g=document.getElementById('game'),tabs=document.getElementById('tabs'),side=document.getElementById('side'),panel=document.getElementById('panel'),ab=document.getElementById('actionbar'),menu=document.getElementById('btnMenu'),tb=document.getElementById('topbar'),ready=document.getElementById('btnReady');
-if(!g||!tabs||!side||!ab)return;
-const bar=document.createElement('div');bar.id='tbar';g.appendChild(bar);
-const dsl=document.createElement('button');dsl.id='sideDesel';dsl.type='button';dsl.textContent='선택 해제';side.appendChild(dsl);
-function place(){const on=mq.matches;g.classList.toggle('ce-mod',on);
- if(on){ab.insertBefore(tabs,ab.firstChild);ab.insertBefore(menu,ready);}
- else{side.insertBefore(tabs,side.firstChild);tb.appendChild(menu);['ce-sideoff','ce-hassel','ce-tbar','ce-draft'].forEach(c=>g.classList.remove(c));}
- try{if(C.started&&C.view){UI.renderPanel();}if(C.mapInit)MapView.resize();}catch(e){}}
-function sync(){if(!g.classList.contains('ce-mod'))return;const v=C.view;if(!v)return;
- const sel=C.sel,tab=C.tab||'map',draft=!!v.draft,hasSel=sel!=null&&!draft&&v.terr&&v.terr[sel];
- if(!hasSel)C.win=false;
- if(C._ls!==sel){C.win=false;C._ls=sel;}
- const pend=!!C.pend;if(C._lp&&!pend)C.win=false;C._lp=pend;
- const side=draft||pend||C.win||tab!=='map'||v.phase==='report';
- g.classList.toggle('ce-draft',draft);g.classList.toggle('ce-sideoff',!side);g.classList.toggle('ce-hassel',!!hasSel&&side&&tab==='map');
- const showBar=!!hasSel&&!side;g.classList.toggle('ce-tbar',showBar);
- if(showBar){const T=v.terr[sel],td=TDEF[sel],o=T.owner!=null?v.players[T.owner]:null;let h='';
-  if(td.kind==='sea'){h=`<div><h3>${esc(td.name)}</h3><div class="sub">해역</div></div>`;}
-  else{const k=KIND[td.kind],ter=td.kind==='fort'?'산악 요새':TERRAIN[td.terrain].n;let def=0;try{def=Math.round(defFormula(td,T)*100);}catch(e){}
-   const tr=T.troops!=null?fmt(T.troops):'?';
-   h=`${o?fl(o):'<span class="fl" style="background:#556"></span>'}<div><h3>${esc(td.name)}</h3><div class="sub">${esc((td.cc?td.cc+' · ':'')+k.tag+' · '+ter)}</div></div><div class="st"><span>병력</span><b>${tr}</b><i><u style="width:${T.troops!=null?Math.min(100,Math.round(T.troops/k.cap*100)):0}%"></u></i></div><div class="st"><span>방어 보정</span><b>+${def}%</b><i><u style="width:${Math.min(100,def/3)}%"></u></i></div><div class="st"><span>수입</span><b>${k.inc}</b><i><u style="width:${Math.min(100,k.inc)}%"></u></i></div>`;
-   if(T.owner===v.me&&v.phase==='plan'&&!v.spec)h+='<div class="rec" data-tb="rec">모집</div>';}
-  h+=`<div class="ds" data-tb="ds"${/rec/.test(h)?'':' style="margin-left:auto"'}>선택 해제</div>`;bar.innerHTML=h;}}
-bar.addEventListener('click',e=>{if(e.target.closest('[data-tb=ds]')){C.sel=null;C.pend=null;C.win=false;UI.renderAll();return;}C.win=true;UI.renderAll();});
-dsl.addEventListener('click',()=>{C.sel=null;C.pend=null;C.win=false;UI.renderAll();});
-tabs.addEventListener('click',e=>{const b=e.target.closest('button[data-tab]');if(!b||!g.classList.contains('ce-mod'))return;const k=b.dataset.tab;
- if(k==='map'){if(C.tab==='map'){C.win=!C.win;e.stopPropagation();UI.renderTabs();UI.renderPanel();}else C.win=true;}
- else if(C.tab===k){C.tab='map';C.win=false;e.stopPropagation();UI.renderTabs();UI.renderPanel();}},true);
-const rp=UI.renderPanel;UI.renderPanel=function(){const r=rp.apply(this,arguments);try{sync();}catch(e){console.error(e);}return r;};
-if(mq.addEventListener)mq.addEventListener('change',place);else mq.addListener(place);
-place();
 })();
 </script>
 <script src="https://frenchfries777.com/games/ff-profile.js"></script>
