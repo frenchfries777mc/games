@@ -23,6 +23,7 @@ var P=[
  ['차이나에서 고백하면 차이나?','Confess your love in Chile? Expect a chilly answer!','¿Te declaras en Perú? Te dicen: ¡Pe-rú no!','Se déclarer au Népal ? « Népal possible ! »','Liebeserklärung in Norwegen? Antwort: Nein-wegen!','チャイナで告白したら、ふられちゃいな？','在冰岛表白？等来的回答冷冰冰！','Declarar amor no Peru? Vai ouvir: Peru, não!','Признался в любви в Чили? Ответ будет прохладным — чилл!','Mısır’da aşkını mı ilan ettin? Cevap: Patlamış mısır!',"Dichiarazione d'amore in Cile? Risposta glaciale!","Wyznanie miłości w Chile? Chłodna odpowiedź!","اعترفت بحبك في تشيلي؟ توقّع ردًا باردًا!"],
  ['그거 아세요? 저도 몰라요!','Did you know? Me neither!','¿Sabías qué? ¡Yo tampoco!','Tu savais ? Moi non plus !','Wusstest du schon? Ich auch nicht!','知ってました？私も知りません！','你知道吗？我也不知道！','Sabia? Eu também não!','А вы знали? Я тоже нет!','Biliyor muydun? Ben de bilmiyordum!',"Lo sapevi? Neanch'io!","Wiedziałeś? Ja też nie!","هل كنت تعلم؟ ولا أنا!"],
  ['와! 샌즈!'],
+ ['우리가 아니라 내 거'],
  ['조선천지에 777% 일어날 일!'],
  ['옛날 옛적에, 호랑이가 클라우드에 자아를 백업하는 시절에...'],
  ['로딩중... 로딩중학교 1학년 6반 16번!'],
