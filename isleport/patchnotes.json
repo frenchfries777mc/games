@@ -1,6 +1,48 @@
 {
  "notes": [
   {
+   "date": "2026-11-07",
+   "build": "v0.2 b89",
+   "title": "공동 건설 두 가지 더",
+   "items": [
+    "공공 공사에 마을 광장 분수와 섬을 잇는 다리가 생겼어요",
+    "마을 광장 분수를 지으면 모두의 활동 보너스가 25% 늘어요",
+    "섬을 잇는 다리를 지으면 모두의 주민 심부름 보상이 20% 늘어요"
+   ],
+   "tr": {"en": {"title": "Two more shared projects", "items": ["Shared projects now include the plaza fountain and the island bridge", "Building the plaza fountain adds 25% to everyone's activity bonus", "Building the island bridge adds 20% to everyone's errand rewards"]}}
+  },
+  {
+   "date": "2026-11-07",
+   "build": "v0.2 b88",
+   "title": "항해 일지",
+   "items": [
+    "메뉴에 항해 일지가 생겼어요. 배가 항구에 닿을 때마다 항구, 배, 판 돈, 사 온 짐이 한 줄씩 적혀요",
+    "최근 30번이 남고, 가장 많이 번 항해도 보여요"
+   ],
+   "tr": {"en": {"title": "Voyage log", "items": ["The menu has a new voyage log. Each time a ship reaches port, the port, ship, gold earned and goods bought are written down", "The latest 30 voyages are kept, along with your best one"]}}
+  },
+  {
+   "date": "2026-11-07",
+   "build": "v0.2 b87",
+   "title": "주민 친밀도",
+   "items": [
+    "주민의 심부름을 맡기고 전해 줄 때마다 그 주민들과 친밀도가 쌓여요",
+    "낯선 사이에서 안면, 친구, 단짝으로 올라가고, 단계마다 그 주민의 심부름 보상이 10%씩 늘어요",
+    "주민에게 말을 걸면 친밀도 단계가 보여요"
+   ],
+   "tr": {"en": {"title": "Villager friendship", "items": ["Taking and delivering errands for a villager builds your friendship with them", "Friendship goes from strangers to acquaintances, friends and best friends, and each level adds 10% to that villager's errand rewards", "Talk to a villager to see your friendship level"]}}
+  },
+  {
+   "date": "2026-11-07",
+   "build": "v0.2 b86",
+   "title": "선술집 주사위 내기",
+   "items": [
+    "선술집에서 선원과 주사위 내기를 할 수 있어요. 50, 200, 1,000 금화 중에 골라 걸고, 합이 큰 쪽이 이겨요",
+    "이기면 건 돈의 두 배를 받고, 비기면 돌려받아요. 하루 10판까지 할 수 있어요"
+   ],
+   "tr": {"en": {"title": "Tavern dice game", "items": ["You can play dice against the sailor at the tavern. Bet 50, 200 or 1,000 gold; the higher total wins", "A win pays double your bet and a tie returns it. Up to 10 rounds a day"]}}
+  },
+  {
    "date": "2026-11-03",
    "build": "v0.2 b85",
    "title": "유머 쪽지 여러 나라 말 보기",
