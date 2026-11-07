@@ -1486,8 +1486,8 @@ const WEAPONS = {
             desc:'데미지 30 · 쿨타임 0.3초 · 사거리 70 · 갈고리손으로 빠르게 베는 근접 공격'},
   tell:{id:'tell',name:'석궁',emoji:'🏹', kind:'charge', dmg:64, cd:0.4, bulletSpeed:1000, shape:'quarrel', hitR:12, life:3,
             desc:'꾹 눌러 게이지를 채우고(1.6초) 놓으면 발사 · 패시브: 게이지가 찰수록 피해 1~64, 속도가 빨라지고 점점 일직선에 가까워지며 꽉 차면 완전한 일직선 · 게이지가 차는 동안 이동속도 25% 감소'},
-  harald:{id:'harald',name:'전투 도끼',emoji:'🪓', kind:'melee', dmg:73, cd:1.3, range:112, shape:'axe', kbMult:2.6,
-            desc:'데미지 73 · 쿨타임 1.3초 · 사거리 112 · 도끼를 번쩍 들어 내려찍음 (느리지만 매우 아프고 크게 밀쳐냄) · 도끼가 손에 없을 땐 방패로 밀침 (피해 절반, 쿨타임 0.75배, 넉백은 같음)'},
+  harald:{id:'harald',name:'전투 도끼',emoji:'🪓', kind:'melee', dmg:73, cd:1.2, range:125, shape:'axe', kbMult:2.6,
+            desc:'데미지 73 · 쿨타임 1.2초 · 사거리 125 · 도끼를 번쩍 들어 내려찍음 (느리지만 매우 아프고 크게 밀쳐냄) · 도끼가 손에 없을 땐 방패로 밀침 (피해 절반, 쿨타임 0.75배, 넉백은 같음)'},
   samurai:{id:'samurai',name:'카타나',emoji:'⚔️', kind:'melee', dmg:36, cd:0.65, range:95, shape:'katana',
             desc:'데미지 36 · 쿨타임 0.65초 · 사거리 95 · 한 번 베면 묵직하게 들어가는 카타나'},
   dspaper:{id:'dspaper',name:'종이비행기',emoji:'✈️', kind:'gun', dmg:26, cd:1, bulletSpeed:640, shape:'dspaper', hitR:13, life:3, desc:''},
@@ -6008,7 +6008,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-07-v737';
+const GAME_BUILD='build 2026-11-07-v738';
 const GAME_VERSION='1.0', GAME_VERSION_NAME='신화의 전설';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
