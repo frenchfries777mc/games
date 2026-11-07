@@ -460,7 +460,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.6 · build 155</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.6 · build 156</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -6101,13 +6101,14 @@ const UI={
   renderWorld(){const v=C.view;const P=v.players;const nm=p=>esc(p.kingdom||p.name);
     const cnt={};v.terr.forEach(t=>{if(t.owner!=null&&t.owner>=0&&!TDEF[t.id].sea)cnt[t.owner]=(cnt[t.owner]||0)+1;});
     const wars=(v.wars||[]).filter(w=>P[w.a]&&P[w.b]&&P[w.a].alive&&P[w.b].alive);
-    const rk=P.filter(p=>p.alive).sort((a,b)=>(cnt[b.id]||0)-(cnt[a.id]||0)||(b.troops||0)-(a.troops||0));
+    const MT=[['t','영토'],['n','병력'],['g','금화'],['m','사기'],['s','안정']];const M=C.wdm||'t';const val=p=>M==='t'?(cnt[p.id]||0):(M==='n'?p.troops:(M==='g'?p.gold:(M==='m'?p.morale:p.stab)));
+    const rk=P.filter(p=>p.alive).sort((a,b)=>(val(b)==null?-1:val(b))-(val(a)==null?-1:val(a)));
     $('#warlog').innerHTML=`<div class="wlbox"><div class="wlhead"><button class="btn sm" id="wlBack">← 뒤로</button><h2>세계 정세</h2></div>
       <div class="wlsum">전쟁 중 ${wars.length}쌍</div>
       <div class="wllist">${wars.length?wars.map(w=>{const a=w.a,b=w.b,sa=w.ak+w.ac*2000,sb=w.bk+w.bc*2000,tot=sa+sb,pa=tot>0?Math.round(sa/tot*100):50;return `<div class="wlrow war ${a===v.me||b===v.me?'me':''}" style="flex-wrap:wrap"><span class="i">⚔</span><span class="t">${fl(P[a])} ${nm(P[a])} ↔ ${fl(P[b])} ${nm(P[b])}</span><div style="flex:0 0 100%;display:flex;height:8px;border-radius:4px;overflow:hidden;background:#b89a5a;box-shadow:0 0 0 1px #7a6030"><i style="width:${pa}%;background:${P[a].color}"></i><i style="width:${100-pa}%;background:${P[b].color}"></i></div></div>`;}).join(''):'<div class="muted" style="padding:10px 0">전쟁 중인 나라가 없어요.</div>'}
-      <div class="wlsum" style="margin-top:10px">강대국 순위 · 영토 수</div>
-      ${(()=>{const mx=Math.max(1,...rk.map(p=>cnt[p.id]||0));return rk.map((p,i)=>`<div style="display:flex;align-items:center;gap:6px;padding:3px 0;${p.id===v.me?'background:#e8d49a;margin:0 -8px;padding:3px 8px;border-radius:6px':''}"><span style="flex:none;width:26px;font-size:12px;color:#7a5f2a;text-align:right">${i+1}</span>${fl(p)}<span style="flex:none;width:130px;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${nm(p)}</span><div style="flex:1;height:16px;background:#d9c58e;border-radius:3px;overflow:hidden"><i style="display:block;height:100%;width:${Math.max(2,Math.round((cnt[p.id]||0)/mx*100))}%;background:${p.color};box-shadow:inset 0 0 0 1px #7a6030"></i></div><b style="flex:none;width:44px;font-size:13px;text-align:right">${cnt[p.id]||0}</b></div>`).join('');})()}</div></div>`;
-    $('#wlBack').onclick=()=>UI.back();},
+      <div class="wlchips" style="margin-top:10px">${MT.map(([k,l])=>`<button data-wm="${k}" class="${M===k?'on':''}">${l}</button>`).join('')}</div>
+      ${(()=>{const mx=Math.max(1,...rk.map(p=>val(p)||0));return rk.map((p,i)=>`<div style="display:flex;align-items:center;gap:6px;padding:3px 0;${p.id===v.me?'background:#e8d49a;margin:0 -8px;padding:3px 8px;border-radius:6px':''}"><span style="flex:none;width:26px;font-size:12px;color:#7a5f2a;text-align:right">${i+1}</span>${fl(p)}<span style="flex:none;width:130px;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${nm(p)}</span><div style="flex:1;height:16px;background:#d9c58e;border-radius:3px;overflow:hidden"><i style="display:block;height:100%;width:${val(p)==null?0:Math.max(2,Math.round(val(p)/mx*100))}%;background:${p.color};box-shadow:inset 0 0 0 1px #7a6030"></i></div><b style="flex:none;width:64px;font-size:13px;text-align:right">${val(p)==null?'?':Math.round(val(p)).toLocaleString()}</b></div>`).join('');})()}</div></div>`;
+    $('#wlBack').onclick=()=>UI.back();$('#warlog').querySelectorAll('[data-wm]').forEach(b=>b.onclick=()=>{C.wdm=b.dataset.wm;UI.renderWorld();});},
   openWarlog(){const v=C.view;if(!v)return;C.wlMode=null;C.wlf=C.wlf||'all';UI.navPush('warlog');UI.renderWarlog();$('#warlog').classList.remove('hidden');},
   renderWarlog(){if(C.wlMode==='world')return UI.renderWorld();const v=C.view;const L=(v.wl||[]);const F=C.wlf||'all',mine=!!C.wlMine;
     const grp={all:null,war:['war','join'],peace:['truce','ally','break'],big:['capital','fall'],event:['event']};
