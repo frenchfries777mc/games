@@ -84,10 +84,11 @@ const HERO = {
   spearman: { body: 0x5a6a7a, leg: 0x3a3a44, arm: 0x5a6a7a, helm: 1, helmC: 0x8a8f9c, plume: 0xb83a3a, spear: 1, belt: 1 },
   crossbow: { body: 0x6b4a2e, leg: 0x2e2a34, arm: 0x6b4a2e, kettle: 1, scarf: 0xb8442e, xh: 1, bolts: 1, strap: 1, belt: 1, wide: 1.1 },
   streltsy: { body: 0xc4281f, leg: 0x2a2024, arm: 0xc4281f, beard: 0x6a4a30, kolpak: 1, gun: 1, berdysh: 1, belt: 1, beltC: 0x2a1c14, wide: 1.1 },
-  wellington: { body: 0x14214a, leg: 0xe8e4dc, arm: 0x14214a, hairW: 1, reg: 1, sword: 1 }
+  wellington: { body: 0x14214a, leg: 0xe8e4dc, arm: 0x14214a, hairW: 1, reg: 1, sword: 1 },
+  chainer: { body: 0x6a7078, leg: 0x3a3430, arm: 0x6a7078, chainer: 1, belt: 1, wide: 1.1 }
 };
 // 동작은 비슷한 직업의 것을 같이 써요 (마녀는 사제처럼, 바이킹·맘루크·스켈레톤은 종자처럼)
-const FAM = { witch: 'priest', viking: 'squire', mamluk: 'squire', skeleton: 'squire', warden: 'knight', telaris: 'knight', assassin: 'squire', crossbow: 'archer', streltsy: 'archer', wellington: 'knight', bomber: 'squire', bard: 'priest', court: 'priest', necro: 'priest', spearman: 'squire' };
+const FAM = { witch: 'priest', viking: 'squire', mamluk: 'squire', skeleton: 'squire', warden: 'knight', telaris: 'knight', assassin: 'squire', crossbow: 'archer', streltsy: 'archer', wellington: 'knight', bomber: 'squire', bard: 'priest', court: 'priest', necro: 'priest', spearman: 'squire', chainer: 'squire' };
 function matOf(v) { return v === 'dm' ? dmetal() : v === 'mt' ? metal() : M(v); }
 export const makeHero = toonify(function (role, cos) {
   const o = Object.assign({}, HERO[role]), cp = cos && COSMETICS.cape.items.find(i => i.id === cos.cape && i.col);
@@ -310,6 +311,28 @@ function makeFigure(o) {
   if (o.xbow) { const xb = new THREE.Group(); xb.position.set(0, -0.9, 0.3); armR.add(xb); xb.rotation.x = Math.PI / 2; box(0.14, 1.1, 0.14, M(0x4a3020), 0, 0.4, 0, xb); box(1.2, 0.1, 0.1, dmetal(), 0, 0.8, 0, xb); }
   if (o.torch) { const t = new THREE.Group(); t.position.set(0, -0.9, 0.1); armR.add(t); t.rotation.x = 0.9; cyl(0.08, 0.1, 1.2, 6, leather(), 0, 0.4, 0, t); cone(0.22, 0.6, 6, M(0xffa040, { e: 0xff7a20, ei: 3 }), 0, 1.2, 0, t); if (!o.noLight) { light = new THREE.PointLight(0xff9a48, 16, 9, 1.6); light.position.set(0, 1.4, 0); t.add(light); } }
   if (o.axe) { const ax = new THREE.Group(); ax.position.set(0, -0.9, 0.15); armR.add(ax); ax.rotation.x = Math.PI / 2; cyl(0.08, 0.08, 2.4, 6, M(0x5a3a22), 0, 0.9, 0, ax); const hd = new THREE.Group(); hd.position.set(0.32, 1.9, 0); ax.add(hd); box(0.62, 0.9, 0.12, M(0xb8bfcc, { m: 0.8, r: 0.3 }), 0, 0, 0, hd); cyl(0.45, 0.45, 0.13, 10, M(0xd8dde8, { m: 0.8, r: 0.3 }), 0.28, 0, 0, hd).rotation.x = Math.PI / 2;  vAxe = ax; vAxeM = new THREE.Group(); vAxeM.position.set(0, -0.9, 0.15); armR.add(vAxeM); }
+  if (o.chainer) {   // 철퇴 병사: 하운드스컬 바시넷(뾰족한 주둥이 면갑) + 사슬 갑옷 + 붉은 겉옷, 손에는 날개 달린 철퇴
+    const ir = M(0x9aa0a8, { m: 0.8, r: 0.4 }), dk = M(0x2a2e36, { m: 0.7, r: 0.5 }), lt = M(0x4a3020), wd = M(0x6a4828), rd = M(0x8a2a24);
+    const mailTex = geo('chMailTex', () => { const c = document.createElement('canvas'); c.width = c.height = 64; const x = c.getContext('2d'); x.fillStyle = '#6a7078'; x.fillRect(0, 0, 64, 64); x.strokeStyle = '#b4bac2'; x.lineWidth = 2; for (let r = 0; r < 8; r++) for (let q = 0; q < 8; q++) { x.beginPath(); x.arc(q * 8 + (r % 2) * 4 + 4, r * 8 + 4, 3.2, 0, 6.3); x.stroke(); } const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(3, 3); t.magFilter = THREE.NearestFilter; return t; });
+    const mail = new THREE.MeshToonMaterial({ map: mailTex, gradientMap: toonGrad() });
+    // 하운드스컬 바시넷: 둥글고 뾰족한 투구통 + 개 주둥이처럼 튀어나온 뾰족한 면갑(눈구멍 틈, 숨구멍) + 목을 덮는 사슬 목가리개
+    { const sk = sph(0.5, 12, 9, ir, 0, 0.12, -0.02, head); sk.scale.set(1, 1.15, 1.05); cone(0.14, 0.34, 8, ir, 0, 0.78, -0.08, head).rotation.x = -0.15;
+      const sn = cone(0.4, 0.6, 8, ir, 0, -0.14, 0.62, head); sn.rotation.x = Math.PI / 2; sn.scale.set(1, 1, 0.9); head.scale.setScalar(1.3);
+      { const pts = [[-0.24, 0.02, 0.5], [-0.13, 0.08, 0.57], [0, 0.1, 0.6], [0.13, 0.08, 0.57], [0.24, 0.02, 0.5]].map(q => new THREE.Vector3(q[0], q[1], q[2]));   // 눈구멍: 코 위쪽 이마 가까이에 살짝 위로 휜 하나의 틈 (입처럼 안 보이게 위로 올림)
+        for (let k = 0; k < pts.length; k++) { sph(0.035, 6, 4, dk, pts[k].x, pts[k].y, pts[k].z, head); if (k) { const a = pts[k - 1], b = pts[k], dv = b.clone().sub(a), sl = cyl(0.035, 0.035, dv.length(), 6, dk, (a.x + b.x) / 2, (a.y + b.y) / 2, (a.z + b.z) / 2, head); sl.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dv.clone().normalize()); } } }
+      cyl(0.5, 0.62, 0.5, 12, mail, 0, -0.3, -0.02, head); }
+    // 사슬 갑옷: 몸통(무릎 위까지)과 소매, 붉은 겉옷, 가죽 띠
+    cyl(0.56, 0.7, 1.5, 12, mail, 0, 1.5, 0, body);
+    box(0.7, 1.5, 0.05, rd, 0, 1.5, 0.66, body); box(0.7, 1.5, 0.05, rd, 0, 1.5, -0.66, body);
+    for (const ar of [armR, armL]) { cyl(0.21, 0.21, 0.82, 8, mail, 0, -0.45, 0, ar); cyl(0.22, 0.22, 0.2, 8, lt, 0, -0.8, 0, ar); }
+    const ch = new THREE.Group(); ch.position.set(0, -0.9, 0.1); armR.add(ch);   // 사슬 철퇴: 짧은 자루 끝에서 굵은 사슬이 앞으로 늘어져 가시 쇠공이 매달려요
+    cyl(0.08, 0.08, 0.9, 6, wd, 0, 0.35, 0, ch); cyl(0.11, 0.11, 0.1, 6, ir, 0, 0.82, 0, ch);
+    const lkG = geo('chLink', () => new THREE.TorusGeometry(0.15, 0.05, 5, 10));
+    for (let k = 0; k < 8; k++) { const t = k / 7, lk = mesh(lkG, ir, 0, 0.8 - 1.9 * Math.pow(t, 1.4), 0.2 + 0.85 * t, ch); lk.rotation.y = k % 2 ? 0 : Math.PI / 2; lk.scale.set(0.7, 1.3, 1); }
+    { const bl = new THREE.Group(); bl.position.set(0, -1.25, 1.15); ch.add(bl); sph(0.4, 10, 8, dk, 0, 0, 0, bl); for (let k = 0; k < 8; k++) { const a = k / 8 * 6.283, sp = cone(0.08, 0.2, 4, ir, Math.cos(a) * 0.42, (k % 2 ? 0.14 : -0.14), Math.sin(a) * 0.42, bl); sp.rotation.set(Math.sin(a) * 1.2, 0, -Math.cos(a) * 1.2); } cone(0.08, 0.2, 4, ir, 0, 0.44, 0, bl); cone(0.08, 0.2, 4, ir, 0, -0.44, 0, bl).rotation.x = Math.PI; }
+  }
+
+
   if (o.scim) { const sc = new THREE.Group(); sc.position.set(0, -0.9, 0.1); armR.add(sc); sc.rotation.x = Math.PI / 2; box(0.1, 0.4, 0.1, gold(), 0, 0, 0, sc); box(0.5, 0.08, 0.14, gold(), 0, 0.22, 0, sc); const bl = mesh(geo('scim', () => new THREE.TorusGeometry(1.4, 0.07, 3, 10, 1.2)), M(0xe9edf5, { m: 0.9, r: 0.2 }), -1.4, 0.25, 0, sc); bl.scale.set(1, 1, 1.8); }
   if (o.buckler) { const bk = cyl(0.5, 0.5, 0.12, 10, M(0xc8a040, { m: 0.7, r: 0.35 }), -0.1, -0.75, 0.3, armL); bk.rotation.x = Math.PI / 2 - 0.4; sph(0.12, 6, 5, gold(), -0.1, -0.75, 0.38, armL); }
   if (o.goggles) { box(0.62, 0.2, 0.1, M(0x2a2a30), 0, 0.12, 0.42, head); for (const sx of [-1, 1]) { const l = cyl(0.13, 0.13, 0.12, 8, M(0x9ad8ff, { e: 0x4a9ad0, ei: 1.2 }), sx * 0.17, 0.12, 0.46, head); l.rotation.x = Math.PI / 2; } }
