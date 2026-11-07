@@ -59,3 +59,7 @@ patchnotes.json | v745 title | 공동 처치 | build 745 | 2026-11-07
 patchnotes.json | v745 items[0] | 죽기 전 5초 동안 피해의 60% 이상을 준 사람은 마지막 타격자와 함께 처치로 인정 (처치 수, 골드, 처치 알림에 반영) | build 745 | 2026-11-07
 patchnotes.json | v746 title | 펠 드론 수에 따른 쿨타임 | build 746 | 2026-11-07
 patchnotes.json | v746 items[0] | 펠은 드론이 2대를 넘으면 한 대당 쿨타임 15%씩 늘어남 (6대일 때 약 1.33배 길어짐) | build 746 | 2026-11-07
+patchnotes.json | v747 title | 큰 맵 만들기와 시작 위치 제한 | build 747 | 2026-11-07
+patchnotes.json | v747 items[0] | 깃발 뺏기·황금 쟁탈·금고 약탈·데스매치 더블용 양옆이 긴 맵을 맵 에디터에서 만들 수 있음 (왼쪽 절반만 그리면 오른쪽 자동 대칭, 깃발 위치 도구, 친선 방 전용) | build 747 | 2026-11-07
+patchnotes.json | v747 items[1] | 제국 수호전은 시작 위치 8개인 내 맵으로 열 수 있음 | build 747 | 2026-11-07
+patchnotes.json | v747 items[2] | 시작 위치 최대 개수를 모드에 맞춰 제한 (듀얼 2개 등) | build 747 | 2026-11-07

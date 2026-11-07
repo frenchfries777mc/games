@@ -1,115 +1,115 @@
 {
- "name": "Stickseum",
- "latest": "1.0",
- "latestFile": "Stickseum-latest.html",
- "updated": "2026-11-07",
- "versions": [
-  {
-   "version": "1.0",
-   "date": "2026-11-07",
-   "file": "Stickseum-v1.0.html",
-   "title": "신화의 전설",
-   "summary": "새 캐릭터 하랄드·용살자·빌헬름 텔\n새 맵 올림포스 신전·미궁·파라오의 무덤\n시즌 패스 한정 스킨 7종·팀전 3라운드제·새 모드 데스매치 더블\n새 인트로·1.0 로고·예고 영상\n친선과 연습 개편 (인터넷 없이도 봇과 플레이)·맵 에디터 맵 공개·봇 난이도 7단계",
-   "latest": true,
-   "size": 14380107,
-   "sha256": "efe67758315cc06799c98970133ec723b17141fcc91b65912874728ac04f9991",
-   "build": "v746"
-  },
-  {
-   "version": "0.9",
-   "date": "2026-10-27",
-   "file": "Stickseum-v0.9.html",
-   "title": "은하 제국의 황혼",
-   "summary": "새 캐릭터 크레온 1세·펠·티오니스 (근위병 소환·드론 자폭·변장과 분신)\n새 인트로와 로비 배경\n시즌 패스 개편 (가로 보상 목록·진행도 초기화)",
-   "latest": false,
-   "size": 4016443,
-   "sha256": "b67bdb774c29eb0fdb048b0b4cc844acdd8f9deadda35093522793de2f00c2fa",
-   "build": "v623"
-  },
-  {
-   "version": "0.8",
-   "date": "2026-10-18",
-   "file": "Stickseum-v0.8.html",
-   "title": "황금을 찾아서",
-   "summary": "새 캐릭터 피사로(창·하늘의 십자가·중첩 궁극기)\n팀전 금지 캐릭터를 팀원마다 선택\n봇 순간이동·MVP 투표 카드·계정별 진행 상황 분리·클랜 검색 정렬",
-   "latest": false,
-   "size": 3297087,
-   "sha256": "4ddb69ece9a7a726f95165dc8ede7525be75145bdb37ae6bf9037c7bcdb838c9",
-   "build": "v457"
-  },
-  {
-   "version": "0.7",
-   "date": "2026-10-15",
-   "file": "Stickseum-v0.7.html",
-   "title": "어둠의 늪",
-   "summary": "새 캐릭터 쿠루스·신규 맵 어둠의 늪·보스 레이드 개편·MVP 투표 개편·Hub Coin 환전·모바일 조작 개선·배틀로얄·듀오 개편·온라인 렉 감소·봇 개선·클랜 이름·태그 변경·닉네임 통일·연습 모드 DPS 표시·밸런스 페이지·모드 구분 정리·신규 맵 4종·색약 모드·게임패드",
-   "latest": false,
-   "size": 2344886,
-   "sha256": "5d22ee8f76d5d09144d0b46097944c4d91b8e717753bfd7902bc8efae21d751c",
-   "build": "v299"
-  },
-  {
-   "version": "0.6",
-   "date": "2026-10-10",
-   "file": "Stickseum-v0.6.html",
-   "title": "챔피언의 길",
-   "summary": "모바일 터치 조작(자동 감지)·전적 화면·무기 밸런스 조정·보스 레이드와 토너먼트·주간 이벤트·새 맵 3장·하이라이트 저장, 모드 목록 통합, 이모트·프로필 카드·방 규칙, 일일/주간 미션·시즌 패스·킬 이펙트, 언어 자동 설정",
-   "latest": false,
-   "size": 2180739,
-   "sha256": "9b690ddf7380ed687903c6553e9da57954a0015f872f510fcf00584fc9a2c6e3",
-   "build": "v226"
-  },
-  {
-   "version": "0.5",
-   "date": "2026-10-07",
-   "file": "Stickseum-v0.5.html",
-   "size": 1543474,
-   "sha256": "2ceddca30e76d5b5f544b65b4cdc45e2665e03d28acf9f10b624c1482571bf43",
-   "title": "파라오의 보물",
-   "summary": "자다이·호렘헵 추가, 티어 스킨과 화려한 연출, 깃발 뺏기, 랜덤 상자·영혼석·일일 보상, 닉네임 검색, 승리/패배 음악, 채팅 개선, 성능 최적화, 다른 기기에서도 진행 상황 이어하기, 이름이 StickmanRumble로 바뀜",
-   "latest": false,
-   "build": "v123"
-  },
-  {
-   "version": "0.4",
-   "date": "2026-10-05",
-   "file": "Stickseum-v0.4.html",
-   "size": 789605,
-   "sha256": "67203547b6f28c67548debcf58e1a2197c77a0568cf2f5922b1d948e0b82a050",
-   "title": "좀비 카니발",
-   "summary": "좀비 · 폭탄 돌리기 · 숨바꼭질 · 파쿠르 · 서바이벌, 킬캠 리플레이, 도전과제와 무기 숙련도, 온라인 AI 봇",
-   "latest": false,
-   "build": "v45"
-  },
-  {
-   "version": "0.3",
-   "date": "2026-10-02",
-   "file": "Stickseum-v0.3.html",
-   "size": 283118,
-   "sha256": "3a656ba92bdd8c018271e0ba2b0d98f20cab48cde11fcebd98756c6fb085ba85",
-   "title": "밤의 초대장",
-   "summary": "드라큘라·도박사·마법사 추가, 킬캠과 킬 배너, 상점·프로필·레벨, 친구와 게임 초대",
-   "latest": false
-  },
-  {
-   "version": "0.2",
-   "date": "2026-09-29",
-   "file": "Stickseum-v0.2.html",
-   "size": 195696,
-   "sha256": "661cfe23bc17d959f8344619bec7c6be679e9f0b34b59ac66040192cf5acc16d",
-   "title": "모래 고르기",
-   "summary": "화면과 이펙트 정리, 밸런스 조정",
-   "latest": false
-  },
-  {
-   "version": "0.1",
-   "date": "2026-09-29",
-   "file": "Stickseum-v0.1.html",
-   "size": 195495,
-   "sha256": "e1fedfb1a765ca9bd1f8431ca2ffc7548fecebad7f368e537e379832415f70ed",
-   "title": "콜로세움의 문",
-   "summary": "2~32인 온라인 스틱맨 난투, 무기와 궁극기, 점령전, 코스튬·골드의 기본 틀",
-   "latest": false
-  }
- ]
+  "name": "Stickseum",
+  "latest": "1.0",
+  "latestFile": "Stickseum-latest.html",
+  "updated": "2026-11-07",
+  "versions": [
+    {
+      "version": "1.0",
+      "date": "2026-11-07",
+      "file": "Stickseum-v1.0.html",
+      "title": "신화의 전설",
+      "summary": "새 캐릭터 하랄드·용살자·빌헬름 텔\n새 맵 올림포스 신전·미궁·파라오의 무덤\n시즌 패스 한정 스킨 7종·팀전 3라운드제·새 모드 데스매치 더블\n새 인트로·1.0 로고·예고 영상\n친선과 연습 개편 (인터넷 없이도 봇과 플레이)·맵 에디터 맵 공개·봇 난이도 7단계",
+      "latest": true,
+      "size": 14386364,
+      "sha256": "5ad0f7eeafdaf69070b8f8eb10c329e6d25ea717fb7caaefc1cc0ebab5437fa9",
+      "build": "v747"
+    },
+    {
+      "version": "0.9",
+      "date": "2026-10-27",
+      "file": "Stickseum-v0.9.html",
+      "title": "은하 제국의 황혼",
+      "summary": "새 캐릭터 크레온 1세·펠·티오니스 (근위병 소환·드론 자폭·변장과 분신)\n새 인트로와 로비 배경\n시즌 패스 개편 (가로 보상 목록·진행도 초기화)",
+      "latest": false,
+      "size": 4016443,
+      "sha256": "b67bdb774c29eb0fdb048b0b4cc844acdd8f9deadda35093522793de2f00c2fa",
+      "build": "v623"
+    },
+    {
+      "version": "0.8",
+      "date": "2026-10-18",
+      "file": "Stickseum-v0.8.html",
+      "title": "황금을 찾아서",
+      "summary": "새 캐릭터 피사로(창·하늘의 십자가·중첩 궁극기)\n팀전 금지 캐릭터를 팀원마다 선택\n봇 순간이동·MVP 투표 카드·계정별 진행 상황 분리·클랜 검색 정렬",
+      "latest": false,
+      "size": 3297087,
+      "sha256": "4ddb69ece9a7a726f95165dc8ede7525be75145bdb37ae6bf9037c7bcdb838c9",
+      "build": "v457"
+    },
+    {
+      "version": "0.7",
+      "date": "2026-10-15",
+      "file": "Stickseum-v0.7.html",
+      "title": "어둠의 늪",
+      "summary": "새 캐릭터 쿠루스·신규 맵 어둠의 늪·보스 레이드 개편·MVP 투표 개편·Hub Coin 환전·모바일 조작 개선·배틀로얄·듀오 개편·온라인 렉 감소·봇 개선·클랜 이름·태그 변경·닉네임 통일·연습 모드 DPS 표시·밸런스 페이지·모드 구분 정리·신규 맵 4종·색약 모드·게임패드",
+      "latest": false,
+      "size": 2344886,
+      "sha256": "5d22ee8f76d5d09144d0b46097944c4d91b8e717753bfd7902bc8efae21d751c",
+      "build": "v299"
+    },
+    {
+      "version": "0.6",
+      "date": "2026-10-10",
+      "file": "Stickseum-v0.6.html",
+      "title": "챔피언의 길",
+      "summary": "모바일 터치 조작(자동 감지)·전적 화면·무기 밸런스 조정·보스 레이드와 토너먼트·주간 이벤트·새 맵 3장·하이라이트 저장, 모드 목록 통합, 이모트·프로필 카드·방 규칙, 일일/주간 미션·시즌 패스·킬 이펙트, 언어 자동 설정",
+      "latest": false,
+      "size": 2180739,
+      "sha256": "9b690ddf7380ed687903c6553e9da57954a0015f872f510fcf00584fc9a2c6e3",
+      "build": "v226"
+    },
+    {
+      "version": "0.5",
+      "date": "2026-10-07",
+      "file": "Stickseum-v0.5.html",
+      "size": 1543474,
+      "sha256": "2ceddca30e76d5b5f544b65b4cdc45e2665e03d28acf9f10b624c1482571bf43",
+      "title": "파라오의 보물",
+      "summary": "자다이·호렘헵 추가, 티어 스킨과 화려한 연출, 깃발 뺏기, 랜덤 상자·영혼석·일일 보상, 닉네임 검색, 승리/패배 음악, 채팅 개선, 성능 최적화, 다른 기기에서도 진행 상황 이어하기, 이름이 StickmanRumble로 바뀜",
+      "latest": false,
+      "build": "v123"
+    },
+    {
+      "version": "0.4",
+      "date": "2026-10-05",
+      "file": "Stickseum-v0.4.html",
+      "size": 789605,
+      "sha256": "67203547b6f28c67548debcf58e1a2197c77a0568cf2f5922b1d948e0b82a050",
+      "title": "좀비 카니발",
+      "summary": "좀비 · 폭탄 돌리기 · 숨바꼭질 · 파쿠르 · 서바이벌, 킬캠 리플레이, 도전과제와 무기 숙련도, 온라인 AI 봇",
+      "latest": false,
+      "build": "v45"
+    },
+    {
+      "version": "0.3",
+      "date": "2026-10-02",
+      "file": "Stickseum-v0.3.html",
+      "size": 283118,
+      "sha256": "3a656ba92bdd8c018271e0ba2b0d98f20cab48cde11fcebd98756c6fb085ba85",
+      "title": "밤의 초대장",
+      "summary": "드라큘라·도박사·마법사 추가, 킬캠과 킬 배너, 상점·프로필·레벨, 친구와 게임 초대",
+      "latest": false
+    },
+    {
+      "version": "0.2",
+      "date": "2026-09-29",
+      "file": "Stickseum-v0.2.html",
+      "size": 195696,
+      "sha256": "661cfe23bc17d959f8344619bec7c6be679e9f0b34b59ac66040192cf5acc16d",
+      "title": "모래 고르기",
+      "summary": "화면과 이펙트 정리, 밸런스 조정",
+      "latest": false
+    },
+    {
+      "version": "0.1",
+      "date": "2026-09-29",
+      "file": "Stickseum-v0.1.html",
+      "size": 195495,
+      "sha256": "e1fedfb1a765ca9bd1f8431ca2ffc7548fecebad7f368e537e379832415f70ed",
+      "title": "콜로세움의 문",
+      "summary": "2~32인 온라인 스틱맨 난투, 무기와 궁극기, 점령전, 코스튬·골드의 기본 틀",
+      "latest": false
+    }
+  ]
 }
