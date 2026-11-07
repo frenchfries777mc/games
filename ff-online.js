@@ -18,7 +18,7 @@ var AV={}; async function loadAv(ids){ AV={}; if(!ids.length) return; try{ var r
 var LT={ko:['지금 {0}명 접속 중','친구','허브'],en:['{0} online now','Friends','Hub'],es:['{0} conectados ahora','Amigos','Portal'],fr:['{0} en ligne','Amis','Portail'],de:['{0} jetzt online','Freunde','Hub'],ja:['今{0}人がオンライン','フレンド','ハブ'],zh:['当前 {0} 人在线','好友','主页'],pt:['{0} online agora','Amigos','Início'],ru:['Сейчас онлайн: {0}','Друзья','Хаб'],tr:['Şu an {0} çevrimiçi','Arkadaşlar','Merkez'],it:['{0} online ora','Amici','Hub'],pl:['Teraz online: {0}','Znajomi','Hub'],ar:['{0} متصل الآن','الأصدقاء','المركز'],nw:['{0} telescreened now','Comrades','Hub'],gk:['{0} 선 위에 지금','친구들','바퀴통']};
 function L(){ var l='ko'; try{ l=(window.FFLang&&FFLang.get())||(document.documentElement.lang||'ko'); }catch(e){} return LT[l]||LT.en; }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
-function gname(id){ var l=(window.FF_REG||[]).concat(window.FF_SITES||[]); for(var i=0;i<l.length;i++) if(l[i].id===id) return l[i].name; return id==='hub'?L()[2]:id; }
+function gname(id){ var l=(window.FF_REG||[]).concat(window.FF_SITES||[]); for(var i=0;i<l.length;i++) if(l[i].id===id) return l[i].name; if(window.FF_PLACES&&FF_PLACES[id]) return FF_PLACES[id]; return id==='hub'?L()[2]:id; }
 async function loadNames(ids){
   ids=ids.filter(function(id,i){ return id&&!names[id]&&ids.indexOf(id)===i; }); if(!ids.length) return;
   try{ var r=await sb.from('profiles').select('id,username,display_name').in('id',ids); ((r&&r.data)||[]).forEach(function(p){ names[p.id]=(p.display_name&&String(p.display_name).trim())||p.username||'???'; }); }catch(e){}
