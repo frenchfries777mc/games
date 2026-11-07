@@ -5785,11 +5785,13 @@ function boulderIdAtKey(key){const [x,y]=keyXY(key);if(x<0||y<0||x>=W||y>=H)retu
 function collectRemoved(){
   const out=[],T=TER.T;
   for(let ci=0;ci<TER.tn.length;ci++){const n=TER.tn[ci];if(n<=0)continue;const b=ci*TMAX;for(let j=0;j<n;j++)if(TER.removed[b+j])out.push(T.y[b+j]*W+T.x[b+j]);}
+  const q=MOD.mkQ;if(q&&q.i<q.rem.length)return Array.from(new Set(out.concat(q.rem.slice(q.i))));   // 아직 다시 표시 못 한 것도 포함
   return out;
 }
 function collectBrem(){
   const out=[],B=TER.B;
   for(let ci=0;ci<TER.bn.length;ci++){const n=TER.bn[ci];if(n<=0)continue;const b=ci*BMAX;for(let j=0;j<n;j++)if(TER.brem[b+j]&&!world.pend.has(b+j))out.push(B.y[b+j]*W+B.x[b+j]);}
+  const q=MOD.mkQ;if(q&&q.j<q.brm.length)return Array.from(new Set(out.concat(q.brm.slice(q.j))));
   return out;
 }
 function markRemoved(keys){for(const key of keys||[]){const k=treeIdAtKey(key);if(k!==undefined&&!world.removed[k]){world.removed[k]=1;removeShadow(k);}}}
@@ -10926,8 +10928,23 @@ function modFlush(){   // fill 로 바뀐 지형·나무·블록을 지금 열�
 function modTfLive(t){
   const rem=collectRemoved(),brm=collectBrem(),cv=(world.conv||[]).slice();
   applyTF(t,false);
-  markRemoved(rem);markBrem(brm);markOres(cv,5);world.conv=cv;
-  saveWorld(true);
+  world.conv=cv;
+  // 베어 낸 나무·캔 바위를 다시 표시하는 일은 한 번에 하면 렉이 걸려서, 플레이어와 가까운 것부터 프레임마다 조금씩 해요
+  const px=P.x,py=P.y,dk=k=>{const x=k%W,y=(k/W)|0;return (x-px)*(x-px)+(y-py)*(y-py);};
+  const q=MOD.mkQ={rem:rem.sort((a,b)=>dk(a)-dk(b)),brm:brm.sort((a,b)=>dk(a)-dk(b)),cv:cv.filter(o=>o[1]>=2&&o[1]<=5).sort((a,b)=>dk(a[0])-dk(b[0])),i:0,j:0,l:0};
+  saveWorld(true);   // 아직 못 한 것들도 collectRemoved/collectBrem 이 같이 저장해요
+  const pump=()=>{
+    if(MOD.mkQ!==q||!world||!TER)return;
+    const t0=performance.now();
+    while(performance.now()-t0<6){
+      if(q.i<q.rem.length){markRemoved([q.rem[q.i++]]);}
+      else if(q.j<q.brm.length){markBrem([q.brm[q.j++]]);}
+      else if(q.l<q.cv.length){const o=q.cv[q.l++],k=boulderIdAtKey(o[0]);if(k!==undefined&&!world.brem[k])world.boulders.t[k]=o[1];}
+      else{MOD.mkQ=null;return;}
+    }
+    requestAnimationFrame(pump);
+  };
+  requestAnimationFrame(pump);
 }
 function modFillVar(o,depth,box){   // fill %{pos1}% %{pos2}% to %{block}%: 좌표·대상을 변수에서 읽어서 실행해요
   let c=o.c;
