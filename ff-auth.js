@@ -62,6 +62,11 @@ var L={
 function lang(){ var c=[]; try{ var s=localStorage.getItem('arenaClashLang'); if(s) c.push(s); }catch(e){} try{ c=c.concat(navigator.languages||[navigator.language||'']); }catch(e){}
   for(var i=0;i<c.length;i++){ var b=String(c[i]||'').toLowerCase().split('-')[0]; if(L[b]) return b; } return 'en'; }
 var T=L[lang()];
+/* 로그인은 frenchfries777.com/log-in/ 한 곳에서 해요. 사이트의 로그인 버튼은 그 페이지로 보냈다가, 끝나면 원래 있던 곳으로 돌려보내요 */
+var LOGIN_URL='https://frenchfries777.com/log-in/', onLP=/^\/log-in\/?/.test(location.pathname||'')&&/(^|\.)frenchfries777\.com$/.test(location.hostname), lpBusy=false;
+function lpNext(){ try{ var n=new URLSearchParams(location.search).get('next'), u=new URL(n,location.href); if(/^https:$/.test(u.protocol)&&/(^|\.)frenchfries777\.com$/.test(u.hostname)&&!/^\/log-in\//.test(u.pathname)) return u.href; }catch(e){} return 'https://frenchfries777.com/'; }
+function lpGo(){ location.replace(lpNext()); }
+function lpMine(){ return !onLP&&/(^|\.)frenchfries777\.com$/.test(location.hostname); }
 var ACHL={es:'🏆 Logros',fr:'🏆 Succès',de:'🏆 Erfolge',ja:'🏆 実績',zh:'🏆 成就',pt:'🏆 Conquistas',ru:'🏆 Достижения',tr:'🏆 Başarımlar',it:'🏆 Obiettivi',pl:'🏆 Osiągnięcia',ar:'🏆 الإنجازات',nw:'🏆 Plusdoings',gk:'🏆 업적'};   // 도전과제 버튼 이름 (ko/en은 위 사전에 있어요)
 /* the shared language setting (ff-lang.js): pages that load only this script still keep the games' language keys in step */
 if(!window.FFLang){ try{ var ls=document.createElement('script'); ls.src=BASE+'ff-lang.js'; document.head.appendChild(ls); }catch(e){} }
@@ -87,8 +92,10 @@ async function setUser(u){
   if(user){ try{ var r=await sb.from('profiles').select('username,display_name').eq('id',user.id).single(); prof=(r&&r.data)||null; }catch(e){} }
   paint(); subs.forEach(function(f){ try{ f(user, prof); }catch(e){} });
   nickEmit();
+  if(onLP){ if(user&&!lpBusy) setTimeout(lpGo,0); return; }   // 로그인 페이지: 이미 로그인돼 있거나 GitHub/Google에서 돌아왔으면 바로 원래 사이트로
   if(user&&!prof&&!isIdAcct(user)) setTimeout(openSetup,0);
   setTimeout(noticeAck,300);
+  try{ if(user&&prof&&localStorage.getItem('ff.welcomePending')==='1'){ localStorage.removeItem('ff.welcomePending'); setTimeout(welcome,500); } }catch(e){}   // log-in 페이지에서 새로 가입하고 돌아왔을 때
 }
 /* 확인 창: 지정한 사용자가 접속하면 체크해야 닫히는 창을 띄우고, 닫으면 ff_notice_ack 에 기록해요 */
 var NOTICE={id:'cc4-credit-1',names:[],text:'이 체크박스를 클릭하면 이제부터 본인은 이 사이트 개발에 참여하지 않았다는 데에 동의하고, 이 사이트를 본인, 혹은 본인을 포함한 단체로 소개하는 것이 CC 4.0에 위배된다는 것을 인정합니다',btn:'확인합니다',thanks:'잘했습니다!',reward:'+100 hC'};
@@ -414,11 +421,13 @@ function modal(){
   el.querySelector('form').onsubmit=async function(e){
     e.preventDefault(); var f=e.target, m=el.querySelector('.m'), go=el.querySelector('.go');
     if(!sb){ m.textContent=T.net; return; }
-    m.textContent=T.busy; go.disabled=true;
+    m.textContent=T.busy; go.disabled=true; lpBusy=true;
     var r=mode==='in'?await signIn(f.username.value, f.password.value):await signUp(f.username.value, f.password.value);
-    go.disabled=false;
+    go.disabled=false; lpBusy=false;
     if(r.error){ m.textContent=r.error; return; }
-    f.password.value=''; close(); if(mode==='up') setTimeout(welcome,400);
+    f.password.value='';
+    if(onLP){ if(mode==='up'){ try{ localStorage.setItem('ff.welcomePending','1'); }catch(e){} } lpGo(); return; }   // 가입이면 돌아간 사이트에서 닉네임·프로필 창이 떠요
+    close(); if(mode==='up') setTimeout(welcome,400);
   };
   return el;
 }
@@ -426,8 +435,9 @@ function fill(){ var el=modal(); el.querySelector('h3').textContent=mode==='in'?
   el.querySelector('.sw span').textContent=mode==='in'?T.noAcc:T.hasAcc; el.querySelector('.sw a').textContent=mode==='in'?T.signup:T.login;
   el.querySelector('input[name=password]').setAttribute('autocomplete',mode==='in'?'current-password':'new-password'); el.querySelector('.m').textContent='';
   el.querySelector('form').classList.toggle('ffa-in',mode==='in'); }
-function openLogin(m){ mode=m==='up'?'up':'in'; fill(); var el=modal(); el.style.display='flex'; setTimeout(function(){ try{ el.querySelector('input').focus(); }catch(e){} },30); }
-function close(){ var el=document.getElementById('ffaModal'); if(el) el.style.display='none'; }
+function openLogin(m){ if(lpMine()){ location.href=LOGIN_URL+'?next='+encodeURIComponent(location.href)+(m==='up'?'&m=up':''); return; }
+  mode=m==='up'?'up':'in'; fill(); var el=modal(); el.style.display='flex'; setTimeout(function(){ try{ el.querySelector('input').focus(); }catch(e){} },30); }
+function close(){ if(onLP){ lpGo(); return; } var el=document.getElementById('ffaModal'); if(el) el.style.display='none'; }
 
 /* the worn profile border (ff-borders.js) as a ring on the small avatar of the account button */
 async function chipBorder(root){ try{ if(!sb||!user) return; var uid=user.id;
