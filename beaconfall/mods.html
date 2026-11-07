@@ -403,6 +403,14 @@ function parseScript(text,lenient){
       if(l.ind>ind)throw PE(l.n,'indent does not match the line above');
       pos++;var m;
       if(/^(set|add|subtract|multiply|divide|reset|loop|if\s+(variable|player|world|signal)|signal|every)\b/i.test(l.t))l={n:l.n,ind:l.ind,t:nb(l.t)};   // {변수} 는 {} 를 떼고 읽어요
+      var fchv=null,frv=null,frb=null;   // fill ... chance %{pct}% / replace %{block}% / replace <블록>: 변수·블록을 떼어 두고 나머지를 읽어요
+      if(/^fill\s/i.test(l.t)){
+        var ft1=l.t,fmm;
+        if(fmm=ft1.match(/\s+chance\s+%\{([a-z0-9_]{1,20})\}%/i)){fchv=fmm[1].toLowerCase();ft1=ft1.replace(fmm[0],'');}
+        if(fmm=ft1.match(/\s+replace\s+%\{([a-z0-9_]{1,20})\}%/i)){frv=fmm[1].toLowerCase();ft1=ft1.replace(fmm[0],'');}
+        else if(fmm=ft1.match(/\s+replace\s+(?!(?:ocean|water|land)\s*$)("[^"]{1,20}"|[a-z_]{2,24})\s*$/i)){frb=fmm[1].charAt(0)==='"'?'@'+fmm[1].slice(1,-1):item(l,fmm[1]);ft1=ft1.replace(fmm[0],'');}
+        if(ft1!==l.t)l={n:l.n,ind:l.ind,t:ft1};
+      }
       var fvar=null,fvm=l.t.match(/^fill\s+%\{([a-z0-9_]{1,20})\}%\s+%\{([a-z0-9_]{1,20})\}%\s+(?:to\s+)?(.+)$/i);   // fill %{pos1}% %{pos2}% land: 변수에 담긴 'x z' 두 점으로 채워요
       if(fvm){fvar=[fvm[1].toLowerCase(),fvm[2].toLowerCase()];l={n:l.n,ind:l.ind,t:'fill 0 0 0 0 to '+fvm[3]};}
       var ftv=null,ftm=l.t.match(/^(fill\s+.+?\s+to\s+)%\{([a-z0-9_]{1,20})\}%(.*)$/i);   // fill ... to %{block}%: 블록/지형 이름을 변수에서 읽어요
@@ -506,17 +514,32 @@ if(nv===''||nv==='-')nv=0;fc.push([rel?1:0,+nv]);}
         if(/^(land|beach|ocean|mountain|paint)$/.test(ftg)){
           var fcb=null,fb=m[6]?m[6].toLowerCase():null;if(m[6]&&m[6].charAt(0)==='"'){fcb=m[6].slice(1,-1);fb=null;}if(fb&&BIOMES.indexOf(fb)<0)throw PE(l.n,"unknown biome '"+fb+"'. You can use: "+BIOMES.join(', '));
           if(ftg==='paint'&&!fb&&!fcb)throw PE(l.n,'paint needs a biome: fill 0 0 100 100 to paint "road"');
-          var fa={c:fc,mode:ftg,b:fb};if(fcb)fa.cb=fcb;if(m[8])fa.rp=/^land$/i.test(m[8])?2:1;if(fchn!==null&&fchn<100)fa.ch=fchn;if(fvar)fa.v=fvar;if(ftv)fa.tv=ftv;acts.push({fill:fa});
+          var fa={c:fc,mode:ftg,b:fb};if(fcb)fa.cb=fcb;if(m[8])fa.rp=/^land$/i.test(m[8])?2:1;if(fchn!==null&&fchn<100)fa.ch=fchn;if(fvar)fa.v=fvar;if(ftv)fa.tv=ftv;if(fchv)fa.chv=fchv;if(frv)fa.rv=frv;if(frb){if(!ftv)throw PE(l.n,'replace <block> works when filling with a block: fill 0 0 99 99 to log replace stone');fa.rb=frb;}acts.push({fill:fa});
         }else{
           if(m[6])throw PE(l.n,"'"+m[6]+"' can't come after '"+m[5]+"'. Use: fill 0 0 99 99 to "+ftg+" chance 30%");
           if(m[8])throw PE(l.n,"replace works with land, beach, ocean, mountain and paint only");
-          if(/^(tree|rock|iron|gold|copper|zinc)$/.test(ftg)){acts.push({fillx:{k:ftg,c:fc,ch:fchn===null?100:fchn,v:fvar||undefined}});}
-          else{var fit=ftg.charAt(0)==='"'?'@'+ftg.slice(1,-1):item(l,m[5]);acts.push({fillb:{it:fit,c:fc,ch:fchn===null?100:fchn,v:fvar||undefined}});}
+          if(/^(tree|rock|iron|gold|copper|zinc)$/.test(ftg)){
+            if(frb||frv)throw PE(l.n,'replace works with land, beach, ocean, mountain, paint and block fills');
+            if(fvar||fchv)acts.push({fill:{c:fc,mode:'land',b:null,v:fvar||undefined,tl:ftg,ch:fchn===null?undefined:fchn,chv:fchv||undefined}});
+            else acts.push({fillx:{k:ftg,c:fc,ch:fchn===null?100:fchn}});}
+          else{var fit=ftg.charAt(0)==='"'?'@'+ftg.slice(1,-1):item(l,m[5]);
+            if(fvar||fchv||frv)acts.push({fill:{c:fc,mode:'land',b:null,v:fvar||undefined,tl:fit,ch:fchn===null?undefined:fchn,chv:fchv||undefined,rv:frv||undefined,rb:frb||undefined}});
+            else acts.push({fillb:{it:fit,c:fc,ch:fchn===null?100:fchn,rb:frb||undefined}});}
         }
       }else if((m=l.t.match(/^load\s+(~?-?\d*)\s+(~?-?\d*)\s+(~?-?\d*)\s+(~?-?\d*)$/i))&&m[1]&&m[2]&&m[3]&&m[4]){
         var lc=[];for(var li=1;li<=4;li++){var lk=m[li],lrel=lk.charAt(0)==='~',lv=lk.replace('~','');if(lv===''||lv==='-')lv=0;lc.push([lrel?1:0,+lv]);}
         acts.push({fill:{c:lc,mode:'load',b:null}});
       }else if(/^cancel\s+event$/i.test(l.t)){acts.push({cancel:1});}   // on key / on click 안에서: 그 키·클릭으로 일어날 일을 막아요
+      else if(m=l.t.match(/^add\s+input\s+"([^"]{1,30})"\s+into\s+(?:\{(:?)([a-z0-9_]{1,17})\2\}|([a-z0-9_]{1,20}))$/i)){   // 열려 있는 창에 입력칸 더하기
+        var ain=(m[4]||m[3]).toLowerCase();if(/^_.*_$/.test(ain))throw PE(l.n,'input needs a {name} or {:name:} variable (not {_name_})');
+        acts.push({addin:{l:m[1],v:(m[2]?'s__':'')+ain}});}
+      else if(m=l.t.match(/^add\s+button\s+"([^"]{1,20})"([^:]*):$/i)){   // 열려 있는 창에 버튼 더하기
+        var abr=m[2],acm=abr.match(/\bcolor\s+"?(#[0-9a-f]{6})"?/i);if(acm)abr=abr.replace(acm[0],'');
+        var apm=abr.match(/\bat\s+([a-z ]+?)\s*$/i);if(apm)abr=abr.replace(apm[0],'');
+        if(abr.trim())throw PE(l.n,'write it like  add button "OK" at bottom right color "#2a8f5a":');
+        var abp=apm?apm[1].toLowerCase().trim():'bottom right';if(POS.indexOf(abp)<0)throw PE(l.n,"unknown position '"+abp+"'. You can use: "+POS.join(', '));
+        acts.push({addbtn:{l:m[1],p:abp,c:acm?acm[1].toLowerCase():'',do:sub(l,depth)}});}
+      else if(m=l.t.match(/^remove\s+(input|button)\s+"([^"]{1,30})"$/i)){acts.push(m[1].toLowerCase()==='input'?{rmin:m[2]}:{rmbtn:m[2]});}
       else if(m=l.t.match(/^remove\s+all\s+(trees|rocks|ores|structures)$/i)){acts.push({wipe:m[1].toLowerCase()});}
       else if(m=l.t.match(/^set\s+variable\s+([a-z0-9_]{1,20})\s+to\s+(?:"([^"]{0,40})"|(-?\d{1,9}(?:\.\d{1,3})?))$/i)){acts.push({setv:{n:m[1].toLowerCase(),v:m[2]!==undefined?m[2]:+m[3]}});}
       else if(m=l.t.match(/^(add|subtract)\s+(\d{1,9}(?:\.\d{1,3})?)\s+(?:to|from)\s+variable\s+([a-z0-9_]{1,20})$/i)){acts.push({addv:{n:m[3].toLowerCase(),d:(m[1].toLowerCase()==='add'?1:-1)*+m[2]}});}
