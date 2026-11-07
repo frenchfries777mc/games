@@ -10886,7 +10886,7 @@ function modGen(){
   if(isGuest()||!world||!world.id||!MOD.ev.length)return;
   const done=world.mg||(world.mg=[]);let ran=false;
   for(const m of MOD.on){
-    if(done.includes(m.id))continue;
+    if(done.includes(m.id)||(world.pt||0)>=1)continue;   // on world generate 는 월드가 새로 만들어졌을 때만 (게임을 켤 때마다 도는 건 on game load)
     const evs=MOD.ev.filter(e=>e.mid===m.id&&e.on==='generate');if(!evs.length)continue;
     for(const e of evs){try{modRun(e.do,0,{n:100000,gen:1,fresh:(world.pt||0)<1});}catch(x){}}
     done.push(m.id);ran=true;
@@ -13682,7 +13682,7 @@ function enterPlay(){
   try{bfOwnerFix();}catch(e){}
   loadInvFor(invKey());renderInv();renderEquip();
   {const cw=settings.worlds.find(w=>w.id===settings.current);SANDBOX=!!(cw&&cw.sandbox)&&!isGuest();SBX.fly=false;SBX.tm=1;P.train=null;if(!isGuest())setWopt(cw);}
-  mode='play';document.body.classList.add('playing');keys.clear();setTimeout(()=>{try{modEvent('join','');}catch(e){}},400);
+  mode='play';document.body.classList.add('playing');keys.clear();setTimeout(()=>{try{modEvent('join','');}catch(e){}try{modEvent('load','');}catch(e){}},400);
   if(!isGuest()&&!world.introSeen){world.introSeen=true;showIntro();}
   const c=world.camp;P.x=c.x+10;P.y=c.y+7;P.f=1;P.walk=0;
   const sp=world.savedPlayer;
