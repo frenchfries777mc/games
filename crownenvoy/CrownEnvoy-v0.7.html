@@ -529,7 +529,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 160</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 161</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -911,7 +911,7 @@ const ADJFIX={0:[[156,117],[156,237],[281,277]],2:[[156,117],[156,763],[856,852]
 function mapBuild(i){if(_mapCache[i])return _mapCache[i];const m=MAPDATA[i];if(i===0&&!m._cs){m._cs=1;/* 유럽 지도의 카스피해(273)는 흑해·러시아 땅까지 덮는 잘못된 모양이라 지운다: 모양을 비우고 바다 연결도 끊는다 */const cs=m.terr[273];if(cs&&cs.name==='카스피해'){cs.rings=[];m.sadj[273]=[];m.sadj.forEach((l,k)=>{if(k!==273)m.sadj[k]=l.filter(x=>x!==273);});}}if(ADJFIX[i]&&!m._af){m._af=1;ADJFIX[i].forEach(([x,y])=>{m.adj[x]=m.adj[x].filter(k=>k!==y);m.adj[y]=m.adj[y].filter(k=>k!==x);});}
   const tdef=m.terr.map(t=>({id:t.id,name:t.name,cc:t.cc,x:t.site[0],y:t.site[1],kind:t.kind,terrain:t.terrain,area:t.area,sea:t.kind==='sea',cu:t.cu||'mix',mul:t.mul||1,fort0:t.fort0||0}));
   const B=decRings(m.bg,m.q),LB=m.lb?decRings(m.lb,m.q):B,T=dropSlivers(m.terr.map((t,ti)=>((RINGFIX[i]||{})[ti])||(Array.isArray(t.rings)?t.rings:decRings(t.rings,m.q))),B);const pin=pinSet([...T,B,LB]);
-  const geo={polys:T.map(r=>wiggle(r,pin)),adj:m.adj,sadj:m.sadj||[],bg:wiggle(B,pin),base:m.lb?wiggle(LB,pin):null};geo.base=geo.base||geo.bg;fixSites(tdef,geo);return(_mapCache[i]={tdef,geo});}
+  const geo={polys:T.map(r=>wiggle(r,pin)),adj:m.adj,sadj:m.sadj||[],bg:wiggle(B,pin),base:m.lb?wiggle(LB,pin):null};geo.base=geo.base||geo.bg;fixSites(tdef,geo);/* 바다와 맞닿지 않는 내륙 영토가 바다 공격·상륙 대상으로 잡히던 연결을 끊는다 */[[['비스케이만','Bay of Biscay'],['마드리드','Madrid']],[['레반트해','Levantine Sea'],['디마슈크','Damascus']],[['리구리아해','Ligurian Sea'],['토리노','Turin']],[['티레니아해','Tyrrhenian Sea'],['피렌체','Florence']],[['에게해','Aegean Sea'],['이스파르타','Isparta']]].forEach(([sn,ln])=>{const sd=tdef.find(t=>t.kind==='sea'&&(sn.includes(t.name)||sn.includes(t.en))),ld=tdef.find(t=>t.kind!=='sea'&&(ln.includes(t.name)||ln.includes(t.en)));if(!sd||!ld||!geo.sadj)return;if(geo.sadj[sd.id])geo.sadj[sd.id]=geo.sadj[sd.id].filter(x=>x!==ld.id);if(geo.sadj[ld.id])geo.sadj[ld.id]=geo.sadj[ld.id].filter(x=>x!==sd.id);});return(_mapCache[i]={tdef,geo});}
 /* 경계선을 구불구불하게 만들면 모양이 조금 변해서 병력 숫자·도시 표시가 영토 밖으로 밀릴 수 있어요. 밖으로 나간 표시 위치는 가장 가까운 영토 안쪽으로 옮겨요 */
 function fixSites(tdef,geo){const inP=(x,y,r)=>{let c=false;for(let i=0,j=r.length-1;i<r.length;j=i++){const a=r[i],b=r[j];if((a[1]>y)!==(b[1]>y)&&x<(b[0]-a[0])*(y-a[1])/(b[1]-a[1])+a[0])c=!c;}return c;},inTerr=(x,y,rs)=>{let c=false;for(const r of rs)if(inP(x,y,r))c=!c;return c;};
   tdef.forEach((t,i)=>{const P=geo.polys[i];if(!P||!P.length||inTerr(t.x,t.y,P))return;
