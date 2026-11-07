@@ -10727,6 +10727,7 @@ function modG(k){   // if player/world ... 조건용 게임 값 (읽기는 안 �
   switch(k){case 'hp':return P.hp;case 'maxhp':return P.maxhp;case 'x':return P.x;case 'y':return P.alt||0;case 'z':return P.y;
     case 'day':return Math.floor(world.clock/DAY_SEC)+1;case 'hour':return Math.floor((6+world.clock/DAY_SEC*24)%24);case 'players':return 1+remotes.size;
     case 'biome':try{return TF_BIO[bioAt(P.x,P.y)]||'';}catch(e){return '';}
+    case 'dimension':return TER&&TER.dv?'deep_void':'overworld';   // 메인 월드 / Deep Void
     case 'item':{const q=inv[P.sel];return q?String(q.id):'';}
     case 'name':return String(myName());}
   return 0;
