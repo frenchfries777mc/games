@@ -621,10 +621,11 @@ function shape(x,y,hb,fb,L){
       let nv;
       if(q[4]===0){nv=SEA+0.08+Math.max(0,0.55*((hb-0.5)*2.8+0.5)-0.3)*0.6;if(nv>0.7)nv=0.7;}
       else if(q[4]===1)nv=SEA+0.012+Math.max(0,hb-0.5)*0.05;
-      else if(q[4]===3)nv=Math.min(0.95,0.8+Math.max(0,hb-0.3)*0.3);   // 산
+      else if(q[4]===3)nv=Math.min(0.95,0.8+Math.max(0,hb-0.3)*0.3);   // hills: 초록 언덕 (나무가 자라요)
+      else if(q[4]===6)nv=1.102+hb*0.02;   // mountain: 회색 바위산 (돌·광석이 나오고 나무는 없어요, 눈이 덮이기 직전 높이)
       else nv=SEA-0.22-hb*0.1;
       let ft=1;   // 구역 가장자리는 안쪽으로 조금씩 번지게 (반듯한 네모 + 어두운 테두리선이 안 생기게)
-      if(!(q[9]>0&&q[9]<100)){const F=Math.min(q[4]===2?110:56,(q[2]-q[0])*0.3,(q[3]-q[1])*0.3);
+      if(!(q[9]>0&&q[9]<100)){const F=Math.min(q[4]===2?110:q[4]===6?90:56,(q[2]-q[0])*0.3,(q[3]-q[1])*0.3);
         if(F>=3){const d=Math.min(x-q[0],q[2]-x,y-q[1],q[3]-y);ft=d/F+(hb-0.5)*0.8;ft=ft<0?0:ft>1?1:ft;ft=ft*ft*(3-2*ft);}}
       v=v+(nv-v)*ft;
       if(q[5]>=0&&ft>0.5){bv=q[5];sC=(q[6]&&MODBIO.id[q[6]])||0;}
@@ -10837,7 +10838,7 @@ function cleanTF(t){
   const r=[];if(Array.isArray(t.r))for(const q of t.r.slice(0,200)){
     if(!Array.isArray(q)||q.length<6)continue;
     const n=q.slice(0,6).map(v=>Math.round(+v));if(n.some(v=>!Number.isFinite(v)))continue;
-    const o=[Math.max(0,n[0]),Math.max(0,n[1]),Math.min(W,n[2]),Math.min(H,n[3]),n[4]>=0&&n[4]<=5?n[4]:0,n[5]>=-1&&n[5]<=8?n[5]:-1];
+    const o=[Math.max(0,n[0]),Math.max(0,n[1]),Math.min(W,n[2]),Math.min(H,n[3]),n[4]>=0&&n[4]<=6?n[4]:0,n[5]>=-1&&n[5]<=8?n[5]:-1];
     if(typeof q[6]==='string'&&q[6].length<=20&&(q[6]||q[7]===1)){o.push(q[6].slice(0,20),q[7]===1?1:0);}
     const rp=(q[8]===1||q[8]===2)&&o[4]!==4?q[8]:0,ch=Math.round(+q[9]);
     if(rp||(ch>=1&&ch<=99&&o[4]!==4)){while(o.length<8)o.push(o.length===6?'':0);o.push(rp);if(ch>=1&&ch<=99&&o[4]!==4)o.push(ch);}   // replace ocean|land, chance N%
@@ -10991,7 +10992,7 @@ function modFillVar(o,depth,box){   // fill %{pos1}% %{pos2}% to %{block}% [repl
   let a2;
   if(o.tv||o.tl){
     const raw=o.tv?String(modVGet(o.tv)==null?'':modVGet(o.tv)).trim():String(o.tl),v=raw.toLowerCase();
-    if(/^(land|beach|ocean|mountain)$/.test(v))a2={fill:{c,mode:v,b:null,rp,ch:ch<100?ch:undefined,vd:1}};
+    if(/^(land|beach|ocean|hills|mountain)$/.test(v))a2={fill:{c,mode:v,b:null,rp,ch:ch<100?ch:undefined,vd:1}};
     else if(/^(tree|rock|iron|gold|copper|zinc)$/.test(v))a2={fillx:{k:v,c,ch:ch||100}};
     else{const id=o.tl&&raw[0]==='@'?raw:modBlockId(raw);
       if(!id){modSay('Unknown block: '+raw.slice(0,30));return;}
@@ -11094,7 +11095,7 @@ function modTf(kind,a){
   if(kind==='wipe'){const f={trees:'nt',rocks:'nr',ores:'no',structures:'ns'}[a];if(f)tf[f]=1;}
   else{
     const an=modAnchor(null,true),c=a.c.map((p,i)=>{const v=Math.round(+p[1])||0;return p[0]?(i%2?an.y:an.x)+v:v;});
-    const md={land:0,beach:1,ocean:2,mountain:3,load:4,paint:5}[a.mode];let bi=a.b==null?-1:TF_BIO.indexOf(String(a.b)),cn='';
+    const md={land:0,beach:1,ocean:2,hills:3,load:4,paint:5,mountain:6}[a.mode];let bi=a.b==null?-1:TF_BIO.indexOf(String(a.b)),cn='';
     if(typeof a.cb==='string'){const D=MODBIO.by[MODBIO.id[a.cb]];if(D){bi=D.bs;cn=D.n;}}
     if(md===undefined||tf.r.length>=200)return;
     const cl=(v,m)=>Math.max(0,Math.min(m,Math.round(v)));
