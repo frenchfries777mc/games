@@ -332,6 +332,9 @@ CSS+=
  W+'.ffa-chip,'+W+'.ffa-hub,'+W+'.ffa-set{background:transparent;color:var(--text);border:1px solid var(--fry);border-radius:99px}'+
  W+'.ffa-menu{background:var(--bg);border:1px solid var(--fry);border-left:8px solid var(--fry);border-radius:16px;box-shadow:none}'+
  W+'.ffa-menu button:hover{background:var(--fry);color:var(--bg)}'+
+ W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct,#ffaWelcome){background:var(--ffw-ov,rgba(5,6,10,.78))}'+
+ WB+'{background:var(--bg,var(--ffw-bg,#0e0e0e))!important;border:1px solid var(--fry,#d9b45f);border-left:8px solid var(--fry,#d9b45f)}'+
+ W+'#ffaWelcome .w{background:var(--bg,var(--ffw-bg,#0e0e0e))!important}'+
  W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct,#ffaWelcome){font-family:"Oswald","Noto Sans KR",sans-serif;-webkit-backdrop-filter:none;backdrop-filter:none}'+
  WB+'{background:var(--bg);border:1px solid var(--fry);border-left:8px solid var(--fry);border-radius:16px;box-shadow:none;padding-bottom:30px}'+
  W+'#ffaWelcome .w{background:var(--bg);border:1px solid var(--fry);border-left:8px solid var(--fry);border-radius:16px;box-shadow:none}'+
