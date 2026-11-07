@@ -1563,7 +1563,7 @@ const ULTS = {
   pel:{name:'드론 자폭', desc:'3초 동안 드론의 공격력이 50% 증가하고, 그 뒤 모든 드론이 2초 동안 가까운 상대를 추격해 맞거나 2초가 지나면 자폭 (드론 1대당 10 피해) · 자폭한 드론은 스킬로 다시 늘림'},
   tionis:{name:'분신 연극', desc:'4초 동안 분신이 나타나 공격하고 (내 공격력의 절반) 분신은 공격을 받지 않음 · 그동안 나는 투명해지고 피해를 받거나 분신이 사라지고 1초 뒤에 풀림'},
   tell:{name:'떨어지는 사과', desc:'포물선으로 느리게 떨어지는 사과를 던지고 게이지가 바로 가득 참 · 떨어지는 사과를 화살로 맞히면 1초 동안 게이지가 곧바로 가득 참'},
-  dragonslayer:{name:'드래곤 소환', desc:'맵 위쪽에 드래곤을 7초 동안 소환 · 드래곤이 맵 위를 날아다니며 1초마다 가장 가까운 적에게 화염구를 쏨 (발판 관통, 화염구마다 14 피해, 터지는 범위 70) · 드래곤이 있는 동안 스킬이 \'지원 발사\'로 바뀜: 커서 위치에 화염구를 연속 4번 발사 (쿨타임 1.5초)'},
+  dragonslayer:{name:'드래곤 소환', desc:'맵의 가장 높은 발판 위에 드래곤을 7초 동안 소환 · 드래곤이 맵 위를 날아다니며 1초마다 가장 가까운 적에게 화염구를 쏨 (발판 관통, 화염구마다 14 피해, 터지는 범위 70) · 드래곤이 있는 동안 스킬이 \'지원 발사\'로 바뀜: 커서 위치에 화염구를 연속 4번 발사 (쿨타임 1.5초)'},
   pizarro:  {name:'정복자의 기세', desc:'체력 30 회복(최종 단계에서 쓰면 50) + 공격력 20→29→38→47, 공격 쿨타임 0.6→0.5→0.4→0.3초, 대쉬 쿨타임 3→1.5→0.7→0.4초로 단계가 오르고 스킬·궁극기 쿨타임도 단계마다 12% 단축됨 (최대 3번 중첩 = 4단계, 4단계엔 이동속도 125%, 죽으면 초기화)'},
   puppeteer:{name:'꼭두각시 조종', desc:'조준한 방향으로 실을 날려 맞힌 상대를 5초간 조종 (맞히지 못하면 조종 못 함) · 조종하는 동안 내 이동·점프·조준·일반 공격 입력대로 움직이고 내 시야도 상대 시점이 됨, 상대는 스킬과 궁극기를 쓸 수 없음 · 조종하는 동안 내 몸은 움직이지 못하고 받는 데미지 50% 감소 · 조종이 끝나면 조종당한 상대가 자폭해 본인은 60, 주변(220) 적에게는 30 피해'},
   kan:      {name:'케찰코아틀의 날개', desc:'5초 동안 날개를 펴고 날아올라 (점프 키를 누르면 위로, 떼면 천천히 내려옴) 독침을 한 번에 3발씩, 더 빠르게 발사'},
@@ -6024,7 +6024,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-07-v742';
+const GAME_BUILD='build 2026-11-07-v743';
 const GAME_VERSION='1.0', GAME_VERSION_NAME='신화의 전설';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -13213,9 +13213,16 @@ function dsPlanePos(s){      // 만화가 용살자's ultimate: a big paper plan
   y+=-(1-Math.min(1,s/0.6))*260;      // it swoops in from above at the start
   return {x:x, y:y, ang:ang, face:(Math.cos(ang)>=0)?1:-1};
 }
+let dsDragonY0Cache=null;
+function dsDragonY0(){      // 용살자 dragon: it flies a little above the HIGHEST platform of the map (not at one fixed height), kept on the screen
+  if(!MAP || !MAP.platforms || !MAP.platforms.length) return 250;
+  if(dsDragonY0Cache && dsDragonY0Cache.m===MAP && dsDragonY0Cache.n===MAP.platforms.length) return dsDragonY0Cache.y;
+  let top=1e9; for(const pl of MAP.platforms) if(pl.y<top) top=pl.y;
+  const y=Math.max(110, top-130); dsDragonY0Cache={m:MAP, n:MAP.platforms.length, y:y}; return y;
+}
 function dsDragonPos(s,manga){
   if(manga) return dsPlanePos(s);      // the dragon's flight: it flies in from above, then sweeps back and forth along the top of the map
-  const W=MAP.arenaW, x=W*0.5+Math.sin(s*0.75)*W*0.4, y=250+Math.sin(s*1.9)*16-(1-Math.min(1,s/0.7))*300;
+  const W=MAP.arenaW, x=W*0.5+Math.sin(s*0.75)*W*0.4, y=dsDragonY0()+Math.sin(s*1.9)*16-(1-Math.min(1,s/0.7))*300;
   return {x:x, y:y, face:(Math.cos(s*0.75)>=0)?1:-1};
 }
 function dsDragonUlt(p, tSec, tMs){
