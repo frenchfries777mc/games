@@ -495,6 +495,31 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   @media(max-width:980px){ .lz-pick{grid-template-columns:1fr;} }
   @media(max-width:640px){ .lz{padding-top:8px;} .lz-fry{left:0;} .lz-pick{grid-template-columns:1fr;} }
   </style>
+<link rel="stylesheet" href="../ff-rich.css?v=1">
+<style id="ff-rich-page">
+.amb,.lz-field{display:none!important}
+.hero-t .eyebrow{display:block;font-size:12px}
+.gl-tabs button{background:transparent!important;color:var(--text)!important;border:1px solid var(--fry)!important;box-shadow:none!important;font-family:'Oswald','Noto Sans KR',sans-serif;letter-spacing:.04em}
+.gl-tabs button.on,.gl-tabs button:hover{background:var(--fry)!important;color:var(--bg)!important}
+.gl-c{background:var(--bg)!important;border:1px solid var(--fry)!important;border-left:8px solid var(--fry)!important;border-radius:16px!important;box-shadow:none!important}
+.gl-c:hover{transform:none!important;box-shadow:0 0 0 1px var(--fry)!important}
+.gl-c::after{content:'';position:absolute;left:14px;bottom:0;width:70px;height:3px;background:var(--fry);z-index:2}
+.gl-c .cap,html[data-ff-theme=light] .gl-c .cap{background:linear-gradient(transparent,var(--bg) 70%)!important}
+.gl-c .cap b,html[data-ff-theme=light] .gl-c .cap b{color:var(--text)!important;font-family:'Oswald','Noto Sans KR',sans-serif;font-weight:600;text-shadow:none}
+.gl-c .cap span,html[data-ff-theme=light] .gl-c .cap span{color:var(--fry)!important;letter-spacing:.14em;text-transform:uppercase}
+.gl-c .cap .pt,html[data-ff-theme=light] .gl-c .cap .pt{color:var(--fry)!important;border-color:var(--fry)!important}
+.gl-lb,html[data-ff-theme=light] .gl-lb{background:color-mix(in srgb,var(--bg) 94%,transparent)!important}
+.gl-lb img{border:1px solid var(--fry);border-left:8px solid var(--fry);border-radius:16px!important;box-shadow:none!important}
+.gl-lb .cap,html[data-ff-theme=light] .gl-lb .cap{color:var(--text)!important}.gl-lb .cap b{color:var(--fry)}.gl-lb .cap p,html[data-ff-theme=light] .gl-lb .cap p{color:var(--text)!important}
+.gl-lb .x,.gl-lb .nv,html[data-ff-theme=light] .gl-lb .x,html[data-ff-theme=light] .gl-lb .nv{background:transparent!important;border:1px solid var(--fry);color:var(--fry)!important}
+.lz-c{background:var(--bg)!important;border:1px solid var(--fry)!important;border-left:8px solid var(--fry)!important;border-radius:16px!important;position:relative;box-shadow:none!important}
+.lz-c:hover{transform:none!important;box-shadow:0 0 0 1px var(--fry)!important}
+.lz-c::after{content:'';position:absolute;left:22px;bottom:0;width:70px;height:3px;background:var(--fry)}
+.lz-c i{background:transparent!important;border:1px solid var(--fry)}
+.lz-c b{color:var(--text)!important;font-weight:600}.lz-c span{color:var(--text)!important;font-weight:500}.lz-c em{color:var(--fry)!important;font-weight:700}
+.lz-soon:hover{box-shadow:none!important}
+.sh::before{background:var(--fry)!important}
+</style>
   <section class="hero lz">
     <div class="hero-t">
     <span class="eyebrow">Prototypes</span>

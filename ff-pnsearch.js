@@ -26,13 +26,13 @@ function css(){
   if(document.getElementById('ffpnCss')) return;
   var s=document.createElement('style'); s.id='ffpnCss';
   s.textContent='.ffpn{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px}'+
-    '.ffpn input{flex:1 1 240px;max-width:440px;min-width:0;box-sizing:border-box;background:rgba(0,0,0,.32);color:inherit;border:1px solid rgba(255,255,255,.22);border-radius:8px;padding:8px 12px;font:inherit;font-size:15px}'+
-    '.ffpn input:focus{outline:none;border-color:rgba(255,255,255,.6)}'+
-    'html[data-ff-theme=light] .ffpn input{background:#fff;color:#111;border-color:rgba(0,0,0,.28)}html[data-ff-theme=light] .ffpn input:focus{border-color:#a67c00}html[data-ff-theme=light] mark.ffpn-mark{background:#f0d88a;color:#111}'+
+    '.ffpn input{flex:1 1 240px;max-width:440px;min-width:0;box-sizing:border-box;background:transparent;color:var(--text,inherit);border:1px solid var(--fry,#d9b45f);border-radius:99px;padding:8px 16px;font:inherit;font-size:15px}'+
+    '.ffpn input:focus{outline:none;box-shadow:0 0 0 1px var(--fry,#d9b45f)}'+
+    'html[data-ff-theme=light] mark.ffpn-mark{background:var(--fry);color:var(--bg)}'+
     '.ffpn input::placeholder{color:inherit;opacity:.55}'+
     '.ffpn span{font-size:13.5px;opacity:.7}'+
     '.ffpn-none{opacity:.7;padding:8px 0}'+
-    'mark.ffpn-mark{background:#d9b45f;color:#1a1206;border-radius:3px;padding:0 2px}';
+    'mark.ffpn-mark{background:var(--fry,#d9b45f);color:var(--bg,#1a1206);border-radius:3px;padding:0 2px}';
   document.head.appendChild(s);
 }
 function words(v,out){

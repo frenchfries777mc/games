@@ -47,12 +47,12 @@ function pick(l){
 }
 function css(){
   var st=document.createElement('style');
-  st.textContent='.ffs{position:absolute; z-index:5; left:0; top:0; color:#d9b45f; font-family:"Noto Sans KR",sans-serif; font-weight:900; line-height:1.15; text-align:center; white-space:normal; word-break:keep-all; width:max-content; max-width:210px; text-shadow:2px 2px 0 #3d2e00; text-decoration:none; pointer-events:none; transform-origin:50% 50%;}'+
+  st.textContent='.ffs{position:absolute; z-index:5; left:0; top:0; color:var(--fry,#d9b45f); font-family:"Oswald","Noto Sans KR",sans-serif; font-weight:600; line-height:1.15; text-align:center; white-space:normal; word-break:keep-all; width:max-content; max-width:210px; text-shadow:none; text-decoration:none; pointer-events:none; transform-origin:50% 50%;}'+
    '.ffs i{display:block; font-style:normal; animation:ffsP .5s ease-in-out infinite alternate;}'+
-   'a.ffs{pointer-events:auto; cursor:pointer;} a.ffs:hover i{color:#f0d88a;}'+
+   'a.ffs{pointer-events:auto; cursor:pointer;} a.ffs:hover i{color:var(--text,#f0d88a);}'+
    '@keyframes ffsP{from{transform:scale(1)}to{transform:scale(1.08)}}'+
    '@media (prefers-reduced-motion:reduce){.ffs i{animation:none}}'+
-   'html[data-ff-theme=light] .ffs{color:#7a5a00; text-shadow:none;}html[data-ff-theme=light] a.ffs:hover i{color:#111;}';
+   'html[data-ff-theme=light] .ffs{color:var(--fry,#7a5a00); text-shadow:none;}html[data-ff-theme=light] a.ffs:hover i{color:var(--text,#111);}';
   document.head.appendChild(st);
 }
 function run(){
