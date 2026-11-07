@@ -1155,6 +1155,7 @@ sting();})();</script>
     <div style="display:flex; flex-wrap:wrap; gap:6px; margin:8px 0;" id="cmTools">
       <button class="btn-secondary cmTool sel" data-tool="plat">▭ 발판 (끌어서 그리기)</button>
       <button class="btn-secondary cmTool" data-tool="spawn">📍 시작 위치</button>
+      <button class="btn-secondary cmTool" data-tool="flag" style="display:none;">🚩 깃발 위치</button>
       <button class="btn-secondary cmTool" data-tool="del">🗑 지우기</button>
       <button class="btn-secondary" id="cmFloorBtn">바닥 깔기</button>
       <button class="btn-secondary" id="cmUndoBtn">되돌리기</button>
@@ -6025,7 +6026,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-07-v746';
+const GAME_BUILD='build 2026-11-07-v747';
 const GAME_VERSION='1.0', GAME_VERSION_NAME='신화의 전설';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -6567,22 +6568,42 @@ function ensureEmoteWheel(){
 function emoteWheelOpen(){ const w=document.getElementById('emoteWheel'); return !!(w && w.style.display==='block'); }
 function closeEmoteWheel(){ const w=document.getElementById('emoteWheel'); if(w) w.style.display='none'; }
 /* ================= 맵 에디터: platforms and start points drawn by hand, kept in this browser, shared as a code or with the friends of a private room ================= */
-const CM_KEY='stickseumCustomMaps', CM_GRID=20, CM_MAX_PLATS=60, CM_MAX_SPAWNS=8, CM_MAX_SAVED=12;
+const CM_KEY='stickseumCustomMaps', CM_GRID=20, CM_MAX_PLATS=60, CM_MAX_SPAWNS=8, CM_MAX_SAVED=12, CM_BIG_SIZES=[3600,4000,4400,4800,5200,5400];
 function cmThemeKeys(){ return Object.keys(THEMES).filter(k=>THEMES[k] && THEMES[k].plat && THEMES[k].bgA); }
 function cmClean(sp){          // one map spec {n name, w width, h 900, t theme, p [[x,y,w,h]], s [[x,y]]}, brought into safe ranges (a code from anybody is only data)
   if(!sp || typeof sp!=='object') return null;
-  const W=(+sp.w===2400)?2400:1800, H=900, num=v=>Math.round(+v);
+  const num=v=>Math.round(+v);
   const n=String(sp.n==null?'':sp.n).replace(/[<>&"']/g,'').slice(0,16).trim()||'내 맵';
   const t=(typeof sp.t==='string' && cmThemeKeys().includes(sp.t)) ? sp.t : 'colosseum';
+  if(sp.big){          // a big flag map (깃발 뺏기, 황금 쟁탈, 금고 약탈, 데스매치 더블): only the LEFT half is drawn, the right half is its mirror image; the ground is automatic
+    const W=CM_BIG_SIZES.includes(+sp.w)?+sp.w:4400, H=1500, G=H-100, p=[];
+    for(const a of (Array.isArray(sp.p)?sp.p:[]).slice(0,CM_MAX_PLATS)){ if(!Array.isArray(a) || a.length<4) continue; let [x,y,w,h]=a.slice(0,4).map(num); if(![x,y,w,h].every(Number.isFinite)) continue; w=clamp(w,40,W-40); h=clamp(h,16,200); x=clamp(x,0,W/2-20); y=clamp(y,150,G-h); p.push([x,y,w,h]); }
+    let f=Array.isArray(sp.f)?sp.f.slice(0,2).map(num):[360,G]; if(!f.every(Number.isFinite)) f=[360,G]; f=[clamp(f[0],100,W/2-100), clamp(f[1],150,G)];
+    return {n,w:W,h:H,t,p,s:[],big:1,f};
+  }
+  const W=(+sp.w===2400)?2400:1800, H=900;
   const p=[], s=[];
   for(const a of (Array.isArray(sp.p)?sp.p:[]).slice(0,CM_MAX_PLATS)){ if(!Array.isArray(a) || a.length<4) continue; let [x,y,w,h]=a.slice(0,4).map(num); if(![x,y,w,h].every(Number.isFinite)) continue; w=clamp(w,40,W); h=clamp(h,16,200); x=clamp(x,0,W-w); y=clamp(y,100,H-h); p.push([x,y,w,h]); }
   for(const a of (Array.isArray(sp.s)?sp.s:[]).slice(0,CM_MAX_SPAWNS)){ if(!Array.isArray(a) || a.length<2) continue; let [x,y]=a.slice(0,2).map(num); if(![x,y].every(Number.isFinite)) continue; s.push([clamp(x,20,W-20), clamp(y,40,H)]); }
   return {n,w:W,h:H,t,p,s};
 }
-function cmId(sp){ const str=JSON.stringify([sp.n,sp.w,sp.t,sp.p,sp.s]); let h=5381; for(let i=0;i<str.length;i++) h=((h<<5)+h+str.charCodeAt(i))|0; return 'cm_'+(h>>>0).toString(36); }
+function cmId(sp){ const str=JSON.stringify(sp.big?[sp.n,sp.w,sp.t,sp.p,sp.f,'big']:[sp.n,sp.w,sp.t,sp.p,sp.s]); let h=5381; for(let i=0;i<str.length;i++) h=((h<<5)+h+str.charCodeAt(i))|0; return 'cm_'+(h>>>0).toString(36); }
 function cmRegister(raw, guest){          // puts a map spec into MAP_TEMPLATES (private rooms and practice use it from there); returns its id, or null when the spec cannot be a map
-  const sp=cmClean(raw); if(!sp || !sp.p.length || sp.s.length<2) return null;
+  const sp=cmClean(raw); if(!sp || !sp.p.length || (!sp.big && sp.s.length<2)) return null;
   const id=cmId(sp);
+  if(sp.big){
+    if(!MAP_TEMPLATES[id]){
+      const W=sp.w, Hh=sp.h, G=Hh-100, plats=[{x:0, y:G, w:W, h:100}];
+      for(const [x,y,w,h] of sp.p){
+        if(x+w>W/2){ const half=Math.min(W/2-x, x+w-W/2); if(half<20) continue; const cw=half*2; plats.push({x:W/2-cw/2, y, w:cw, h}); }      // a platform over the middle line becomes one centered platform
+        else { plats.push({x, y, w, h}); plats.push({x:W-x-w, y, w, h}); }
+      }
+      const fx=sp.f[0], fy=sp.f[1], sp0=[-60,10,80,150,220,290].map(dx=>({x:clamp(fx+dx,30,W/2-30), y:fy-12})), sp1=sp0.map(q=>({x:W-q.x, y:q.y}));
+      MAP_TEMPLATES[id]={id, name:'🛠 '+sp.n, maxPlayers:12, arenaW:W, arenaH:Hh, theme:THEMES[sp.t], platforms:plats, privateOnly:true, isCtf:true, custom:true, big:true, cspec:sp, guestOnly:!!guest,
+        ctf:{flags:[{team:0, x:fx, y:fy}, {team:1, x:W-fx, y:fy}]}, teamSpawns:[sp0, sp1], spawns:sp0.concat(sp1)};
+    } else if(!guest) MAP_TEMPLATES[id].guestOnly=false;
+    return id;
+  }
   if(!MAP_TEMPLATES[id]) MAP_TEMPLATES[id]={id, name:'🛠 '+sp.n, maxPlayers:clamp(sp.s.length,2,8), arenaW:sp.w, arenaH:sp.h, theme:THEMES[sp.t], platforms:sp.p.map(([x,y,w,h])=>({x,y,w,h})), spawns:sp.s.map(([x,y])=>({x,y})), privateOnly:true, custom:true, cspec:sp, guestOnly:!!guest};
   else if(!guest) MAP_TEMPLATES[id].guestOnly=false;
   return id;
@@ -6595,23 +6616,36 @@ function cmDecode(code){ try{ code=String(code||'').trim(); if(!/^SM1:/.test(cod
 cmSavedIds();
 const cm={sp:null, tool:'plat', drag:null, undo:[], back:'menuScreen', cv:null, sc:1};
 function cmNew(){ return {n:'내 맵', w:1800, h:900, t:'colosseum', p:[[0,800,1800,100]], s:[[300,800],[1500,800]]}; }
+function cmNewBig(){ return {n:'큰 맵', w:4400, h:1500, t:'grassland', p:[[500,1190,300,24],[900,1090,300,24],[1300,990,300,24]], s:[], big:1, f:[360,1400]}; }
 function cmPush(){ cm.undo.push(JSON.stringify(cm.sp)); if(cm.undo.length>30) cm.undo.shift(); }
-function cmOpen(from, sp){
-  cm.back=from||'menuScreen'; { const pb=document.getElementById('cmPracBtn'), fb=document.getElementById('cmFriendBtn'); if(pb) pb.style.display=(cm.back==='friendlyScreen')?'none':''; if(fb) fb.style.display=(cm.back==='friendlyScreen')?'':'none'; } cm.sp=cmClean(sp||cmNew()) || cmNew(); cm.undo=[]; cm.drag=null;
+function cmOpen(from, sp, opt){
+  cm.need=(opt&&opt.need)||0; cm.max=Math.max(2,Math.min(CM_MAX_SPAWNS,(opt&&opt.max)||CM_MAX_SPAWNS)); cm.back=from||'menuScreen'; { const pb=document.getElementById('cmPracBtn'), fb=document.getElementById('cmFriendBtn'); if(pb) pb.style.display=(cm.back==='friendlyScreen')?'none':''; if(fb) fb.style.display=(cm.back==='friendlyScreen')?'':'none'; } cm.sp=cmClean(sp||((opt&&opt.big)?cmNewBig():cmNew())) || cmNew(); cm.undo=[]; cm.drag=null;
   const th=document.getElementById('cmTheme'); if(!th.options.length) for(const k of cmThemeKeys()){ const o=document.createElement('option'); o.value=k; o.textContent=THEMES[k].name||k; th.appendChild(o); }
   showScreen('cmScreen'); cmSync(); requestAnimationFrame(cmDraw);
 }
-function cmSync(){ document.getElementById('cmName').value=cm.sp.n; document.getElementById('cmSize').value=String(cm.sp.w); document.getElementById('cmTheme').value=cm.sp.t; document.querySelectorAll('#cmTools .cmTool').forEach(b=>b.classList.toggle('sel', b.dataset.tool===cm.tool)); cmDraw(); }
+function cmBigUi(){      // the editor of a big flag map shows other tools and sizes
+  const big=!!cm.sp.big, sz=document.getElementById('cmSize'); if(!sz) return;
+  if(sz.dataset.big!==(big?'1':'0')){ sz.dataset.big=big?'1':'0'; sz.innerHTML=big ? CM_BIG_SIZES.map(w=>'<option value="'+w+'">큰 맵 ('+w+'×1500)</option>').join('') : '<option value="1800">소형 (1800×900)</option><option value="2400">중형 (2400×900)</option>'; }
+  const show=(sel,on)=>{ const b=document.querySelector(sel); if(b) b.style.display=on?'':'none'; };
+  show('#cmTools [data-tool="spawn"]',!big); show('#cmTools [data-tool="flag"]',big); show('#cmFloorBtn',!big);
+  if(big && cm.tool==='spawn') cm.tool='plat'; if(!big && cm.tool==='flag') cm.tool='plat';
+}
+function cmSync(){ cmBigUi(); document.getElementById('cmName').value=cm.sp.n; document.getElementById('cmSize').value=String(cm.sp.w); document.getElementById('cmTheme').value=cm.sp.t; document.querySelectorAll('#cmTools .cmTool').forEach(b=>b.classList.toggle('sel', b.dataset.tool===cm.tool)); cmDraw(); }
 function cmDraw(){
   const cv=document.getElementById('cmCanvas'); if(!cv || !cm.sp) return; cm.cv=cv;
   const sp=cm.sp, W=Math.max(300, cv.clientWidth||800), H=Math.round(W*sp.h/sp.w); cv.width=W; cv.height=H; cm.sc=W/sp.w;
   const c=cv.getContext('2d'), th=THEMES[sp.t]||THEMES.colosseum, sc=cm.sc;
   const g=c.createLinearGradient(0,0,0,H); g.addColorStop(0,th.bgA); g.addColorStop(1,th.bgB); c.fillStyle=g; c.fillRect(0,0,W,H);
   c.strokeStyle='rgba(255,255,255,.07)'; c.lineWidth=1; for(let x=0;x<=sp.w;x+=100){ c.beginPath(); c.moveTo(x*sc,0); c.lineTo(x*sc,H); c.stroke(); } for(let y=0;y<=sp.h;y+=100){ c.beginPath(); c.moveTo(0,y*sc); c.lineTo(W,y*sc); c.stroke(); }
+  if(sp.big){ const G=sp.h-100; c.fillStyle=th.ground; c.fillRect(0,G*sc,W,100*sc); c.strokeStyle=th.platEdge; c.strokeRect(0,G*sc,W,100*sc);
+    c.save(); c.globalAlpha=.4; for(const [x,y,w,h] of sp.p){ c.fillStyle=th.plat; c.fillRect((sp.w-x-w)*sc,y*sc,w*sc,h*sc); } c.restore();      // (the right half: the mirror image of the left)
+    c.strokeStyle='rgba(255,255,255,.35)'; c.setLineDash([8,6]); c.beginPath(); c.moveTo(W/2,0); c.lineTo(W/2,H); c.stroke(); c.setLineDash([]); }
   for(const [x,y,w,h] of sp.p){ c.fillStyle=h>40?th.ground:th.plat; c.fillRect(x*sc,y*sc,w*sc,h*sc); c.fillStyle=th.stripe; c.globalAlpha=.75; c.fillRect(x*sc,y*sc,w*sc,Math.max(2,3)); c.globalAlpha=1; c.strokeStyle=th.platEdge; c.strokeRect(x*sc,y*sc,w*sc,h*sc); }
+  if(sp.big && sp.f){ for(const [fx,col] of [[sp.f[0],'#ff4d6d'],[sp.w-sp.f[0],'#4da3ff']]){ const fy=sp.f[1]; c.strokeStyle='#fff'; c.lineWidth=2; c.beginPath(); c.moveTo(fx*sc,fy*sc); c.lineTo(fx*sc,(fy-90)*sc); c.stroke(); c.fillStyle=col; c.beginPath(); c.moveTo(fx*sc,(fy-90)*sc); c.lineTo((fx+50)*sc,(fy-70)*sc); c.lineTo(fx*sc,(fy-50)*sc); c.fill(); } c.lineWidth=1; }
   sp.s.forEach(([x,y],i)=>{ c.fillStyle='#ff4d6d'; c.beginPath(); c.arc(x*sc,(y-18)*sc*1,Math.max(8,14*sc*2),0,7); c.fill(); c.fillStyle='#fff'; c.font='bold 12px sans-serif'; c.textAlign='center'; c.textBaseline='middle'; c.fillText(String(i+1), x*sc, (y-18)*sc); });
   if(cm.drag){ const d=cm.drag, x=Math.min(d.x0,d.x1), y=Math.min(d.y0,d.y1), w=Math.abs(d.x1-d.x0), h=Math.abs(d.y1-d.y0); c.strokeStyle='#fff'; c.setLineDash([6,4]); c.strokeRect(x*sc,y*sc,w*sc,h*sc); c.setLineDash([]); }
-  document.getElementById('cmInfo').textContent='발판 '+sp.p.length+'/'+CM_MAX_PLATS+' · 시작 위치 '+sp.s.length+'/'+CM_MAX_SPAWNS+' (2개 이상 필요, 시작 위치는 발판 위에만 놓을 수 있어요) · 시작 위치 수가 최대 인원이에요';
+  if(sp.big){ document.getElementById('cmInfo').textContent='큰 맵 (깃발 뺏기·황금 쟁탈·금고 약탈·데스매치 더블) · 발판 '+sp.p.length+'/'+CM_MAX_PLATS+' · 왼쪽 절반만 그리면 오른쪽(흐린 쪽)에 거울처럼 자동으로 만들어져요 · 🚩 깃발 위치는 발판이나 바닥 위에 놓고, 시작 위치는 깃발 주변에 자동으로 정해져요 · 가운데 선을 넘는 발판은 가운데에 대칭으로 놓여요'; return; }
+  document.getElementById('cmInfo').textContent='발판 '+sp.p.length+'/'+CM_MAX_PLATS+' · 시작 위치 '+sp.s.length+'/'+(cm.max||CM_MAX_SPAWNS)+' (2개 이상 필요, 시작 위치는 발판 위에만 놓을 수 있어요) · 시작 위치 수가 최대 인원이에요';
 }
 function cmPos(e){ const r=cm.cv.getBoundingClientRect(); const x=(e.clientX-r.left)/r.width*cm.sp.w, y=(e.clientY-r.top)/r.height*cm.sp.h; return {x:clamp(x,0,cm.sp.w), y:clamp(y,0,cm.sp.h)}; }
 function cmSnap(v){ return Math.round(v/CM_GRID)*CM_GRID; }
@@ -6619,8 +6653,13 @@ function cmPlatUnder(x,y){ let best=null; for(const pl of cm.sp.p){ if(x>=pl[0] 
 function cmDown(e){
   if(!cm.sp) return; e.preventDefault(); const q=cmPos(e), sp=cm.sp;
   if(cm.tool==='plat'){ cm.drag={x0:cmSnap(q.x), y0:cmSnap(q.y), x1:cmSnap(q.x), y1:cmSnap(q.y)}; try{ cm.cv.setPointerCapture(e.pointerId); }catch(_){} cmDraw(); }
+  else if(cm.tool==='flag' && sp.big){
+    const pl=cmPlatUnder(q.x,q.y), fy=pl?pl[1]:sp.h-100, fx=clamp(cmSnap(q.x),100,sp.w/2-100);
+    if(!pl && q.y<sp.h-250){ uiAlert('깃발은 발판이나 바닥 위에 놓아 주세요'); return; }
+    cmPush(); sp.f=[fx,fy]; cmDraw();
+  }
   else if(cm.tool==='spawn'){
-    if(sp.s.length>=CM_MAX_SPAWNS){ uiAlert('시작 위치는 최대 '+CM_MAX_SPAWNS+'개예요'); return; }
+    if(sp.s.length>=(cm.max||CM_MAX_SPAWNS)){ uiAlert('시작 위치는 최대 '+(cm.max||CM_MAX_SPAWNS)+'개예요'); return; }
     const pl=cmPlatUnder(q.x,q.y); if(!pl){ uiAlert('시작 위치는 발판 위에만 놓을 수 있어요'); return; }
     const nx=cmSnap(q.x); if(sp.s.some(([x,y])=>Math.abs(x-nx)<30 && y===pl[1])) return;
     cmPush(); sp.s.push([nx, pl[1]]); cmDraw();
@@ -6637,11 +6676,11 @@ function cmUp(e){
   if(w<CM_GRID*2 && h<CM_GRID*2){ w=200; h=24; x=clamp(d.x0-100,0,sp.w-w); }           // a click makes an ordinary platform
   if(h<16) h=24; if(w<40) w=40;
   if(sp.p.length>=CM_MAX_PLATS){ uiAlert('발판은 최대 '+CM_MAX_PLATS+'개예요'); cmDraw(); return; }
-  cmPush(); const c=cmClean({n:sp.n,w:sp.w,t:sp.t,p:[[x,y,w,h]],s:[]}); if(c.p.length) sp.p.push(c.p[0]); cmDraw();
+  cmPush(); const c=cmClean({n:sp.n,w:sp.w,t:sp.t,p:[[x,y,w,h]],s:[],big:sp.big,f:sp.f}); if(c.p.length) sp.p.push(c.p[0]); cmDraw();
 }
 function cmFixSpawns(){ const sp=cm.sp; sp.s=sp.s.filter(([x,y])=>sp.p.some(pl=>x>=pl[0]&&x<=pl[0]+pl[2]&&Math.abs(pl[1]-y)<=2)); }
 function cmReadFields(){ const sp=cm.sp; sp.n=String(document.getElementById('cmName').value||'').replace(/[<>&"']/g,'').slice(0,16).trim()||'내 맵'; sp.t=document.getElementById('cmTheme').value||sp.t; }
-function cmValid(){ cmFixSpawns(); const sp=cm.sp; if(!sp.p.length){ uiAlert('발판을 하나 이상 그려 주세요'); return false; } if(sp.s.length<2){ uiAlert('시작 위치가 2개 이상 있어야 해요 (발판 위에 놓아 주세요)'); return false; } return true; }
+function cmValid(){ cmFixSpawns(); const sp=cm.sp; if(!sp.p.length){ uiAlert('발판을 하나 이상 그려 주세요'); return false; } if(sp.big) return true; if(cm.need && sp.s.length<cm.need){ uiAlert('이 모드는 시작 위치가 '+cm.need+'개 필요해요'); return false; } if(cm.max && sp.s.length>cm.max){ uiAlert('이 모드는 시작 위치가 최대 '+cm.max+'개예요'); return false; } if(sp.s.length<2){ uiAlert('시작 위치가 2개 이상 있어야 해요 (발판 위에 놓아 주세요)'); return false; } return true; }
 function cmSaveCurrent(){ cmReadFields(); if(!cmValid()){ cmDraw(); return null; } const sp=cmClean(cm.sp); let list=cmLoad().filter(x=>x.n!==sp.n); list.unshift(sp); cmStore(list); const id=cmRegister(sp,false); cm.sp=sp; cmSync(); return id; }
 function cmCloseEditor(){ showScreen(cm.back||'menuScreen'); if(cm.back==='practiceScreen'){ try{ renderPracticeSetup(); }catch(e){} } else if(cm.back==='friendlyScreen'){ try{ friendlyRender(); }catch(e){} } }
 function cmShowList(){
@@ -6650,13 +6689,18 @@ function cmShowList(){
   const close=()=>ov.remove(); ov.onclick=e=>{ if(e.target===ov) close(); };
   const h=document.createElement('div'); h.textContent='내 맵 ('+list.length+'/'+CM_MAX_SAVED+')'; h.style.cssText='font-weight:800;margin-bottom:10px;'; box.appendChild(h);
   if(!list.length){ const e=document.createElement('div'); e.textContent='저장한 맵이 없어요'; e.style.opacity='.7'; box.appendChild(e); }
-  for(const sp of list){ const row=document.createElement('div'); row.style.cssText='display:flex;gap:6px;align-items:center;margin:6px 0;'; const nm=document.createElement('div'); nm.style.cssText='flex:1;font-weight:700;'; nm.textContent=sp.n+' ('+sp.s.length+'인)';
+  for(const sp of list){ const row=document.createElement('div'); row.style.cssText='display:flex;gap:6px;align-items:center;margin:6px 0;'; const nm=document.createElement('div'); nm.style.cssText='flex:1;font-weight:700;'; nm.textContent=sp.big?(sp.n+' (큰 맵)'):(sp.n+' ('+sp.s.length+'인)');
     const b1=document.createElement('button'); b1.className='btn-secondary'; b1.textContent='불러오기'; b1.onclick=()=>{ cm.sp=cmClean(sp); cm.undo=[]; cmSync(); close(); };
     const b2=document.createElement('button'); b2.className='btn-secondary'; b2.textContent='삭제'; b2.onclick=async()=>{ if(await uiConfirm('"'+sp.n+'" 맵을 지울까요?')){ cmStore(cmLoad().filter(x=>x.n!==sp.n)); close(); cmShowList(); } };
     row.append(nm,b1,b2); box.appendChild(row); }
   ov.appendChild(box); document.body.appendChild(ov);
 }
-function carouselList(){ if(mapOrder.length===0) buildMapOrder(); const own=(MODES[selectedPrivateMode]||{}).ownMapRules; return own ? mapOrder.slice() : mapOrder.concat(cmSavedIds()); }      // (a mode with its own map pool (flag maps, tournament...) cannot use a hand-made map)
+const CM_OWN_NEED={defend:8};      // 제국 수호전: a hand-made map with 8 start positions works there
+function cmBigOf(id){ return !!(MAP_TEMPLATES[id] && MAP_TEMPLATES[id].big); }
+function carouselList(){ if(mapOrder.length===0) buildMapOrder(); const mode=MODES[selectedPrivateMode]||{}, own=mode.ownMapRules, saved=cmSavedIds();
+  if(!own) return mapOrder.concat(saved.filter(id=>!cmBigOf(id)));
+  if(mode.isCtfMode) return mapOrder.slice();                       // (the pool of flag maps already holds the big maps made in the editor)
+  const need=CM_OWN_NEED[mode.id]; return need ? mapOrder.concat(saved.filter(id=>!cmBigOf(id) && (MAP_TEMPLATES[id].maxPlayers||0)>=need)) : mapOrder.slice(); }      // (a mode with its own map pool (flag maps, tournament...) cannot use a hand-made map)
 (function cmInit(){
   const $=id=>document.getElementById(id); if(!$('cmCanvas')) return;
   const cv=$('cmCanvas'); cv.addEventListener('pointerdown',cmDown); cv.addEventListener('pointermove',cmMove); cv.addEventListener('pointerup',cmUp); cv.addEventListener('pointercancel',()=>{ cm.drag=null; cmDraw(); });
@@ -6664,17 +6708,17 @@ function carouselList(){ if(mapOrder.length===0) buildMapOrder(); const own=(MOD
   document.querySelectorAll('#cmTools .cmTool').forEach(b=>b.onclick=()=>{ cm.tool=b.dataset.tool; cmSync(); });
   $('cmName').oninput=()=>{ cmReadFields(); };
   $('cmTheme').onchange=()=>{ cmReadFields(); cmDraw(); };
-  $('cmSize').onchange=()=>{ cmPush(); cm.sp.w=(+$('cmSize').value===2400)?2400:1800; cm.sp=cmClean(cm.sp); cmSync(); };
+  $('cmSize').onchange=()=>{ cmPush(); const v=+$('cmSize').value; if(cm.sp.big){ cm.sp.w=CM_BIG_SIZES.includes(v)?v:4400; } else cm.sp.w=(v===2400)?2400:1800; cm.sp=cmClean(cm.sp); cmSync(); };
   $('cmFloorBtn').onclick=()=>{ cmPush(); cm.sp.p=cm.sp.p.filter(pl=>!(pl[1]===800&&pl[0]===0)); cm.sp.p.unshift([0,800,cm.sp.w,100]); cmSync(); };
   $('cmUndoBtn').onclick=()=>{ const u=cm.undo.pop(); if(u){ cm.sp=cmClean(JSON.parse(u)); cmSync(); } };
   $('cmClearBtn').onclick=async()=>{ if(await uiConfirm('그린 것을 모두 지울까요?')){ cmPush(); cm.sp.p=[]; cm.sp.s=[]; cmSync(); } };
   $('cmSaveBtn').onclick=()=>{ const id=cmSaveCurrent(); if(id) uiAlert('저장했어요: '+cm.sp.n); };
-  $('cmFriendBtn').onclick=()=>{ let id=null; try{ id=cmSaveCurrent(); }catch(e){ try{ uiAlert('맵을 저장하지 못했어요: '+(e&&e.message||e)); }catch(_){} return; } if(!id) return; friendlyHost(id); };      // 1.0: a map made in the editor opens the friendly room right away
+  $('cmFriendBtn').onclick=()=>{ let id=null; try{ id=cmSaveCurrent(); }catch(e){ try{ uiAlert('맵을 저장하지 못했어요: '+(e&&e.message||e)); }catch(_){} return; } if(!id) return; const cmode=MODES[selectedPrivateMode]||{}; if(!!cm.sp.big!==!!cmode.isCtfMode){ uiAlert(cm.sp.big?'큰 맵은 깃발 뺏기·황금 쟁탈·금고 약탈·데스매치 더블에서만 쓸 수 있어요':'이 모드는 큰 맵만 쓸 수 있어요'); return; } friendlyHost(id); };      // 1.0: a map made in the editor opens the friendly room right away
   $('cmPubBtn').onclick=()=>cmPublish(false); $('cmUnpubBtn').onclick=()=>cmPublish(true);
   $('cmListBtn').onclick=cmShowList;
   $('cmPracBtn').onclick=()=>{ const id=cmSaveCurrent(); if(!id) return; practiceCfg.mapId=id; savePracticeCfg(); renderPracticeSetup(); showScreen('practiceScreen'); };
   $('cmCopyBtn').onclick=async()=>{ cmReadFields(); if(!cmValid()){ cmDraw(); return; } const code=cmEncode(cmClean(cm.sp)); let ok=false; try{ await navigator.clipboard.writeText(code); ok=true; }catch(e){} if(ok) uiAlert('맵 코드를 복사했어요. 친구에게 붙여 넣어 보내 주세요'); else uiPrompt('이 맵 코드를 복사해 주세요', code, 20000); };
-  $('cmImportBtn').onclick=async()=>{ const v=await uiPrompt('받은 맵 코드를 붙여 넣어 주세요','',20000); if(v===null||v===false) return; const sp=cmDecode(v); if(!sp || !sp.p.length || sp.s.length<2){ uiAlert('맵 코드가 올바르지 않아요'); return; } cmPush(); cm.sp=sp; cmSync(); };
+  $('cmImportBtn').onclick=async()=>{ const v=await uiPrompt('받은 맵 코드를 붙여 넣어 주세요','',20000); if(v===null||v===false) return; const sp=cmDecode(v); if(!sp || !sp.p.length || (!sp.big && sp.s.length<2)){ uiAlert('맵 코드가 올바르지 않아요'); return; } cmPush(); cm.sp=sp; cmSync(); };
   $('cmCloseBtn').onclick=cmCloseEditor;
   const a=$('cmOpenFromPriv'); if(a) a.onclick=()=>cmOpen('privateSetupScreen');
   const b=$('cmOpenFromPrac'); if(b) b.onclick=()=>cmOpen('practiceScreen');
@@ -7690,7 +7734,7 @@ function friendlyRender(){
   const ids=carouselList();
   const open=(id)=>friendlyHost(id);
   { const r=document.createElement('button'); r.className='fCard fAct'; r.innerHTML='<span class="fBig">🎲</span><span>랜덤 맵으로 시작</span>'; r.onclick=()=>open(ids[Math.floor(Math.random()*ids.length)]); grid.appendChild(r); }
-  if(!mode.ownMapRules){ const e=document.createElement('button'); e.className='fCard fAct'; e.innerHTML='<span class="fBig">🛠</span><span>맵 만들기 · 가져오기</span><span style="font-size:12px;font-weight:600;color:var(--text-dim);">만든 맵으로 바로 방을 열어요</span>'; e.onclick=()=>cmOpen('friendlyScreen'); grid.appendChild(e); }
+  { const bigMode=!!mode.isCtfMode, need=CM_OWN_NEED[mode.id]||0; if(!mode.ownMapRules || bigMode || need){ const e=document.createElement('button'); e.className='fCard fAct'; e.innerHTML='<span class="fBig">🛠</span><span>'+(bigMode?'큰 맵 만들기 · 가져오기':'맵 만들기 · 가져오기')+'</span><span style="font-size:12px;font-weight:600;color:var(--text-dim);">만든 맵으로 바로 방을 열어요</span>'; e.onclick=()=>cmOpen('friendlyScreen', null, {big:bigMode, need:need, max:(mode.fixedPlayers&&!need)?mode.fixedPlayers:(need||CM_MAX_SPAWNS)}); grid.appendChild(e); } }
   for(const id of ids){ const m=MAP_TEMPLATES[id]; if(!m) continue;
     const b=document.createElement('button'); b.className='fCard';
     b.innerHTML='<canvas></canvas><span class="fTag"></span><div class="fBody"><div class="fName"></div><div class="fMeta"></div></div>';
@@ -12342,6 +12386,7 @@ async function umLoadPool(){
 }
 async function cmPublish(unpublish){
   if(!sb || !sbUser){ uiAlert('맵을 공개하려면 로그인해야 해요'); return; }
+  if(cm.sp.big){ uiAlert('큰 맵은 공개할 수 없어요 (맵 코드로 친구에게 보낼 수 있어요)'); return; }
   cmReadFields(); if(!cmValid()){ cmDraw(); return; }
   const sp=cmClean(cm.sp);
   try{
@@ -12357,7 +12402,7 @@ function onlineMapPoolFor(modeId){
   const mode=MODES[modeId]||MODES.ffa;
   if(modeId==='usermap') return umPool.slice();          // the shared maps (loaded just before the search, see umLoadPool)
   if(mode.fixedMapId) return [mode.fixedMapId];
-  if(mode.isCtfMode) return Object.keys(MAP_TEMPLATES).filter(id=>MAP_TEMPLATES[id].isCtf);
+  if(mode.isCtfMode) return Object.keys(MAP_TEMPLATES).filter(id=>MAP_TEMPLATES[id].isCtf && !MAP_TEMPLATES[id].custom);
   if(mode.isParkourMode) return Object.keys(MAP_TEMPLATES).filter(id=>MAP_TEMPLATES[id].isParkour);
   const floor=mode.mapFilterMinPlayers||mode.minPlayers; // zombie's own minPlayers(7) IS its map-capacity requirement; only survival needs a separate mapFilterMinPlayers since its start-minimum(6) and map floor(8) differ
   if((mode.ownMapRules || mode.minPlayers) && floor) return Object.keys(MAP_TEMPLATES).filter(id=>!MAP_TEMPLATES[id].privateOnly && (MAP_TEMPLATES[id].maxPlayers||0)>=floor);   // (any mode with a minimum: duo needs 8 seats)
