@@ -14784,7 +14784,7 @@ async function bstRun(d){
       modApply(lst);
       closeModal();
       const seed=randSeedNum().replace(/^0+(?=\d)/,'');
-      const w={id:'bst'+Date.now().toString(36),name:'테스트',seed,sz:2,created:Date.now()};
+      const w={id:'bst'+Date.now().toString(36),name:'테스트',seed,sz:2,created:Date.now(),sandbox:!!(d&&d.sandbox)};if(w.sandbox)w.sbEver=true;
       settings.worlds=[w];settings.current=w.id;
       await loadWorld(w.seed,w.name,w.id);
       world.introSeen=true;enterPlay();
