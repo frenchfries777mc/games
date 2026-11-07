@@ -57,3 +57,5 @@ patchnotes.json | v744 title | 원거리 봇 거리 유지 | build 744 | 2026-11
 patchnotes.json | v744 items[0] | 원거리 캐릭터 봇이 적에게 달라붙지 않고 더 멀리서 싸우도록 수정 | build 744 | 2026-11-07
 patchnotes.json | v745 title | 공동 처치 | build 745 | 2026-11-07
 patchnotes.json | v745 items[0] | 죽기 전 5초 동안 피해의 60% 이상을 준 사람은 마지막 타격자와 함께 처치로 인정 (처치 수, 골드, 처치 알림에 반영) | build 745 | 2026-11-07
+patchnotes.json | v746 title | 펠 드론 수에 따른 쿨타임 | build 746 | 2026-11-07
+patchnotes.json | v746 items[0] | 펠은 드론이 2대를 넘으면 한 대당 쿨타임 15%씩 늘어남 (6대일 때 약 1.33배 길어짐) | build 746 | 2026-11-07
