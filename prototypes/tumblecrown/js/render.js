@@ -1756,7 +1756,7 @@ const ease = u => u < 0 ? 0 : u > 1 ? 1 : u * u * (3 - 2 * u);
 const seg = (u, a, b) => ease((u - a) / (b - a));
 // 역할마다 공격·기술 동작. 몸 전체(허리 비틀기, 내딛기, 뛰어오르기)가 같이 움직여요
 const VK_T = { bloodlust: 1.7 };   // 바이킹은 도끼를 던져 받는 동안 기술 동작이 조금 더 길어요
-const ANIM_T = { atk: 0.32, hv: 0.95, big: 0.6, skill: 0.8 }, SK_T = { kill: 0.55, whirl: 1.0, storm: 1.5, flurry: 0.7, leap: 0.9, bloodlust: 1.4, shadow: 0.6, scatter: 0.7, chainpull: 0.9, maceslam: 1.1, maceswirl: 2.5, lunge: 0.7 };
+const ANIM_T = { atk: 0.32, hv: 0.95, big: 0.6, skill: 0.8 }, SK_T = { kill: 0.55, whirl: 1.0, storm: 1.5, flurry: 0.7, leap: 0.9, bloodlust: 1.4, shadow: 0.6, scatter: 0.7, chainpull: 0.9, maceslam: 1.25, maceswirl: 2.5, lunge: 0.7 };
 // 기사 베기 좌우 방향 (1이면 화면 오른쪽에서 시작)
 const KS = 1, KR = 1, KH_T = 0.5;
 // 기사 베기 자세. 1타: 오른쪽 위에서 감았다가 왼쪽 아래로 / 2타: 1타가 끝난 왼쪽 아래에서 조금 더 감았다가 오른쪽 아래로 낮게
@@ -1833,7 +1833,7 @@ function animHero(E, p, dt, t, view) {
   // 동작 시작: 동작 번호가 바뀌면 처음부터
   // 앞 동작이 아직 남아 있으면 그 자세에서 이어서 시작해요 (blT 동안 천천히 따라가요)
   if (p.aN !== E.aN) { E.aN = p.aN; if (E.aN != null && p.ak) { if (E.ak || E.kh) E.blT = 0.1; E.ak = p.ak; E.aT = 0; E.kc = (p.ac | 0) % 2; E.kh = null; } }
-  const kind = E.ak ? (E.ak === 'atk' || E.ak === 'hv' || E.ak === 'big' ? E.ak : 'skill') : '', D0 = kind === 'atk' && p.role === 'spearman' ? 0.45 : kind === 'atk' && p.role === 'chainer' ? 0.55 : kind === 'big' && role === 'priest' ? 0.9 : kind === 'skill' && p.role === 'viking' && VK_T[E.ak] ? VK_T[E.ak] : kind === 'skill' && SK_T[E.ak] ? SK_T[E.ak] : ANIM_T[kind] || 0.5;
+  const kind = E.ak ? (E.ak === 'atk' || E.ak === 'hv' || E.ak === 'big' ? E.ak : 'skill') : '', D0 = kind === 'atk' && p.role === 'spearman' ? 0.45 : kind === 'atk' && p.role === 'chainer' ? 0.95 : kind === 'big' && role === 'priest' ? 0.9 : kind === 'skill' && p.role === 'viking' && VK_T[E.ak] ? VK_T[E.ak] : kind === 'skill' && SK_T[E.ak] ? SK_T[E.ak] : ANIM_T[kind] || 0.5;
   // 기사 베기가 끝나면 끝 자세를 잠깐 들고 있다가 (연타가 이어질 수 있는 동안) 천천히 돌아와요
   const slow = p.role === 'knight' || p.role === 'priest' || p.role === 'archer' || p.role === 'chainer' ? 1 : 1.15, D = D0 * slow;   // 기사·사제·궁수 말고는 동작을 조금 느리고 부드럽게 해요
   if (E.ak) { E.aT += dt; if (E.aT > D) { if ((role === 'knight' || CHAIN[role]) && E.ak === 'atk' && p.role !== 'chainer') E.kh = { c: E.kc, t: 0 }; E.ak = null; } }
@@ -1908,9 +1908,9 @@ function animHero(E, p, dt, t, view) {
           T.rx = (base[0] + (-1.3 * wd + 1.9 * th) * (1 - gr) + (-0.4 + 0.45 * ph * pu) * gr) * x + base[0] * (1 - x); T.lx = (base[1] + (-0.9 * gr + -0.35 * ph * pu) - 0.4 * gr) * x + base[1] * (1 - x); T.rz = -0.1 * gr * x; T.lz = 0.12 * gr * x;
           T.bx = (-0.2 * wd + 0.5 * th - 0.65 * pu * (1 - 0.3 * Math.abs(ph))) * x; T.bz = (0.4 * th - 0.35 * pu) * x; T.lg = 0.8 * (th + pu * 0.6) * x; T.sq = (0.12 * wd + 0.08 * pu) * x; T.hx = -0.1 * pu * x; break; }
         case 'maceslam': { // 철퇴 병사 E: 팔을 높이 들어 머리 위에서 철퇴를 빙글빙글 돌리다가 (0~0.5), 뛰어올라 (0.5~0.73) 앞 땅에 내려쳐요
-          const L1 = 0.727, up = seg(v, 0, 0.1), jp = seg(v, 0.5, L1), rc = seg(v, 0.88, 1), x = 1 - rc;
-          T.rx = base[0] + (-1.7 * up * (1 - jp) + 0.6 * jp) * x; T.lx = base[1] - 0.2 * up * x; T.rz = (0.25 * up - 0.25 * jp) * x; T.bx = (-0.1 * up - 0.2 * seg(v, 0.5, 0.62) + 0.6 * seg(v, 0.62, L1)) * x; T.bry = 0.3 * Math.sin(v * 22) * up * (1 - jp) * x;
-          T.jy = hop(0.5, L1, 1.3); T.sq = (0.35 * seg(v, 0.4, 0.5) * (1 - jp) - 0.2 * jp * (1 - seg(v, 0.7, L1)) + land(L1, 0.8)); T.lg = (0.6 * seg(v, 0.4, 0.5) * (1 - jp) + 0.9 * jp) * x; T.by = (-0.3 * seg(v, 0.4, 0.5) * (1 - jp) - 0.35 * jp) * x; T.hx = 0.35 * jp * x; break; }
+          const L1 = 0.76, up = seg(v, 0, 0.08), jp = seg(v, 0.54, L1), rc = seg(v, 0.9, 1), x = 1 - rc;
+          T.rx = base[0] + (-1.7 * up * (1 - jp) + 0.6 * jp) * x; T.lx = base[1] - 0.2 * up * x; T.rz = (0.25 * up - 0.25 * jp) * x; T.bx = (-0.1 * up - 0.2 * seg(v, 0.54, 0.64) + 0.6 * seg(v, 0.64, L1)) * x; T.bry = 0.5 * Math.sin(v * 30) * up * (1 - jp) * x;
+          T.jy = hop(0.54, L1, 1.3); T.sq = (0.35 * seg(v, 0.44, 0.54) * (1 - jp) - 0.2 * jp * (1 - seg(v, 0.72, L1)) + land(L1, 0.8)); T.lg = (0.6 * seg(v, 0.44, 0.54) * (1 - jp) + 0.9 * jp) * x; T.by = (-0.3 * seg(v, 0.44, 0.54) * (1 - jp) - 0.35 * jp) * x; T.hx = 0.35 * jp * x; break; }
         case 'maceswirl': { // 철퇴 병사 R: 손잡이를 두 손으로 잡고 몸째 팽이처럼 빙글빙글 돌아요 (움직일 수 있어요)
           const ms = seg(v, 0, 0.06) * (1 - seg(v, 0.95, 1)), sp = seg(v, 0.04, 0.96);
           T.spin = -Math.PI * 2 * 5 * sp; T.rx = base[0] * (1 - ms) - 1.55 * ms; T.lx = base[1] * (1 - ms) - 1.5 * ms; T.rz = -0.5 * ms; T.lz = 0.5 * ms; T.bx = 0.25 * ms; T.brz = 0.12 * ms * Math.sin(v * 31); T.jy = ms * 0.08 * (1 + Math.sin(v * 50)); T.lg = 0.5 * ms; T.sq = 0.1 * ms; T.hx = 0.1 * ms; break; }
@@ -2051,7 +2051,7 @@ function animHero(E, p, dt, t, view) {
       const wi = V(0.3, 3.5, -0.8), far = V(0, 1.3, 9.2), near = V(0, 1.2, 2.3), up = seg(v, 0, 0.14), th = seg(v, 0.14, 0.28), pu = seg(v, 0.42, 0.84), bk = seg(v, 0.84, 1);
       let q = lp(rest, wi, up); q = lp(q, far, th); q.y += Math.sin(th * Math.PI) * 0.7 * (1 - pu); q = lp(q, near, pu); tg.copy(lp(q, rest, bk));
     } else if (a === 'maceslam') {
-      const L1 = 0.727, up = seg(v, 0, 0.1), jp = seg(v, 0.5, L1), bk = seg(v, 0.88, 1), th = v * 1.1 * 20, orb = V(Math.sin(th) * 1.7, 4.3, Math.cos(th) * 1.7), gr = V(0, 0.45, 2.8);
+      const L1 = 0.76, up = seg(v, 0, 0.08), jp = seg(v, 0.54, L1), bk = seg(v, 0.9, 1), th = v * 1.25 * 26, orb = V(0.4 + Math.sin(th) * 2.4, 4.0 + 0.25 * Math.sin(th * 0.5), Math.cos(th) * 2.4), gr = V(0, 0.45, 2.8);
       let q = lp(rest, orb, up); q = lp(q, gr, jp); q.y += Math.sin(jp * Math.PI) * 1.2; tg.copy(lp(q, rest, bk));
     } else if (a === 'maceswirl') {
       const ms = seg(v, 0, 0.06) * (1 - seg(v, 0.94, 1)), sp = T.spin, orb = V(Math.sin(sp) * 3.6, 1.45 + 0.25 * Math.sin(v * 40), Math.cos(sp) * 3.6);

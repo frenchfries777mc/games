@@ -184,7 +184,7 @@ export const ROLES = {
   },
   chainer: {
     name: T('철퇴 병사'), type: T('근접 딜러'), color: '#8a2a24', hp: 350, speed: 6.4,
-    atk: { kind: 'melee', range: 5, w: 0.5, dmg: 38, cd: 0.7 },
+    atk: { kind: 'melee', range: 5, w: 0.5, dmg: 48, cd: 0.9 },
     skills: [
       { id: 'chainpull', name: T('사슬 당기기'), key: 'Q', cd: 12, desc: T('사슬을 던져 맞은 상대 한 명을 내 앞까지 끌어와요. 22 피해.') },
       { id: 'maceslam', name: T('철퇴 내려치기'), key: 'E', cd: 14, desc: T('머리 위에서 철퇴를 돌리다 뛰어올라 내려쳐요. 앞쪽 둘레 상대에게 64 피해를 주고 0.6초 기절시켜요.') },

@@ -532,7 +532,7 @@ function swapPos(G, a, b, inv) {
   if (inv) { a.inv = Math.max(a.inv || 0, inv); b.inv = Math.max(b.inv || 0, inv); }
   ev(G, 'skill', { id: a.id, s: 'swapfx', x: ax, z: az, tx: a.x, tz: a.z, a: a.a, n: inv ? 0 : 1 });
 }
-const CHAIN_LEN = 10, MS_DELAY = 0.8;
+const CHAIN_LEN = 10, MS_DELAY = 0.95;
 // 철퇴 병사 E: 내려친 자리(앞쪽) 둘레 상대에게 피해와 짧은 기절
 function maceLand(G, p) {
   const cx = p.x + Math.cos(p.a) * 2.2, cz = p.z + Math.sin(p.a) * 2.2;
