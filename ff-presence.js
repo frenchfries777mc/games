@@ -71,7 +71,7 @@ function ping(force){
   }).then(function(){ busy=false; try{ window.dispatchEvent(new Event('ffpresence')); }catch(e){} },function(){ busy=false; });
 }
 /* 창을 닫거나 다른 페이지로 가면 바로 접속 표시에서 빠져요 (로그인한 사람만) */
-function leave(){ var t=token(); if(!t) return; last=0; rpc('ff_leave',{},t,true); }
+function leave(){ var t=token(); if(!t) return; last=0; rpc('ff_leave_at',{p_place:game||'hub'},t,true); }   /* 떠나는 페이지의 신호만 지워요 (supabase-presence-v8.sql 전에는 조용히 건너뜀, 신호는 150초 뒤 저절로 사라져요) */
 window.addEventListener('pagehide', leave);
 setTimeout(ping, 1500);
 setInterval(ping, 45000);
