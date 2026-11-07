@@ -14743,6 +14743,35 @@ function bstParse(code){
     addEventListener('message',h);f.contentWindow.postMessage({type:'bs-parse',code:String(code),id},'*');
   }));
 }
+/* Fry Code 설정에서 켠 API: bs-apply 의 apis:['potato'] 를 읽어서 그 API 모드를 같이 적용해요 (꺼진 API 는 적용 안 돼요) */
+const BST_API={potato:{id:'6b2b1a90-c35e-4484-934a-c21f14ce791c',name:'Potato API',dir:'apis/potato-api/',files:['main.bs','events.bs','mode.bs']}};
+const bstApiCache={};
+function bstApiLoad(k){
+  if(bstApiCache[k])return bstApiCache[k];
+  const A=BST_API[k];
+  return bstApiCache[k]=(async()=>{
+    const M={events:[],sets:[]};
+    for(const f of A.files){
+      const code=await (await fetch(A.dir+f)).text(),d=(await bstParse(code)).data||{};
+      if(d.events)M.events=M.events.concat(d.events);
+      if(d.sets)M.sets=M.sets.concat(d.sets);
+      if(d.pa)M.pa=(M.pa||[]).concat(d.pa);
+      if(d.defs)M.defs=(M.defs||[]).concat(d.defs);
+      if(d.names){M.names=M.names||{};Object.assign(M.names,d.names);}
+      if(d.col){M.col=M.col||{};Object.assign(M.col,d.col);}
+      if(d.remap){M.remap=M.remap||{};Object.assign(M.remap,d.remap);}
+      if(d.wins){M.wins=M.wins||{};Object.assign(M.wins,d.wins);}
+      if(d.api)M.api=d.api;
+    }
+    return {id:A.id,kind:'mod',name:A.name,descr:'',data:M};
+  })().catch(e=>{delete bstApiCache[k];throw e;});
+}
+function bstApiKeys(v){   // apis: ['potato'] 또는 {potato:true} (대소문자·'potato api' 도 읽어요)
+  const o=[];const add=x=>{const k=String(x).toLowerCase().replace(/[^a-z0-9]/g,'');for(const n in BST_API){if(k===n||k===n+'api'){if(!o.includes(n))o.push(n);}}};
+  if(Array.isArray(v))v.forEach(x=>{if(typeof x==='string')add(x);else if(x&&typeof x==='object'&&x.on!==false&&x.enabled!==false)add(x.id||x.name||'');});
+  else if(v&&typeof v==='object')for(const k in v)if(v[k])add(k);
+  return o;
+}
 async function bstRun(d){
   if(bstBusy){bstNext=d;return;}
   bstBusy=true;
@@ -14752,10 +14781,12 @@ async function bstRun(d){
       const ps=await bstParse(d.code);
       ent={id:'bstest',kind:ps.kind||'mod',name:ps.name||'테스트',descr:ps.descr||'',data:ps.data};
     }
+    const lst=[];for(const k of bstApiKeys(d&&d.apis))lst.push(await bstApiLoad(k));
+    if(ent)lst.push(ent);
     if(d&&d.reset===false&&world&&mode==='play'){
-      modApply(ent?[ent]:[]);
+      modApply(lst);
     }else{
-      modApply(ent?[ent]:[]);
+      modApply(lst);
       closeModal();
       const seed=randSeedNum().replace(/^0+(?=\d)/,'');
       const w={id:'bst'+Date.now().toString(36),name:'테스트',seed,sz:2,created:Date.now()};
