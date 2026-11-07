@@ -463,7 +463,8 @@ function parseScript(text,lenient){
         acts.push({gens:gsx});}
       else if(m=l.t.match(/^generate\s+biome\s+"([^"]{1,20})"(?:\s+(\d+)\s+times?)?$/i)){var gb=m[2]?+m[2]:1;if(gb<1||gb>30)throw PE(l.n,'generate biome count must be 1 to 30');acts.push({genbiome:{n:m[1],c:gb}});}
       else if((m=l.t.match(/^fill\s+(~?-?\d*)\s+(~?-?\d*)\s+(~?-?\d*)\s+(~?-?\d*)\s+to\s+("[^"]{1,20}"|[a-z_]{2,24})(?:\s+(?!chance\b|replace\b)(\w+|"[^"]{1,20}"))?(?:\s+chance\s+(\d{1,3})\s*%?)?(?:\s+replace\s+(ocean|water|land))?$/i))&&m[1]&&m[2]&&m[3]&&m[4]){
-        var fc=[];for(var fi=1;fi<=4;fi++){var tk=m[fi],rel=tk.charAt(0)==='~',nv=tk.replace('~','');if(nv===''||nv==='-')nv=0;fc.push([rel?1:0,+nv]);}
+        var fc=[];for(var fi=1;fi<=4;fi++){var tk=m[fi],rel=tk.charAt(0)==='~'||tk.charAt(0)==='-',nv=tk.replace('~','');   // 음수(-255)는 ~-255 처럼 캠프 기준
+if(nv===''||nv==='-')nv=0;fc.push([rel?1:0,+nv]);}
         var ftg=m[5].toLowerCase(),fchn=m[7]!==undefined?+m[7]:null;
         if(fchn!==null&&(fchn<1||fchn>100))throw PE(l.n,'chance must be 1 to 100% (fill ... to ocean chance 50%)');
         if(/^(land|beach|ocean|mountain|paint)$/.test(ftg)){
