@@ -30,3 +30,5 @@ patchnotes.json | v730 items[1] | 어퍼컷 피해 24→17 | build 730 | 2026-11
 patchnotes.json | v730 items[2] | 맷집 폭발: 피해 1.5배→1.25배, 이동속도 2배→1.5배 | build 730 | 2026-11-07
 patchnotes.json | v730 items[3] | 궁극기 연타 러시: 공격 속도 3배→2배 | build 730 | 2026-11-07
 patchnotes.json | v730 items[4] | 로비 스플래시 문구 위치를 아래로 조정 | build 730 | 2026-11-07
+
+- 2026-11-07 v731 패치노트 '맵 공개 시작 위치 2개부터': en만 작성, 나머지 11개 언어 번역 필요
