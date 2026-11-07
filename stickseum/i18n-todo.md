@@ -24,3 +24,9 @@ versions.json | 1.0 summary[3] | 새 인트로·1.0 로고·예고 영상 | buil
 versions.json | 1.0 summary[4] | 친선과 연습 개편 (인터넷 없이도 봇과 플레이)·맵 에디터 맵 공개·봇 난이도 7단계 | build 728 | 2026-11-07
 patchnotes.json | v729 title | 친선과 연습 모드 설명 줄이기 | build 729 | 2026-11-07
 patchnotes.json | v729 items[0] | 친선과 연습 모드 선택 카드의 설명을 짧게 변경 | build 729 | 2026-11-07
+patchnotes.json | v730 title | 복서 밸런스 조정 | build 730 | 2026-11-07
+patchnotes.json | v730 items[0] | 권투글러브(복서) 대폭 너프: 기본 피해 24→17, 쿨타임 0.25→0.3초 | build 730 | 2026-11-07
+patchnotes.json | v730 items[1] | 어퍼컷 피해 24→17 | build 730 | 2026-11-07
+patchnotes.json | v730 items[2] | 맷집 폭발: 피해 1.5배→1.25배, 이동속도 2배→1.5배 | build 730 | 2026-11-07
+patchnotes.json | v730 items[3] | 궁극기 연타 러시: 공격 속도 3배→2배 | build 730 | 2026-11-07
+patchnotes.json | v730 items[4] | 로비 스플래시 문구 위치를 아래로 조정 | build 730 | 2026-11-07
