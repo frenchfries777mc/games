@@ -1421,6 +1421,7 @@ async function loadWorld(seed,name,id,sz){
   else if(!isGuest()&&world.id&&world.treasureInit&&(world.lmChestInit!==2||world.pirInit!==2||world.ruinInit!==2)){placeLmChests();placePirChests();placeRuinChests();saveWorld(true);}
   cleanLooseChests();
   try{modGen();}catch(e){}
+  try{modWorldLoad();}catch(e){}
   achIslands();
   const rnd=mulberry32(hashStr(seed)^0x9e3779b9);
   cloudSprites=[];
@@ -10899,6 +10900,14 @@ function modGen(){
   if(MOD.tfDirty){MOD.tfDirty=0;try{const t=cleanTF(world.tf);if(t)applyTF(t,true);}catch(x){}}
   try{modBuildPend();}catch(x){}try{modBiomeStructs();}catch(x){}
   if(ran)saveWorld(true);
+}
+function modWorldLoad(){   // on world load: 월드를 불러올 때마다 (방장·혼자일 때만, 월드를 바꾸는 명령은 새 월드일 때만 먹혀요)
+  if(isGuest()||!world||!world.id||!MOD.ev.length)return;
+  for(const m of MOD.on){
+    for(const e of MOD.ev.filter(e=>e.mid===m.id&&e.on==='wload')){try{modRun(e.do,0,{n:100000,gen:1,fresh:false});}catch(x){}}
+  }
+  if(MOD.tfDirty){MOD.tfDirty=0;try{const t=cleanTF(world.tf);if(t)applyTF(t,true);}catch(x){}}
+  try{modBuildPend();}catch(x){}
 }
 function modKey(e,down){
   if(e._mod)return;

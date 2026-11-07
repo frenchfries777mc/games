@@ -325,7 +325,7 @@ function parseScript(text,lenient){
   }
   function splitOr(t){var parts=[],cur='',q=false;for(var i=0;i<t.length;i++){var ch=t[i];if(ch==='"')q=!q;if(!q&&/\s/.test(ch)){var r=t.slice(i).match(/^\s+or\s+/i);if(r){parts.push(cur);cur='';i+=r[0].length-1;continue;}}cur+=ch;}parts.push(cur);return parts;}
   function evOf(l,en,tw){
-    var ev=EVS[en.toLowerCase()];if(!ev){var g=guess(en,Object.keys(EVS));throw PE(l.n,"unknown event '"+en+"'."+(g?" Did you mean '"+g+"'?":" You can use: world generate, game load, join, quit, key, every, mine, chop, kill, craft, fish, place, destroy, damage, death, respawn, roll, interaction, spawn"));}
+    var ev=EVS[en.toLowerCase()];if(!ev){var g=guess(en,Object.keys(EVS));throw PE(l.n,"unknown event '"+en+"'."+(g?" Did you mean '"+g+"'?":" You can use: world generate, world load, game load, join, quit, key, every, mine, chop, kill, craft, fish, place, destroy, damage, death, respawn, roll, interaction, spawn"));}
     var tg=tw?tw.toLowerCase():'';
     if(tg&&ev==='spawn')return {on:ev,tg:'',ofn:tw};
     if(tg&&ev==='interaction')return {on:ev,tg:thingOf(l,tw)};
@@ -499,7 +499,8 @@ function parseScript(text,lenient){
     if(m=l.t.match(/^(mod|resource\s*pack|pack)\s+"([^"]{1,40})"$/i)){out.kind=/mod/i.test(m[1])?'mod':'pack';out.name=m[2];}
     else if(m=l.t.match(/^on\s+kill\s+"([^"]{1,20})"\s*:$/i)){out.events.push({on:'kill',target:'@'+m[1],do:sub(l,0)});}
     else if(m=l.t.match(/^on\s+world\s+generate\s*:$/i)){out.events.push({on:'generate',do:sub(l,0)});}
-    else if(m=l.t.match(/^on\s+game\s+load\s*:$/i)){out.events.push({on:'load',do:sub(l,0)});}   // 게임이 시작될 때마다
+    else if(m=l.t.match(/^on\s+game\s+load\s*:$/i)){out.events.push({on:'load',do:sub(l,0)});}
+    else if(m=l.t.match(/^on\s+world\s+load\s*:$/i)){out.events.push({on:'wload',do:sub(l,0)});}   // 월드를 불러올 때마다   // 게임이 시작될 때마다
     else if(m=l.t.match(/^every\s+%\{([a-z0-9_]{1,20})\}%\s+seconds?\s*:$/i)){out.events.push({on:'every',n:1,nv:m[1].toLowerCase(),do:sub(l,0)});}
     else if(m=l.t.match(/^every\s+(\S+)\s+seconds?\s*:$/i)){if(!/^\d+$/.test(m[1])||+m[1]<1)throw PE(l.n,'every needs a whole number of seconds, 1 or more');if(+m[1]>3600)throw PE(l.n,'every can be at most 3600 seconds');out.events.push({on:'every',n:+m[1],do:sub(l,0)});}
     else if(m=l.t.match(/^on\s+join\s*:$/i)){out.events.push({on:'join',do:sub(l,0)});}
