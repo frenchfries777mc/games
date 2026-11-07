@@ -366,6 +366,7 @@ function parseScript(text,lenient){
     c=c.trim();var m;
     if(m=c.match(/^(not\s+)?mod\s+"([^"]{1,40})"$/i))return {md:{n:m[2],not:!!m[1]}};
     if(m=c.match(/^(player|world)\s+(max\s*hp|hp|x|y|z|biome|dimen[st]ion|item|name|day|hour|players)\s*(>=|<=|!=|>|<|=|is\s+not|is)\s*(.+)$/i))return gameCond(l,m);
+    if(m=c.match(/^(not\s+)?key\s+"([^"]+)"\s+press$/i)){var kc0=keyCode(m[2]);if(!kc0)throw PE(l.n,"unknown key '"+m[2]+"'. Use A-Z, 0-9 or F1-F12");return {key:{c:kc0,not:!!m[1]}};}
     if(m=c.match(/^(not\s+)?(.+?)\s+in\s+player_hand$/i)){var hq1=m[2].trim().match(/^"([^"]{1,20})"$/);return {hand:{item:hq1?'@'+hq1[1]:item(l,m[2].trim()),not:!!m[1]}};}
     if(m=c.match(/^has\s+(?:(\d+)\s+)?(.+)$/i)){var hq0=m[2].trim().match(/^"([^"]{1,20})"$/);return {has:{item:hq0?'@'+hq0[1]:item(l,m[2].trim()),n:m[1]?+m[1]:1}};}
     if(m=c.match(/^%(attacker|victim)%\s+is\s+(not\s+)?player$/i))return {ifp:{w:m[1].toLowerCase(),not:!!m[2]}};
@@ -385,7 +386,7 @@ function parseScript(text,lenient){
       if(em){
         var tl=acts[acts.length-1];
         while(tl&&tl.elseIf&&tl.else&&tl.else.length===1)tl=tl.else[0];
-        if(!tl||!Array.isArray(tl.do)||!(tl.has||tl.ifp||tl.ifv||tl.ifc||tl.ifg||tl.md||tl.anyof||typeof tl.chance==='number'))throw PE(l.n,'else has to come right under an if, with the same indent');
+        if(!tl||!Array.isArray(tl.do)||!(tl.has||tl.hand||tl.key||tl.ifp||tl.ifv||tl.ifc||tl.ifg||tl.md||tl.anyof||typeof tl.chance==='number'))throw PE(l.n,'else has to come right under an if, with the same indent');
         if(tl.else)throw PE(l.n,'this if already has an else');
         if(!em[1]){tl.else=sub(l,depth);continue;}
         pe=tl;l={n:l.n,ind:l.ind,t:'if '+em[1]+':'};
@@ -438,6 +439,8 @@ function parseScript(text,lenient){
         acts.push({md:{n:m[2],not:!!m[1]},do:sub(l,depth)});
       }else if((m=l.t.match(/^if\s+(.+?)\s*:$/i))&&splitOr(m[1]).length>1){
         acts.push({anyof:splitOr(m[1]).map(function(c){return condOf(l,c);}),do:sub(l,depth)});
+      }else if(m=l.t.match(/^if\s+(not\s+)?key\s+"([^"]+)"\s+press\s*:$/i)){
+        var kc1=keyCode(m[2]);if(!kc1)throw PE(l.n,"unknown key '"+m[2]+"'. Use A-Z, 0-9 or F1-F12");acts.push({key:{c:kc1,not:!!m[1]},do:sub(l,depth)});
       }else if(m=l.t.match(/^if\s+(not\s+)?(.+?)\s+in\s+player_hand\s*:$/i)){
         var hq2=m[2].trim().match(/^"([^"]{1,20})"$/);acts.push({hand:{item:hq2?'@'+hq2[1]:item(l,m[2].trim()),not:!!m[1]},do:sub(l,depth)});
       }else if(m=l.t.match(/^if\s+has\s+(?:(\d+)\s+)?(.+?)\s*:$/i)){
