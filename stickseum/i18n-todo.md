@@ -67,3 +67,6 @@ patchnotes.json | v748 title | 맵 메이커 위치와 모드 선택 | build 748
 patchnotes.json | v748 items[0] | 친선과 연습 모드 목록 아래 「맵 메이커」 버튼으로 바로 들어감 | build 748 | 2026-11-07
 patchnotes.json | v748 items[1] | 맵 크기에서 큰 맵까지 고를 수 있고, 저장·공개할 때 이 맵의 모드를 선택 | build 748 | 2026-11-07
 patchnotes.json | v748 items[2] | 소형 맵 시작 위치 최대 4개, 중형 맵 최대 8개 | build 748 | 2026-11-07
+patchnotes.json | v749 title | 마법사 데미지 조정 | build 749 | 2026-11-07
+patchnotes.json | v749 items[0] | 마법사 화염구 데미지 14에서 16으로 상향 | build 749 | 2026-11-07
+patchnotes.json | v749 items[1] | 발판·벽·플레이어를 한 번 통과하면 데미지가 8로 감소 | build 749 | 2026-11-07
