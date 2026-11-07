@@ -232,7 +232,7 @@ function paintRoles() {
     box.appendChild(d);
   });
 }
-function paintAchs() { const b = $('achList'); b.innerHTML = ''; ACHIEVEMENTS.forEach(a => { const d = document.createElement('div'); d.className = 'ach' + (SAVE.ach[a.id] ? ' on' : ''); d.innerHTML = `<b>${SAVE.ach[a.id] ? '★ ' : ''}${a.name}</b><span>${a.desc}</span>`; b.appendChild(d); }); }
+function paintAchs() { const b = $('achList'); b.innerHTML = ''; ACHIEVEMENTS.forEach(a => { const d = document.createElement('div'); d.className = 'ach' + (SAVE.ach[a.id] ? ' on' : ''); d.innerHTML = `<img src="ach/${a.id}.svg" alt="" width="44" height="44" onerror="this.remove()"><div><b>${SAVE.ach[a.id] ? '★ ' : ''}${a.name}</b><span>${a.desc}</span></div>`; b.appendChild(d); }); }
 function unlock(id) { if (SAVE.ach[id]) return; const a = ACHIEVEMENTS.find(x => x.id === id); if (!a) return; SAVE.ach[id] = Date.now(); save(); ffSync(); toast(T('업적: {0}', a.name), 3000); }
 function paintSettings() {
   $('setVol').value = SAVE.set.vol;
