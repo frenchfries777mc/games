@@ -2,49 +2,508 @@
  "notes": [
   {
    "date": "2026-11-07",
-   "build": "v0.2 b89",
+   "build": "v0.2 build 90",
+   "title": "기증한 장부 되찾기",
+   "items": [
+    "박물관에 기증한 장부를 이야기 창에서 다시 내 것으로 되찾을 수 있어요",
+    "되찾으면 박물관 입장료 1.5배는 사라지고 모든 판매가가 3% 올라요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Take the ledger back",
+     "items": [
+      "You can take the donated ledger back from the museum in the story window",
+      "Taking it back removes the 1.5x museum fee and raises all sell prices by 3%"
+     ]
+    },
+    "ja": {
+     "title": "Take the ledger back",
+     "items": [
+      "You can take the donated ledger back from the museum in the story window",
+      "Taking it back removes the 1.5x museum fee and raises all sell prices by 3%"
+     ]
+    },
+    "es": {
+     "title": "Take the ledger back",
+     "items": [
+      "You can take the donated ledger back from the museum in the story window",
+      "Taking it back removes the 1.5x museum fee and raises all sell prices by 3%"
+     ]
+    },
+    "fr": {
+     "title": "Take the ledger back",
+     "items": [
+      "You can take the donated ledger back from the museum in the story window",
+      "Taking it back removes the 1.5x museum fee and raises all sell prices by 3%"
+     ]
+    },
+    "de": {
+     "title": "Take the ledger back",
+     "items": [
+      "You can take the donated ledger back from the museum in the story window",
+      "Taking it back removes the 1.5x museum fee and raises all sell prices by 3%"
+     ]
+    },
+    "zh": {
+     "title": "Take the ledger back",
+     "items": [
+      "You can take the donated ledger back from the museum in the story window",
+      "Taking it back removes the 1.5x museum fee and raises all sell prices by 3%"
+     ]
+    },
+    "pt": {
+     "title": "Take the ledger back",
+     "items": [
+      "You can take the donated ledger back from the museum in the story window",
+      "Taking it back removes the 1.5x museum fee and raises all sell prices by 3%"
+     ]
+    },
+    "ru": {
+     "title": "Take the ledger back",
+     "items": [
+      "You can take the donated ledger back from the museum in the story window",
+      "Taking it back removes the 1.5x museum fee and raises all sell prices by 3%"
+     ]
+    },
+    "tr": {
+     "title": "Take the ledger back",
+     "items": [
+      "You can take the donated ledger back from the museum in the story window",
+      "Taking it back removes the 1.5x museum fee and raises all sell prices by 3%"
+     ]
+    },
+    "it": {
+     "title": "Take the ledger back",
+     "items": [
+      "You can take the donated ledger back from the museum in the story window",
+      "Taking it back removes the 1.5x museum fee and raises all sell prices by 3%"
+     ]
+    },
+    "pl": {
+     "title": "Take the ledger back",
+     "items": [
+      "You can take the donated ledger back from the museum in the story window",
+      "Taking it back removes the 1.5x museum fee and raises all sell prices by 3%"
+     ]
+    },
+    "ar": {
+     "title": "Take the ledger back",
+     "items": [
+      "You can take the donated ledger back from the museum in the story window",
+      "Taking it back removes the 1.5x museum fee and raises all sell prices by 3%"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-11-07",
+   "build": "v0.2 build 89",
    "title": "공동 건설 두 가지 더",
    "items": [
     "공공 공사에 마을 광장 분수와 섬을 잇는 다리가 생겼어요",
     "마을 광장 분수를 지으면 모두의 활동 보너스가 25% 늘어요",
     "섬을 잇는 다리를 지으면 모두의 주민 심부름 보상이 20% 늘어요"
    ],
-   "tr": {"en": {"title": "Two more shared projects", "items": ["Shared projects now include the plaza fountain and the island bridge", "Building the plaza fountain adds 25% to everyone's activity bonus", "Building the island bridge adds 20% to everyone's errand rewards"]}}
+   "tr": {
+    "en": {
+     "title": "Two more shared projects",
+     "items": [
+      "Shared projects now include the plaza fountain and the island bridge",
+      "Building the plaza fountain adds 25% to everyone's activity bonus",
+      "Building the island bridge adds 20% to everyone's errand rewards"
+     ]
+    },
+    "ja": {
+     "title": "Two more shared projects",
+     "items": [
+      "Shared projects now include the plaza fountain and the island bridge",
+      "Building the plaza fountain adds 25% to everyone's activity bonus",
+      "Building the island bridge adds 20% to everyone's errand rewards"
+     ]
+    },
+    "es": {
+     "title": "Two more shared projects",
+     "items": [
+      "Shared projects now include the plaza fountain and the island bridge",
+      "Building the plaza fountain adds 25% to everyone's activity bonus",
+      "Building the island bridge adds 20% to everyone's errand rewards"
+     ]
+    },
+    "fr": {
+     "title": "Two more shared projects",
+     "items": [
+      "Shared projects now include the plaza fountain and the island bridge",
+      "Building the plaza fountain adds 25% to everyone's activity bonus",
+      "Building the island bridge adds 20% to everyone's errand rewards"
+     ]
+    },
+    "de": {
+     "title": "Two more shared projects",
+     "items": [
+      "Shared projects now include the plaza fountain and the island bridge",
+      "Building the plaza fountain adds 25% to everyone's activity bonus",
+      "Building the island bridge adds 20% to everyone's errand rewards"
+     ]
+    },
+    "zh": {
+     "title": "Two more shared projects",
+     "items": [
+      "Shared projects now include the plaza fountain and the island bridge",
+      "Building the plaza fountain adds 25% to everyone's activity bonus",
+      "Building the island bridge adds 20% to everyone's errand rewards"
+     ]
+    },
+    "pt": {
+     "title": "Two more shared projects",
+     "items": [
+      "Shared projects now include the plaza fountain and the island bridge",
+      "Building the plaza fountain adds 25% to everyone's activity bonus",
+      "Building the island bridge adds 20% to everyone's errand rewards"
+     ]
+    },
+    "ru": {
+     "title": "Two more shared projects",
+     "items": [
+      "Shared projects now include the plaza fountain and the island bridge",
+      "Building the plaza fountain adds 25% to everyone's activity bonus",
+      "Building the island bridge adds 20% to everyone's errand rewards"
+     ]
+    },
+    "tr": {
+     "title": "Two more shared projects",
+     "items": [
+      "Shared projects now include the plaza fountain and the island bridge",
+      "Building the plaza fountain adds 25% to everyone's activity bonus",
+      "Building the island bridge adds 20% to everyone's errand rewards"
+     ]
+    },
+    "it": {
+     "title": "Two more shared projects",
+     "items": [
+      "Shared projects now include the plaza fountain and the island bridge",
+      "Building the plaza fountain adds 25% to everyone's activity bonus",
+      "Building the island bridge adds 20% to everyone's errand rewards"
+     ]
+    },
+    "pl": {
+     "title": "Two more shared projects",
+     "items": [
+      "Shared projects now include the plaza fountain and the island bridge",
+      "Building the plaza fountain adds 25% to everyone's activity bonus",
+      "Building the island bridge adds 20% to everyone's errand rewards"
+     ]
+    },
+    "ar": {
+     "title": "Two more shared projects",
+     "items": [
+      "Shared projects now include the plaza fountain and the island bridge",
+      "Building the plaza fountain adds 25% to everyone's activity bonus",
+      "Building the island bridge adds 20% to everyone's errand rewards"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-07",
-   "build": "v0.2 b88",
+   "build": "v0.2 build 88",
    "title": "항해 일지",
    "items": [
     "메뉴에 항해 일지가 생겼어요. 배가 항구에 닿을 때마다 항구, 배, 판 돈, 사 온 짐이 한 줄씩 적혀요",
     "최근 30번이 남고, 가장 많이 번 항해도 보여요"
    ],
-   "tr": {"en": {"title": "Voyage log", "items": ["The menu has a new voyage log. Each time a ship reaches port, the port, ship, gold earned and goods bought are written down", "The latest 30 voyages are kept, along with your best one"]}}
+   "tr": {
+    "en": {
+     "title": "Voyage log",
+     "items": [
+      "The menu has a new voyage log. Each time a ship reaches port, the port, ship, gold earned and goods bought are written down",
+      "The latest 30 voyages are kept, along with your best one"
+     ]
+    },
+    "ja": {
+     "title": "Voyage log",
+     "items": [
+      "The menu has a new voyage log. Each time a ship reaches port, the port, ship, gold earned and goods bought are written down",
+      "The latest 30 voyages are kept, along with your best one"
+     ]
+    },
+    "es": {
+     "title": "Voyage log",
+     "items": [
+      "The menu has a new voyage log. Each time a ship reaches port, the port, ship, gold earned and goods bought are written down",
+      "The latest 30 voyages are kept, along with your best one"
+     ]
+    },
+    "fr": {
+     "title": "Voyage log",
+     "items": [
+      "The menu has a new voyage log. Each time a ship reaches port, the port, ship, gold earned and goods bought are written down",
+      "The latest 30 voyages are kept, along with your best one"
+     ]
+    },
+    "de": {
+     "title": "Voyage log",
+     "items": [
+      "The menu has a new voyage log. Each time a ship reaches port, the port, ship, gold earned and goods bought are written down",
+      "The latest 30 voyages are kept, along with your best one"
+     ]
+    },
+    "zh": {
+     "title": "Voyage log",
+     "items": [
+      "The menu has a new voyage log. Each time a ship reaches port, the port, ship, gold earned and goods bought are written down",
+      "The latest 30 voyages are kept, along with your best one"
+     ]
+    },
+    "pt": {
+     "title": "Voyage log",
+     "items": [
+      "The menu has a new voyage log. Each time a ship reaches port, the port, ship, gold earned and goods bought are written down",
+      "The latest 30 voyages are kept, along with your best one"
+     ]
+    },
+    "ru": {
+     "title": "Voyage log",
+     "items": [
+      "The menu has a new voyage log. Each time a ship reaches port, the port, ship, gold earned and goods bought are written down",
+      "The latest 30 voyages are kept, along with your best one"
+     ]
+    },
+    "tr": {
+     "title": "Voyage log",
+     "items": [
+      "The menu has a new voyage log. Each time a ship reaches port, the port, ship, gold earned and goods bought are written down",
+      "The latest 30 voyages are kept, along with your best one"
+     ]
+    },
+    "it": {
+     "title": "Voyage log",
+     "items": [
+      "The menu has a new voyage log. Each time a ship reaches port, the port, ship, gold earned and goods bought are written down",
+      "The latest 30 voyages are kept, along with your best one"
+     ]
+    },
+    "pl": {
+     "title": "Voyage log",
+     "items": [
+      "The menu has a new voyage log. Each time a ship reaches port, the port, ship, gold earned and goods bought are written down",
+      "The latest 30 voyages are kept, along with your best one"
+     ]
+    },
+    "ar": {
+     "title": "Voyage log",
+     "items": [
+      "The menu has a new voyage log. Each time a ship reaches port, the port, ship, gold earned and goods bought are written down",
+      "The latest 30 voyages are kept, along with your best one"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-07",
-   "build": "v0.2 b87",
+   "build": "v0.2 build 87",
    "title": "주민 친밀도",
    "items": [
     "주민의 심부름을 맡기고 전해 줄 때마다 그 주민들과 친밀도가 쌓여요",
     "낯선 사이에서 안면, 친구, 단짝으로 올라가고, 단계마다 그 주민의 심부름 보상이 10%씩 늘어요",
     "주민에게 말을 걸면 친밀도 단계가 보여요"
    ],
-   "tr": {"en": {"title": "Villager friendship", "items": ["Taking and delivering errands for a villager builds your friendship with them", "Friendship goes from strangers to acquaintances, friends and best friends, and each level adds 10% to that villager's errand rewards", "Talk to a villager to see your friendship level"]}}
+   "tr": {
+    "en": {
+     "title": "Villager friendship",
+     "items": [
+      "Taking and delivering errands for a villager builds your friendship with them",
+      "Friendship goes from strangers to acquaintances, friends and best friends, and each level adds 10% to that villager's errand rewards",
+      "Talk to a villager to see your friendship level"
+     ]
+    },
+    "ja": {
+     "title": "Villager friendship",
+     "items": [
+      "Taking and delivering errands for a villager builds your friendship with them",
+      "Friendship goes from strangers to acquaintances, friends and best friends, and each level adds 10% to that villager's errand rewards",
+      "Talk to a villager to see your friendship level"
+     ]
+    },
+    "es": {
+     "title": "Villager friendship",
+     "items": [
+      "Taking and delivering errands for a villager builds your friendship with them",
+      "Friendship goes from strangers to acquaintances, friends and best friends, and each level adds 10% to that villager's errand rewards",
+      "Talk to a villager to see your friendship level"
+     ]
+    },
+    "fr": {
+     "title": "Villager friendship",
+     "items": [
+      "Taking and delivering errands for a villager builds your friendship with them",
+      "Friendship goes from strangers to acquaintances, friends and best friends, and each level adds 10% to that villager's errand rewards",
+      "Talk to a villager to see your friendship level"
+     ]
+    },
+    "de": {
+     "title": "Villager friendship",
+     "items": [
+      "Taking and delivering errands for a villager builds your friendship with them",
+      "Friendship goes from strangers to acquaintances, friends and best friends, and each level adds 10% to that villager's errand rewards",
+      "Talk to a villager to see your friendship level"
+     ]
+    },
+    "zh": {
+     "title": "Villager friendship",
+     "items": [
+      "Taking and delivering errands for a villager builds your friendship with them",
+      "Friendship goes from strangers to acquaintances, friends and best friends, and each level adds 10% to that villager's errand rewards",
+      "Talk to a villager to see your friendship level"
+     ]
+    },
+    "pt": {
+     "title": "Villager friendship",
+     "items": [
+      "Taking and delivering errands for a villager builds your friendship with them",
+      "Friendship goes from strangers to acquaintances, friends and best friends, and each level adds 10% to that villager's errand rewards",
+      "Talk to a villager to see your friendship level"
+     ]
+    },
+    "ru": {
+     "title": "Villager friendship",
+     "items": [
+      "Taking and delivering errands for a villager builds your friendship with them",
+      "Friendship goes from strangers to acquaintances, friends and best friends, and each level adds 10% to that villager's errand rewards",
+      "Talk to a villager to see your friendship level"
+     ]
+    },
+    "tr": {
+     "title": "Villager friendship",
+     "items": [
+      "Taking and delivering errands for a villager builds your friendship with them",
+      "Friendship goes from strangers to acquaintances, friends and best friends, and each level adds 10% to that villager's errand rewards",
+      "Talk to a villager to see your friendship level"
+     ]
+    },
+    "it": {
+     "title": "Villager friendship",
+     "items": [
+      "Taking and delivering errands for a villager builds your friendship with them",
+      "Friendship goes from strangers to acquaintances, friends and best friends, and each level adds 10% to that villager's errand rewards",
+      "Talk to a villager to see your friendship level"
+     ]
+    },
+    "pl": {
+     "title": "Villager friendship",
+     "items": [
+      "Taking and delivering errands for a villager builds your friendship with them",
+      "Friendship goes from strangers to acquaintances, friends and best friends, and each level adds 10% to that villager's errand rewards",
+      "Talk to a villager to see your friendship level"
+     ]
+    },
+    "ar": {
+     "title": "Villager friendship",
+     "items": [
+      "Taking and delivering errands for a villager builds your friendship with them",
+      "Friendship goes from strangers to acquaintances, friends and best friends, and each level adds 10% to that villager's errand rewards",
+      "Talk to a villager to see your friendship level"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-07",
-   "build": "v0.2 b86",
+   "build": "v0.2 build 86",
    "title": "선술집 주사위 내기",
    "items": [
     "선술집에서 선원과 주사위 내기를 할 수 있어요. 50, 200, 1,000 금화 중에 골라 걸고, 합이 큰 쪽이 이겨요",
     "이기면 건 돈의 두 배를 받고, 비기면 돌려받아요. 하루 10판까지 할 수 있어요"
    ],
-   "tr": {"en": {"title": "Tavern dice game", "items": ["You can play dice against the sailor at the tavern. Bet 50, 200 or 1,000 gold; the higher total wins", "A win pays double your bet and a tie returns it. Up to 10 rounds a day"]}}
+   "tr": {
+    "en": {
+     "title": "Tavern dice game",
+     "items": [
+      "You can play dice against the sailor at the tavern. Bet 50, 200 or 1,000 gold; the higher total wins",
+      "A win pays double your bet and a tie returns it. Up to 10 rounds a day"
+     ]
+    },
+    "ja": {
+     "title": "Tavern dice game",
+     "items": [
+      "You can play dice against the sailor at the tavern. Bet 50, 200 or 1,000 gold; the higher total wins",
+      "A win pays double your bet and a tie returns it. Up to 10 rounds a day"
+     ]
+    },
+    "es": {
+     "title": "Tavern dice game",
+     "items": [
+      "You can play dice against the sailor at the tavern. Bet 50, 200 or 1,000 gold; the higher total wins",
+      "A win pays double your bet and a tie returns it. Up to 10 rounds a day"
+     ]
+    },
+    "fr": {
+     "title": "Tavern dice game",
+     "items": [
+      "You can play dice against the sailor at the tavern. Bet 50, 200 or 1,000 gold; the higher total wins",
+      "A win pays double your bet and a tie returns it. Up to 10 rounds a day"
+     ]
+    },
+    "de": {
+     "title": "Tavern dice game",
+     "items": [
+      "You can play dice against the sailor at the tavern. Bet 50, 200 or 1,000 gold; the higher total wins",
+      "A win pays double your bet and a tie returns it. Up to 10 rounds a day"
+     ]
+    },
+    "zh": {
+     "title": "Tavern dice game",
+     "items": [
+      "You can play dice against the sailor at the tavern. Bet 50, 200 or 1,000 gold; the higher total wins",
+      "A win pays double your bet and a tie returns it. Up to 10 rounds a day"
+     ]
+    },
+    "pt": {
+     "title": "Tavern dice game",
+     "items": [
+      "You can play dice against the sailor at the tavern. Bet 50, 200 or 1,000 gold; the higher total wins",
+      "A win pays double your bet and a tie returns it. Up to 10 rounds a day"
+     ]
+    },
+    "ru": {
+     "title": "Tavern dice game",
+     "items": [
+      "You can play dice against the sailor at the tavern. Bet 50, 200 or 1,000 gold; the higher total wins",
+      "A win pays double your bet and a tie returns it. Up to 10 rounds a day"
+     ]
+    },
+    "tr": {
+     "title": "Tavern dice game",
+     "items": [
+      "You can play dice against the sailor at the tavern. Bet 50, 200 or 1,000 gold; the higher total wins",
+      "A win pays double your bet and a tie returns it. Up to 10 rounds a day"
+     ]
+    },
+    "it": {
+     "title": "Tavern dice game",
+     "items": [
+      "You can play dice against the sailor at the tavern. Bet 50, 200 or 1,000 gold; the higher total wins",
+      "A win pays double your bet and a tie returns it. Up to 10 rounds a day"
+     ]
+    },
+    "pl": {
+     "title": "Tavern dice game",
+     "items": [
+      "You can play dice against the sailor at the tavern. Bet 50, 200 or 1,000 gold; the higher total wins",
+      "A win pays double your bet and a tie returns it. Up to 10 rounds a day"
+     ]
+    },
+    "ar": {
+     "title": "Tavern dice game",
+     "items": [
+      "You can play dice against the sailor at the tavern. Bet 50, 200 or 1,000 gold; the higher total wins",
+      "A win pays double your bet and a tie returns it. Up to 10 rounds a day"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-03",
-   "build": "v0.2 b85",
+   "build": "v0.2 build 85",
    "title": "유머 쪽지 여러 나라 말 보기",
    "items": [
     "시세 신문의 유머가 고른 나라 말로 보여요",
@@ -59,87 +518,87 @@
      ]
     },
     "ja": {
-     "title": "新聞のユーモア欄を多言語化",
+     "title": "Newspaper jokes in more languages",
      "items": [
-      "相場新聞のユーモア欄が選んだ言語で表示されます",
-      "プロフィール窓の「個」「回」の英語表示を修正しました"
+      "The joke box in the price paper now shows in your language",
+      "Fixed the English labels for counts in the profile window"
      ]
     },
     "es": {
-     "title": "Humor del periódico en más idiomas",
+     "title": "Newspaper jokes in more languages",
      "items": [
-      "El recuadro de humor del periódico de precios se muestra en tu idioma",
-      "Corregidas las etiquetas en inglés de las cantidades en la ventana de perfil"
+      "The joke box in the price paper now shows in your language",
+      "Fixed the English labels for counts in the profile window"
      ]
     },
     "fr": {
-     "title": "Humour du journal en plusieurs langues",
+     "title": "Newspaper jokes in more languages",
      "items": [
-      "La case humour du journal des prix s’affiche dans votre langue",
-      "Corrigé l’affichage anglais des compteurs dans la fenêtre de profil"
+      "The joke box in the price paper now shows in your language",
+      "Fixed the English labels for counts in the profile window"
      ]
     },
     "de": {
-     "title": "Zeitungshumor in mehr Sprachen",
+     "title": "Newspaper jokes in more languages",
      "items": [
-      "Der Humor-Kasten der Preiszeitung wird jetzt in deiner Sprache angezeigt",
-      "Englische Zähler im Profilfenster korrigiert"
+      "The joke box in the price paper now shows in your language",
+      "Fixed the English labels for counts in the profile window"
      ]
     },
     "zh": {
-     "title": "报纸趣味栏支持更多语言",
+     "title": "Newspaper jokes in more languages",
      "items": [
-      "行情报纸里的趣味栏现在会以你的语言显示",
-      "修正了个人资料窗口中计数的英文显示"
+      "The joke box in the price paper now shows in your language",
+      "Fixed the English labels for counts in the profile window"
      ]
     },
     "pt": {
-     "title": "Humor do jornal em mais idiomas",
+     "title": "Newspaper jokes in more languages",
      "items": [
-      "A caixa de humor do jornal de preços agora aparece no seu idioma",
-      "Corrigida a exibição em inglês das contagens na janela de perfil"
+      "The joke box in the price paper now shows in your language",
+      "Fixed the English labels for counts in the profile window"
      ]
     },
     "ru": {
-     "title": "Юмор из газеты на большем числе языков",
+     "title": "Newspaper jokes in more languages",
      "items": [
-      "Блок юмора в газете цен теперь показывается на вашем языке",
-      "Исправлено английское отображение счётчиков в окне профиля"
+      "The joke box in the price paper now shows in your language",
+      "Fixed the English labels for counts in the profile window"
      ]
     },
     "tr": {
-     "title": "Gazetenin mizahı daha fazla dilde",
+     "title": "Newspaper jokes in more languages",
      "items": [
-      "Fiyat gazetesindeki mizah kutusu artık sizin dilinizde görünüyor",
-      "Profil penceresindeki sayaçların İngilizce gösterimi düzeltildi"
+      "The joke box in the price paper now shows in your language",
+      "Fixed the English labels for counts in the profile window"
      ]
     },
     "it": {
-     "title": "Umorismo del giornale in più lingue",
+     "title": "Newspaper jokes in more languages",
      "items": [
-      "Il riquadro umoristico del giornale dei prezzi ora appare nella tua lingua",
-      "Corretta la visualizzazione inglese dei contatori nella finestra profilo"
+      "The joke box in the price paper now shows in your language",
+      "Fixed the English labels for counts in the profile window"
      ]
     },
     "pl": {
-     "title": "Humor z gazety w większej liczbie języków",
+     "title": "Newspaper jokes in more languages",
      "items": [
-      "Ramka humoru w gazecie cenowej pokazuje się teraz w Twoim języku",
-      "Poprawiono angielskie wyświetlanie liczników w oknie profilu"
+      "The joke box in the price paper now shows in your language",
+      "Fixed the English labels for counts in the profile window"
      ]
     },
     "ar": {
-     "title": "طُرف الجريدة بلغات أكثر",
+     "title": "Newspaper jokes in more languages",
      "items": [
-      "يظهر صندوق الطرائف في جريدة الأسعار بلغتك الآن",
-      "تم إصلاح عرض العدادات بالإنجليزية في نافذة الملف الشخصي"
+      "The joke box in the price paper now shows in your language",
+      "Fixed the English labels for counts in the profile window"
      ]
     }
    }
   },
   {
    "date": "2026-11-03",
-   "build": "v0.2 b84",
+   "build": "v0.2 build 84",
    "title": "다른 나라 말 문구 번역 보강",
    "items": [
     "개척지 시설, 영주의 성, 주민 심부름, 특산 요리 등 게임 안 문구가 더 많은 나라 말로 보여요"
@@ -221,7 +680,7 @@
   },
   {
    "date": "2026-11-02",
-   "build": "v0.2 b83",
+   "build": "v0.2 build 83",
    "title": "이모지를 로고로 통일",
    "items": [
     "잠금, 톱니바퀴, 발자국, 나무, 바위, 곡괭이, 흙, 수정구슬이 허브와 같은 그림으로 보임"
@@ -234,76 +693,76 @@
      ]
     },
     "ja": {
-     "title": "Emoji replaced with logo icons",
+     "title": "絵文字をロゴのアイコンに統一",
      "items": [
-      "Lock, gear, footprints, tree, rock, pickaxe, soil and crystal ball now use the same icon art as the hub"
+      "錠前、歯車、足跡、木、岩、つるはし、土、水晶玉がハブと同じ絵で表示されます"
      ]
     },
     "es": {
-     "title": "Emoji replaced with logo icons",
+     "title": "Emojis unificados en iconos del logo",
      "items": [
-      "Lock, gear, footprints, tree, rock, pickaxe, soil and crystal ball now use the same icon art as the hub"
+      "Lock, engranaje, huellas, árbol, roca, pico, tierra y bola de cristal se ven con el mismo dibujo que el centro"
      ]
     },
     "fr": {
-     "title": "Emoji replaced with logo icons",
+     "title": "Emojis remplacés par les icônes du logo",
      "items": [
-      "Lock, gear, footprints, tree, rock, pickaxe, soil and crystal ball now use the same icon art as the hub"
+      "Cadenas, engrenages, empreintes, arbre, rocher, pioche, terre et boule de cristal ont le même dessin que le hub"
      ]
     },
     "de": {
-     "title": "Emoji replaced with logo icons",
+     "title": "Emojis durch Logo-Symbole ersetzt",
      "items": [
-      "Lock, gear, footprints, tree, rock, pickaxe, soil and crystal ball now use the same icon art as the hub"
+      "Schloss, Zahnrad, Fußspuren, Baum, Fels, Spitzhacke, Erde und Kristallkugel sehen wie im Hub aus"
      ]
     },
     "zh": {
-     "title": "Emoji replaced with logo icons",
+     "title": "表情符号统一为徽标图标",
      "items": [
-      "Lock, gear, footprints, tree, rock, pickaxe, soil and crystal ball now use the same icon art as the hub"
+      "锁、齿轮、脚印、树、岩石、镐、土和水晶球与中心站使用相同的图案"
      ]
     },
     "pt": {
-     "title": "Emoji replaced with logo icons",
+     "title": "Emojis unificados nos ícones do logotipo",
      "items": [
-      "Lock, gear, footprints, tree, rock, pickaxe, soil and crystal ball now use the same icon art as the hub"
+      "Cadeado, engrenagem, pegadas, árvore, pedra, picareta, terra e bola de cristal com o mesmo desenho do hub"
      ]
     },
     "ru": {
-     "title": "Emoji replaced with logo icons",
+     "title": "Эмодзи заменены значками логотипа",
      "items": [
-      "Lock, gear, footprints, tree, rock, pickaxe, soil and crystal ball now use the same icon art as the hub"
+      "Замок, шестерёнка, следы, дерево, камень, кирка, почва и хрустальный шар теперь как в хабе"
      ]
     },
     "tr": {
-     "title": "Emoji replaced with logo icons",
+     "title": "Emojiler logo simgelerine birleştirildi",
      "items": [
-      "Lock, gear, footprints, tree, rock, pickaxe, soil and crystal ball now use the same icon art as the hub"
+      "Kilit, dişli, ayak izi, ağaç, kaya, kazma, toprak ve kristal küre merkezdeki simgelerle aynı"
      ]
     },
     "it": {
-     "title": "Emoji replaced with logo icons",
+     "title": "Emoji unificate nelle icone del logo",
      "items": [
-      "Lock, gear, footprints, tree, rock, pickaxe, soil and crystal ball now use the same icon art as the hub"
+      "Lucchetto, ingranaggio, impronte, albero, roccia, piccone, terra e sfera di cristallo con lo stesso disegno dell'hub"
      ]
     },
     "pl": {
-     "title": "Emoji replaced with logo icons",
+     "title": "Emotikony ujednolicone do ikon logo",
      "items": [
-      "Lock, gear, footprints, tree, rock, pickaxe, soil and crystal ball now use the same icon art as the hub"
+      "Kłódka, koło zębate, ślady, drzewo, skała, kilof, ziemia i kula kryształowa mają te same grafiki co w hubie"
      ]
     },
     "ar": {
-     "title": "Emoji replaced with logo icons",
+     "title": "توحيد الرموز التعبيرية في أيقونات الشعار",
      "items": [
-      "Lock, gear, footprints, tree, rock, pickaxe, soil and crystal ball now use the same icon art as the hub"
+      "قفل وترس وآثار أقدام وشجرة وصخرة ومعول وتربة وكرة كريستال تظهر بنفس رسوم المركز"
      ]
     }
    }
   },
   {
    "date": "2026-10-31",
-   "build": "v0.2 b82",
+   "build": "v0.2 build 82",
    "title": "이어지는 이야기 의뢰",
    "items": [
     "주민 심부름을 세 번 끝내면 세 번에 걸쳐 이어지는 이야기 의뢰가 나오기 시작함",
@@ -318,87 +777,87 @@
      ]
     },
     "ja": {
-     "title": "続きのある話の依頼",
+     "title": "続きものの物語の依頼",
      "items": [
-      "島民のお使いを3回終えると、3段階にわたって続く話の依頼が出るようになる",
-      "話の依頼は報酬が1.5倍で、最後の段階を終えると大きなボーナスがもらえる（話は3種類）"
+      "住民の使いを3回終えると、3回に分かれた物語の依頼が来始めます",
+      "物語の依頼は報酬が1.5倍で、最後の段階を終えると大きなボーナスがもらえます（物語は3つ）"
      ]
     },
     "es": {
-     "title": "Encargos de historia en varias partes",
+     "title": "Encargos de historia en serie",
      "items": [
-      "Tras completar tres recados, empiezan a aparecer recados de historia que se extienden en tres pasos",
-      "Los encargos de historia pagan 1,5 veces más y el último paso da un gran bono (hay tres historias)"
+      "Tras terminar tres encargos de ciudadanos, empiezan a llegar encargos de historia que se extienden en tres partes",
+      "Los encargos de historia pagan 1,5 veces y dan un gran bonus al terminar la última etapa (hay tres historias)"
      ]
     },
     "fr": {
-     "title": "Commissions à suite",
+     "title": "Quêtes d'histoire en série",
      "items": [
-      "Après avoir terminé trois commissions, des commissions d'histoire en trois étapes commencent à apparaître",
-      "Les commissions d'histoire rapportent 1,5 fois plus, et la dernière étape offre un gros bonus (trois histoires)"
+      "Après trois missions pour les habitants, des quêtes d'histoire en trois étapes commencent à arriver",
+      "Les quêtes d'histoire rapportent 1,5 fois plus et donnent un gros bonus à la dernière étape (trois histoires)"
      ]
     },
     "de": {
-     "title": "Fortlaufende Geschichten-Aufträge",
+     "title": "Fortlaufende Geschichtsaufträge",
      "items": [
-      "Nachdem du drei Botengänge erledigt hast, tauchen Geschichten-Aufträge mit drei Schritten auf",
-      "Geschichten-Aufträge zahlen das 1,5-Fache, und der letzte Schritt bringt einen großen Bonus (drei Geschichten)"
+      "Nach drei Aufträgen für Bewohner kommen Geschichtsaufträge in drei Teilen",
+      "Geschichtsaufträge zahlen das 1,5-Fache und bringen einen großen Bonus bei der letzten Stufe (drei Geschichten)"
      ]
     },
     "zh": {
-     "title": "连续剧情委托",
+     "title": "连续的故事委托",
      "items": [
-      "完成三次跑腿后，开始出现分三步完成的剧情委托",
-      "剧情委托的报酬为 1.5 倍，完成最后一步可获得大额奖励（共三个故事）"
+      "完成三次居民差事后，会开始出现分三段进行的故事委托",
+      "故事委托报酬为1.5倍，完成最后一步会获得大额奖励（共三个故事）"
      ]
     },
     "pt": {
-     "title": "Missões de história em sequência",
+     "title": "Pedidos de história em sequência",
      "items": [
-      "Depois de concluir três recados, começam a aparecer recados de história em três etapas",
-      "Os recados de história pagam 1,5 vez mais, e a última etapa dá um grande bônus (são três histórias)"
+      "Depois de concluir três pedidos dos moradores, começam a surgir pedidos de história em três partes",
+      "Os pedidos de história pagam 1,5 vez mais e dão um grande bônus ao terminar a última etapa (são três histórias)"
      ]
     },
     "ru": {
-     "title": "Продолжающиеся сюжетные поручения",
+     "title": "Цепочки историй-заданий",
      "items": [
-      "После выполнения трёх поручений начинают появляться сюжетные поручения из трёх этапов",
-      "Сюжетные поручения платят в 1,5 раза больше, а за последний этап дают большой бонус (историй три)"
+      "После трёх поручений жителей начинают приходить задания-истории из трёх частей",
+      "Задания-истории платят в 1,5 раза больше, за последний этап большой бонус (историй три)"
      ]
     },
     "tr": {
-     "title": "Devam eden hikâye görevleri",
+     "title": "Devamlı hikâye görevleri",
      "items": [
-      "Üç görevi tamamladıktan sonra üç adımlı hikâye görevleri çıkmaya başlar",
-      "Hikâye görevleri 1,5 kat ödül verir ve son adımı tamamlamak büyük bir bonus sağlar (üç hikâye var)"
+      "Sakinlerin görevlerini üç kez bitirince üç parçaya yayılan hikâye görevleri gelmeye başlar",
+      "Hikâye görevleri 1,5 kat öder, son aşamayı bitirince büyük bonus verir (üç hikâye var)"
      ]
     },
     "it": {
-     "title": "Incarichi a puntate della storia",
+     "title": "Incarichi di storia a puntate",
      "items": [
-      "Dopo aver completato tre commissioni, iniziano a comparire commissioni di storia in tre passaggi",
-      "Le commissioni a puntate pagano 1,5 volte e il passaggio finale dà un bonus extra (sono tre storie)"
+      "Dopo tre commissioni per gli abitanti iniziano ad arrivare incarichi di storia in tre parti",
+      "Gli incarichi di storia pagano 1,5 volte e danno un grande bonus al completamento dell'ultima fase (tre storie)"
      ]
     },
     "pl": {
-     "title": "Wieloetapowe zlecenia fabularne",
+     "title": "Ciągi zleceń fabularnych",
      "items": [
-      "Po wykonaniu trzech zleceń zaczynają pojawiać się zlecenia fabularne składające się z trzech etapów",
-      "Zlecenia fabularne płacą 1,5 raza więcej, a ostatni etap daje duży bonus (są trzy historie)"
+      "Po trzech zleceniach dla mieszkańców zaczynają pojawiać się zlecenia fabularne w trzech częściach",
+      "Zlecenia fabularne płacą 1,5 raza więcej i dają duży bonus za ukończenie ostatniego etapu (są trzy historie)"
      ]
     },
     "ar": {
-     "title": "مهام القصة المتسلسلة",
+     "title": "مهام قصة متتابعة",
      "items": [
-      "بعد إنهاء ثلاث مهام، تبدأ تظهر مهام قصصية متسلسلة من ثلاث مراحل",
-      "تدفع مهام القصة 1.5 ضعف، وتمنح الخطوة الأخيرة مكافأة كبيرة (هناك ثلاث قصص)"
+      "بعد إنهاء ثلاث مهام لسكان القرية تبدأ مهام قصة تمتد على ثلاثة أجزاء بالظهور",
+      "مهام القصة تدفع 1.5 ضعف وتمنح مكافأة كبيرة عند إنهاء المرحلة الأخيرة (ثلاث قصص)"
      ]
     }
    }
   },
   {
    "date": "2026-10-31",
-   "build": "v0.2 b81",
+   "build": "v0.2 build 81",
    "title": "섬마다 특산 요리",
    "items": [
     "여섯 항구마다 그 항구의 특산품으로 만드는 특산 요리가 생겨, 그 항구에서 한 번 팔면 식당에서 만들 수 있음",
@@ -413,87 +872,87 @@
      ]
     },
     "ja": {
-     "title": "港ごとの名物料理",
+     "title": "島ごとの特産料理",
      "items": [
-      "6つの港それぞれに、その港の特産品で作る名物料理が生まれ、その港で一度売ると食堂で作れるようになる",
-      "特産料理は普通の料理より30%高く売れます"
+      "六つの港ごとに、その港の特産品で作る特産料理が生まれ、その港で一度売ると食堂で作れます",
+      "特産料理は通常の料理より30%高く売れます"
      ]
     },
     "es": {
-     "title": "Un plato estrella en cada puerto",
+     "title": "Platos especiales de cada isla",
      "items": [
-      "Cada uno de los seis puertos tiene un plato estrella hecho con sus productos típicos; vende algo allí una vez y podrás prepararlo en el restaurante",
-      "Los platos estrella se venden un 30 % más caros que los normales"
+      "Cada uno de los seis puertos crea un plato especial hecho con su producto típico; una vez vendido allí, se puede preparar en el restaurante",
+      "Los platos especiales se venden un 30 % más caros que los normales"
      ]
     },
     "fr": {
-     "title": "Un plat signature dans chaque port",
+     "title": "Plats spéciaux par île",
      "items": [
-      "Chacun des six ports propose un plat signature préparé avec ses produits typiques ; vendez-y une fois pour le préparer au restaurant",
-      "Les plats signature se vendent 30 % plus cher que les plats ordinaires"
+      "Chacun des six ports crée un plat spécial à partir de son produit phare ; une fois vendu là-bas, il peut être préparé au restaurant",
+      "Les plats spéciaux se vendent 30 % plus cher que les plats ordinaires"
      ]
     },
     "de": {
-     "title": "Ein Spezialgericht für jeden Hafen",
+     "title": "Inselspezialgerichte",
      "items": [
-      "In jedem der sechs Häfen entsteht ein Spezialgericht aus seinen Spezialitäten; verkaufe dort einmal etwas, dann kannst du es im Restaurant zubereiten",
-      "Spezialgerichte werden 30 % teurer verkauft als normale Gerichte"
+      "In jedem der sechs Häfen entsteht ein Spezialgericht aus dem Hafenprodukt; wenn du dort einmal verkaufst, kannst du es im Restaurant kochen",
+      "Spezialgerichte verkaufen sich 30 % teurer als normale Gerichte"
      ]
     },
     "zh": {
-     "title": "每个港口的特色菜",
+     "title": "各岛特色料理",
      "items": [
-      "六个港口各有一道用本港特产制作的特色菜，在该港口卖出一次物品后，即可在餐厅制作",
-      "特色菜的售价比普通菜高 30%"
+      "六个港口各自会出现用本港特产制作的特色菜，在该港卖出一次后即可在餐厅制作",
+      "特色菜比普通菜品卖得贵30%"
      ]
     },
     "pt": {
-     "title": "Um prato típico em cada porto",
+     "title": "Pratos especiais de cada ilha",
      "items": [
-      "Cada um dos seis portos ganha um prato típico feito com seus produtos especiais; venda ali uma vez para liberá-lo no restaurante",
-      "Os pratos típicos são vendidos 30% mais caro que os pratos comuns"
+      "Cada um dos seis portos cria um prato especial feito com seu produto típico; depois de vender ali uma vez, dá para preparar no restaurante",
+      "Os pratos especiais vendem 30% mais caro que os comuns"
      ]
     },
     "ru": {
-     "title": "Фирменное блюдо для каждого порта",
+     "title": "Островные фирменные блюда",
      "items": [
-      "В каждом из шести портов появляется фирменное блюдо из местных товаров; продайте там что-нибудь один раз, и блюдо откроется в ресторане",
+      "В каждом из шести портов появляется фирменное блюдо из местного товара; продайте там однажды, и его можно готовить в ресторане",
       "Фирменные блюда продаются на 30% дороже обычных"
      ]
     },
     "tr": {
-     "title": "Her liman için özel yemek",
+     "title": "Ada özel yemekleri",
      "items": [
-      "Altı limanın her birinde o limanın özel ürünlerinden yapılan bir özel yemek oluşur; orada bir kez satış yapınca restoranda yapabilirsiniz",
-      "Özel yemekler, normal yemeklerden %30 daha pahalıya satılır"
+      "Altı limanın her biri kendi ürünüyle özel bir yemek ortaya çıkarır; orada bir kez satıldığında restoranda yapılabilir",
+      "Özel yemekler normal yemeklerden %30 daha pahalıya satılır"
      ]
     },
     "it": {
-     "title": "Un piatto tipico per ogni porto",
+     "title": "Piatti speciali di ogni isola",
      "items": [
-      "Ognuno dei sei porti ha un piatto tipico fatto con i suoi prodotti speciali; vendi lì una volta per poterlo preparare al ristorante",
-      "I piatti tipici si vendono il 30% in più rispetto a quelli normali"
+      "Ciascuno dei sei porti crea un piatto speciale con il proprio prodotto tipico; dopo una vendita lì, può essere preparato al ristorante",
+      "I piatti speciali si vendono il 30% più cari di quelli normali"
      ]
     },
     "pl": {
-     "title": "Specjalne danie każdego portu",
+     "title": "Specjały każdej wyspy",
      "items": [
-      "Każdy z sześciu portów ma specjalne danie z lokalnych produktów; sprzedaj tam coś raz, a danie odblokuje się w restauracji",
-      "Specjalne dania sprzedają się o 30% drożej niż zwykłe"
+      "Każdy z sześciu portów tworzy specjał z własnego produktu; po sprzedaży tam raz można go przygotować w restauracji",
+      "Specjały sprzedają się o 30% drożej niż zwykłe dania"
      ]
     },
     "ar": {
-     "title": "طبق مميز لكل ميناء",
+     "title": "أطباق خاصة لكل جزيرة",
      "items": [
-      "لكل من الموانئ الستة طبق مميز يُصنع من منتجاته الخاصة؛ بع فيه مرة واحدة ليُفتح لك الطبق في المطعم",
-      "تُباع الأطباق المميزة بسعر أعلى بنسبة 30% من الأطباق العادية"
+      "كل ميناء من الموانئ الستة يبتكر طبقًا خاصًا من منتجه المميز؛ بعد بيعه هناك مرة واحدة يمكن طهيه في المطعم",
+      "تُباع الأطباق الخاصة بسعر أعلى بنسبة 30% من الأطباق العادية"
      ]
     }
    }
   },
   {
    "date": "2026-10-31",
-   "build": "v0.2 b80",
+   "build": "v0.2 build 80",
    "title": "성이 자라면 마을도 달라져요",
    "items": [
     "성이 2단계가 되면 마을 길 위에 깃발 줄이 걸리고, 3단계는 줄이 더 늘고 4단계는 깃대가 서요",
@@ -508,87 +967,87 @@
      ]
     },
     "ja": {
-     "title": "城が育つと町も変わる",
+     "title": "城が育つと町も変わります",
      "items": [
-      "城が2段階になると町の道の上に旗の紐が掛かり、3段階では紐が増え、4段階では旗竿が立つ",
-      "城が3段階になるとパン3個で宴会を開けるようになり、20分ごとに金貨がもらえ、宴会中は旗の紐がきらめきます"
+      "城が2段階になると村の道に旗の紐が掛かり、3段階で増え、4段階では旗竿が立ちます",
+      "城が3段階になると、パン3個で宴を開けます。20分ごとに金貨がもらえ、宴の間は旗の紐がきらめきます"
      ]
     },
     "es": {
      "title": "Cuando crece el castillo, el pueblo también cambia",
      "items": [
-      "Desde el nivel 2 cuelgan guirnaldas de banderines sobre los caminos del pueblo; en el nivel 3 hay más y en el nivel 4 se levantan mástiles",
-      "Desde el nivel 3 puedes celebrar un banquete con 3 panes; cada 20 minutos recibes oro y durante el banquete las guirnaldas brillan"
+      "Al llegar el castillo al nivel 2 se cuelgan banderines en el camino del pueblo; el nivel 3 añade más y el nivel 4 levanta un asta de bandera",
+      "Desde el nivel 3 del castillo, con 3 panes se puede dar un banquete; cada 20 minutos recibes monedas de oro y durante el banquete los banderines brillan"
      ]
     },
     "fr": {
-     "title": "Le village change avec le château",
+     "title": "Quand le château grandit, le village change aussi",
      "items": [
-      "Au niveau 2, des guirlandes de fanions flottent au-dessus des chemins du village ; au niveau 3 il y en a davantage et au niveau 4 des mâts se dressent",
-      "Au niveau 3, un banquet se prépare avec 3 pains ; toutes les 20 minutes, vous recevez des pièces d'or, et pendant le banquet les guirlandes scintillent"
+      "Au niveau 2 du château, des guirlandes de drapeaux ornent la route du village ; le niveau 3 en ajoute et le niveau 4 dresse un mât",
+      "Dès le niveau 3 du château, un banquet se donne avec 3 pains ; toutes les 20 min on reçoit des pièces d'or et pendant le banquet les guirlandes scintillent"
      ]
     },
     "de": {
-     "title": "Mit wachsender Burg verändert sich auch das Dorf",
+     "title": "Wächst die Burg, verändert sich auch das Dorf",
      "items": [
-      "Ab Stufe 2 hängen Wimpelgirlanden über den Dorfwegen, auf Stufe 3 mehr davon und auf Stufe 4 stehen Fahnenmasten",
-      "Ab Stufe 3 kannst du mit 3 Brot ein Festmahl ausrichten; alle 20 Minuten gibt es Gold, und während des Festes glitzern die Girlanden"
+      "Ab Burgstufe 2 hängen Fahnenketten über dem Dorfweg; Stufe 3 bringt mehr, Stufe 4 stellt einen Fahnenmast auf",
+      "Ab Burgstufe 3 kann man mit 3 Broten ein Bankett geben; alle 20 Min. gibt es Goldmünzen, und während des Banketts glitzern die Fahnenketten"
      ]
     },
     "zh": {
-     "title": "城堡升级，城镇也随之改变",
+     "title": "城堡成长，村庄也会改变",
      "items": [
-      "城堡到 2 级时，村中道路上会挂起旗帜绳，3 级旗绳更多，4 级则立起旗杆",
-      "城堡 3 级起，用 3 个面包即可举办宴会，每 20 分钟获得金币，宴会期间旗帜绳闪闪发光"
+      "城堡到2级时村路上会挂起旗串，3级更多，4级竖起旗杆",
+      "城堡3级起，用3个面包即可举办宴会；每20分钟获得金币，宴会期间旗串会闪闪发光"
      ]
     },
     "pt": {
-     "title": "Conforme o castelo cresce, a vila também muda",
+     "title": "Quando o castelo cresce, a vila também muda",
      "items": [
-      "No nível 2, varais de bandeirinhas passam sobre as ruas da vila; no nível 3 há mais, e no nível 4 erguem-se mastros de bandeira",
-      "A partir do nível 3, você pode oferecer um banquete com 3 pães; a cada 20 minutos recebe ouro, e durante o banquete as bandeirinhas brilham"
+      "Quando o castelo chega ao nível 2, cordões de bandeiras aparecem na estrada da vila; o nível 3 traz mais e o 4 levanta um mastro",
+      "A partir do nível 3 do castelo, dá para dar um banquete com 3 pães; a cada 20 minutos recebe moedas de ouro e, durante o banquete, os cordões brilham"
      ]
     },
     "ru": {
-     "title": "С ростом замка меняется и деревня",
+     "title": "Когда замок растёт, меняется и деревня",
      "items": [
-      "Со 2-го уровня над дорогами деревни натягиваются гирлянды флажков, на 3-м их становится больше, а на 4-м появляются флагштоки",
-      "С 3-го уровня можно устроить пир на 3 буханки хлеба: каждые 20 минут приносит золото, а во время пира гирлянды сверкают"
+      "Замок 2 уровня — над дорогой деревни появляются гирлянды флагов; 3 уровень добавляет их, 4 уровень ставит флагшток",
+      "Замок 3 уровня — можно устроить пир за 3 хлеба; каждые 20 минут приходит золото, а во время пира гирлянды блестят"
      ]
     },
     "tr": {
      "title": "Kale büyüdükçe köy de değişir",
      "items": [
-      "2. seviyeden itibaren köy yollarının üzerine flama ipleri asılır, 3. seviyede daha fazlası olur, 4. seviyede ise bayrak direkleri dikilir",
-      "3. seviyeden itibaren 3 ekmekle ziyafet verilebilir; her 20 dakikada altın kazanılır ve ziyafet sırasında flama ipleri parıldar"
+      "Kale 2. seviyeye geldiğinde köy yolunun üstüne bayrak ipleri asılır; 3. seviyede daha çoğu, 4. seviyede bir direk dikilir",
+      "Kale 3. seviyeden itibaren 3 ekmekle ziyafet verilebilir; her 20 dakikada altın gelir ve ziyafet sırasında bayrak ipleri parlar"
      ]
     },
     "it": {
-     "title": "Man mano che il castello cresce, cambia anche il villaggio",
+     "title": "Quando il castello cresce, cambia anche il paese",
      "items": [
-      "Dal livello 2 sopra le strade del villaggio pendono festoni di bandierine, più numerosi al livello 3; al livello 4 si ergono pali con bandiere",
-      "Dal livello 3 puoi organizare un banchetto con 3 pani; ogni 20 minuti ricevi oro e durante il banchetto i festoni brillano"
+      "Al livello 2 del castello sulla strada del paese compaiono festoni di bandiere; il livello 3 ne aggiunge altri e il 4 innalza un pennone",
+      "Dal livello 3 del castello si può offrire un banchetto con 3 pani; ogni 20 minuti si ricevono monete d'oro e durante il banchetto i festoni brillano"
      ]
     },
     "pl": {
-     "title": "Wraz z rozwojem zamku zmienia się także miasteczko",
+     "title": "Gdy zamek rośnie, zmienia się też wioska",
      "items": [
-      "Od 2. poziomu nad drogami miasteczka wiszą sznury proporczyków, na 3. jest ich więcej, a na 4. stają maszty z flagami",
-      "Od 3. poziomu możesz wyprawić ucztę za 3 bochenki chleba; co 20 minut dostajesz złoto, a podczas uczty proporczyki lśnią"
+      "Gdy zamek osiągnie poziom 2, nad drogą wioski pojawią się sznury flag; poziom 3 dodaje ich więcej, a 4 stawia maszt",
+      "Od poziomu 3 zamku można wydać ucztę za 3 chleby; co 20 minut przychodzi złoto, a podczas uczty sznury flag błyszczą"
      ]
     },
     "ar": {
-     "title": "تتغير البلدة مع نمو القلعة",
+     "title": "عندما تكبر القلعة تتغير القرية أيضًا",
      "items": [
-      "من المستوى 2 تتدلى سلاسل من الأعلام الصغيرة فوق طرق البلدة، وتزداد في المستوى 3، وفي المستوى 4 تُنصب صواري الأعلام",
-      "من المستوى 3 يمكنك إقامة وليمة بثلاثة أرغفة خبز؛ كل 20 دقيقة تحصل على ذهب، وأثناء الوليمة تتلألأ سلاسل الأعلام"
+      "عندما تصل القلعة إلى المستوى 2 تُعلَّق خيوط أعلام على طريق القرية، والمستوى 3 يزيدها، والمستوى 4 ينصب سارية علم",
+      "من المستوى 3 للقلعة يمكن إقامة وليمة بثلاث خبزات؛ تصل الذهب كل 20 دقيقة، وتتلألأ خيوط الأعلام أثناء الوليمة"
      ]
     }
    }
   },
   {
    "date": "2026-10-31",
-   "build": "v0.2 b79",
+   "build": "v0.2 build 79",
    "title": "개척지 생산 사슬",
    "items": [
     "개척지에 빵집과 선술집이 생겨서 밀 → 밀가루 → 빵 → 금화로 이어지는 사슬을 만들 수 있음",
@@ -603,87 +1062,87 @@
      ]
     },
     "ja": {
-     "title": "開拓地の生産の流れ",
+     "title": "開拓地の生産の連鎖",
      "items": [
-      "開拓地にパン屋と居酒屋ができ、小麦→小麦粉→パン→金貨とつながる流れを作れるようになる",
-      "馬車の停留所があれば完成品を倉庫へ運び、倉庫に材料があれば次の施設へ自動で入れてくれる"
+      "開拓地にパン屋と居酒屋ができ、小麦 → 小麦粉 → パン → 金貨の連鎖を作れるようになりました",
+      "馬車の停留所があれば完成品を倉庫へ運び、倉庫の材料は次の施設へ自動で入れます"
      ]
     },
     "es": {
-     "title": "Cadena de producción de la frontera",
+     "title": "Cadena de producción de frontera",
      "items": [
-      "Con la nueva panadería y taberna de la frontera, puedes montar la cadena trigo → harina → pan → oro",
-      "Con una estación de carros, los productos terminados van al almacén, y si hay materiales en el almacén se cargan solos en la siguiente instalación"
+      "Con la panadería y la taberna de frontera puedes crear una cadena: trigo → harina → pan → monedas de oro",
+      "Si hay una parada de carros, lleva los productos terminados al almacén y, si hay materiales en el almacén, los mete solo en la siguiente instalación"
      ]
     },
     "fr": {
      "title": "Chaîne de production de la frontière",
      "items": [
-      "La frontière accueille désormais une boulangerie et une taverne : vous pouvez créer la chaîne blé → farine → pain → or",
-      "Avec une station de charrettes, les produits finis sont transportés à l'entrepôt, et les matières présentes dans l'entrepôt sont automatiquement livrées à l'installation suivante"
+      "Avec la boulangerie et la taverne de frontière, on peut créer une chaîne blé → farine → pain → pièces d'or",
+      "Avec une station de charrettes, les produits finis sont transportés à l'entrepôt, et les matières dans l'entrepôt vont seules à l'installation suivante"
      ]
     },
     "de": {
-     "title": "Produktionskette der Grenzsiedlung",
+     "title": "Produktionskette der Grenze",
      "items": [
-      "Auf der Grenzsiedlung gibt es jetzt eine Bäckerei und eine Schenke, mit denen sich die Kette Weizen → Mehl → Brot → Gold bauen lässt",
-      "Mit einer Wagenstation werden fertige Waren ins Lager gebracht, und Zutaten aus dem Lager werden automatisch in die nächste Anlage geliefert"
+      "Mit Bäckerei und Schenke an der Grenze lässt sich eine Kette Weizen → Mehl → Brot → Goldmünzen bauen",
+      "Mit Wagenstation werden fertige Waren ins Lager gebracht, und Materialien im Lager wandern automatisch in die nächste Anlage"
      ]
     },
     "zh": {
      "title": "开拓地生产链",
      "items": [
-      "开拓地新增面包店和酒馆，可以搭建小麦→面粉→面包→金币的生产链",
-      "有马车站时，成品会运到仓库；仓库里有材料时，会自动送入下一个设施"
+      "开拓地新建了面包房和酒馆，可以做出小麦 → 面粉 → 面包 → 金币的链条",
+      "有马车站时，成品会被运到仓库，仓库里的材料会自动放入下一个设施"
      ]
     },
     "pt": {
      "title": "Cadeia de produção da fronteira",
      "items": [
-      "A fronteira ganhou padaria e taverna, e agora dá para montar a cadeia trigo → farinha → pão → ouro",
-      "Com uma estação de carroças, os produtos prontos vão para o armazém, e os ingredientes do armazém são levados automaticamente à próxima instalação"
+      "Com a padaria e a taberna de fronteira, dá para montar a cadeia trigo → farinha → pão → moedas de ouro",
+      "Se houver uma estação de carroças, ela leva os produtos prontos ao armazém, e os materiais do armazém vão sozinhos para a próxima instalação"
      ]
     },
     "ru": {
-     "title": "Производственная цепочка на фронтире",
+     "title": "Цепочка производства на фронтире",
      "items": [
-      "На фронтире появились пекарня и таверна, и теперь можно построить цепочку: пшеница → мука → хлеб → золото",
-      "Если есть станция повозок, готовые товары отправляются на склад, а материалы со склада сами поступают в следующее здание"
+      "На фронтире появились пекарня и таверна: можно выстроить цепочку пшеница → мука → хлеб → золото",
+      "С станцией повозок готовые товары отвозятся на склад, а материалы со склада сами идут в следующую постройку"
      ]
     },
     "tr": {
-     "title": "Sınır üretim zinciri",
+     "title": "Öncü üretim zinciri",
      "items": [
-      "Sınırda fırın ve meyhane açıldı; buğday → un → ekmek → altın zincirini kurabilirsiniz",
-      "Yük arabası istasyonu varsa bitmiş ürünler depoya taşınır; depoda malzeme varsa sonraki tesise otomatik olarak yerleştirilir"
+      "Öncü fırını ve meyhanesiyle buğday → un → ekmek → altın zinciri kurulabilir",
+      "Araba durağı varsa bitmiş ürünleri depoya taşır; depodaki malzemeler kendiliğinden bir sonraki tesise girer"
      ]
     },
     "it": {
      "title": "Catena produttiva della frontiera",
      "items": [
-      "La frontiera ha ora un forno e una taverna: puoi creare la catena grano → farina → pane → oro",
-      "Con una stazione dei carri, i prodotti finiti vanno al magazzino e i materiali presenti in magazzino vengono inseriti automaticamente nella struttura successiva"
+      "Con la panetteria e la taverna di frontiera si può creare la catena grano → farina → pane → monete d'oro",
+      "Con la stazione dei carri i prodotti finiti vanno in magazzino e i materiali del magazzino entrano da soli nell'impianto successivo"
      ]
     },
     "pl": {
-     "title": "Łańcuch produkcji na pograniczu",
+     "title": "Łańcuch produkcji pogranicza",
      "items": [
-      "Na pograniczu powstały piekarnia i karczma, więc można zbudować łańcuch: pszenica → mąka → chleb → złoto",
-      "Przy stacji wozów gotowe towary trafiają do magazynu, a materiały z magazynu same trafiają do następnego obiektu"
+      "Dzięki piekarni i karczmie pogranicza można zbudować łańcuch pszenica → mąka → chleb → złoto",
+      "Gdy jest stacja wozów, gotowe towary trafiają do magazynu, a materiały z magazynu same trafiają do następnego obiektu"
      ]
     },
     "ar": {
-     "title": "سلسلة الإنتاج في الحدود",
+     "title": "سلسلة إنتاج الحدود",
      "items": [
-      "أصبح في الحدود مخبز ونُزل، ويمكنك إنشاء سلسلة: قمح → دقيق → خبز → ذهب",
-      "مع محطة العربات، تُنقل المنتجات الجاهزة إلى المستودع، وتُدخل المواد الموجودة فيه تلقائياً إلى المنشأة التالية"
+      "بالمخبز والحانة في الحدود يمكن بناء سلسلة قمح ← دقيق ← خبز ← ذهب",
+      "مع محطة العربات تُنقل المنتجات النهائية إلى المخزن، وتدخل المواد من المخزن إلى المنشأة التالية تلقائيًا"
      ]
     }
    }
   },
   {
    "date": "2026-10-31",
-   "build": "v0.2 b78",
+   "build": "v0.2 build 78",
    "title": "활동 보너스",
    "items": [
     "직접 플레이한 시간이 1분 쌓일 때마다 금화 보너스가 들어오고, 끊기지 않고 이어 하면 최대 5분 연속까지 보너스가 커짐",
@@ -700,85 +1159,85 @@
     "ja": {
      "title": "活動ボーナス",
      "items": [
-      "自分で遊んだ時間が1分たまるごとに金貨ボーナスが入り、途切れず続けると最大5分連続までボーナスが大きくなる",
-      "90秒以上手を止めると連続が切れるが、オフラインの収入はそのまま"
+      "直接プレイした時間が1分たまるごとに金貨ボーナスが入り、途切れず続けると最大5分連続まで伸びます",
+      "90秒以上触らないと連続が切れますが、オフラインの収入はそのままです"
      ]
     },
     "es": {
-     "title": "Bonificación por actividad",
+     "title": "Bonus de actividad",
      "items": [
-      "Cada minuto de juego activo da un bono de oro, que crece hasta una racha máxima de 5 minutos si juegas sin pausas",
-      "Si estás inactivo más de 90 segundos, la racha se corta; los ingresos sin conexión no cambian"
+      "Cada minuto que juegas directamente da un bonus de oro; si juegas sin parar, el bonus llega a 5 minutos seguidos como máximo",
+      "Si no tocas nada durante 90 segundos, la racha se corta; los ingresos sin conexión siguen igual"
      ]
     },
     "fr": {
      "title": "Bonus d'activité",
      "items": [
-      "Chaque minute de jeu actif rapporte un bonus d'or, qui augmente jusqu'à une série de 5 minutes si vous jouez sans interruption",
-      "Une inactivité de plus de 90 secondes interrompt la série ; les revenus hors ligne restent inchangés"
+      "Chaque minute passée à jouer directement rapporte un bonus d'or ; sans interruption, il monte jusqu'à 5 minutes d'affilée",
+      "Sans rien toucher pendant plus de 90 s, la série s'arrête ; les revenus hors ligne restent les mêmes"
      ]
     },
     "de": {
      "title": "Aktivitätsbonus",
      "items": [
-      "Jede Minute aktiven Spielens bringt einen Goldbonus, der bei durchgehendem Spielen bis zu einer 5-Minuten-Serie wächst",
-      "Wer mehr als 90 Sekunden untätig ist, unterbricht die Serie; das Offline-Einkommen bleibt unverändert"
+      "Jede direkt gespielte Minute bringt einen Goldbonus; wer durchspielt, erreicht bis zu 5 Minuten am Stück",
+      "Wer 90 Sek. nichts berührt, verliert die Serie; die Offline-Einnahmen bleiben gleich"
      ]
     },
     "zh": {
      "title": "活动奖励",
      "items": [
-      "每累积 1 分钟亲自游玩的时间就获得一次金币奖励，不间断地持续游玩，奖励最多可累积到 5 分钟连续",
-      "超过 90 秒不操作会中断连续记录，离线收入不变"
+      "每直接玩1分钟就获得金币奖励，连续不断地玩最多可连续5分钟",
+      "超过90秒不操作，连续记录会中断；离线收入不变"
      ]
     },
     "pt": {
      "title": "Bônus de atividade",
      "items": [
-      "Cada minuto de jogo ativo rende um bônus de ouro, que cresce até uma sequência de 5 minutos se você continuar sem parar",
-      "Ficar parado por mais de 90 segundos interrompe a sequência; a renda offline continua igual"
+      "Cada minuto jogado diretamente rende um bônus de ouro; jogando sem parar, chega até 5 minutos seguidos",
+      "Se ficar mais de 90 s sem tocar em nada, a sequência termina; a renda offline continua igual"
      ]
     },
     "ru": {
      "title": "Бонус за активность",
      "items": [
-      "Каждая минута активной игры приносит бонус золотом; если играть без перерыва, бонус растёт до серии в 5 минут",
-      "Бездействие дольше 90 секунд сбрасывает серию; доход в офлайне не меняется"
+      "Каждая минута прямой игры приносит бонус золотом; без перерыва — до 5 минут подряд",
+      "Если не трогать ничего больше 90 с, серия прерывается; доход в офлайне остаётся прежним"
      ]
     },
     "tr": {
      "title": "Etkinlik bonusu",
      "items": [
-      "Kendi oynadığınız her dakika altın bonusu kazandırır; kesintisiz oynarsanız bonus 5 dakikalık seriye kadar artar",
-      "90 saniyeden uzun süre hareketsiz kalmak seriyi bozar; çevrimdışı gelir değişmez"
+      "Doğrudan oynanan her dakika altın bonusu verir; kesintisiz oynanırsa en fazla 5 dakika üst üste sayılır",
+      "90 saniyeden fazla dokunmazsan seri kesilir; çevrimdışı gelir aynı kalır"
      ]
     },
     "it": {
      "title": "Bonus attività",
      "items": [
-      "Ogni minuto di gioco attivo dà un bonus d'oro, che cresce fino a una serie di 5 minuti se giochi senza interruzioni",
-      "Restare fermi per più di 90 secondi interrompe la serie; il guadagno offline resta invariato"
+      "Ogni minuto di gioco diretto dà un bonus d'oro; giocando senza pause si arriva a 5 minuti consecutivi",
+      "Senza toccare nulla per più di 90 s la serie si interrompe; i guadagni offline restano invariati"
      ]
     },
     "pl": {
      "title": "Bonus za aktywność",
      "items": [
-      "Każda minuta aktywnej gry przynosi bonus w złocie, który rośnie aż do serii 5 minut, jeśli grasz bez przerwy",
-      "Bezczynność dłuższa niż 90 sekund przerywa serię; dochód offline pozostaje bez zmian"
+      "Każda minuta bezpośredniej gry daje bonus złota; gra bez przerw daje do 5 minut z rzędu",
+      "Jeśli nic nie robisz przez ponad 90 s, seria się urywa; dochód offline pozostaje bez zmian"
      ]
     },
     "ar": {
      "title": "مكافأة النشاط",
      "items": [
-      "كل دقيقة لعب فعلي تمنحك مكافأة ذهب، وتزداد المكافأة حتى سلسلة 5 دقائق إذا واصلت اللعب دون انقطاع",
-      "التوقف عن اللعب لأكثر من 90 ثانية يقطع السلسلة، ولا يتغير دخل وضع عدم الاتصال"
+      "كل دقيقة لعب مباشرة تمنح مكافأة ذهب؛ ومع اللعب المتواصل تصل إلى 5 دقائق متتالية كحد أقصى",
+      "إذا لم تلمس شيئًا لأكثر من 90 ثانية تنقطع السلسلة، ويبقى دخل وضع عدم الاتصال كما هو"
      ]
     }
    }
   },
   {
    "date": "2026-10-31",
-   "build": "v0.2 b77",
+   "build": "v0.2 build 77",
    "title": "첫 로딩 가볍게, 패치노트 번역 확대",
    "items": [
     "번역 자료를 한국어로 시작할 때는 풀지 않고 다른 언어를 고를 때만 풀어서 시작이 빨라짐",
@@ -793,87 +1252,87 @@
      ]
     },
     "ja": {
-     "title": "最初の読み込みを軽く、パッチノートの翻訳を拡大",
+     "title": "初回読み込みを軽くし、パッチノートの翻訳を拡大",
      "items": [
-      "翻訳データは、韓国語以外の言語を選んだときだけ展開するので、韓国語での起動が速くなる",
-      "パッチノートを15言語に広げ、翻訳がない文は英語で表示するようにした"
+      "韓国語で始めるときは翻訳データを展開せず、他の言語を選んだときだけ展開するので起動が速くなりました",
+      "パッチノートを15言語に拡大し、翻訳がない文は英語で表示します"
      ]
     },
     "es": {
-     "title": "Carga inicial más ligera y notas de parche en más idiomas",
+     "title": "Carga inicial más ligera, traducciones de notas ampliadas",
      "items": [
-      "Los datos de traducción solo se descomprimen al elegir un idioma distinto del coreano, así que el inicio en coreano es más rápido",
-      "Las notas de parche ahora cubren 15 idiomas y, si una frase no está traducida, se muestra en inglés"
+      "Los datos de traducción no se descomprimen al empezar en coreano; solo se cargan al elegir otro idioma, así que el inicio es más rápido",
+      "Lista de notas ampliada a 15 idiomas; las frases sin traducción se muestran en inglés"
      ]
     },
     "fr": {
-     "title": "Chargement initial plus léger, notes de mise à jour en plus de langues",
+     "title": "Chargement initial plus léger, traductions des notes étendues",
      "items": [
-      "Les données de traduction ne sont décompressées que lorsqu'on choisit une langue autre que le coréen, ce qui accélère le démarrage en coréen",
-      "Les notes de mise à jour couvrent désormais 15 langues ; une phrase non traduite s'affiche en anglais"
+      "Les données de traduction ne sont décompressées qu'au choix d'une autre langue, pas au démarrage en coréen, donc le démarrage est plus rapide",
+      "Liste des notes étendue à 15 langues ; les phrases sans traduction s'affichent en anglais"
      ]
     },
     "de": {
-     "title": "Schnelleres Laden, Patchnotes in mehr Sprachen",
+     "title": "Schnellerer Start, erweiterte Übersetzungen der Patchnotizen",
      "items": [
-      "Übersetzungsdaten werden nur entpackt, wenn du eine andere Sprache als Koreanisch wählst, daher startet Koreanisch schneller",
-      "Patchnotes gibt es jetzt in 15 Sprachen; nicht übersetzte Sätze werden auf Englisch angezeigt"
+      "Übersetzungsdaten werden beim Start auf Koreanisch nicht entpackt, sondern erst bei einer anderen Sprache, daher ist der Start schneller",
+      "Patchnotizen auf 15 Sprachen erweitert; Sätze ohne Übersetzung werden auf Englisch gezeigt"
      ]
     },
     "zh": {
-     "title": "首次加载更轻快，补丁说明支持更多语言",
+     "title": "首次加载更轻快，补丁说明翻译扩大",
      "items": [
-      "只有选择韩语以外的语言时才会解压翻译数据，因此韩语启动更快",
-      "补丁说明扩展到 15 种语言，尚未翻译的句子会以英文显示"
+      "用韩语启动时不再展开翻译数据，只有选择其他语言时才展开，因此启动更快",
+      "补丁说明扩展到15种语言；没有译文的句子显示为英文"
      ]
     },
     "pt": {
-     "title": "Carregamento inicial mais leve e notas de patch em mais idiomas",
+     "title": "Carregamento inicial mais leve, traduções das notas ampliadas",
      "items": [
-      "Os dados de tradução só são descompactados ao escolher um idioma diferente do coreano, então o início em coreano fica mais rápido",
-      "As notas de patch agora cobrem 15 idiomas, e as frases ainda não traduzidas aparecem em inglês"
+      "Os dados de tradução não são descompactados ao começar em coreano; só são carregados ao escolher outro idioma, então o início é mais rápido",
+      "Notas ampliadas para 15 idiomas; frases sem tradução aparecem em inglês"
      ]
     },
     "ru": {
-     "title": "Быстрый первый запуск и патчноуты на большем числе языков",
+     "title": "Быстрее первая загрузка, расширены переводы патчноутов",
      "items": [
-      "Данные перевода распаковываются только при выборе языка, отличного от корейского, поэтому на корейском игра запускается быстрее",
-      "Патчноуты теперь доступны на 15 языках; непереведённые строки показываются на английском"
+      "При старте на корейском переводы не распаковываются, только при выборе другого языка, поэтому запуск быстрее",
+      "Заметки переведены на 15 языков; фразы без перевода показываются по-английски"
      ]
     },
     "tr": {
-     "title": "Daha hafif ilk yükleme, yama notları daha fazla dilde",
+     "title": "İlk yükleme hafifledi, yama notu çevirileri genişledi",
      "items": [
-      "Çeviri verileri yalnızca Korece dışında bir dil seçildiğinde açılır; böylece Korece başlangıç daha hızlı olur",
+      "Korece başlarken çeviri verileri açılmaz, yalnızca başka bir dil seçildiğinde açılır; bu yüzden başlangıç hızlıdır",
       "Yama notları 15 dile genişletildi; çevirisi olmayan cümleler İngilizce gösterilir"
      ]
     },
     "it": {
-     "title": "Avvio più leggero e note di patch in più lingue",
+     "title": "Caricamento iniziale più leggero, traduzioni delle note ampliate",
      "items": [
-      "I dati di traduzione vengono decompressi solo quando si sceglie una lingua diversa dal coreano, quindi l'avvio in coreano è più rapido",
-      "Le note di patch coprono ora 15 lingue e le frasi non ancora tradotte vengono mostrate in inglese"
+      "Avviando in coreano i dati di traduzione non vengono decompressi, ma solo quando si sceglie un'altra lingua, quindi l'avvio è più rapido",
+      "Note estese a 15 lingue; le frasi senza traduzione vengono mostrate in inglese"
      ]
     },
     "pl": {
-     "title": "Lżejsze pierwsze ładowanie, notatki o łatach w większej liczbie języków",
+     "title": "Lżejsze pierwsze ładowanie, rozszerzone tłumaczenia notatek",
      "items": [
-      "Dane tłumaczeń są rozpakowywane tylko po wybraniu języka innego niż koreański, więc start po koreańsku jest szybszy",
-      "Notatki o łatach obejmują teraz 15 języków, a nieprzetłumaczone zdania są wyświetlane po angielsku"
+      "Przy starcie po koreańsku dane tłumaczeń nie są rozpakowywane, tylko po wyborze innego języka, więc start jest szybszy",
+      "Notatki rozszerzone na 15 języków; zdania bez tłumaczenia wyświetlają się po angielsku"
      ]
     },
     "ar": {
-     "title": "تحميل أولي أخف، وملاحظات التحديثات بلغات أكثر",
+     "title": "تحميل أولي أخف وترجمة أوسع لملاحظات التحديث",
      "items": [
-      "لا تُفكّ بيانات الترجمة إلا عند اختيار لغة غير الكورية، لذلك يبدأ التشغيل بالكورية أسرع",
-      "تغطي ملاحظات التحديثات الآن 15 لغة، وتُعرض الجمل غير المترجمة باللغة الإنجليزية"
+      "عند البدء بالكورية لا تُفكّ بيانات الترجمة، بل فقط عند اختيار لغة أخرى، لذلك يكون البدء أسرع",
+      "توسعت الملاحظات إلى 15 لغة، وتُعرض الجمل غير المترجمة بالإنجليزية"
      ]
     }
    }
   },
   {
    "date": "2026-10-31",
-   "build": "v0.2 b76",
+   "build": "v0.2 build 76",
    "title": "글자 겹침 정리",
    "items": [
     "마을과 섬에서 이름표가 서로 겹치면 위아래로 자동으로 비켜 서서 모두 읽을 수 있음",
@@ -888,87 +1347,87 @@
      ]
     },
     "ja": {
-     "title": "名前の重なり解消",
+     "title": "文字の重なりを整理",
      "items": [
-      "町と島の名札が重なると自動で上下にずれ、すべて読めるようになる",
-      "小さな画面でも名札の文字が小さくなりすぎないよう最小サイズを設定"
+      "町や島で名前札が重なると、上下に自動でずれて全部読めるようになります",
+      "スマホのように画面が小さいときも、名前札の文字が小さくなりすぎないよう最小サイズを設けました"
      ]
     },
     "es": {
-     "title": "Nombres sin solaparse",
+     "title": "Ordenar superposiciones de texto",
      "items": [
-      "En pueblos e islas, las etiquetas se desplazan automáticamente arriba o abajo si se solapan, para que todas se puedan leer",
-      "Tamaño mínimo de las etiquetas, incluso en pantallas pequeñas como las de móvil"
+      "Si las etiquetas de nombre se solapan en el pueblo o en las islas, se apartan solas arriba y abajo para poder leerlas todas",
+      "Aunque la pantalla sea pequeña como en un teléfono, el tamaño mínimo de las letras de las etiquetas no se reduce demasiado"
      ]
     },
     "fr": {
-     "title": "Noms sans chevauchement",
+     "title": "Réglage des chevauchements de texte",
      "items": [
-      "Dans les villages et sur les îles, les noms se décalent automatiquement vers le haut ou le bas quand ils se chevauchent, pour rester lisibles",
-      "Taille minimale des noms, même sur les petits écrans de téléphone"
+      "Si les étiquettes de nom se chevauchent au village ou sur les îles, elles s'écartent automatiquement vers le haut ou le bas pour rester lisibles",
+      "Même sur un petit écran de téléphone, les étiquettes gardent une taille de texte minimale qui ne devient pas trop petite"
      ]
     },
     "de": {
-     "title": "Namen überlappen nicht mehr",
+     "title": "Textüberlappungen geordnet",
      "items": [
-      "In Städten und auf Inseln weichen Namensschilder bei Überlappung automatisch nach oben oder unten aus, sodass alle lesbar bleiben",
-      "Mindestgröße für Namensschilder, auch auf kleinen Handybildschirmen"
+      "Überlappen sich Namensschilder im Dorf oder auf den Inseln, rücken sie automatisch nach oben oder unten, damit alle lesbar bleiben",
+      "Auch auf kleinen Bildschirmen wie beim Handy werden Namensschilder nicht zu klein; es gibt eine Mindestschriftgröße"
      ]
     },
     "zh": {
-     "title": "名牌不再重叠",
+     "title": "整理文字重叠",
      "items": [
-      "城镇和岛屿上的名牌重叠时会自动上下错开，全部都能看清",
-      "手机等小屏幕上也设有名牌文字的最小尺寸"
+      "村庄和岛屿里名牌重叠时，会自动上下错开，全部都能读",
+      "即使屏幕像手机一样小，名牌文字也不会过小，设置了最小尺寸"
      ]
     },
     "pt": {
-     "title": "Nomes sem sobreposição",
+     "title": "Organização de sobreposição de texto",
      "items": [
-      "Nomes em vilas e ilhas se afastam automaticamente para cima ou para baixo quando se sobrepõem, ficando todos legíveis",
-      "Tamanho mínimo das etiquetas, mesmo em telas pequenas de celular"
+      "Se as etiquetas de nome se sobrepõem na vila ou nas ilhas, elas se afastam sozinhas para cima ou para baixo para poderem ser lidas",
+      "Mesmo com tela pequena, como a de celular, o texto das etiquetas não fica pequeno demais, pois há um tamanho mínimo"
      ]
     },
     "ru": {
-     "title": "Подписи больше не перекрываются",
+     "title": "Исправлено наложение надписей",
      "items": [
-      "В деревнях и на островах подписи при наложении автоматически сдвигаются вверх или вниз, и все их можно прочитать",
-      "Минимальный размер подписей, даже на маленьких экранах телефонов"
+      "Если таблички с именами перекрываются в деревне или на островах, они сами сдвигаются вверх или вниз, чтобы читались все",
+      "Даже на маленьком экране, как у телефона, надписи не уменьшаются слишком сильно: задан минимальный размер"
      ]
     },
     "tr": {
-     "title": "Etiketler artık çakışmıyor",
+     "title": "Yazı çakışmaları düzeltildi",
      "items": [
-      "Köy ve adalarda isim etiketleri üst üste geldiğinde otomatik olarak yukarı ya da aşağı kayar, hepsi okunabilir",
-      "Küçük telefon ekranlarında bile etiket yazılarının en küçük bir boyutu vardır"
+      "Köy ve adalarda isim etiketleri üst üste gelirse otomatik olarak yukarı ya da aşağı kayarak hepsi okunur",
+      "Telefon gibi küçük ekranlarda bile etiket yazıları çok küçülmesin diye asgari bir boyut var"
      ]
     },
     "it": {
-     "title": "Nomi senza sovrapposizioni",
+     "title": "Sistemazione delle sovrapposizioni di testo",
      "items": [
-      "Nei villaggi e sulle isole le etichette si spostano automaticamente su o giù se si sovrappongono, così si leggono tutte",
-      "Dimensione minima delle etichette anche sugli schermi piccoli dei telefoni"
+      "Se le etichette dei nomi si sovrappongono in paese o sulle isole, si spostano da sole in alto o in basso per essere lette tutte",
+      "Anche con uno schermo piccolo come quello di un telefono, il testo delle etichette ha una dimensione minima che non diventa troppo piccola"
      ]
     },
     "pl": {
-     "title": "Etykiety bez nakładania się",
+     "title": "Uporządkowano nakładające się napisy",
      "items": [
-      "Etykiety w miastach i na wyspach przesuwają się automatycznie w górę lub w dół, gdy się nakładają, więc wszystkie są czytelne",
-      "Najmniejszy rozmiar etykiet, nawet na małych ekranach telefonów"
+      "Gdy etykiety nazw nakładają się w wiosce lub na wyspach, same przesuwają się w górę lub w dół, by wszystkie dały się przeczytać",
+      "Nawet przy małym ekranie jak w telefonie napisy na etykietach nie stają się za małe, bo jest rozmiar minimalny"
      ]
     },
     "ar": {
-     "title": "لا تداخل بين الأسماء",
+     "title": "ترتيب تداخل النصوص",
      "items": [
-      "في القرى والجزر، تتحرك الأسماء تلقائيًا لأعلى أو لأسفل عند تداخلها لتبقى جميعها مقروءة",
-      "حجم أدنى للأسماء حتى على شاشات الهواتف الصغيرة"
+      "عندما تتداخل بطاقات الأسماء في القرية أو الجزر تتحرك تلقائيًا إلى الأعلى أو الأسفل لتبقى كلها مقروءة",
+      "حتى مع شاشة صغيرة كالهاتف، لا تصبح كتابة بطاقات الأسماء صغيرة جدًا لأن لها حدًا أدنى للحجم"
      ]
     }
    }
   },
   {
    "date": "2026-10-31",
-   "build": "v0.2 b75",
+   "build": "v0.2 build 75",
    "title": "닉네임을 눌러 프로필 보기",
    "items": [
     "방 접속자 목록에서 계정으로 들어온 사람의 닉네임을 누르면 그 사람의 Isleport 프로필 카드가 열림"
@@ -983,74 +1442,74 @@
     "ja": {
      "title": "ニックネームを押してプロフィールを見る",
      "items": [
-      "部屋の接続者リストで、アカウントで入ったプレイヤーのニックネームを押すと、そのプレイヤーの Isleport プロフィールカードが開く"
+      "部屋の接続者リストで、アカウントでログインした人のニックネームを押すと、その人のIsleportプロフィールカードが開きます"
      ]
     },
     "es": {
-     "title": "Toca un nombre para ver el perfil",
+     "title": "Toca un apodo para ver el perfil",
      "items": [
-      "En la lista de la sala, al tocar el nombre de un jugador con cuenta se abre su tarjeta de perfil de Isleport"
+      "En la lista de conectados de la sala, al pulsar el apodo de alguien con cuenta se abre su tarjeta de perfil de Isleport"
      ]
     },
     "fr": {
      "title": "Touchez un pseudo pour voir le profil",
      "items": [
-      "Dans la liste de la salle, toucher le pseudo d'un joueur connecté à un compte ouvre sa carte de profil Isleport"
+      "Dans la liste des connectés du salon, toucher le pseudo d'une personne connectée à un compte ouvre sa carte de profil Isleport"
      ]
     },
     "de": {
-     "title": "Auf einen Namen tippen, um das Profil zu sehen",
+     "title": "Auf einen Spitznamen tippen, um das Profil zu sehen",
      "items": [
-      "Ein Tipp auf den Namen eines angemeldeten Spielers in der Raumliste öffnet dessen Isleport-Profilkarte"
+      "In der Teilnehmerliste eines Raums öffnet das Antippen des Spitznamens eines Kontoinhabers dessen Isleport-Profilkarte"
      ]
     },
     "zh": {
      "title": "点击昵称查看资料",
      "items": [
-      "在房间在线列表中点击已登录账号玩家的昵称，即可打开其 Isleport 资料卡"
+      "在房间在线列表里点击账号登录者的昵称，会打开其 Isleport 资料卡"
      ]
     },
     "pt": {
      "title": "Toque num apelido para ver o perfil",
      "items": [
-      "Na lista da sala, tocar no apelido de um jogador com conta abre o cartão de perfil dele no Isleport"
+      "Na lista de conectados da sala, tocar no apelido de quem entrou com conta abre o cartão de perfil dessa pessoa no Isleport"
      ]
     },
     "ru": {
-     "title": "Нажмите на имя, чтобы открыть профиль",
+     "title": "Нажмите на ник, чтобы открыть профиль",
      "items": [
-      "В списке комнаты нажатие на имя вошедшего в аккаунт игрока открывает его карточку профиля Isleport"
+      "В списке участников комнаты нажатие на ник вошедшего с аккаунтом открывает его карточку профиля Isleport"
      ]
     },
     "tr": {
-     "title": "Profili görmek için takma adına dokun",
+     "title": "Profili görmek için takma adına dokunun",
      "items": [
-      "Oda listesinde hesapla giriş yapmış bir oyuncunun takma adına dokunulunca o kişinin Isleport profil kartı açılır"
+      "Odadaki bağlı kişiler listesinde hesapla girmiş birinin takma adına dokununca Isleport profil kartı açılır"
      ]
     },
     "it": {
      "title": "Tocca un nickname per vedere il profilo",
      "items": [
-      "Nella lista della stanza, toccando il nickname di un giocatore con account si apre la sua scheda profilo di Isleport"
+      "Nell'elenco dei connessi della stanza, toccando il nickname di chi è entrato con un account si apre la sua scheda profilo di Isleport"
      ]
     },
     "pl": {
-     "title": "Dotknij pseudonimu, aby zobaczyć profil",
+     "title": "Kliknij pseudonim, aby zobaczyć profil",
      "items": [
-      "Na liście pokoju dotknięcie pseudonimu zalogowanego gracza otwiera jego kartę profilu Isleport"
+      "Na liście połączonych w pokoju kliknięcie pseudonimu osoby z kontem otwiera jej kartę profilu Isleport"
      ]
     },
     "ar": {
-     "title": "انقر على الاسم لعرض الملف الشخصي",
+     "title": "اضغط على اسم مستعار لعرض الملف الشخصي",
      "items": [
-      "عند النقر على اسم لاعب مسجَّل الدخول في قائمة الغرفة تُفتح بطاقة ملفه الشخصي في Isleport"
+      "في قائمة المتصلين بالغرفة، عند الضغط على اسم مستعار لشخص دخل بحساب تُفتح بطاقة ملفه الشخصي في Isleport"
      ]
     }
    }
   },
   {
    "date": "2026-10-30",
-   "build": "v0.2 b74",
+   "build": "v0.2 build 74",
    "title": "영주의 성",
    "items": [
     "시작섬 남쪽 호숫가 빈 터에 영주의 성을 짓는 자리가 생김",
@@ -1069,96 +1528,96 @@
     "ja": {
      "title": "領主の城",
      "items": [
-      "始まりの島の南、湖畔の空き地に領主の城を建てる場所ができる",
-      "望楼、城壁、本丸、庭園と旗の4段階で建て、段階ごとに階級と金貨が必要",
-      "城が大きくなるほど税が溜まり、1分あたり20〜220金貨、最大60分ぶんまで集められる"
+      "始まりの島の南の湖畔の空き地に、領主の城を建てる場所ができました",
+      "望楼、城壁、本館、庭園と旗の4段階で建て、段階ごとに階級と金貨が必要です",
+      "城が大きいほど税金がたまり、1分に20〜220枚の金貨、最大60分分まで集められます"
      ]
     },
     "es": {
-     "title": "El castillo del señor",
+     "title": "Castillo del señor feudal",
      "items": [
-      "Aparece un solar para el castillo del señor en el terreno libre junto al lago, al sur de la isla inicial",
-      "Se construye en 4 etapas (atalaya, muralla, torre principal, jardines y estandartes), cada una con rango y oro",
-      "Cuanto más grande es el castillo, más impuestos se acumulan: de 20 a 220 monedas de oro por minuto, hasta 60 minutos"
+      "Un terreno vacío a la orilla del lago sur de la isla de inicio permite construir el castillo del señor feudal",
+      "Se construye en cuatro etapas: torre de vigía, muralla, palacio principal y jardín con estandarte; cada etapa pide un rango y monedas de oro",
+      "Cuanto más grande el castillo, más impuestos se acumulan: de 20 a 220 monedas de oro por minuto, hasta 60 minutos"
      ]
     },
     "fr": {
-     "title": "Le château du seigneur",
+     "title": "Château du seigneur",
      "items": [
-      "Un emplacement pour le château du seigneur apparaît sur le terrain vide au bord du lac, au sud de l'île de départ",
-      "4 étapes à construire : tour de guet, rempart, donjon, jardins et bannières, chacune demandant un rang et de l'or",
+      "Un terrain vide au bord du lac au sud de l'île de départ permet de bâtir le château du seigneur",
+      "Bâti en quatre étapes : tour de guet, rempart, donjon, jardin et bannière ; chaque étape demande un rang et des pièces d'or",
       "Plus le château grandit, plus les impôts s'accumulent : de 20 à 220 pièces d'or par minute, jusqu'à 60 minutes"
      ]
     },
     "de": {
-     "title": "Die Burg des Herrn",
+     "title": "Burg des Lehnsherrn",
      "items": [
-      "Auf dem freien Grund am Seeufer südlich der Startinsel entsteht ein Bauplatz für die Burg des Herrn",
-      "Der Bau hat 4 Stufen: Wachturm, Mauer, Hauptgebäude, Garten und Banner. Jede Stufe braucht Rang und Gold",
-      "Je größer die Burg, desto mehr Steuern sammeln sich: 20 bis 220 Gold pro Minute, bis zu 60 Minuten"
+      "Auf einem leeren Platz am Südufer des Startsees der Starteinsel kann die Burg des Lehnsherrn gebaut werden",
+      "In vier Stufen gebaut: Wachturm, Mauer, Haupthaus, Garten und Banner; jede Stufe verlangt einen Rang und Goldmünzen",
+      "Je größer die Burg, desto mehr Steuern sammeln sich: 20 bis 220 Goldmünzen pro Minute, bis zu 60 Minuten"
      ]
     },
     "zh": {
-     "title": "领主城堡",
+     "title": "领主的城堡",
      "items": [
-      "起始岛南面湖边的空地上出现了领主城堡的建造位置",
-      "分四个阶段建造：瞭望塔、城墙、主楼、花园与旗帜，每阶段都需要等级和金币",
-      "城堡越大，税收积累越多，每分钟可收 20 到 220 金币，最多可收 60 分钟的量"
+      "起始岛南面湖畔的空地上出现了可以建造领主城堡的位置",
+      "分四级建造：瞭望塔、城墙、主楼、庭园与旗帜；每一级都需要等级和金币",
+      "城堡越大，税收积累越多：每分钟20到220枚金币，最多可收取60分钟的量"
      ]
     },
     "pt": {
-     "title": "O castelo do senhor",
+     "title": "Castelo do senhor feudal",
      "items": [
-      "Surge um terreno para o castelo do senhor no espaço vazio à beira do lago, ao sul da ilha inicial",
-      "Construção em 4 etapas: torre de vigia, muralha, torre principal, jardins e bandeiras, cada uma exigindo patente e ouro",
+      "Um terreno vazio à beira do lago no sul da ilha inicial abre espaço para construir o castelo do senhor feudal",
+      "Construído em quatro etapas: torre de vigia, muralha, salão principal e jardim com bandeira; cada etapa pede uma classe e moedas de ouro",
       "Quanto maior o castelo, mais impostos se acumulam: de 20 a 220 moedas de ouro por minuto, até 60 minutos"
      ]
     },
     "ru": {
      "title": "Замок лорда",
      "items": [
-      "На пустом участке у озера, к югу от стартового острова, появилось место для замка лорда",
-      "Строится в 4 этапа: сторожевая башня, стены, главный замок, сады и знамёна; каждый этап требует звание и золото",
-      "Чем больше замок, тем больше накапливается налогов: от 20 до 220 золотых в минуту, до 60 минут сразу"
+      "На пустыре у южного озера стартового острова появилось место для постройки замка лорда",
+      "Строится в четыре этапа: башня, стена, главный зал, сад и знамя; для каждого нужны звание и золото",
+      "Чем больше замок, тем больше накапливается налогов: от 20 до 220 золотых в минуту, до 60 минут"
      ]
     },
     "tr": {
-     "title": "Lordun kalesi",
+     "title": "Derebeyin kalesi",
      "items": [
-      "Başlangıç adasının güneyindeki göl kıyısında, lordun kalesi için boş bir arsa açılır",
-      "4 aşamada inşa edilir: gözetleme kulesi, sur, ana bina, bahçe ve bayrak; her aşama rütbe ve altın ister",
-      "Kale büyüdükçe vergi birikir; dakikada 20 ile 220 altın arasında, en fazla 60 dakikalık toplanabilir"
+      "Başlangıç adasının güney gölü kıyısındaki boş alanda derebeyinin kalesini kurma yeri açıldı",
+      "Dört aşamada yapılır: gözetleme kulesi, sur, ana salon, bahçe ve bayrak; her aşama bir rütbe ve altın ister",
+      "Kale büyüdükçe vergi birikir: dakikada 20 ile 220 altın arasında, en fazla 60 dakikalık tutar toplanabilir"
      ]
     },
     "it": {
-     "title": "Il castello del signore",
+     "title": "Castello del signore",
      "items": [
-      "Compare un lotto per il castello del signore sul terreno vuoto sulla riva del lago, a sud dell'isola iniziale",
-      "Si costruisce in 4 fasi: torre di guardia, mura, palazzo principale, giardini e stendardi, ognuna con grado e oro richiesti",
+      "Su un terreno vuoto sulla riva del lago a sud dell'isola iniziale c'è lo spazio per costruire il castello del signore",
+      "Costruito in quattro fasi: torre di guardia, mura, mastio, giardino e stendardo; ogni fase richiede un grado e monete d'oro",
       "Più il castello cresce, più tasse si accumulano: da 20 a 220 monete d'oro al minuto, fino a 60 minuti"
      ]
     },
     "pl": {
      "title": "Zamek pana",
      "items": [
-      "Na pustym terenie nad jeziorem, na południe od wyspy startowej, pojawia się miejsce na zamek pana",
-      "Budowa w 4 etapach: wieża strażnicza, mury, główny budynek, ogrody i chorągwie; każdy etap wymaga rangi i złota",
-      "Im większy zamek, tym więcej podatków się zbiera: od 20 do 220 złotych na minutę, do 60 minut"
+      "Na pustym placu nad południowym jeziorem wyspy startowej pojawiło się miejsce na zamek pana",
+      "Budowa w czterech etapach: strażnica, mur, główna sala, ogród i sztandar; każdy etap wymaga rangi i złota",
+      "Im większy zamek, tym więcej podatków się zbiera: od 20 do 220 monet złota na minutę, do 60 minut"
      ]
     },
     "ar": {
      "title": "قلعة اللورد",
      "items": [
-      "تظهر قطعة أرض فارغة لبناء قلعة اللورد على ضفة البحيرة جنوب الجزيرة الأولى",
-      "يُبنى على 4 مراحل: برج المراقبة والأسوار والقصر الرئيسي والحدائق والرايات، ولكل مرحلة رتبة وذهب مطلوبان",
-      "كلما كبرت القلعة تراكمت الضرائب: من 20 إلى 220 ذهبة في الدقيقة، لمدة تصل إلى 60 دقيقة"
+      "قطعة فارغة على ضفة البحيرة الجنوبية للجزيرة الأولى صارت مكانًا لبناء قلعة اللورد",
+      "تُبنى على أربع مراحل: برج المراقبة، والسور، والقاعة الرئيسية، والحديقة والراية؛ تتطلب كل مرحلة رتبة وذهبًا",
+      "كلما كبرت القلعة تراكمت الضرائب أكثر: من 20 إلى 220 قطعة ذهبية في الدقيقة، لمدة تصل إلى 60 دقيقة"
      ]
     }
    }
   },
   {
    "date": "2026-10-30",
-   "build": "v0.2 b73",
+   "build": "v0.2 build 73",
    "title": "주민 심부름",
    "items": [
     "섬 주민에게 말을 걸면 다른 섬 주민에게 편지나 소포를 전해 달라는 부탁을 받을 수 있음",
@@ -1177,109 +1636,109 @@
      ]
     },
     "ja": {
-     "title": "島民のお使い",
+     "title": "住民の使い",
      "items": [
-      "島民に話しかけると、別の島の住人に手紙や小包を届けてほしいと頼まれる",
-      "一度に最大3件まで引き受けられ、届けると金貨の報酬がもらえる",
-      "島民を押すと、受けたお使いと届け先が表示される",
-      "同じ島民からの頼みは5分後にまた受けられる"
+      "島の住民に話しかけると、別の島の住民に手紙や小包を届けてほしいという頼みを受けられます",
+      "一度に最大3件まで引き受けられ、届けると金貨の報酬がもらえます",
+      "住民を押すと、受けた使いと届け先が表示されます",
+      "同じ住民の頼みは5分後にまた受けられます"
      ]
     },
     "es": {
-     "title": "Recados de los isleños",
+     "title": "Encargos de ciudadanos",
      "items": [
-      "Habla con un isleño y te pedirá llevar una carta o un paquete a alguien de otra isla",
-      "Puedes llevar hasta 3 a la vez y recibes oro al entregarlos",
-      "Al tocar a un habitante se ven tus recados y a dónde llevarlos",
-      "El mismo habitante te vuelve a pedir un recado a los 5 minutos"
+      "Si hablas con un habitante de la isla, puede pedirte que lleves una carta o un paquete a otro habitante",
+      "Puedes aceptar hasta 3 encargos a la vez; al entregarlos recibes monedas de oro como recompensa",
+      "Al pulsar un habitante se ven los encargos recibidos y adónde llevarlos",
+      "El mismo habitante vuelve a pedir un encargo 5 minutos después"
      ]
     },
     "fr": {
-     "title": "Commissions des insulaires",
+     "title": "Missions des habitants",
      "items": [
-      "Parlez à un insulaire : il vous demandera d'apporter une lettre ou un colis à un habitant d'une autre île",
-      "Jusqu'à 3 commissions à la fois ; les livrer rapporte de l'or",
-      "Toucher un habitant affiche vos commissions et leur destination",
-      "Le même habitant peut vous confier une nouvelle commission après 5 minutes"
+      "En parlant à un habitant de l'île, vous pouvez recevoir la demande de porter une lettre ou un colis à un autre habitant",
+      "Vous pouvez accepter jusqu'à 3 missions à la fois ; en les livrant, vous recevez des pièces d'or",
+      "En touchant un habitant, on voit les missions reçues et où les porter",
+      "El même habitant ne peut redemander une mission que 5 minutes plus tard"
      ]
     },
     "de": {
-     "title": "Botengänge der Inselbewohner",
+     "title": "Aufträge der Bewohner",
      "items": [
-      "Sprich mit einem Inselbewohner, der dich bittet, einen Brief oder ein Paket zu einem Bewohner einer anderen Insel zu bringen",
-      "Bis zu 3 gleichzeitig möglich, bei Zustellung gibt es Gold",
-      "Ein Tipp auf einen Bewohner zeigt deine Aufträge und das Ziel",
-      "Derselbe Bewohner bittet nach 5 Minuten erneut"
+      "Sprichst du mit einem Inselbewohner, bittet er dich vielleicht, einen Brief oder ein Paket zu einem anderen Bewohner zu bringen",
+      "Bis zu 3 Aufträge gleichzeitig möglich; wer sie übergibt, erhält Goldmünzen als Belohnung",
+      "Wenn du einen Bewohner antippst, siehst du die erhaltenen Aufträge und wohin sie gehören",
+      "Derselbe Bewohner bittet nach 5 Minuten erneut um einen Auftrag"
      ]
     },
     "zh": {
-     "title": "岛民跑腿",
+     "title": "居民差事",
      "items": [
-      "与岛民对话，就会接到把信件或包裹送给其他岛上居民的委托",
-      "一次最多可接 3 件，送达后获得金币奖励",
-      "点击居民即可查看已接委托和送达地点",
-      "同一居民的委托 5 分钟后可再次接取"
+      "与岛上居民说话，可以接到把信或包裹送给另一位居民的请求",
+      "一次最多可接3件，送达后获得金币奖励",
+      "点击居民可以看到已接的差事和送达地点",
+      "同一居民5分钟后才会再次委托"
      ]
     },
     "pt": {
-     "title": "Recados dos ilhéus",
+     "title": "Pedidos dos moradores",
      "items": [
-      "Fale com um ilhéu e ele pedirá para levar uma carta ou encomenda a um morador de outra ilha",
-      "Até 3 de cada vez, e a entrega rende ouro",
-      "Tocar num morador mostra os recados recebidos e onde entregá-los",
-      "O mesmo morador volta a pedir após 5 minutos"
+      "Ao falar com um morador da ilha, você pode receber o pedido de levar uma carta ou um pacote a outro morador",
+      "Pode aceitar até 3 pedidos de uma vez; ao entregá-los, recebe moedas de ouro como recompensa",
+      "Ao tocar em um morador, veem-se os pedidos recebidos e para onde levá-los",
+      "O mesmo morador só pede outro pedido 5 minutos depois"
      ]
     },
     "ru": {
-     "title": "Поручения островитян",
+     "title": "Поручения жителей",
      "items": [
-      "Поговорите с островитянином, и он попросит передать письмо или посылку жителю другого острова",
-      "Можно взять до 3 поручений сразу, за доставку — золото",
-      "Нажмите на жителя, чтобы увидеть принятые поручения и место доставки",
-      "Тот же житель снова даст поручение через 5 минут"
+      "Если заговорить с жителем острова, можно получить просьбу отнести письмо или посылку другому жителю",
+      "Можно взять до 3 поручений одновременно; за доставку — золото",
+      "Нажатие на жителя показывает полученные поручения и куда их отнести",
+      "Один и тот же житель снова даст поручение через 5 минут"
      ]
     },
     "tr": {
-     "title": "Ada sakinlerinin işleri",
+     "title": "Sakin görevleri",
      "items": [
-      "Bir ada sakinine konuşarak başka bir adadaki birine mektup ya da paket götürmesini isteyebilirsin",
-      "Aynı anda en fazla 3 tane alabilirsin, teslim edince altın kazanırsın",
-      "Bir sakine dokununca aldığın işler ve teslim yeri görünür",
-      "Aynı sakinden 5 dakika sonra tekrar iş alabilirsin"
+      "Ada sakinleriyle konuşunca başka bir sakine mektup ya da paket götürme isteği alabilirsin",
+      "Aynı anda en fazla 3 görev alabilirsin; teslim edince altın ödülü alırsın",
+      "Bir sakine dokununca alınan görevler ve nereye götürüleceği görünür",
+      "Aynı sakin 5 dakika sonra yeniden görev verir"
      ]
     },
     "it": {
-     "title": "Commissioni degli isolani",
+     "title": "Commissioni degli abitanti",
      "items": [
-      "Parla con un isolano per ricevere la richiesta di portare una lettera o un pacco a un abitante di un'altra isola",
-      "Fino a 3 alla volta, e la consegna ripaga in oro",
-      "Toccando un abitante vedi le commissioni ricevute e dove consegnarle",
-      "Lo stesso abitante può chiedere di nuovo dopo 5 minuti"
+      "Parlando con un abitante dell'isola puoi ricevere la richiesta di portare una lettera o un pacco a un altro abitante",
+      "Puoi accettarne fino a 3 alla volta; consegnandoli ricevi monete d'oro come ricompensa",
+      "Toccando un abitante si vedono gli incarichi ricevuti e dove portarli",
+      "Lo stesso abitante torna a chiedere un incarico dopo 5 minuti"
      ]
     },
     "pl": {
-     "title": "Zlecenia wyspiarzy",
+     "title": "Zlecenia mieszkańców",
      "items": [
-      "Porozmawiaj z wyspiarzem, a poprosi cię o zaniesienie listu lub paczki mieszkańcowi innej wyspy",
-      "Można mieć naraz do 3 zleceń, a za dostarczenie dostaje się złoto",
-      "Dotknięcie mieszkańca pokazuje przyjęte zlecenia i miejsce dostawy",
-      "Ten sam mieszkaniec znów zleci zadanie po 5 minutach"
+      "Rozmawiając z mieszkańcem wyspy, możesz dostać prośbę o zaniesienie listu lub paczki innemu mieszkańcowi",
+      "Można przyjąć do 3 zleceń naraz; za dostarczenie dostaje się złoto",
+      "Kliknięcie mieszkańca pokazuje otrzymane zlecenia i miejsce dostawy",
+      "Ten sam mieszkaniec da nowe zlecenie po 5 minutach"
      ]
     },
     "ar": {
-     "title": "مهام سكان الجزيرة",
+     "title": "مهام السكان",
      "items": [
-      "تكلم مع أحد سكان الجزيرة ليطلب منك إيصال رسالة أو طرد إلى أحد سكان جزيرة أخرى",
-      "يمكن حمل 3 مهام كحد أقصى في وقت واحد، ويُكافأ عليها بالذهب عند التسليم",
-      "انقر على أي ساكن لتظهر لك المهام التي استلمتها ومكان تسليمها",
-      "يمكن استلام مهمة جديدة من الساكن نفسه بعد 5 دقائق"
+      "عندما تتحدث إلى سكان الجزيرة قد تتلقى طلبًا بإيصال رسالة أو طرد إلى ساكن آخر",
+      "يمكنك قبول ما يصل إلى 3 مهام في آن واحد؛ وعند التسليم تحصل على مكافأة ذهبية",
+      "عند الضغط على ساكن تظهر المهام التي استلمتها ومكان تسليمها",
+      "يعود الساكن نفسه ليطلب مهمة بعد 5 دقائق"
      ]
     }
    }
   },
   {
    "date": "2026-10-30",
-   "build": "v0.2 b72",
+   "build": "v0.2 build 72",
    "title": "개척지 가공소와 마차",
    "items": [
     "개척 시설 자리가 4칸에서 6칸으로 늘어남",
@@ -1298,109 +1757,109 @@
      ]
     },
     "ja": {
-     "title": "開拓地の加工所と馬車",
+     "title": "開拓の加工所と馬車",
      "items": [
-      "開拓施設の枠が4から6に増える",
-      "開拓の製粉所と醸造所を追加: 材料を入れておくと島で小麦粉とワインを作る",
-      "馬車の停留所を追加: 島で実った作物と集めた品を自動で倉庫へ運び、種があれば植え直す",
-      "灌漑井戸と馬車の停留所は、島ごとに1つだけ建てられる"
+      "開拓地の施設の枠が4マスから6マスに増えました",
+      "開拓の製粉所と醸造所を追加：材料を入れておくと島で小麦粉とワインを作ります",
+      "馬車の停留所を追加：島の実った作物と集めた物を倉庫へ運び、種があれば植え直します",
+      "灌漑井戸と馬車の停留所は島ごとに一つしか建てられません"
      ]
     },
     "es": {
-     "title": "Talleres y carros de la frontera",
+     "title": "Taller de frontera y carros",
      "items": [
-      "Los espacios de instalaciones de frontera pasan de 4 a 6",
-      "Nuevos molino y bodega de frontera: con ingredientes, producen harina y vino en la isla",
-      "Nueva parada de carros: lleva automáticamente los cultivos maduros y los objetos reunidos al almacén, y replanta si hay semillas",
-      "Solo se puede construir un pozo de riego y una parada de carros por isla"
+      "Los sitios de construcción de la frontera pasan de 4 a 6 casillas",
+      "Se añaden molino y cervecería de frontera: si les metes materiales, hacen harina y vino en la isla",
+      "Se añade una parada de carros: lleva por la isla los cultivos maduros y los productos juntados al almacén y vuelve a sembrar si hay semillas",
+      "Pozo de riego y estación de carros solo se pueden construir una vez por isla"
      ]
     },
     "fr": {
-     "title": "Ateliers et charrettes de la frontière",
+     "title": "Atelier de la frontière et charrettes",
      "items": [
-      "Les emplacements d'installations de la frontière passent de 4 à 6",
-      "Ajout d'un moulin et d'un cellier de frontière : y déposer des ingrédients produit farine et vin sur l'île",
-      "Ajout d'une station de charrettes : elle transporte seule les cultures mûres et les objets récoltés à l'entrepôt, et replante s'il y a des graines",
-      "Un seul puits d'irrigation et une seule station de charrettes par île"
+      "Les emplacements de construction de la frontière passent de 4 à 6 cases",
+      "Ajout d'un moulin et d'une cave de frontière : on y met des matières et on obtient farine et vin sur l'île",
+      "Ajout d'une station de charrettes : elle transporte les cultures mûres et les produits réunis jusqu'à l'entrepôt et replante s'il y a des graines",
+      "Le puits d'irrigation et la station de charrettes ne peuvent être bâtis qu'une fois par île"
      ]
     },
     "de": {
-     "title": "Werkstätten und Wagen der Grenzsiedlung",
+     "title": "Grenzwerkstatt und Wagen",
      "items": [
-      "Die Plätze für Grenzanlagen wachsen von 4 auf 6",
-      "Neue Grenzmühle und Grenzkelterei: Zutaten hineinlegen, und auf der Insel entstehen Mehl und Wein",
-      "Neue Wagenstation: bringt reife Ernte und gesammelte Waren automatisch ins Lager und sät neu, wenn Samen da sind",
-      "Brunnen und Wagenstation gibt es je Insel nur einmal"
+      "Die Bauplätze an der Grenze wachsen von 4 auf 6 Felder",
+      "Grenzmühle und Grenzkellerei hinzugefügt: Material hineinlegen, dann entstehen auf der Insel Mehl und Wein",
+      "Wagenstation hinzugefügt: bringt reife Pflanzen und gesammelte Waren auf der Insel ins Lager und sät neu, wenn Samen da sind",
+      "Bewässerungsbrunnen und Wagenstation können pro Insel nur einmal gebaut werden"
      ]
     },
     "zh": {
-     "title": "开拓地的加工坊与马车",
+     "title": "开拓加工所与马车",
      "items": [
-      "开拓设施的格位从 4 个增加到 6 个",
-      "新增开拓磨坊和开拓酿酒坊：放入材料后，在岛上制作面粉和葡萄酒",
-      "新增马车站：自动把成熟的作物和收集的物品运到仓库，有种子时还会重新播种",
-      "灌溉井和马车站每座岛只能建造一个"
+      "开拓设施位置从4格增加到6格",
+      "新增开拓磨坊和开拓酒庄：放入材料后可在岛上制作面粉和葡萄酒",
+      "新增马车站：把岛上成熟的作物和收集的物品运到仓库，有种子就重新播种",
+      "灌溉井和马车站每个岛只能建造一个"
      ]
     },
     "pt": {
-     "title": "Oficinas e carroças da fronteira",
+     "title": "Oficina de fronteira e carroças",
      "items": [
-      "Os espaços de instalações da fronteira aumentam de 4 para 6",
-      "Novos moinho e vinícola da fronteira: coloque ingredientes e eles produzem farinha e vinho na ilha",
-      "Nova estação de carroças: leva sozinha as colheitas maduras e os itens guardados ao armazém, e replanta se houver sementes",
-      "Só é possível construir um poço de irrigação e uma estação de carroças por ilha"
+      "Os espaços de construção da fronteira passam de 4 para 6 casas",
+      "Adicionado moinho e vinícola de fronteira: colocando materiais, fazem farinha e vinho na ilha",
+      "Adicionada estação de carroças: leva as plantações maduras e os itens juntados ao armazém e replanta se houver sementes",
+      "Poço de irrigação e estação de carroças só podem ser construídos uma vez por ilha"
      ]
     },
     "ru": {
-     "title": "Мастерские и повозки на освоенных землях",
+     "title": "Переработка на фронтире и повозки",
      "items": [
-      "Число слотов для построек на освоенных землях увеличено с 4 до 6",
-      "Добавлены мельница и винодельня на освоенных землях: кладите ингредиенты, и на острове будут получаться мука и вино",
-      "Добавлена станция повозок: сама отвозит созревший урожай и собранные товары на склад и пересаживает, если есть семена",
-      "На каждом острове можно построить только один ирригационный колодец и одну станцию повозок"
+      "Места под постройки на фронтире увеличены с 4 до 6 ячеек",
+      "Добавлены мельница и винодельня на фронтире: кладёте сырьё, и на острове появляются мука и вино",
+      "Добавлена станция повозок: отвозит спелый урожай и собранное на склад и пересаживает, если есть семена",
+      "Оросительный колодец и станция повозок строятся только по одному на остров"
      ]
     },
     "tr": {
-     "title": "Sınır yerleşiminin atölyeleri ve arabaları",
+     "title": "Öncü atölyesi ve arabalar",
      "items": [
-      "Sınır tesisleri için yer 4'ten 6'ya çıktı",
-      "Sınır değirmeni ve şarap evi eklendi: malzeme koyunca adada un ve şarap üretir",
-      "Araba istasyonu eklendi: olgunlaşan ürünleri ve biriken eşyaları otomatik olarak depoya taşır, tohum varsa yeniden eker",
-      "Sulama kuyusu ve araba istasyonu her adada yalnızca birer tane yapılabilir"
+      "Öncü tesis alanı 4 kareden 6 kareye çıktı",
+      "Öncü değirmeni ve öncü şarap evi eklendi: malzeme koyulunca adada un ve şarap yapılır",
+      "Araba durağı eklendi: adadaki olgun ürünleri ve toplanan malzemeleri depoya taşır, tohum varsa yeniden eker",
+      "Sulama kuyusu ve araba durağı her adada yalnızca bir kez kurulabilir"
      ]
     },
     "it": {
-     "title": "Officine e carri della frontiera",
+     "title": "Laboratorio di frontiera e carri",
      "items": [
-      "Gli spazi per le strutture di frontiera passano da 4 a 6",
-      "Aggiunti mulino e cantina di frontiera: con gli ingredienti producono farina e vino sull'isola",
-      "Nuova stazione dei carri: porta automaticamente in magazzino i raccolti maturi e gli oggetti accumulati, e ripianta se ci sono semi",
-      "Solo un pozzo di irrigazione e una stazione dei carri per isola"
+      "Gli spazi per gli impianti di frontiera passano da 4 a 6 caselle",
+      "Aggiunti mulino e cantina di frontiera: vi si mettono materiali e sull'isola si ottengono farina e vino",
+      "Aggiunta la stazione dei carri: porta in magazzino i raccolti maturi e gli oggetti raccolti e ripianta se ci sono semi",
+      "Il pozzo di irrigazione e la stazione dei carri si possono costruire una sola volta per isola"
      ]
     },
     "pl": {
-     "title": "Warsztaty i wozy na pograniczu",
+     "title": "Przetwórnia pogranicza i wozy",
      "items": [
-      "Miejsc na budynki pogranicza jest teraz 6 zamiast 4",
-      "Dodano młyn i winiarnię na pograniczu: wrzuć składniki, a na wyspie powstaną mąka i wino",
-      "Nowa stacja wozów: sama wozi dojrzałe plony i zebrane przedmioty do magazynu, a jeśli są nasiona, sadzi ponownie",
-      "Tylko jedną studnię nawadniającą i jedną stację wozów na wyspę"
+      "Miejsca na obiekty pogranicza zwiększono z 4 do 6 pól",
+      "Dodano młyn i winnicę pogranicza: wkładając materiały, wytwarza się na wyspie mąkę i wino",
+      "Dodano stację wozów: przewozi dojrzałe plony i zebrane rzeczy do magazynu i sieje ponownie, jeśli są nasiona",
+      "Studnię nawadniającą i stację wozów można zbudować tylko raz na wyspę"
      ]
     },
     "ar": {
-     "title": "ورش وعربات المستوطنات الحدودية",
+     "title": "ورش الحدود والعربات",
      "items": [
-      "ارتفعت خانات منشآت الحدود من 4 إلى 6",
-      "إضافة طاحونة ومعصرة نبيذ للحدود: ضع المكونات فيها لتنتج الدقيق والنبيذ في الجزيرة",
-      "إضافة محطة عربات: تنقل المحاصيل الناضجة والأشياء المجمعة إلى المخزن تلقائيًا، وتعيد الزراعة إذا توفرت البذور",
-      "لا يمكن بناء سوى بئر ري واحدة ومحطة عربات واحدة في كل جزيرة"
+      "تزداد خانات منشآت الحدود من 4 إلى 6",
+      "أضيفت مطحنة ومعصرة للحدود: بوضع المواد فيهما تُصنع الدقيق والنبيذ في الجزيرة",
+      "أُضيفت محطة العربات: تنقل المحاصيل الناضجة والأشياء المجمعة إلى المخزن وتعيد الزراعة إذا توفرت البذور",
+      "يمكن بناء بئر الري ومحطة العربات مرة واحدة فقط في كل جزيرة"
      ]
     }
    }
   },
   {
    "date": "2026-10-30",
-   "build": "v0.2 b71",
+   "build": "v0.2 build 71",
    "title": "중세 마을과 섬 주민",
    "items": [
     "집, 시장, 항구 건물, 저택, 탑, 예배당을 중세 유럽 건물 풍으로 새로 그림",
@@ -1421,120 +1880,120 @@
      ]
     },
     "ja": {
-     "title": "中世の町と島民",
+     "title": "中世の村と島の住民",
      "items": [
-      "家、市場、港の建物、邸宅、塔、礼拝堂を中世ヨーロッパ風に描き直した",
-      "始まりの島の家と工房も、木組みの骨組み、石の土台、急勾配の瓦屋根に変わった",
-      "製粉所と灯台は石積みの姿に変わった",
-      "島ごとに農夫、漁師、鍛冶屋、修道士などの島民が歩き回る",
-      "島民に近づいてEを押すと、島の話を聞かせてくれる"
+      "家、市場、港の建物、邸宅、塔、礼拝堂を中世ヨーロッパ風の建物に描き直しました",
+      "始まりの島の家と工房も、木の骨組みと石の土台、急な瓦屋根になりました",
+      "製粉所と灯台は石造りの姿になりました",
+      "島ごとに農夫、漁師、鍛冶屋、修道士などの住民が歩き回ります",
+      "住民に近づいてEを押すと、島の話を聞けます"
      ]
     },
     "es": {
-     "title": "Pueblos medievales y habitantes",
+     "title": "Pueblo medieval y habitantes de la isla",
      "items": [
-      "Casas, mercados, edificios portuarios, mansiones, torres y capillas, redibujados al estilo medieval europeo",
-      "Las casas y talleres de la isla inicial ahora tienen armazón de madera, base de piedra y tejados empinados",
-      "El molino y el faro ahora están construidos con piedra",
-      "En cada isla deambulan campesinos, pescadores, herreros y monjes",
-      "Acércate a un habitante y pulsa E para escuchar historias de la isla"
+      "Casas, mercado, edificios del puerto, mansiones, torres y capillas se redibujan al estilo de los edificios medievales europeos",
+      "Las casas y los talleres de la isla de inicio también cambian a estructura de madera, base de piedra y tejados empinados",
+      "El molino y el faro ahora son de piedra",
+      "En cada isla se mueven habitantes como granjeros, pescadores, herreros y monjes",
+      "Acércate a un habitante y pulsa E para escuchar la historia de la isla"
      ]
     },
     "fr": {
-     "title": "Villages médiévaux et habitants",
+     "title": "Village médiéval et habitants des îles",
      "items": [
-      "Maisons, marchés, bâtiments portuaires, manoirs, tours et chapelles redessinés dans le style médiéval européen",
-      "Les maisons et ateliers de l'île de départ ont maintenant une ossature en bois, un soubassement en pierre et des toits en tuiles pentus",
-      "Le moulin et le phare sont désormais en pierre",
-      "Chaque île compte désormais des paysans, pêcheurs, forgerons et moines qui se promènent",
-      "Approchez-vous d'un habitant et appuyez sur E pour entendre une histoire de l'île"
+      "Maisons, marché, bâtiments du port, manoirs, tours et chapelles sont redessinés dans le style des bâtiments médiévaux européens",
+      "Les maisons et ateliers de l'île de départ prennent aussi une ossature de bois, un soubassement de pierre et des toits pentus",
+      "Le moulin et le phare sont maintenant en pierre",
+      "Sur chaque île circulent des habitants comme des fermiers, des pêcheurs, des forgerons et des moines",
+      "Approchez-vous d'un habitant et appuyez sur E pour entendre l'histoire de l'île"
      ]
     },
     "de": {
-     "title": "Mittelalterliche Dörfer und Bewohner",
+     "title": "Mittelalterliches Dorf und Inselbewohner",
      "items": [
-      "Häuser, Märkte, Hafengebäude, Herrenhäuser, Türme und Kapellen neu im mittelalterlich-europäischen Stil gezeichnet",
-      "Häuser und Werkstätten der Startinsel haben jetzt Fachwerk, Steinsockel und steile Ziegeldächer",
-      "Mühle und Leuchtturm sind jetzt aus Stein gemauert",
-      "Auf jeder Insel laufen Bauern, Fischer, Schmiede und Mönche umher",
-      "Geh zu einem Bewohner und drücke E, um Geschichten der Insel zu hören"
+      "Häuser, Markt, Hafengebäude, Herrenhäuser, Türme und Kapellen wurden im Stil mittelalterlicher europäischer Bauten neu gezeichnet",
+      "Häuser und Werkstätten der Starteinsel bekommen ebenfalls Fachwerk, Steinsockel und steile Ziegeldächer",
+      "Mühle und Leuchtturm sind nun aus Stein",
+      "Auf jeder Insel laufen Bewohner wie Bauern, Fischer, Schmiede und Mönche umher",
+      "Geh zu einem Bewohner und drücke E, um die Geschichte der Insel zu hören"
      ]
     },
     "zh": {
-     "title": "中世村镇与岛民",
+     "title": "中世村庄与岛上居民",
      "items": [
-      "房屋、市场、港口建筑、宅邸、塔楼和礼拜堂，重绘为中世纪欧洲风格",
-      "起始岛上的房屋和工坊也改为木结构、石砌底座与陡峭的瓦屋顶",
+      "房屋、市场、港口建筑、宅邸、塔和礼拜堂重新绘制成欧洲中世纪风格",
+      "起始岛上的房屋和工坊也变成木结构、石基和陡峭的瓦屋顶",
       "磨坊和灯塔改为石砌外观",
-      "每座岛上都有农夫、渔夫、铁匠、修士等居民四处走动",
-      "走近居民按 E，即可听到岛上的故事"
+      "每个岛上都有农夫、渔夫、铁匠、修士等居民走动",
+      "走近居民并按E，即可听到岛上的故事"
      ]
     },
     "pt": {
-     "title": "Vilas medievais e moradores",
+     "title": "Vila medieval e moradores das ilhas",
      "items": [
-      "Casas, mercados, prédios do porto, mansões, torres e capelas redesenhados em estilo medieval europeu",
-      "As casas e oficinas da ilha inicial agora têm estrutura de madeira, base de pedra e telhados íngremes de telha",
+      "Casas, mercado, prédios do porto, mansões, torres e capelas foram redesenhados no estilo dos prédios medievais europeus",
+      "As casas e oficinas da ilha inicial também ganham estrutura de madeira, base de pedra e telhados íngremes",
       "O moinho e o farol agora são de pedra",
-      "Em cada ilha circulam agricultores, pescadores, ferreiros e monges",
-      "Chegue perto de um morador e aperte E para ouvir histórias da ilha"
+      "Em cada ilha circulam moradores como agricultores, pescadores, ferreiros e monges",
+      "Chegue perto de um morador e pressione E para ouvir a história da ilha"
      ]
     },
     "ru": {
-     "title": "Средневековые деревни и жители",
+     "title": "Средневековая деревня и жители островов",
      "items": [
-      "Дома, рынки, портовые здания, особняки, башни и часовни перерисованы в средневековом европейском стиле",
-      "Дома и мастерские стартового острова теперь с деревянным каркасом, каменным цоколем и крутыми черепичными крышами",
-      "Мельница и маяк теперь выложены из камня",
-      "На каждом острове ходят крестьяне, рыбаки, кузнецы и монахи",
+      "Дома, рынок, портовые здания, особняки, башни и часовни перерисованы в стиле средневековых европейских зданий",
+      "Дома и мастерские стартового острова тоже теперь с деревянным каркасом, каменным цоколем и крутыми крышами",
+      "Мельница и маяк теперь из камня",
+      "На каждом острове ходят жители: фермеры, рыбаки, кузнецы и монахи",
       "Подойдите к жителю и нажмите E, чтобы услышать историю острова"
      ]
     },
     "tr": {
-     "title": "Ortaçağ köyleri ve sakinler",
+     "title": "Ortaçağ köyü ve ada sakinleri",
      "items": [
-      "Evler, pazarlar, liman binaları, konaklar, kuleler ve şapeller ortaçağ Avrupa tarzında yeniden çizildi",
-      "Başlangıç adasındaki evler ve atölyeler artık ahşap iskeletli, taş tabanlı ve dik kiremit çatılı",
-      "Değirmen ve deniz feneri artık taştan örülmüş görünümde",
-      "Her adada çiftçi, balıkçı, demirci ve keşiş gibi sakinler dolaşıyor",
-      "Bir sakine yaklaşıp E tuşuna basarak ada hakkında bir hikâye dinle"
+      "Evler, pazar, liman binaları, konaklar, kuleler ve şapeller Avrupa ortaçağ yapıları tarzında yeniden çizildi",
+      "Başlangıç adasının evleri ve atölyeleri de ahşap iskelet, taş taban ve dik kiremit çatılarla değişti",
+      "Değirmen ve deniz feneri artık taştan",
+      "Her adada çiftçi, balıkçı, demirci ve keşiş gibi sakinler dolaşır",
+      "Bir sakine yaklaşıp E'ye basarsan ada hikâyesini dinleyebilirsin"
      ]
     },
     "it": {
-     "title": "Villaggi medievali e isolani",
+     "title": "Villaggio medievale e abitanti dell'isola",
      "items": [
-      "Case, mercati, edifici portuali, ville, torri e cappelle ridisegnati in stile medievale europeo",
-      "Case e officine dell'isola iniziale ora hanno struttura in legno, base in pietra e tetti di tegole ripidi",
+      "Case, mercato, edifici del porto, ville, torri e cappelle sono ridisegnati nello stile degli edifici medievali europei",
+      "Anche le case e le botteghe dell'isola iniziale hanno ora struttura in legno, base in pietra e tetti ripidi",
       "Il mulino e il faro ora sono in pietra",
-      "Su ogni isola si aggirano contadini, pescatori, fabbri e monaci",
-      "Avvicinati a un abitante e premi E per sentire una storia dell'isola"
+      "Su ogni isola si muovono abitanti come contadini, pescatori, fabbri e monaci",
+      "Avvicinati a un abitante e premi E per ascoltare la storia dell'isola"
      ]
     },
     "pl": {
-     "title": "Średniowieczne wioski i mieszkańcy",
+     "title": "Średniowieczna wieś i mieszkańcy wysp",
      "items": [
-      "Domy, targi, budynki portowe, dwory, wieże i kaplice narysowane na nowo w średniowiecznym stylu europejskim",
-      "Domy i warsztaty na wyspie startowej mają teraz drewniany szkielet, kamienną podmurówkę i strome dachy z dachówki",
-      "Młyn i latarnia są teraz murowane z kamienia",
-      "Na każdej wyspie chodzą rolnicy, rybacy, kowale i mnisi",
-      "Podejdź do mieszkańca i naciśnij E, by usłyszeć opowieść o wyspie"
+      "Domy, targ, budynki portowe, dwory, wieże i kaplice narysowano na nowo w stylu średniowiecznej Europy",
+      "Domy i warsztaty wyspy startowej też mają drewniany szkielet, kamienny cokół i strome dachy",
+      "Młyn i latarnia są teraz kamienne",
+      "Na każdej wyspie chodzą mieszkańcy: rolnicy, rybacy, kowale i mnisi",
+      "Podejdź do mieszkańca i naciśnij E, aby usłyszeć historię wyspy"
      ]
     },
     "ar": {
-     "title": "قرى قروسطية وسكان",
+     "title": "قرية قروسطية وسكان الجزر",
      "items": [
-      "رسم جديد للبيوت والأسواق ومباني الميناء والقصور والأبراج والكنائس بأسلوب أوروبا في القرون الوسطى",
-      "صارت بيوت الجزيرة الأولى وورشها بهياكل خشبية وقواعد حجرية وأسقف قرميدية شديدة الانحدار",
-      "صارت الطاحونة والمنارة مبنيّتين من الحجر",
-      "على كل جزيرة يتجول فلاحون وصيادون وحدادون ورهبان",
-      "اقترب من أحد السكان واضغط E لتسمع حكاية عن الجزيرة"
+      "أُعيد رسم البيوت والسوق ومباني الميناء والقصور والأبراج والكنائس بأسلوب المباني الأوروبية في العصور الوسطى",
+      "صارت بيوت ومشاغل الجزيرة الأولى أيضًا بهيكل خشبي وأساس حجري وأسقف مائلة",
+      "صارت المطحنة والمنارة من الحجر",
+      "على كل جزيرة يتجول سكان مثل المزارعين والصيادين والحدادين والرهبان",
+      "اقترب من ساكن واضغط E لسماع حكاية الجزيرة"
      ]
     }
    }
   },
   {
    "date": "2026-10-29",
-   "build": "v0.2 b70",
+   "build": "v0.2 build 70",
    "title": "다른 섬 개척",
    "items": [
     "상륙한 섬마다 개척 밭 6칸과 개척 시설 4칸이 생김",
@@ -1559,129 +2018,129 @@
     "ja": {
      "title": "他の島の開拓",
      "items": [
-      "上陸した島ごとに、開拓畑6枠と開拓施設4枠ができる",
-      "開拓畑は1枠400金貨で耕して種をまくと、島を離れている間も育つ",
-      "畑の上を歩くと、実った作物を自動で収穫",
-      "施設4種を追加: 採集小屋、灌漑井戸、放牧場、市場の露店",
-      "採集小屋は島の特産品、放牧場は羊毛、市場の露店は金貨を溜める",
-      "灌漑井戸を建てると、その島の畑の作物が30%早く育つ"
+      "上陸した島ごとに開拓畑6マスと開拓施設4マスができます",
+      "開拓畑は1マス400金貨で開墾でき、種を植えると島を離れていても育ちます",
+      "実った畑の上を歩くと、自動で収穫されます",
+      "施設を4種類追加：採集小屋、灌漑井戸、放牧場、市場の露店",
+      "採集小屋は島の特産品、放牧場は羊毛、市場の露店は金貨をためておきます",
+      "灌漑井戸を建てると、この島の畑の作物が30%早く育ちます"
      ]
     },
     "es": {
      "title": "Colonizar otras islas",
      "items": [
-      "Cada isla en la que desembarcas tiene 6 campos de frontera y 4 instalaciones de frontera",
-      "Un campo de frontera cuesta 400 monedas de oro para labrar; al sembrar, sigue creciendo aunque estés fuera de la isla",
-      "Al caminar sobre un campo maduro se cosecha automáticamente",
-      "4 instalaciones nuevas: cabaña de recolección, pozo de riego, pastizal y puesto de mercado",
-      "La cabaña recolecta productos de la isla, el pastizal lana y el puesto de mercado acumula oro",
-      "Un pozo de riego hace que los cultivos de esa isla crezcan un 30% más rápido"
+      "Al desembarcar en una isla aparecen 6 campos de frontera y 4 instalaciones",
+      "Un campo de frontera cuesta 400 monedas de oro por casilla; las semillas plantadas siguen creciendo aunque estés en otra isla",
+      "Si caminas sobre un campo maduro, la cosecha se hace sola",
+      "Se añaden 4 instalaciones: cabaña de recolección, pozo de riego, pastizal y puesto de mercado",
+      "La cabaña de recolección guarda productos especiales, el pastizal lana, y el puesto de mercado monedas de oro",
+      "Con un pozo de riego construido, los cultivos de esta isla crecen un 30 % más rápido"
      ]
     },
     "fr": {
      "title": "Coloniser d'autres îles",
      "items": [
-      "Chaque île où vous accostez dispose de 6 champs et de 4 installations de frontière",
-      "Un champ de frontière se défriche pour 400 pièces d'or ; une fois semé, il continue de pousser même quand vous êtes absent",
-      "Marcher sur un champ mûr le récolte automatiquement",
-      "4 installations ajoutées : cabane de cueillette, puits d'irrigation, enclos de pâture et étal de marché",
-      "La cabane récolte les produits de l'île, l'enclos la laine, l'étal accumule les pièces d'or",
-      "Un puits d'irrigation fait pousser les cultures de cette île 30 % plus vite"
+      "Lors d'un débarquement, 6 champs de frontière et 4 installations apparaissent sur chaque île",
+      "Un champ de frontière coûte 400 pièces d'or par case ; les graines plantées poussent même pendant votre absence de l'île",
+      "En marchant sur un champ mûr, la récolte se fait automatiquement",
+      "4 installations ajoutées : cabane de cueillette, puits d'irrigation, pâturage et étal de marché",
+      "La cabane de cueillette garde des spécialités, le pâturage de la laine et l'étal de marché des pièces d'or",
+      "Avec un puits d'irrigation construit, les cultures de cette île poussent 30 % plus vite"
      ]
     },
     "de": {
-     "title": "Andere Inseln besiedeln",
+     "title": "Andere Inseln erschließen",
      "items": [
-      "Auf jeder betretenen Insel entstehen 6 Grenzfelder und 4 Grenzanlagen",
-      "Ein Grenzfeld kostet 400 Gold zum Umpflügen; nach der Aussaat wächst es weiter, auch wenn du die Insel verlässt",
-      "Wer über ein reifes Feld läuft, erntet es automatisch",
-      "4 neue Anlagen: Sammelhütte, Bewässerungsbrunnen, Weide und Marktstand",
-      "Die Sammelhütte sammelt Inselwaren, die Weide Wolle, der Marktstand Gold",
-      "Ein Bewässerungsbrunnen lässt die Ernte auf dieser Insel um 30 % schneller wachsen"
+      "Beim Landen auf einer Insel entstehen 6 Grenzfelder und 4 Anlagen",
+      "Ein Grenzfeld kostet 400 Goldmünzen pro Feld; gesäte Samen wachsen auch, während du auf einer anderen Insel bist",
+      "Wer über ein reifes Feld läuft, erntet automatisch",
+      "4 Anlagen hinzugefügt: Sammelhütte, Bewässerungsbrunnen, Weide und Marktstand",
+      "Die Sammelhütte sammelt Inselspezialitäten, die Weide Wolle und der Marktstand Goldmünzen",
+      "Mit gebautem Bewässerungsbrunnen wachsen die Pflanzen dieser Insel 30 % schneller"
      ]
     },
     "zh": {
      "title": "开拓其他岛屿",
      "items": [
-      "每座登陆的岛屿都会出现 6 块开拓田地和 4 个开拓设施",
-      "开拓田地每块 400 金币开垦，播种后即使离开岛屿也会继续生长",
-      "走过成熟的田地即可自动收获",
-      "新增 4 种设施：采集小屋、灌溉井、放牧场、集市摊位",
-      "采集小屋收集岛上特产，放牧场收集羊毛，集市摊位收集金币",
-      "建造灌溉井后，该岛田地的作物生长速度提高 30%"
+      "登陆的岛屿会出现6格开拓田和4格开拓设施",
+      "开拓田每格需400金币开垦，播下的种子即使离开岛屿也会生长",
+      "在成熟的田地上行走即可自动收获",
+      "新增4种设施：采集小屋、灌溉井、牧场、集市摊位",
+      "采集小屋存放特产，牧场存放羊毛，集市摊位存放金币",
+      "建造灌溉井后，本岛田地的作物生长快30%"
      ]
     },
     "pt": {
-     "title": "Colonizando outras ilhas",
+     "title": "Colonizar outras ilhas",
      "items": [
-      "Cada ilha em que você desembarca ganha 6 campos e 4 instalações da fronteira",
-      "Um campo da fronteira custa 400 de ouro para ser arado; plantado, continua crescendo mesmo quando você está longe da ilha",
+      "Ao desembarcar numa ilha, surgem 6 campos de fronteira e 4 instalações",
+      "Um campo de fronteira custa 400 moedas de ouro por casa; as sementes plantadas continuam crescendo mesmo com você em outra ilha",
       "Ao andar sobre um campo maduro, a colheita é automática",
-      "4 instalações novas: cabana de coleta, poço de irrigação, pasto e barraca de mercado",
-      "A cabana guarda produtos da ilha, o pasto guarda lã e a barraca guarda ouro",
-      "Um poço de irrigação faz as colheitas da ilha crescerem 30% mais rápido"
+      "Adicionadas 4 instalações: cabana de coleta, poço de irrigação, pastagem e barraca de mercado",
+      "A cabana de coleta guarda produtos especiais, a pastagem guarda lã e a barraca de mercado guarda moedas de ouro",
+      "Com o poço de irrigação construído, as plantações desta ilha crescem 30% mais rápido"
      ]
     },
     "ru": {
      "title": "Освоение других островов",
      "items": [
-      "На каждом острове, где вы высадились, появляются 6 полей и 4 постройки на освоенных землях",
-      "Поле на освоенных землях вспахивается за 400 золотых, и посеянный урожай растёт даже тогда, когда вы покидаете остров",
-      "Пройдя по созревшему полю, вы автоматически соберёте урожай",
-      "Добавлено 4 постройки: сборная хижина, ирригационный колодец, загон для скота и рыночный прилавок",
-      "Сборная хижина копит товары острова, загон — шерсть, а прилавок — золото",
-      "Ирригационный колодец ускоряет рост урожая на полях этого острова на 30%"
+      "При высадке на остров появляются 6 полей и 4 постройки на фронтире",
+      "Поле на фронтире стоит 400 золотых за ячейку; посеянное растёт, даже когда вы на другом острове",
+      "Если пройти по спелому полю, урожай собирается сам",
+      "Добавлено 4 постройки: хижина собирателя, оросительный колодец, пастбище и торговый прилавок",
+      "Хижина собирателя копит товары, пастбище — шерсть, прилавок — золото",
+      "Если построен оросительный колодец, урожай на полях этого острова растёт на 30% быстрее"
      ]
     },
     "tr": {
-     "title": "Diğer adaları geliştirmek",
+     "title": "Diğer adaları öncü olarak geliştirme",
      "items": [
-      "Karaya çıktığın her adada 6 sınır tarlası ve 4 sınır tesisi oluşur",
-      "Bir sınır tarlası 400 altına sürülür; ekilince sen adadan uzaktayken bile büyümeye devam eder",
-      "Olgunlaşmış tarlanın üzerinde yürüyünce ürün otomatik toplanır",
-      "4 tesis eklendi: toplayıcı kulübe, sulama kuyusu, otlak ve pazar tezgâhı",
-      "Toplayıcı kulübe ada ürünlerini, otlak yünü, pazar tezgâhı da altını biriktirir",
-      "Sulama kuyusu, o adadaki tarlaların ürünlerini %30 daha hızlı büyütür"
+      "Bir adaya çıkınca 6 öncü tarla ve 4 öncü tesis oluşur",
+      "Bir öncü tarla karesi 400 altın tutar; ekilen tohumlar başka adadayken de büyür",
+      "Olgun bir tarlanın üstünden yürüyünce ürün kendiliğinden toplanır",
+      "4 tesis eklendi: toplayıcı kulübesi, sulama kuyusu, otlak ve pazar tezgâhı",
+      "Toplayıcı kulübesi özel ürün, otlak yün, pazar tezgâhı altın biriktirir",
+      "Sulama kuyusu kurulunca bu adadaki tarlaların ürünleri %30 daha hızlı büyür"
      ]
     },
     "it": {
      "title": "Colonizzare altre isole",
      "items": [
-      "Ogni isola su cui sbarchi ha 6 campi e 4 strutture di frontiera",
-      "Un campo di frontiera si dissoda a 400 monete d'oro; seminato, continua a crescere anche quando sei lontano dall'isola",
-      "Camminando su un campo maturo lo raccogli automaticamente",
-      "Aggiunte 4 strutture: capanna di raccolta, pozzo di irrigazione, pascolo e bancarella del mercato",
-      "La capanna raccoglie i prodotti dell'isola, il pascolo la lana, la bancarella l'oro",
-      "Un pozzo di irrigazione fa crescere i raccolti dell'isola del 30% più in fretta"
+      "Sbarcando su un'isola compaiono 6 campi di frontiera e 4 impianti",
+      "Un campo di frontiera costa 400 monete d'oro a casella; i semi piantati crescono anche mentre sei su un'altra isola",
+      "Camminando su un campo maturo il raccolto avviene automaticamente",
+      "Aggiunti 4 impianti: capanna di raccolta, pozzo di irrigazione, pascolo e bancarella del mercato",
+      "La capanna di raccolta conserva prodotti speciali, il pascolo la lana e la bancarella le monete d'oro",
+      "Con il pozzo di irrigazione costruito, i raccolti dei campi di quest'isola crescono il 30% più in fretta"
      ]
     },
     "pl": {
      "title": "Zasiedlanie innych wysp",
      "items": [
-      "Na każdej wyspie, na którą wylądujesz, powstaje 6 pól i 4 budynki pogranicza",
-      "Pole na pograniczu kosztuje 400 złotych do uprawy; po zasianiu rośnie nawet wtedy, gdy jesteś poza wyspą",
-      "Przejście po dojrzałym polu automatycznie zbiera plony",
-      "4 nowe budynki: chata zbieracza, studnia nawadniająca, zagroda na pastwisko i stragan targowy",
-      "Chata gromadzi produkty wyspy, zagroda wełnę, a stragan złoto",
-      "Studnia nawadniająca przyspiesza wzrost plonów na polach tej wyspy o 30%"
+      "Po wylądowaniu na wyspie pojawia się 6 pól pogranicza i 4 obiekty",
+      "Pole pogranicza kosztuje 400 monet złota za pole; zasiane nasiona rosną, nawet gdy jesteś na innej wyspie",
+      "Idąc po dojrzałym polu, plony zbierają się automatycznie",
+      "Dodano 4 obiekty: chatę zbieracza, studnię nawadniającą, pastwisko i kramik targowy",
+      "Chata zbieracza gromadzi specjały, pastwisko wełnę, a kramik targowy złoto",
+      "Po zbudowaniu studni nawadniającej uprawy na polach tej wyspy rosną o 30% szybciej"
      ]
     },
     "ar": {
      "title": "استيطان جزر أخرى",
      "items": [
-      "تظهر على كل جزيرة ترسو عليها 6 حقول و4 منشآت حدودية",
-      "تُحرث قطعة الحقل الحدودية بـ400 ذهبة، وتستمر في النمو بعد زراعة بذورها حتى وأنت بعيد عن الجزيرة",
-      "المشي فوق حقل ناضج يحصد محصوله تلقائيًا",
-      "4 منشآت جديدة: كوخ الجمع، وبئر الري، ومرعى، وكشك السوق",
-      "يجمع الكوخ منتجات الجزيرة، والمرعى الصوف، والكشك الذهب",
-      "تجعل بئر الري محاصيل حقول تلك الجزيرة تنمو أسرع بنسبة 30%"
+      "عند النزول إلى جزيرة تظهر 6 حقول حدودية و4 منشآت",
+      "تكلف الحقلة الحدودية 400 قطعة ذهبية للخانة؛ والبذور المزروعة تنمو حتى وأنت في جزيرة أخرى",
+      "عند المشي على حقل ناضج تُحصد المحاصيل تلقائيًا",
+      "أُضيفت 4 منشآت: كوخ جمع الموارد وبئر الري والمرعى وكشك السوق",
+      "يجمع كوخ جمع الموارد المنتجات الخاصة، والمرعى الصوف، وكشك السوق الذهب",
+      "عند بناء بئر الري تنمو محاصيل حقول هذه الجزيرة أسرع بنسبة 30%"
      ]
     }
    }
   },
   {
    "date": "2026-10-28",
-   "build": "v0.2 b69",
+   "build": "v0.2 build 69",
    "title": "프로필 창 정리",
    "items": [
     "게임 안 프로필 창에서 꾸미기 버튼 삭제"
@@ -1694,76 +2153,76 @@
      ]
     },
     "ja": {
-     "title": "プロフィール画面の整理",
+     "title": "プロフィール窓を整理",
      "items": [
-      "ゲーム内のプロフィール画面から「飾る」ボタンを削除"
+      "ゲーム内のプロフィール窓の飾りボタンを削除"
      ]
     },
     "es": {
-     "title": "Ajustes de la ventana de perfil",
+     "title": "Ventana de perfil ordenada",
      "items": [
-      "Eliminado el botón de personalizar de la ventana de perfil dentro del juego"
+      "Se quitó el botón de decoración de la ventana de perfil dentro del juego"
      ]
     },
     "fr": {
-     "title": "Nettoyage de la fenêtre de profil",
+     "title": "Fenêtre de profil rangée",
      "items": [
-      "Bouton de personnalisation supprimé de la fenêtre de profil en jeu"
+      "Bouton de décoration supprimé de la fenêtre de profil en jeu"
      ]
     },
     "de": {
      "title": "Profilfenster aufgeräumt",
      "items": [
-      "Der Anpassen-Knopf im Profilfenster des Spiels wurde entfernt"
+      "Der Button zum Gestalten im Profilfenster im Spiel wurde entfernt"
      ]
     },
     "zh": {
      "title": "整理资料窗口",
      "items": [
-      "删除游戏内资料窗口中的“装扮”按钮"
+      "游戏内资料窗口的装饰按钮已删除"
      ]
     },
     "pt": {
-     "title": "Organização da janela de perfil",
+     "title": "Janela de perfil organizada",
      "items": [
-      "Botão de personalizar removido da janela de perfil no jogo"
+      "Botão de decoração da janela de perfil no jogo foi removido"
      ]
     },
     "ru": {
-     "title": "Окно профиля: порядок",
+     "title": "Окно профиля приведено в порядок",
      "items": [
-      "Убрана кнопка «Оформить» из окна профиля в игре"
+      "Кнопка оформления в окне профиля в игре удалена"
      ]
     },
     "tr": {
-     "title": "Profil penceresi düzenlemesi",
+     "title": "Profil penceresi düzenlendi",
      "items": [
-      "Oyun içi profil penceresindeki özelleştirme düğmesi kaldırıldı"
+      "Oyun içi profil penceresindeki süsleme düğmesi kaldırıldı"
      ]
     },
     "it": {
-     "title": "Pulizia della finestra profilo",
+     "title": "Finestra del profilo riordinata",
      "items": [
-      "Rimosso il pulsante di personalizzazione dalla finestra profilo in gioco"
+      "Rimosso il pulsante di decorazione nella finestra del profilo in gioco"
      ]
     },
     "pl": {
-     "title": "Porządki w oknie profilu",
+     "title": "Uporządkowano okno profilu",
      "items": [
-      "Usunięto przycisk personalizacji z okna profilu w grze"
+      "Usunięto przycisk ozdabiania w oknie profilu w grze"
      ]
     },
     "ar": {
      "title": "تنظيم نافذة الملف الشخصي",
      "items": [
-      "أُزيل زر التخصيص من نافذة الملف الشخصي داخل اللعبة"
+      "أُزيل زر التزيين من نافذة الملف الشخصي داخل اللعبة"
      ]
     }
    }
   },
   {
    "date": "2026-10-28",
-   "build": "v0.2 b68",
+   "build": "v0.2 build 68",
    "title": "옛 빌드가 뜨는 문제 고치기",
    "items": [
     "사이트의 바로 플레이가 빌드 번호가 붙은 주소로 열림",
@@ -1778,87 +2237,87 @@
      ]
     },
     "ja": {
-     "title": "古いビルドが表示される問題を修正",
+     "title": "古いビルドが起動する問題を修正",
      "items": [
-      "サイトの「すぐプレイ」はビルド番号付きのアドレスで開く",
-      "古いビルドがキャッシュから表示された場合、最新ビルドを確認して自動で一度読み直す"
+      "サイトの「すぐ遊ぶ」はビルド番号付きのアドレスで開くようになりました",
+      "古いビルドがキャッシュから表示された場合、最新ビルドを確認して一度自動で読み直します"
      ]
     },
     "es": {
-     "title": "Arreglado: aparecía una versión antigua",
+     "title": "Corregido el problema de cargar una versión antigua",
      "items": [
-      "Jugar desde el sitio ahora abre una dirección con el número de compilación",
-      "Si una versión antigua se carga desde la caché, se comprueba la más reciente y se recarga una vez automáticamente"
+      "En el sitio, «Jugar ya» se abre en una dirección con número de compilación",
+      "Si una versión antigua aparece desde la caché, se comprueba la última versión y se vuelve a cargar automáticamente una vez"
      ]
     },
     "fr": {
-     "title": "Correction de l'affichage d'une ancienne version",
+     "title": "Correction du chargement d'une ancienne version",
      "items": [
-      "Le bouton « Jouer maintenant » du site ouvre une adresse avec le numéro de build",
-      "Si une ancienne version se charge depuis le cache, la plus récente est vérifiée et rechargée une fois automatiquement"
+      "Sur le site, « Jouer tout de suite » s'ouvre à une adresse avec le numéro de build",
+      "Si une ancienne version s'affiche depuis le cache, la dernière version est vérifiée et rechargée automatiquement une fois"
      ]
     },
     "de": {
-     "title": "Problem mit alter Version behoben",
+     "title": "Problem behoben, bei dem eine alte Version geladen wurde",
      "items": [
-      "„Sofort spielen“ auf der Website öffnet eine Adresse mit Build-Nummer",
-      "Lädt eine alte Version aus dem Cache, wird die neueste geprüft und einmal automatisch neu geladen"
+      "Auf der Website öffnet sich „Direkt spielen“ unter einer Adresse mit Build-Nummer",
+      "Erscheint eine alte Version aus dem Cache, wird die neueste geprüft und einmal automatisch neu geladen"
      ]
     },
     "zh": {
-     "title": "修复旧版本显示的问题",
+     "title": "修复旧版本被加载的问题",
      "items": [
-      "网站上的“直接开玩”会打开带构建号的地址",
-      "若旧版本从缓存加载，会检查最新版本并自动重新加载一次"
+      "网站的“立即游戏”会在带构建号的地址中打开",
+      "如果旧版本从缓存中显示，会检查最新版本并自动重新加载一次"
      ]
     },
     "pt": {
-     "title": "Corrigido o problema de versão antiga aparecer",
+     "title": "Corrigido o problema de abrir uma versão antiga",
      "items": [
-      "O \"jogar agora\" do site abre um endereço com o número da build",
-      "Se uma versão antiga carregar do cache, a versão mais recente é verificada e recarregada automaticamente uma vez"
+      "No site, o «Jogar agora» abre num endereço com o número da build",
+      "Se uma versão antiga aparecer do cache, a versão mais recente é verificada e recarregada automaticamente uma vez"
      ]
     },
     "ru": {
      "title": "Исправлено: открывалась старая версия",
      "items": [
-      "«Играть сразу» на сайте открывает адрес с номером сборки",
-      "Если старая версия загрузилась из кэша, проверяется последняя сборка и страница один раз автоматически перезагружается"
+      "На сайте «Играть сразу» открывается по адресу с номером сборки",
+      "Если старая версия открылась из кэша, проверяется новая и страница один раз перезагружается"
      ]
     },
     "tr": {
      "title": "Eski sürümün açılma sorunu düzeltildi",
      "items": [
-      "Sitedeki hemen oyna bağlantısı, derleme numarası içeren bir adres açar",
+      "Sitedeki «Hemen oyna» derleme numarası içeren adreste açılır",
       "Eski sürüm önbellekten açılırsa en son sürüm kontrol edilir ve bir kez otomatik yeniden yüklenir"
      ]
     },
     "it": {
-     "title": "Corretto il problema della vecchia versione che appariva",
+     "title": "Corretto il problema per cui si apriva una vecchia versione",
      "items": [
-      "Gioca subito sul sito apre un indirizzo con il numero di build",
-      "Se una vecchia versione si carica dalla cache, si controlla la più recente e si ricarica automaticamente una volta"
+      "Sul sito, «Gioca subito» si apre a un indirizzo con il numero di build",
+      "Se una vecchia versione compare dalla cache, si controlla la più recente e si ricarica automaticamente una volta"
      ]
     },
     "pl": {
-     "title": "Naprawiono wyświetlanie starej wersji",
+     "title": "Naprawiono problem z uruchamianiem starej wersji",
      "items": [
-      "„Graj od razu” na stronie otwiera adres z numerem wersji",
-      "Jeśli stara wersja uruchomi się z pamięci podręcznej, sprawdzana jest najnowsza i automatycznie ładowana ponownie raz"
+      "Na stronie «Graj od razu» otwiera się pod adresem z numerem kompilacji",
+      "Jeśli stara wersja pojawi się z pamięci podręcznej, sprawdzana jest najnowsza i raz automatycznie ładowana ponownie"
      ]
     },
     "ar": {
-     "title": "إصلاح ظهور نسخة قديمة",
+     "title": "إصلاح مشكلة فتح نسخة قديمة",
      "items": [
-      "زر \"العب الآن\" في الموقع يفتح عنوانًا يتضمن رقم البناء",
-      "إذا حُمّلت نسخة قديمة من الذاكرة المؤقتة، يُفحص أحدث إصدار ويُعاد تحميله تلقائيًا مرة واحدة"
+      "في الموقع يُفتح «العب فورًا» على عنوان يتضمن رقم الإصدار",
+      "إذا ظهرت نسخة قديمة من الذاكرة المؤقتة يُتحقق من أحدث نسخة وتُعاد تحميلها تلقائيًا مرة واحدة"
      ]
     }
    }
   },
   {
    "date": "2026-10-28",
-   "build": "v0.2 b67",
+   "build": "v0.2 build 67",
    "title": "옛 버전 기록 막기",
    "items": [
     "재산 순위에 보내는 값에 빌드 번호 함께 전송",
@@ -1875,85 +2334,85 @@
     "ja": {
      "title": "古いバージョンの記録を防止",
      "items": [
-      "資産ランキングに送る値に、ビルド番号も一緒に送信",
-      "新バージョン公開後、古いバージョンの画面はランキングや実績を更新せず、再読み込みを案内"
+      "財産ランキングに送る値と一緒にビルド番号も送信",
+      "新バージョンが出た後、古いバージョンの窓では順位と実績が上がらず、再読み込みの案内が出ます"
      ]
     },
     "es": {
-     "title": "Bloqueo de versiones antiguas",
+     "title": "Bloqueo de registros de versiones antiguas",
      "items": [
-      "Los datos de la clasificación de riqueza ahora incluyen el número de compilación",
-      "Tras una nueva versión, la ventana antigua no sube el ranking ni los logros y pide recargar"
+      "El número de compilación se envía junto con el valor de la clasificación de riqueza",
+      "Cuando sale una versión nueva, la ventana de la versión antigua no sube en la clasificación ni en los logros y muestra un aviso para recargar"
      ]
     },
     "fr": {
-     "title": "Blocage des anciennes versions",
+     "title": "Blocage des enregistrements des anciennes versions",
      "items": [
-      "Les données envoyées au classement de fortune incluent désormais le numéro de build",
-      "Après une nouvelle version, l'ancienne fenêtre n'envoie plus classement ni succès et invite à actualiser"
+      "Le numéro de build est envoyé avec la valeur du classement de fortune",
+      "Une fois la nouvelle version sortie, la fenêtre de l'ancienne ne fait plus monter le classement ni les succès et affiche un message de rechargement"
      ]
     },
     "de": {
-     "title": "Schutz vor alten Versionen",
+     "title": "Alte Versionen werden nicht mehr gewertet",
      "items": [
-      "Die an die Vermögensrangliste gesendeten Daten enthalten jetzt die Build-Nummer",
-      "Nach einer neuen Version meldet das alte Fenster keine Rangliste und Erfolge mehr und bittet um Neuladen"
+      "Die Build-Nummer wird zusammen mit dem Wert für die Vermögensrangliste gesendet",
+      "Nach einer neuen Version wertet das alte Fenster weder Rangliste noch Erfolge und zeigt einen Hinweis zum Neuladen"
      ]
     },
     "zh": {
-     "title": "阻止旧版本记录",
+     "title": "阻止旧版本的记录",
      "items": [
-      "发送到财富排行榜的数据现在会附带构建号",
-      "发布新版本后，旧版本窗口不再更新排行和成就，并提示刷新"
+      "发送财富排行榜数值时一并发送构建号",
+      "新版本发布后，旧版本窗口不再提升排行和成就，并提示刷新"
      ]
     },
     "pt": {
-     "title": "Bloqueio de versões antigas",
+     "title": "Bloqueio de registros de versões antigas",
      "items": [
-      "Os dados enviados ao ranking de riqueza agora incluem o número da build",
-      "Depois de uma nova versão, a janela antiga não atualiza ranking nem conquistas e pede para atualizar"
+      "O número da build é enviado junto com o valor do ranking de riqueza",
+      "Depois que sai uma nova versão, a janela da versão antiga não sobe no ranking nem nas conquistas e mostra um aviso para atualizar"
      ]
     },
     "ru": {
-     "title": "Защита от старых версий",
+     "title": "Блокировка записей старых версий",
      "items": [
-      "В данные для рейтинга богатства теперь добавлен номер сборки",
-      "После выхода новой версии старое окно не обновляет рейтинг и достижения и просит обновить страницу"
+      "Номер сборки отправляется вместе со значением рейтинга богатства",
+      "После выхода новой версии старое окно не поднимает рейтинг и достижения и просит обновить страницу"
      ]
     },
     "tr": {
      "title": "Eski sürüm kayıtlarının engellenmesi",
      "items": [
-      "Servet sıralamasına gönderilen veriye derleme numarası da eklenir",
-      "Yeni sürüm çıktıktan sonra eski pencere sıralama ve başarımları güncellemez, yenilemeyi önerir"
+      "Servet sıralamasına gönderilen değerle birlikte derleme numarası da gönderilir",
+      "Yeni sürüm çıktıktan sonra eski sürüm penceresi sıralamayı ve başarımları yükseltmez, yenilemeyi önerir"
      ]
     },
     "it": {
-     "title": "Blocco delle vecchie versioni",
+     "title": "Blocco delle registrazioni delle vecchie versioni",
      "items": [
-      "I dati inviati alla classifica della ricchezza ora includono il numero di build",
-      "Dopo una nuova versione, la vecchia finestra non aggiorna classifica e obiettivi e chiede di ricaricare"
+      "Il numero di build viene inviato insieme al valore della classifica delle ricchezze",
+      "Dopo l'uscita di una nuova versione, la finestra della vecchia non fa salire classifica e obiettivi e invita ad aggiornare"
      ]
     },
     "pl": {
-     "title": "Blokada starych wersji",
+     "title": "Blokada wpisów starych wersji",
      "items": [
-      "Dane wysyłane do rankingu majątku zawierają teraz numer wersji",
-      "Po wydaniu nowej wersji stare okno nie aktualizuje rankingu ani osiągnięć i prosi o odświeżenie"
+      "Numer kompilacji wysyłany jest razem z wartością rankingu majątku",
+      "Po wydaniu nowej wersji stare okno nie podnosi rankingu ani osiągnięć i zaleca odświeżenie"
      ]
     },
     "ar": {
-     "title": "منع تسجيل النتائج من النسخ القديمة",
+     "title": "منع تسجيل النسخ القديمة",
      "items": [
-      "تُرسَل مع بيانات ترتيب الثروة رقم البناء أيضًا",
-      "بعد صدور نسخة جديدة، لا تحدّث النافذة القديمة الترتيب والإنجازات بل تطلب التحديث"
+      "يُرسل رقم الإصدار مع قيمة ترتيب الثروة",
+      "بعد صدور نسخة جديدة لا ترفع نافذة النسخة القديمة الترتيب أو الإنجازات، وتقترح التحديث"
      ]
     }
    }
   },
   {
    "date": "2026-10-28",
-   "build": "v0.2 b66",
+   "build": "v0.2 build 66",
    "title": "확대 제스처 막기",
    "items": [
     "아이폰에서 두 번 터치와 두 손가락 확대 제스처 차단"
@@ -1968,74 +2427,74 @@
     "ja": {
      "title": "拡大ジェスチャーを防止",
      "items": [
-      "iPhoneでのダブルタップと二本指による拡大ジェスチャーをブロック"
+      "iPhoneで、二度タップと二本指での拡大ジェスチャーを防ぎます"
      ]
     },
     "es": {
-     "title": "Sin gestos de zoom",
+     "title": "Bloquear gesto de ampliación",
      "items": [
-      "En iPhone se bloquean el doble toque y el zoom con dos dedos"
+      "En iPhone se bloquean el doble toque y el gesto de ampliación con dos dedos"
      ]
     },
     "fr": {
-     "title": "Gestes de zoom bloqués",
+     "title": "Blocage du geste de zoom",
      "items": [
-      "Sur iPhone, blocage du double-tap et du pincement"
+      "Sur iPhone, double-toucher et le zoom à deux doigts sont bloqués"
      ]
     },
     "de": {
-     "title": "Keine Zoom-Gesten",
+     "title": "Vergrößerungsgeste blockieren",
      "items": [
-      "Auf dem iPhone werden Doppeltippen und Zwei-Finger-Zoom blockiert"
+      "Auf dem iPhone werden Doppeltippen und Zoomen mit zwei Fingern blockiert"
      ]
     },
     "zh": {
-     "title": "禁止缩放手势",
+     "title": "阻止缩放手势",
      "items": [
-      "iPhone 上屏蔽双击和双指缩放手势"
+      "在 iPhone 上阻止双击和双指缩放手势"
      ]
     },
     "pt": {
-     "title": "Sem gestos de zoom",
+     "title": "Bloquear gesto de ampliação",
      "items": [
-      "No iPhone, bloqueio de toque duplo e de zoom com dois dedos"
+      "No iPhone, o toque duplo e o gesto de ampliação com dois dedos são bloqueados"
      ]
     },
     "ru": {
-     "title": "Жесты масштабирования отключены",
+     "title": "Блокировка жеста увеличения",
      "items": [
-      "На iPhone заблокированы двойное касание и масштабирование двумя пальцами"
+      "На iPhone блокируются двойное касание и увеличение двумя пальцами"
      ]
     },
     "tr": {
-     "title": "Yakınlaştırma hareketleri engellendi",
+     "title": "Yakınlaştırma hareketinin engellenmesi",
      "items": [
-      "iPhone'da çift dokunma ve iki parmakla yakınlaştırma engellendi"
+      "iPhone'da çift dokunma ve iki parmakla yakınlaştırma engellenir"
      ]
     },
     "it": {
-     "title": "Niente gesti di zoom",
+     "title": "Blocco del gesto di zoom",
      "items": [
-      "Su iPhone bloccati doppio tocco e zoom a due dita"
+      "Su iPhone sono bloccati il doppio tocco e lo zoom a due dita"
      ]
     },
     "pl": {
-     "title": "Brak gestów powiększania",
+     "title": "Blokada gestu powiększania",
      "items": [
-      "Na iPhonie zablokowano dwukrotne stuknięcie i powiększanie dwoma palcami"
+      "Na iPhonie zablokowane jest dwukrotne dotknięcie i powiększanie dwoma palcami"
      ]
     },
     "ar": {
-     "title": "منع إيماءات التكبير",
+     "title": "منع إيماءة التكبير",
      "items": [
-      "حظر النقر المزدوج والتكبير بإصبعين على iPhone"
+      "على iPhone يُمنع النقر المزدوج وإيماءة التكبير بإصبعين"
      ]
     }
    }
   },
   {
    "date": "2026-10-28",
-   "build": "v0.2 b65",
+   "build": "v0.2 build 65",
    "title": "두 번 터치 확대 막기",
    "items": [
     "게임 화면을 두 번 터치해도 확대되지 않아요"
@@ -2048,76 +2507,76 @@
      ]
     },
     "ja": {
-     "title": "ダブルタップ拡大を防止",
+     "title": "二度タップによる拡大を防止",
      "items": [
-      "ゲーム画面をダブルタップしても拡大されなくなりました"
+      "ゲーム画面を二度タップしても拡大されなくなりました"
      ]
     },
     "es": {
-     "title": "Sin zoom al tocar dos veces",
+     "title": "Bloquear ampliación por doble toque",
      "items": [
-      "Tocar dos veces la pantalla del juego ya no amplía la imagen"
+      "Aunque se toque dos veces la pantalla del juego, no se amplía"
      ]
     },
     "fr": {
-     "title": "Pas de zoom au double-tap",
+     "title": "Blocage du zoom par double tap",
      "items": [
-      "Un double-tap sur le jeu ne zoome plus"
+      "Même en tapotant deux fois sur l'écran de jeu, celui-ci ne s'agrandit pas"
      ]
     },
     "de": {
-     "title": "Kein Zoom per Doppeltipp",
+     "title": "Zoom durch Doppeltippen blockieren",
      "items": [
-      "Doppeltippen auf das Spiel vergrößert nicht mehr"
+      "Auch wenn du den Spielbildschirm zweimal antippst, wird er nicht vergrößert"
      ]
     },
     "zh": {
-     "title": "禁止双击放大",
+     "title": "阻止双击放大",
      "items": [
-      "双击游戏画面不再放大"
+      "双击游戏画面也不会放大"
      ]
     },
     "pt": {
-     "title": "Sem zoom com toque duplo",
+     "title": "Bloquear ampliação por toque duplo",
      "items": [
-      "Tocar duas vezes na tela do jogo não amplia mais"
+      "Mesmo tocando duas vezes na tela do jogo, ela não amplia"
      ]
     },
     "ru": {
-     "title": "Без увеличения двойным касанием",
+     "title": "Блокировка увеличения двойным касанием",
      "items": [
-      "Двойное касание игрового экрана больше не увеличивает изображение"
+      "Двойное касание к экрану игры больше не увеличивает его"
      ]
     },
     "tr": {
-     "title": "Çift dokunmayla yakınlaştırma yok",
+     "title": "Çift dokunmayla yakınlaştırmanın engellenmesi",
      "items": [
-      "Oyun ekranına çift dokunmak artık yakınlaştırmaz"
+      "Oyun ekranına iki kez dokunulsa da büyümez"
      ]
     },
     "it": {
-     "title": "Niente zoom con doppio tocco",
+     "title": "Blocco dello zoom con doppio tocco",
      "items": [
-      "Toccare due volte il gioco non lo ingrandisce più"
+      "Anche toccando due volte lo schermo di gioco non si ingrandisce"
      ]
     },
     "pl": {
-     "title": "Brak powiększania dwukrotnym stuknięciem",
+     "title": "Blokada powiększania podwójnym dotknięciem",
      "items": [
-      "Dwukrotne stuknięcie ekranu gry już nie powiększa"
+      "Dwukrotne dotknięcie ekranu gry nie powiększa go"
      ]
     },
     "ar": {
-     "title": "لا تكبير بالنقر المزدوج",
+     "title": "منع التكبير بالنقر المزدوج",
      "items": [
-      "لم يعد النقر المزدوج على شاشة اللعبة يكبّرها"
+      "لا يتكبّر ذلك الشاشة حتى عند النقر عليها مرتين"
      ]
     }
    }
   },
   {
    "date": "2026-10-28",
-   "build": "v0.2 b64",
+   "build": "v0.2 build 64",
    "title": "공용 프로필 창",
    "items": [
     "계정 창에서 허브와 같은 프로필 카드 열기",
@@ -2134,90 +2593,90 @@
      ]
     },
     "ja": {
-     "title": "共通のプロフィール画面",
+     "title": "共用のプロフィール窓",
      "items": [
-      "アカウント画面からハブと同じプロフィールカードを開く",
+      "アカウント窓から、ハブと同じプロフィールカードを開けます",
       "プロフィールカードの下にIsleportの統計を表示",
       "名前とプロフィールの変更はハブでのみ可能"
      ]
     },
     "es": {
-     "title": "Ventana de perfil compartida",
+     "title": "Ventana de perfil compartido",
      "items": [
-      "Desde la ventana de cuenta se abre la misma tarjeta de perfil que en el hub",
-      "Estadísticas de Isleport debajo de la tarjeta de perfil",
-      "Solo se puede cambiar el nombre y el perfil desde el hub"
+      "En la ventana de la cuenta se abre la misma tarjeta de perfil que en el centro",
+      "Bajo la tarjeta de perfil se muestran las estadísticas de Isleport",
+      "Cambiar el nombre y el perfil solo es posible desde el centro"
      ]
     },
     "fr": {
-     "title": "Fenêtre de profil commune",
+     "title": "Fenêtre de profil partagée",
      "items": [
-      "Ouvrir depuis la fenêtre du compte la même carte de profil que dans le hub",
-      "Statistiques Isleport sous la carte de profil",
-      "Le nom et le profil ne se modifient que dans le hub"
+      "Dans la fenêtre du compte, ouvrez la même carte de profil que dans le hub",
+      "Les statistiques Isleport sont affichées sous la carte de profil",
+      "Le nom et le profil ne peuvent être changés que depuis le hub"
      ]
     },
     "de": {
      "title": "Gemeinsames Profilfenster",
      "items": [
       "Im Kontofenster öffnet sich dieselbe Profilkarte wie im Hub",
-      "Isleport-Statistiken unter der Profilkarte",
-      "Name und Profil lassen sich nur im Hub ändern"
+      "Unter der Profilkarte werden die Isleport-Statistiken angezeigt",
+      "Name und Profil können nur im Hub geändert werden"
      ]
     },
     "zh": {
-     "title": "通用资料窗口",
+     "title": "共用资料窗口",
      "items": [
-      "在账号窗口中打开与大厅相同的资料卡",
+      "在账号窗口中打开与中心站相同的资料卡",
       "资料卡下方显示 Isleport 统计",
-      "名称和资料只能在大厅中修改"
+      "名字和资料只能在中心站修改"
      ]
     },
     "pt": {
      "title": "Janela de perfil compartilhada",
      "items": [
-      "Abra na janela da conta o mesmo cartão de perfil do hub",
-      "Estatísticas do Isleport abaixo do cartão de perfil",
+      "Na janela da conta, abra o mesmo cartão de perfil do hub",
+      "Estatísticas do Isleport aparecem abaixo do cartão de perfil",
       "Nome e perfil só podem ser alterados no hub"
      ]
     },
     "ru": {
      "title": "Общее окно профиля",
      "items": [
-      "Из окна аккаунта открывается та же карточка профиля, что и в хабе",
-      "Статистика Isleport под карточкой профиля",
-      "Имя и профиль можно менять только в хабе"
+      "В окне аккаунта открывается та же карточка профиля, что и в хабе",
+      "Под карточкой профиля показана статистика Isleport",
+      "Имя и профиль меняются только в хабе"
      ]
     },
     "tr": {
      "title": "Ortak profil penceresi",
      "items": [
-      "Hesap penceresinden hub'daki ile aynı profil kartını aç",
-      "Profil kartının altında Isleport istatistikleri",
-      "Ad ve profil yalnızca hub'dan değiştirilebilir"
+      "Hesap penceresinde merkezdekiyle aynı profil kartı açılır",
+      "Profil kartının altında Isleport istatistikleri gösterilir",
+      "Ad ve profil yalnızca merkezden değiştirilebilir"
      ]
     },
     "it": {
-     "title": "Finestra profilo condivisa",
+     "title": "Finestra del profilo condivisa",
      "items": [
-      "Apri dalla finestra account la stessa scheda profilo dell'hub",
-      "Statistiche di Isleport sotto la scheda profilo",
-      "Nome e profilo si cambiano solo dall'hub"
+      "Dalla finestra dell'account si apre la stessa scheda profilo dell'hub",
+      "Sotto la scheda profilo vengono mostrate le statistiche di Isleport",
+      "Nome e profilo si possono cambiare solo nell'hub"
      ]
     },
     "pl": {
      "title": "Wspólne okno profilu",
      "items": [
-      "Otwórz z okna konta tę samą kartę profilu co w hubie",
-      "Statystyki Isleport pod kartą profilu",
-      "Nazwę i profil można zmienić tylko w hubie"
+      "W oknie konta otwiera się ta sama karta profilu co w hubie",
+      "Pod kartą profilu pokazywane są statystyki Isleport",
+      "Imię i profil można zmieniać tylko w hubie"
      ]
     },
     "ar": {
-     "title": "نافذة ملف شخصي مشتركة",
+     "title": "نافذة الملف الشخصي المشتركة",
      "items": [
-      "فتح بطاقة الملف الشخصي نفسها الموجودة في المركز من نافذة الحساب",
-      "إحصاءات Isleport أسفل بطاقة الملف الشخصي",
+      "من نافذة الحساب تُفتح بطاقة الملف الشخصي نفسها الموجودة في المركز",
+      "تظهر إحصاءات Isleport أسفل بطاقة الملف الشخصي",
       "لا يمكن تغيير الاسم والملف الشخصي إلا من المركز"
      ]
     }
@@ -2225,7 +2684,7 @@
   },
   {
    "date": "2026-10-26",
-   "build": "v0.2 b63",
+   "build": "v0.2 build 63",
    "title": "화면 흔들림 줄이기",
    "items": [
     "걸을 때 화면이 따라오며 떨리던 현상 고침",
@@ -2242,98 +2701,98 @@
      ]
     },
     "ja": {
-     "title": "画面の揺れを軽減",
+     "title": "画面の揺れを減らす",
      "items": [
-      "歩くときに画面がついてきて震える現象を修正",
-      "作物、船、店、島民、島の品が上下にちらついていた動きを削除",
-      "水面のきらめき、旗、選択枠の点滅を、ゆっくりと弱めに"
+      "歩くときに画面が震える現象を修正",
+      "作物、船、店、住民、島の物の上下に点滅していた動きをなくしました",
+      "水面のきらめき、旗、選択枠の点滅を、ゆっくりと弱くしました"
      ]
     },
     "es": {
-     "title": "Pantalla más estable",
+     "title": "Menos sacudidas de pantalla",
      "items": [
-      "Corregido el temblor de la pantalla al caminar",
-      "Eliminado el parpadeo arriba y abajo de cultivos, barcos, tiendas, habitantes y objetos de la isla",
-      "Destellos del agua, banderas y borde de selección más lentos y suaves"
+      "Se corrige el temblor de la pantalla al caminar",
+      "Se quitó el movimiento de parpadeo arriba y abajo de cultivos, barcos, tiendas, habitantes y objetos de la isla",
+      "El brillo del agua, las banderas y el parpadeo del borde de selección son más lentos y suaves"
      ]
     },
     "fr": {
-     "title": "Écran plus stable",
+     "title": "Moins de secousses d'écran",
      "items": [
-      "Correction du tremblement de l'écran pendant la marche",
-      "Suppression du scintillement vertical des cultures, bateaux, boutiques, habitants et objets de l'île",
-      "Scintillement de l'eau, drapeaux et contour de sélection plus lents et plus doux"
+      "Correction du tremblement de l'écran lorsqu'on marche",
+      "Suppression du mouvement de clignotement haut et bas des cultures, bateaux, boutiques, habitants et objets de l'île",
+      "Les scintillements de l'eau, des drapeaux et du cadre de sélection sont plus lents et plus doux"
      ]
     },
     "de": {
-     "title": "Ruhigerer Bildschirm",
+     "title": "Weniger Bildschirmwackeln",
      "items": [
-      "Behoben: Der Bildschirm zitterte beim Gehen",
-      "Das Auf-und-ab-Flackern von Ernte, Schiffen, Läden, Bewohnern und Inselgegenständen wurde entfernt",
-      "Wasserglitzern, Flaggen und Auswahlrahmen flackern langsamer und schwächer"
+      "Das Zittern des Bildschirms beim Gehen ist behoben",
+      "Das Auf-und-ab-Flackern von Pflanzen, Booten, Läden, Bewohnern und Inselobjekten wurde entfernt",
+      "Das Glitzern des Wassers, die Fahnen und das Blinken des Auswahlrahmens sind langsamer und sanfter"
      ]
     },
     "zh": {
-     "title": "画面更稳定",
+     "title": "减少画面晃动",
      "items": [
-      "修复走路时画面跟随抖动的问题",
-      "去除了作物、船只、商店、居民和岛上物品上下闪烁的动作",
-      "水光闪烁、旗帜和选中边框的闪动变得更慢、更柔和"
+      "修复行走时画面抖动的问题",
+      "移除了作物、船只、商店、居民和岛上物品上下闪烁的动作",
+      "水光闪烁、旗帜和选中边框的闪烁变得更慢、更轻"
      ]
     },
     "pt": {
-     "title": "Tela mais estável",
+     "title": "Menos tremor de tela",
      "items": [
       "Corrigido o tremor da tela ao andar",
-      "Removido o piscar para cima e para baixo de colheitas, barcos, lojas, moradores e objetos da ilha",
-      "Brilho da água, bandeiras e contorno de seleção mais lentos e suaves"
+      "Removido o movimento de piscar para cima e para baixo de plantações, barcos, lojas, moradores e objetos da ilha",
+      "O brilho da água, as bandeiras e a piscada da borda de seleção ficaram mais lentos e fracos"
      ]
     },
     "ru": {
-     "title": "Спокойнее экран",
+     "title": "Меньше тряски экрана",
      "items": [
       "Исправлено дрожание экрана при ходьбе",
-      "Убрано мерцание вверх-вниз у урожая, кораблей, магазинов, жителей и предметов острова",
-      "Блики воды, флаги и рамка выбора теперь мерцают медленнее и мягче"
+      "Убрано мигание вверх-вниз у посевов, кораблей, лавок, жителей и предметов острова",
+      "Блеск воды, флаги и мигание рамки выделения стали медленнее и слабее"
      ]
     },
     "tr": {
-     "title": "Daha sakin ekran",
+     "title": "Ekran sarsıntısı azaltıldı",
      "items": [
       "Yürürken ekranın titremesi düzeltildi",
-      "Ürünler, gemiler, dükkânlar, sakinler ve ada eşyalarındaki yukarı aşağı titreme kaldırıldı",
-      "Su parıltısı, bayraklar ve seçim çerçevesi daha yavaş ve daha hafif"
+      "Ürünlerin, teknelerin, dükkânların, sakinlerin ve ada eşyalarının yukarı aşağı yanıp sönen hareketi kaldırıldı",
+      "Su parıltısı, bayraklar ve seçim çerçevesinin yanıp sönmesi daha yavaş ve hafif"
      ]
     },
     "it": {
-     "title": "Schermo più stabile",
+     "title": "Meno scosse dello schermo",
      "items": [
-      "Corretto il tremolio dello schermo durante la camminata",
-      "Eliminato lo sfarfallio su e giù di colture, navi, negozi, abitanti e oggetti dell'isola",
-      "Luccichio dell'acqua, bandiere e bordo di selezione più lenti e delicati"
+      "Corretto il tremolio dello schermo camminando",
+      "Rimosso il movimento lampeggiante su e giù di raccolti, barche, negozi, abitanti e oggetti dell'isola",
+      "Il luccichio dell'acqua, le bandiere e il lampeggio del bordo di selezione sono più lenti e leggeri"
      ]
     },
     "pl": {
-     "title": "Spokojniejszy ekran",
+     "title": "Mniej wstrząsów ekranu",
      "items": [
-      "Naprawiono drgania ekranu podczas chodzenia",
-      "Usunięto migotanie w górę i w dół plonów, statków, sklepów, mieszkańców i przedmiotów wyspy",
-      "Migotanie wody, flagi i obramowanie zaznaczenia wolniejsze i łagodniejsze"
+      "Naprawiono drżenie ekranu podczas chodzenia",
+      "Usunięto migotanie w górę i w dół upraw, łodzi, sklepów, mieszkańców i przedmiotów wyspy",
+      "Migotanie wody, flag i obramowania zaznaczenia jest wolniejsze i słabsze"
      ]
     },
     "ar": {
-     "title": "شاشة أهدأ",
+     "title": "تقليل اهتزاز الشاشة",
      "items": [
-      "إصلاح ارتجاف الشاشة أثناء المشي",
-      "إزالة الوميض صعودًا وهبوطًا عن المحاصيل والسفن والمتاجر والسكان وأغراض الجزيرة",
-      "وميض الماء والأعلام وإطار التحديد أبطأ وأخف"
+      "إصلاح ارتجاج الشاشة عند المشي",
+      "أُزيلت حركة الوميض صعودًا وهبوطًا للمحاصيل والسفن والمتاجر والسكان وأشياء الجزيرة",
+      "بريق الماء والأعلام ووميض إطار التحديد أصبح أبطأ وأخف"
      ]
     }
    }
   },
   {
    "date": "2026-10-25",
-   "build": "v0.2 b62",
+   "build": "v0.2 build 62",
    "title": "방장 컴퓨터 부담 줄이기",
    "items": [
     "방장이 보내는 시장 소식 간격 늘리기 (저사양 옵션이면 더 늘림)",
@@ -2352,109 +2811,109 @@
      ]
     },
     "ja": {
-     "title": "部屋ホストの負担を軽減",
+     "title": "ホストのパソコンの負担を減らす",
      "items": [
-      "部屋ホストが送る市場の情報の間隔を広げる（低スペック設定ではさらに広げる）",
-      "動きがないときは位置情報の送信を省略",
-      "他の人に送るメッセージは、受け取る人だけに届ける",
-      "島の生成時間を短縮、低スペック設定では島のサイズを小さく"
+      "ホストが送る市場の知らせの間隔を広げました（低スペック設定ではさらに広げます）",
+      "動きがないときは位置を送信しません",
+      "他の人に向けたメッセージは受け取る人にだけ届けます",
+      "島を作る時間を短縮し、低スペック設定では島の大きさを小さくします"
      ]
     },
     "es": {
-     "title": "Menos carga para el anfitrión de la sala",
+     "title": "Menos carga para el ordenador del anfitrión",
      "items": [
-      "El anfitrión envía las novedades del mercado con menos frecuencia (aún menos con la opción de bajo rendimiento)",
-      "Se omite el envío de posición cuando nada se mueve",
-      "Los mensajes dirigidos a una persona solo llegan a esa persona",
-      "Generación de islas más rápida; con la opción de bajo rendimiento, islas más pequeñas"
+      "El anfitrión envía las noticias del mercado con más espacio entre ellas (con la opción de bajo rendimiento, aún más)",
+      "Cuando no hay movimiento, no se envía la posición",
+      "Los mensajes para otra persona solo se entregan a quien los recibe",
+      "Se reduce el tiempo para crear una isla; con la opción de bajo rendimiento, la isla es más pequeña"
      ]
     },
     "fr": {
-     "title": "Moins de charge pour l'hôte de la salle",
+     "title": "Moins de charge pour l'ordinateur de l'hôte",
      "items": [
-      "L'hôte envoie les actualités du marché moins souvent (encore moins avec l'option basse config)",
-      "Les positions ne sont pas envoyées quand rien ne bouge",
-      "Les messages destinés à une personne ne sont transmis qu'à elle",
-      "Création des îles plus rapide ; avec l'option basse config, îles plus petites"
+      "L'hôte envoie les nouvelles du marché à intervalles plus longs (encore plus avec l'option basse performance)",
+      "Sans mouvement, la position n'est pas envoyée",
+      "Les messages destinés à une autre personne ne sont transmis qu'au destinataire",
+      "Création d'île plus rapide ; avec l'option basse performance, les îles sont plus petites"
      ]
     },
     "de": {
-     "title": "Weniger Last für den Raumhost",
+     "title": "Weniger Last für den Computer des Hosts",
      "items": [
-      "Der Host sendet Marktmeldungen seltener (mit der Option für schwache Geräte noch seltener)",
-      "Positionsdaten werden nicht gesendet, solange sich nichts bewegt",
-      "Nachrichten für eine Person werden nur an diese Person weitergeleitet",
-      "Inselerstellung ist schneller, mit der Option für schwache Geräte sind die Inseln kleiner"
+      "Der Host sendet Marktnachrichten in größeren Abständen (bei der Option für schwache Geräte noch größer)",
+      "Ohne Bewegung wird die Position nicht gesendet",
+      "Nachrichten an andere Personen werden nur an den Empfänger weitergeleitet",
+      "Inselerstellung ist schneller; bei der Option für schwache Geräte sind die Inseln kleiner"
      ]
     },
     "zh": {
-     "title": "减轻房主电脑负担",
+     "title": "减轻房主电脑的负担",
      "items": [
-      "房主发送的市场消息间隔拉长（低配选项下间隔更长）",
-      "没有移动时省略位置发送",
-      "发给他人的消息只转发给接收者",
-      "缩短岛屿生成时间，低配选项下岛屿尺寸更小"
+      "房主发送市场消息的间隔加大（低配置选项下会更大）",
+      "没有移动时不发送位置",
+      "发给别人的消息只转发给接收者",
+      "缩短创建岛屿的时间；低配置选项下岛屿变小"
      ]
     },
     "pt": {
-     "title": "Menos carga para o anfitrião da sala",
+     "title": "Menos carga no computador do anfitrião",
      "items": [
-      "O anfitrião envia as notícias do mercado com menos frequência (ainda menos com a opção de baixo desempenho)",
-      "O envio de posição é omitido quando nada se move",
-      "Mensagens para outra pessoa são entregues apenas a ela",
-      "Criação de ilhas mais rápida; com a opção de baixo desempenho, ilhas menores"
+      "O anfitrião envia as notícias do mercado com mais intervalo (com a opção de baixo desempenho, ainda mais)",
+      "Sem movimento, a posição não é enviada",
+      "Mensagens para outra pessoa são entregues só a quem as recebe",
+      "Criar uma ilha leva menos tempo; com a opção de baixo desempenho, as ilhas ficam menores"
      ]
     },
     "ru": {
-     "title": "Меньше нагрузки на хоста комнаты",
+     "title": "Меньше нагрузки на компьютер хозяина",
      "items": [
-      "Хост отправляет новости рынка реже (с опцией для слабых устройств — ещё реже)",
-      "Передача позиции пропускается, когда ничего не движется",
-      "Сообщения для одного игрока передаются только ему",
-      "Острова создаются быстрее; с опцией для слабых устройств острова меньше"
+      "Хозяин отправляет новости рынка реже (в режиме слабого ПК — ещё реже)",
+      "Без движения позиция не отправляется",
+      "Сообщения для другого игрока передаются только получателю",
+      "Создание острова ускорено; в режиме слабого ПК острова меньше"
      ]
     },
     "tr": {
-     "title": "Oda sahibinin bilgisayarına daha az yük",
+     "title": "Oda sahibinin bilgisayarının yükü azaltıldı",
      "items": [
-      "Oda sahibi pazar haberlerini daha seyrek gönderir (düşük donanım seçeneğinde daha da seyrek)",
-      "Hiçbir şey hareket etmediğinde konum gönderimi atlanır",
-      "Başka birine giden mesajlar yalnızca o kişiye iletilir",
-      "Ada oluşturma daha hızlı; düşük donanım seçeneğinde adalar daha küçük"
+      "Oda sahibinin gönderdiği pazar haberleri arasındaki süre artırıldı (düşük performans seçeneğinde daha da fazla)",
+      "Hareket yokken konum gönderilmez",
+      "Başkasına giden mesajlar yalnızca alıcıya iletilir",
+      "Ada oluşturma süresi kısaldı; düşük performans seçeneğinde adalar daha küçük"
      ]
     },
     "it": {
-     "title": "Meno carico per l'host della stanza",
+     "title": "Meno carico sul computer dell'host",
      "items": [
-      "L'host invia le notizie del mercato meno spesso (ancora meno con l'opzione per PC lenti)",
-      "L'invio della posizione viene saltato quando nulla si muove",
-      "I messaggi destinati a un giocatore vengono inoltrati solo a lui",
-      "Generazione delle isole più rapida; con l'opzione per PC lenti, isole più piccole"
+      "L'host invia le notizie di mercato a intervalli più lunghi (con l'opzione per PC lenti ancora di più)",
+      "Senza movimento la posizione non viene inviata",
+      "I messaggi destinati ad altri vengono inoltrati solo al destinatario",
+      "Ridotto il tempo per creare un'isola; con l'opzione per PC lenti le isole sono più piccole"
      ]
     },
     "pl": {
-     "title": "Mniejsze obciążenie hosta pokoju",
+     "title": "Mniejsze obciążenie komputera gospodarza",
      "items": [
-      "Host rzadziej wysyła wieści z rynku (z opcją dla słabszych komputerów jeszcze rzadziej)",
-      "Wysyłanie pozycji jest pomijane, gdy nic się nie porusza",
-      "Wiadomości dla jednego gracza są przekazywane tylko jemu",
-      "Szybsze tworzenie wysp; z opcją dla słabszych komputerów wyspy są mniejsze"
+      "Gospodarz wysyła wiadomości z rynku rzadziej (przy opcji niskiej wydajności jeszcze rzadziej)",
+      "Gdy nie ma ruchu, pozycja nie jest wysyłana",
+      "Wiadomości do innej osoby są przekazywane tylko odbiorcy",
+      "Skrócono czas tworzenia wyspy; przy opcji niskiej wydajności wyspy są mniejsze"
      ]
     },
     "ar": {
-     "title": "تخفيف الحمل عن مضيف الغرفة",
+     "title": "تقليل حمل جهاز المضيف",
      "items": [
-      "يرسل المضيف أخبار السوق بفواصل أطول (وأطول مع خيار الأجهزة الضعيفة)",
-      "يُتخطى إرسال الموقع عندما لا يتحرك شيء",
-      "الرسائل الموجهة لشخص واحد تُرسل إليه وحده",
-      "إنشاء أسرع للجزر، ومع خيار الأجهزة الضعيفة تصبح الجزر أصغر"
+      "يرسل المضيف أخبار السوق بفترات أطول (مع خيار الأداء المنخفض أطول أيضًا)",
+      "لا يُرسل الموقع عند عدم الحركة",
+      "تُنقل الرسائل المرسلة إلى الآخرين إلى المستلم فقط",
+      "تقليص وقت إنشاء الجزيرة؛ ومع خيار الأداء المنخفض تكون الجزر أصغر"
      ]
     }
    }
   },
   {
    "date": "2026-10-25",
-   "build": "v0.2 b61",
+   "build": "v0.2 build 61",
    "title": "더 크고 화려한 섬",
    "items": [
     "다른 섬 크기 약 30% 확대",
@@ -2473,109 +2932,109 @@
      ]
     },
     "ja": {
-     "title": "もっと大きく華やかな島",
+     "title": "より大きく華やかな島",
      "items": [
-      "他の島のサイズを約30%拡大",
-      "島ごとに邸宅、塔、噴水、家、露店、ランタン、花壇を追加",
-      "島内の歩く速度を上げた",
+      "他の島の大きさを約30%拡大",
+      "島ごとに邸宅、塔、噴水、家、露店、灯籠、花畑を追加",
+      "島の中で歩く速さを上げました",
       "怪しい商人と通報機能を削除"
      ]
     },
     "es": {
-     "title": "Islas más grandes y espléndidas",
+     "title": "Islas más grandes y más vistosas",
      "items": [
-      "Las demás islas son un 30 % más grandes",
-      "Cada isla recibe mansiones, torres, fuentes, casas, puestos, faroles y parterres",
-      "Caminar por las islas es más rápido",
-      "Eliminados los mercaderes sospechosos y la función de denuncia"
+      "Las demás islas se agrandan alrededor de un 30 %",
+      "Cada isla tiene una mansión, torres, una fuente, casas, puestos, faroles y un jardín de flores",
+      "Se aumenta la velocidad al caminar por las islas",
+      "Se eliminaron el mercader sospechoso y su función de denuncia"
      ]
     },
     "fr": {
-     "title": "Des îles plus grandes et plus splendides",
+     "title": "Îles plus grandes et plus belles",
      "items": [
       "Les autres îles sont agrandies d'environ 30 %",
-      "Chaque île reçoit des manoirs, tours, fontaines, maisons, étals, lanternes et parterres de fleurs",
-      "Déplacement plus rapide sur les îles",
-      "Marchands suspects et fonction de signalement supprimés"
+      "Chaque île a un manoir, des tours, une fontaine, des maisons, des étals, des lanternes et un parterre de fleurs",
+      "Vitesse de marche accrue sur les îles",
+      "Le marchand suspect et la fonction de signalement ont été supprimés"
      ]
     },
     "de": {
      "title": "Größere, prächtigere Inseln",
      "items": [
-      "Andere Inseln sind etwa 30 % größer",
-      "Jede Insel bekommt Herrenhäuser, Türme, Brunnen, Häuser, Stände, Laternen und Blumenbeete",
+      "Die anderen Inseln sind etwa 30 % größer",
+      "Jede Insel hat ein Herrenhaus, Türme, einen Brunnen, Häuser, Stände, Laternen und ein Blumenbeet",
       "Schnelleres Gehen auf den Inseln",
-      "Verdächtige Händler und die Meldefunktion entfernt"
+      "Der verdächtige Händler und die Meldefunktion wurden entfernt"
      ]
     },
     "zh": {
      "title": "更大、更华丽的岛屿",
      "items": [
-      "其他岛屿约扩大 30%",
-      "每座岛屿新增宅邸、塔楼、喷泉、房屋、摊位、灯笼和花坛",
-      "岛上步行速度提高",
-      "删除可疑商人与举报功能"
+      "其他岛屿扩大约30%",
+      "每个岛增加宅邸、塔、喷泉、房屋、摊位、灯笼和花圃",
+      "提高了在岛上行走的速度",
+      "删除了可疑商人及其举报功能"
      ]
     },
     "pt": {
-     "title": "Ilhas maiores e mais suntuosas",
+     "title": "Ilhas maiores e mais vistosas",
      "items": [
-      "Outras ilhas cerca de 30% maiores",
-      "Cada ilha ganha mansões, torres, fontes, casas, barracas, lanternas e canteiros",
-      "Andar pelas ilhas ficou mais rápido",
-      "Mercadores suspeitos e função de denúncia removidos"
+      "As outras ilhas ficam cerca de 30% maiores",
+      "Cada ilha ganha mansão, torres, fonte, casas, barracas, lanternas e canteiro de flores",
+      "Velocidade de caminhada nas ilhas aumentada",
+      "O mercador suspeito e a função de denúncia foram removidos"
      ]
     },
     "ru": {
-     "title": "Больше и краше острова",
+     "title": "Большие и нарядные острова",
      "items": [
-      "Другие острова примерно на 30% больше",
-      "На каждом острове появились особняки, башни, фонтаны, дома, прилавки, фонари и цветники",
-      "Ускорена ходьба по островам",
-      "Удалены подозрительные торговцы и функция жалоб"
+      "Другие острова увеличены примерно на 30%",
+      "На каждом острове добавлены особняк, башни, фонтан, дома, прилавки, фонари и цветник",
+      "Увеличена скорость ходьбы по островам",
+      "Подозрительный торговец и функция жалобы удалены"
      ]
     },
     "tr": {
-     "title": "Daha büyük, daha görkemli adalar",
+     "title": "Daha büyük ve gösterişli adalar",
      "items": [
-      "Diğer adalar yaklaşık %30 büyüdü",
-      "Her adaya konaklar, kuleler, çeşmeler, evler, tezgâhlar, fenerler ve çiçek tarhları eklendi",
+      "Diğer adalar yaklaşık %30 büyütüldü",
+      "Her adaya konak, kuleler, çeşme, evler, tezgâhlar, fenerler ve çiçek bahçesi eklendi",
       "Adalarda yürüme hızı artırıldı",
-      "Şüpheli tüccarlar ve şikâyet işlevi kaldırıldı"
+      "Şüpheli tüccar ve bildirme özelliği kaldırıldı"
      ]
     },
     "it": {
-     "title": "Isole più grandi e più splendide",
+     "title": "Isole più grandi e più belle",
      "items": [
-      "Le altre isole sono circa il 30% più grandi",
-      "Ogni isola ha ora ville, torri, fontane, case, bancarelle, lanterne e aiuole",
-      "Camminata più veloce sulle isole",
-      "Rimossi i mercanti sospetti e la funzione di segnalazione"
+      "Le altre isole sono ingrandite di circa il 30%",
+      "Ogni isola ha ora villa, torri, fontana, case, bancarelle, lanterne e un'aiuola di fiori",
+      "Aumentata la velocità di camminata sulle isole",
+      "Il mercante sospetto e la funzione di segnalazione sono stati eliminati"
      ]
     },
     "pl": {
-     "title": "Większe i bardziej okazałe wyspy",
+     "title": "Większe i ładniejsze wyspy",
      "items": [
-      "Inne wyspy są około 30% większe",
-      "Na każdej wyspie dodano dwory, wieże, fontanny, domy, stragany, latarnie i klomby",
-      "Szybsze chodzenie po wyspach",
-      "Usunięto podejrzanych kupców i funkcję zgłaszania"
+      "Pozostałe wyspy są powiększone o około 30%",
+      "Na każdej wyspie dodano dwór, wieże, fontannę, domy, kramiki, latarnie i klomb",
+      "Zwiększono prędkość chodzenia po wyspach",
+      "Usunięto podejrzanego kupca i funkcję zgłaszania"
      ]
     },
     "ar": {
      "title": "جزر أكبر وأبهى",
      "items": [
-      "الجزر الأخرى أكبر بنحو 30%",
-      "أُضيفت على كل جزيرة قصور وأبراج ونوافير وبيوت وأكشاك وفوانيس وحدائق زهور",
+      "تكبر الجزر الأخرى بنحو 30%",
+      "تحتوي كل جزيرة على قصر وأبراج ونافورة وبيوت وأكشاك وفوانيس وحديقة زهور",
       "زيادة سرعة المشي داخل الجزر",
-      "حذف التجار المشبوهين وزر الإبلاغ"
+      "أُزيل التاجر المشبوه وخاصية الإبلاغ"
      ]
     }
    }
   },
   {
    "date": "2026-10-25",
-   "build": "v0.2 b59",
+   "build": "v0.2 build 59",
    "title": "로비로 돌아가기",
    "items": [
     "게임 화면 오른쪽 위 로비 버튼 추가",
@@ -2665,26 +3124,12 @@
       "زر الردهة في أعلى يمين شاشة اللعبة",
       "نافذة تأكيد تحفظ اللعبة وتعود إلى الردهة"
      ]
-    },
-    "nw": {
-     "title": "Ungo to ministry",
-     "items": [
-      "Ministry button added to up right of telescreen",
-      "Yeswindow that saves plus ungoes to ministry"
-     ]
-    },
-    "gk": {
-     "title": "등 에게 로비",
-     "items": [
-      "로비 단추 더해진 에게 그 꼭대기 옳은 의 그 게임 칸막이",
-      "확인하다 창문 저것 구하다 그리고 반환 에게 그 로비"
-     ]
     }
    }
   },
   {
    "date": "2026-10-24",
-   "build": "v0.2 b58",
+   "build": "v0.2 build 58",
    "title": "항구 검역소",
    "items": [
     "병 소문 소식 추가",
@@ -2800,30 +3245,12 @@
       "ابنِ محطة حجر صحي لتقصير الانتظار",
       "تعرض نافذة السفن البضائع المحجوزة والوقت المتبقي"
      ]
-    },
-    "nw": {
-     "title": "Port holdhouse",
-     "items": [
-      "Plusnew sea news: unwell rumors",
-      "Goods buyed at unwell port wait in quarantine",
-      "Build holdhouse to unlong wait",
-      "Ships window shows held goods plus time left"
-     ]
-    },
-    "gk": {
-     "title": "항구 사십일",
-     "items": [
-      "새로운 바다 뉴스: 아픔 소문들",
-      "상품들 산 에서 하나의 아픈 항구 기다리다 안에 사십일",
-      "짓다 하나의 사십일 역 에게 짧게 하다 그 기다리다",
-      "배들 창문 쇼 사십일된 상품들 그리고 시간 왼쪽"
-     ]
     }
    }
   },
   {
    "date": "2026-10-24",
-   "build": "v0.2 b57",
+   "build": "v0.2 build 57",
    "title": "계정 기록 이름",
    "items": [
     "계정에 보내는 업적과 플레이 기록의 게임 이름을 isleport로 맞췄어요"
@@ -2900,24 +3327,12 @@
      "items": [
       "الإنجازات وسجلات اللعب المرسلة إلى حسابك تستخدم الآن المعرّف isleport"
      ]
-    },
-    "nw": {
-     "title": "Selfgive record name",
-     "items": [
-      "Plusdoings plus playrecords gived to your selfgive now use game name isleport"
-     ]
-    },
-    "gk": {
-     "title": "계좌 기록 이름",
-     "items": [
-      "업적들 그리고 놀다 기록들 보낸 에게 당신의 계좌 지금 사용하다 그 게임 이드 isleport"
-     ]
     }
    }
   },
   {
    "date": "2026-10-23",
-   "build": "v0.2 b56",
+   "build": "v0.2 build 56",
    "title": "최적화 옵션과 가로 화면",
    "items": [
     "설정에 \"최적화\"를 넣었어요. 켜면 화면을 30프레임으로 그리고 비·눈 효과를 꺼서 폰이 덜 뜨거워져요",
@@ -3059,34 +3474,12 @@
       "تعمل اللعبة الآن في نافذة واحدة فقط؛ تُظهر النافذة الثانية تنبيهًا ولا تُستبدل الحفظات ببعضها",
       "عنوان تبويب المتصفح الآن دائمًا Isleport"
      ]
-    },
-    "nw": {
-     "title": "Optimize choice plus sideways telescreen",
-     "items": [
-      "Rules now has \"Optimize\": it draws at 30 fps plus unons rain plus snow so phones run unhot",
-      "Unhigh phones start with Optimize on",
-      "In sideways the tutorial box plus title menu is unbig plus no longer cover game",
-      "Field intro is drawn in plusgood quality; Optimize keeps it unhigh",
-      "Game now runs in one window at time; secondful window shows notice plus saves never overwrite each other",
-      "Browser tab name is now always Isleport"
-     ]
-    },
-    "gk": {
-     "title": "최적화하다 선택권 그리고 풍경 고침들",
-     "items": [
-      "환경들 지금 가지다 \"최적화하다\": 그것 무승부 에서 30 fps 그리고 돌다 떨어져 비 그리고 눈 효과들 그래서 전화들 달리다 시원한",
-      "낮은-끝 전화들 시작하다 와 함께 최적화하다 위에",
-      "안에 풍경 그 지도 상자 그리고 제목 차림표 이다 더 작은 그리고 아니요 더 길게 덮개 그 게임",
-      "그 들판 소개 이다 그려진 안에 더 높은 품질; 최적화하다 지키다 그것 낮은-해상도",
-      "그 게임 지금 달리다 안에 하나 창문 에서 하나의 시간; 하나의 둘째 창문 쇼 하나의 알아차리다 그리고 구하다 절대 아니다 덮어쓰다 각각 다른",
-      "그 브라우저 계산서 제목 이다 지금 항상 Isleport"
-     ]
     }
    }
   },
   {
    "date": "2026-10-23",
-   "build": "v0.2 b55",
+   "build": "v0.2 build 55",
    "title": "인트로 곡",
    "items": [
     "인트로에 곡이 나오고 게임 음악은 그 뒤에 이어져요. 소리가 막힌 브라우저에서는 화면을 누르면 인트로가 시작돼요"
@@ -3163,24 +3556,12 @@
      "items": [
       "صار للمقدمة أغنية تتبعها موسيقى اللعبة. إن حجب المتصفح الصوت، المس الشاشة لبدء المقدمة"
      ]
-    },
-    "nw": {
-     "title": "Intro song",
-     "items": [
-      "Intro now has song, plus game music goes after it. If browser unallows sound, touch telescreen to start intro"
-     ]
-    },
-    "gk": {
-     "title": "소개 노래",
-     "items": [
-      "그 소개 지금 가지다 하나의 노래, 그리고 그 게임 음악 따르다 그것. 만약 그 브라우저 블록들 건전한, 수도꼭지 그 칸막이 에게 시작하다 그 소개"
-     ]
     }
    }
   },
   {
    "date": "2026-10-23",
-   "build": "v0.2 b54",
+   "build": "v0.2 build 54",
    "title": "이모지어 추가",
    "items": [
     "가상 언어 이모지어 추가 (글자를 이모지로 바꿔 보여 줌, 마우스를 올리면 원문)"
@@ -3257,24 +3638,12 @@
      "items": [
       "أُضيفت اللغة الخيالية \"الإيموجي\" (يظهر النص كرموز تعبيرية؛ مرّر الفأرة لرؤية الأصل)"
      ]
-    },
-    "nw": {
-     "title": "Facepic speak added",
-     "items": [
-      "Unreal speak Emoji added (words is shown as facepics; hover to see oldwords)"
-     ]
-    },
-    "gk": {
-     "title": "감정그림 혀 더해진",
-     "items": [
-      "허구의 혀 감정그림 더해진 (문자 이다 보여진 처럼 감정그림; 맴돌다 에게 보다 그 독창적인)"
-     ]
     }
    }
   },
   {
    "date": "2026-10-23",
-   "build": "v0.2 b53",
+   "build": "v0.2 build 53",
    "title": "밭 인트로",
    "items": [
     "게임을 켜면 새벽 밭에서 작물이 자라고 멀리 배가 지나가는 인트로가 나와요. 건너뛸 수 없어요"
@@ -3351,24 +3720,12 @@
      "items": [
       "تبدأ اللعبة الآن بحقل عند الفجر تنمو فيه المحاصيل وتمر سفينة من بعيد. لا يمكن تخطيها"
      ]
-    },
-    "nw": {
-     "title": "Field intro",
-     "items": [
-      "Game now opens with dawn field where crops plusbig plus boat sails by far ungo. It cannot be unwatched"
-     ]
-    },
-    "gk": {
-     "title": "들판 소개",
-     "items": [
-      "그 게임 지금 열다들 와 함께 하나의 새벽 들판 어디 농작물 자라다 그리고 하나의 배 판매들 에 의해 멀리 멀리. 그것 할 수 없다 이다 건너뛴"
-     ]
     }
    }
   },
   {
    "date": "2026-10-23",
-   "build": "v0.2 b52",
+   "build": "v0.2 build 52",
    "title": "음식 평론가, 항구 달력, 수상한 상인",
    "items": [
     "식당에 가끔 음식 평론가가 와요. 원하는 요리를 내면 별점에 따라 큰 보상과 평판을 받아요",
@@ -3471,28 +3828,12 @@
       "يعرض تقويم الميناء في دار البلدية المهرجانات وطفرات الطلب والعواصف القادمة",
       "بعض التجار محتالون: انتبه للدلائل وأبلغ عنهم لتنال مكافأة"
      ]
-    },
-    "nw": {
-     "title": "Food critic, port calendar, unhonest traders",
-     "items": [
-      "Food critic sometimes visits diner: give the dish they want for star rank, plenty plus rep",
-      "Town hall port calendar shows plusnear festivals, wanting booms plus storms",
-      "Some traders is unhonest: spot clues plus report them for plusgift"
-     ]
-    },
-    "gk": {
-     "title": "음식 비평가, 항구 달력, 그늘진 상인들",
-     "items": [
-      "하나의 음식 비평가 때때로 방문하다 그 식당: 봉사하다 그 접시 그들 원하다 위하여 하나의 별 평가, 금 그리고 평판",
-      "그 마을 홀 항구 달력 쇼 다가오는 축제들, 요구하다 쾅들 그리고 폭풍들",
-      "일부 방문하는 중 상인들 이다 사기들: 점 그 단서들 그리고 보고서 그들을 위하여 하나의 하사품"
-     ]
     }
    }
   },
   {
    "date": "2026-10-23",
-   "build": "v0.2 b51",
+   "build": "v0.2 build 51",
    "title": "보급선, 흥정, 선주문, 외상",
    "items": [
     "바다로 나간 배에 보급선을 보내 선체를 고치고 창고 물건을 더 실을 수 있어요",
@@ -3608,30 +3949,12 @@
       "اقبل الطلبات المسبقة من لوحة الإعلانات: عربون الآن ومكافأة عند التسليم في الموعد",
       "فعّل البيع بالآجل في قائمة السفن: الموانئ المعتادة تدفع أكثر، وتحصّل في الزيارة التالية"
      ]
-    },
-    "nw": {
-     "title": "Supply boats, haggling, beforeorders, owegive",
-     "items": [
-      "Give supply boat to ship at sea to plusfix hull plus load plus goods",
-      "Haggle with customers at market stall unbefore they walk ungo",
-      "Take beforeorders at wallwrite: downgive now, plusgift when gived in time",
-      "Turn on owegive in ship list: regular ports give plus, getted on your nextful visit"
-     ]
-    },
-    "gk": {
-     "title": "공급 배들, 흥정하는 중, 전-명령들, 신용",
-     "items": [
-      "보내다 하나의 공급 배 에게 하나의 배 에서 바다 에게 반창고 그 껍질 그리고 짐 더 상품들",
-      "흥정하다 와 함께 고객들 에서 그 시장 마구간 전에 그들 걷다 멀리",
-      "가지고 가다 전-명령들 에서 그 알아차리다 판자: 보증금 지금, 상여금 언제 배달된 안에 시간",
-      "돌다 위에 신용 판매 안에 그 배 목록: 정규 항구들 지불하다 더, 모은 위에 당신의 다음 방문하다"
-     ]
     }
    }
   },
   {
    "date": "2026-10-22",
-   "build": "v0.2 b50",
+   "build": "v0.2 build 50",
    "title": "이야기의 결말과 크레딧",
    "items": [
     "마지막 장에서 장부의 주인을 정하면 결말 연출과 대사가 나와요",
@@ -3734,28 +4057,12 @@
       "تظهر الشارة بعد النهاية. يمكنك تخطيها وتستمر اللعبة",
       "أعد مشاهدة النهاية من صفحة القصة في دار البلدية"
      ]
-    },
-    "nw": {
-     "title": "Story unbeginning plus thanklist",
-     "items": [
-      "Choosing ledger's fate in lastful chapter now plays unbeginning scene with talkwords",
-      "Thanklist rolls unbefore ending. You can skip it, plus game goes on",
-      "Rewatch unbeginning from Story page at town hall"
-     ]
-    },
-    "gk": {
-     "title": "층 끝하는 중 그리고 신용들",
-     "items": [
-      "고르는 중 그 ledger의 운명 안에 그 마지막 장 지금 연극 하나의 끝하는 중 장면 와 함께 대화",
-      "신용들 구르다 후에 그 끝하는 중. 당신 할 수 있다 건너뛰다 그들을, 그리고 그 게임 가다 위에",
-      "다시시계 그 끝하는 중 로부터 그 층 층 에서 그 마을 홀"
-     ]
     }
    }
   },
   {
    "date": "2026-10-22",
-   "build": "v0.2 b49",
+   "build": "v0.2 build 49",
    "title": "선체 내구와 도크 수리",
    "items": [
     "폭풍을 뚫고 가거나 해적에게 당하면 배의 선체가 상해요",
@@ -3858,28 +4165,12 @@
       "تحت 70% من الهيكل تبطئ السفينة، وتحت 30% تتسرب منها الحمولة",
       "أصلح السفن الراسية بزر \"إصلاح\" في قائمة السفن"
      ]
-    },
-    "nw": {
-     "title": "Hull unwear plus dock fixes",
-     "items": [
-      "Sailing into storms or being raided now ungoods hull",
-      "Unup 70% hull ship goes unfast, plus unup 30% it leaks goods",
-      "Plusfix docked ships with Plusfix button in ship list"
-     ]
-    },
-    "gk": {
-     "title": "껍질 입다 그리고 부두 수리들",
-     "items": [
-      "항해하는 중 안으로 폭풍들 또는 존재 습격된 지금 손상 그 껍질",
-      "아래에 70% 껍질 그 배 느리게 하다 아래로, 그리고 아래에 30% 그것 새다 화물",
-      "수리하다 부두된 배들 와 함께 그 수리하다 단추 안에 그 배 목록"
-     ]
     }
    }
   },
   {
    "date": "2026-10-22",
-   "build": "v0.2 b47",
+   "build": "v0.2 build 47",
    "title": "나가기 버튼",
    "items": [
     "설정의 \"사이트로 돌아가기\"를 \"나가기\"로 바꿨어요. 누르면 저장하고 게임 창이 닫혀요"
@@ -3956,24 +4247,12 @@
      "items": [
       "صار زر \"العودة إلى الموقع\" في الإعدادات \"مغادرة\": يحفظ اللعبة ويغلق نافذتها"
      ]
-    },
-    "nw": {
-     "title": "Unenter button",
-     "items": [
-      "Rules button \"Ungo to site\" is now \"Unenter\": it saves plus unopens game window"
-     ]
-    },
-    "gk": {
-     "title": "출구 단추",
-     "items": [
-      "그 환경들 단추 \"등 에게 장소\" 이다 지금 \"출구\": 그것 구하다 그리고 가까운 그 게임 창문"
-     ]
     }
    }
   },
   {
    "date": "2026-10-22",
-   "build": "v0.2 b46",
+   "build": "v0.2 build 46",
    "title": "이탈리아어, 폴란드어, 아랍어",
    "items": [
     "언어 3개 추가: 이탈리아어, 폴란드어, 아랍어 (게임과 사이트 모두)"
@@ -4050,24 +4329,12 @@
      "items": [
       "إضافة 3 لغات: الإيطالية والبولندية والعربية (اللعبة والموقع)"
      ]
-    },
-    "nw": {
-     "title": "Italian, Polish plus Arabic",
-     "items": [
-      "3 speaks added: Italian, Polish plus Arabic (game plus site)"
-     ]
-    },
-    "gk": {
-     "title": "이탈리아의, 광택 그리고 아라비아의",
-     "items": [
-      "3 혀들 더해진: 이탈리아의, 광택 그리고 아라비아의 (게임 그리고 장소)"
-     ]
     }
    }
   },
   {
    "date": "2026-10-22",
-   "build": "v0.2 b45",
+   "build": "v0.2 build 45",
    "title": "수족관과 선술집",
    "items": [
     "마을 남쪽에 수족관이 생겼어요. 낚시에서 물고기를 낚으면 14가지 어종 중 하나가 함께 잡혀요. 수조에 전시하면 관람료가 쌓여요",
@@ -4183,30 +4450,12 @@
       "تُفتتح حانة قرب الميناء. اشترِ شرابًا لتسمع أي ميناء يدفع جيدًا وما المطلوب وأين العواصف",
       "بين حين وآخر يعطيك بحار قطعة خريطة قديمة"
      ]
-    },
-    "nw": {
-     "title": "Aquarium plus tavern",
-     "items": [
-      "Aquarium opens south of town. Fishing now plus catches one of 14 kinds; show them in tanks to get entrygift",
-      "Aquarium can be plusbigged twice plus gives plusgift for each plusnew kind",
-      "Tavern opens near harbor. Buy drink to hear which port pays plusgood, what is wanted plus where storms is",
-      "Once in while sailor gives you unnew map piece"
-     ]
-    },
-    "gk": {
-     "title": "수족관 그리고 선술집",
-     "items": [
-      "하나의 수족관 열다들 남쪽 의 그 마을. 낚시 지금 또한 잡다 하나 의 14 종들; 쇼 그들을 안에 그 탱크들 에게 벌다 입장 요금들",
-      "그 수족관 할 수 있다 이다 업그레이드된 두 번 그리고 주다 하나의 상여금 위하여 각각 새로운 종",
-      "하나의 선술집 열다들 가까운 그 항구. 사다 하나의 마시다 에게 듣다 어느 항구 지불하다 잘, 무엇 이다 안에 요구하다 그리고 어디 폭풍들 이다",
-      "한 번 안에 하나의 동안 하나의 선원 손들 당신 하나의 늙은 지도 조각"
-     ]
     }
    }
   },
   {
    "date": "2026-10-22",
-   "build": "v0.2 b44",
+   "build": "v0.2 build 44",
    "title": "신어 표현 수정",
    "items": [
     "신어 표현 수정: plusplus를 doubleplus로"
@@ -4283,24 +4532,12 @@
      "items": [
       "تصحيح عبارات اللغة الجديدة: plusplus صارت doubleplus"
      ]
-    },
-    "nw": {
-     "title": "Newspeak wording plusfix",
-     "items": [
-      "Newspeak wording plusfix: plusplus is now doubleplus"
-     ]
-    },
-    "gk": {
-     "title": "새로운말하기 단어 고정하다",
-     "items": [
-      "새로운말하기 단어 고정하다: plusplus 이다 지금 doubleplus"
-     ]
     }
    }
   },
   {
    "date": "2026-10-22",
-   "build": "v0.2 b43",
+   "build": "v0.2 build 43",
    "title": "은하 표준어 추가",
    "items": [
     "가상 언어 은하 표준어 추가 (커맨더 킨·마인크래프트 인챈트 글자, 사진을 보고 만든 글꼴)"
@@ -4377,24 +4614,12 @@
      "items": [
       "إضافة الكتابة الخيالية الأبجدية المجرية القياسية (حروف Commander Keen وسحر Minecraft، بخط صُنع من صورة)"
      ]
-    },
-    "nw": {
-     "title": "Standard Galactic added",
-     "items": [
-      "Unreal letters Standard Galactic added (Commander Keen plus Minecraft enchant letters, in photomade font)"
-     ]
-    },
-    "gk": {
-     "title": "표준 은하 더해진",
-     "items": [
-      "허구의 대본 표준 은하 더해진 (그 사령관 열망하는 그리고 마인크래프트 매혹하는 중 편지들, 안에 사진 만든 샘)"
-     ]
     }
    }
   },
   {
    "date": "2026-10-21",
-   "build": "v0.2 b42",
+   "build": "v0.2 build 42",
    "title": "언어 4개와 가상 언어 3개 추가",
    "items": [
     "언어 4개 추가: 중국어 간체, 포르투갈어(브라질), 러시아어, 튀르키예어",
@@ -4497,28 +4722,12 @@
       "إضافة لغات خيالية: النيوسبيك، والكورية المترجمة آليًا، والأوربيش (مجموعة اللغات الخيالية في اختيار اللغة)",
       "يظهر الموقع أيضًا باللغة نفسها"
      ]
-    },
-    "nw": {
-     "title": "4 speaks plus 3 fictional speaks plussed",
-     "items": [
-      "4 speaks plussed: Simplified Chinese, Portuguese (Brazil), Russian, Turkish",
-      "Fictional speaks Newspeak, Translator Eastasian plus Aurebesh plussed (Fictional speaks group in speak picker)",
-      "Ministry shows same speak plus"
-     ]
-    },
-    "gk": {
-     "title": "4 언어들 그리고 3 fictional 언어들 더해진",
-     "items": [
-      "언어들 4개 추가: 중국어 간체, 포르투갈어(브라질), 러시아어, 튀르키예어",
-      "Fictional 언어들 Newspeak, Translator 한국인 그리고 Aurebesh 더해진 (Fictional 언어들 group 안에 그 언어 picker)",
-      "그 현장 쇼들 그 같은 언어 또한"
-     ]
     }
    }
   },
   {
    "date": "2026-10-21",
-   "build": "v0.2 b41",
+   "build": "v0.2 build 41",
    "title": "허브 재산 랭킹",
    "items": [
     "로그인하고 하면 내 재산이 허브 랭킹에 올라가요"
@@ -4595,24 +4804,12 @@
      "items": [
       "عند تسجيل الدخول تظهر ثروتك الصافية في ترتيب المركز"
      ]
-    },
-    "nw": {
-     "title": "Hub wealth goodlist",
-     "items": [
-      "When you is logged in, your net worth is shown in hub goodlist"
-     ]
-    },
-    "gk": {
-     "title": "바퀴통 wealth 순위",
-     "items": [
-      "언제 당신 이다 벌목된 안에, 당신의 net worth 이다 보여진 안에 그 바퀴통 순위"
-     ]
     }
    }
   },
   {
    "date": "2026-10-20",
-   "build": "v0.2 b40",
+   "build": "v0.2 build 40",
    "title": "시작 화면 다듬기",
    "items": [
     "게임을 켜면 \"Made by Frenchfries777\" 소개 화면이 나와요",
@@ -4741,32 +4938,12 @@
       "على الهواتف لم يعد مربع الدليل يغطي عصا التحكم ولم تعد قائمة العنوان تتداخل مع النص",
       "أوقات الحظائر تُكتب الآن مثل \"49 ث\""
      ]
-    },
-    "nw": {
-     "title": "Polished start",
-     "items": [
-      "A \"Maked by Frenchfries777\" intro joyduties when joyduty opens",
-      "Plusnew joyduties start on spring day plus unday tint is lighter plusspeakwrite stays readable",
-      "Truthbook marks field you can plant with ▼",
-      "On phones truthbook thing unlonger covers joystick plus name ministry unlonger overlaps speakwrite",
-      "Pen times now see like \"49 s\""
-     ]
-    },
-    "gk": {
-     "title": "Polished 시작하다",
-     "items": [
-      "하나의 \"만든 옆에 Frenchfries777\" intro 놀다들 언제 그 사냥감 연다",
-      "새로운 사냥감들 시작하다 위에 하나의 spring 날 그리고 그 밤 tint 이다 lighter 그래서 본문 stays readable",
-      "그 안내인 marks 하나의 field 당신 깡통 plant 와 함께 하나의 ▼",
-      "위에 phones 그 안내인 상자 아니요 longer covers 그 joystick 그리고 그 제목 차림표 아니요 longer overlaps 그 본문",
-      "Pen 시간들 지금 읽다 처럼 \"49 s\""
-     ]
     }
    }
   },
   {
    "date": "2026-10-20",
-   "build": "v0.2 b38",
+   "build": "v0.2 build 38",
    "title": "사진 모드",
    "items": [
     "P 키를 누르거나 집에서 \"사진 찍기\"를 고르면 지금 화면을 사진으로 찍어요. 사진은 앨범에 열두 장까지 모여요",
@@ -4856,26 +5033,12 @@
       "اضغط P أو اختر التقط صورة في المنزل لتصوير الشاشة؛ يحتفظ الألبوم بما يصل إلى اثنتي عشرة صورة",
       "أول صورة في ساحة النافورة أو برج الساعة أو البحيرة أو المحطة أو المنارة أو المتحف أو الميناء تمنح مكافأة ذهبية"
      ]
-    },
-    "nw": {
-     "title": "Telepic way",
-     "items": [
-      "Touch P or choose Get telepic at ministry to snap telescreen; album keeps up to twelve",
-      "One telepic at fountain plaza, clock tower, lake, station, lighthouse, museum or shipplace earns plenty plusgood"
-     ]
-    },
-    "gk": {
-     "title": "사진 방식",
-     "items": [
-      "언론 P 또는 고르다 가지고 가다 하나의 사진 에서 집 에게 snap 그 칸막이; 그 album 유지하다들 위로 에게 twelve",
-      "분수 광장, 시계탑, 호수, 기차역, 등대, 박물관, 항구 앞에서 처음 찍으면 금화 보너스를 받습니다"
-     ]
     }
    }
   },
   {
    "date": "2026-10-20",
-   "build": "v0.2 b37",
+   "build": "v0.2 build 37",
    "title": "친구 초대로 바로 입장",
    "items": [
     "방을 열거나 들어가면 허브 친구들에게 방이 보이고, 초대 알림을 누르면 이 게임이 열리면서 그 방에 바로 들어가요"
@@ -4952,24 +5115,12 @@
      "items": [
       "افتح غرفة أو انضم إليها فيراها أصدقاء المركز؛ لمس الدعوة يفتح اللعبة وينضم إلى تلك الغرفة"
      ]
-    },
-    "nw": {
-     "title": "Enter comrades from invites",
-     "items": [
-      "Open or enter place plus hub comrades can see it; tapping summon opens joyduty plus joins that place"
-     ]
-    },
-    "gk": {
-     "title": "합류하다 친구들 로부터 초대하다들",
-     "items": [
-      "열다 또는 합류하다 하나의 방 그리고 바퀴통 친구들 깡통 보다 그것; tapping 하나의 초대하다 연다 그 사냥감 그리고 합류하다들 저것 방"
-     ]
     }
    }
   },
   {
    "date": "2026-10-20",
-   "build": "v0.2 b36",
+   "build": "v0.2 build 36",
    "title": "저작권 표기",
    "items": [
     "게임 파일과 시작 화면, 설정 화면에 저작권 표기를 넣었어요 (CC BY-NC-ND 4.0)"
@@ -5046,24 +5197,12 @@
      "items": [
       "إضافة إشعار حقوق النشر (CC BY-NC-ND 4.0) إلى ملف اللعبة وشاشة العنوان والإعدادات"
      ]
-    },
-    "nw": {
-     "title": "Copyright telescreen",
-     "items": [
-      "Plussed copyright telescreen (CC BY-NC-ND 4.0) to joyduty record, name telescreen plus rules"
-     ]
-    },
-    "gk": {
-     "title": "Copyright 알아차리다",
-     "items": [
-      "더해진 하나의 copyright 알아차리다 (CC 옆에-NC-ND 4.0) 에게 그 사냥감 줄, 제목 칸막이 그리고 환경들"
-     ]
     }
    }
   },
   {
    "date": "2026-10-20",
-   "build": "v0.2 b35",
+   "build": "v0.2 build 35",
    "title": "나무는 천천히",
    "items": [
     "과일나무와 차나무, 카카오 같은 나무류가 다 자라기까지 두 배 걸려요",
@@ -5153,26 +5292,12 @@
       "أشجار الفاكهة والشاي والكاكاو تحتاج الآن ضعف الوقت لتنضج",
       "وظّف عمالًا في المنزل بعد إنهاء بحث \"وظّف عمالًا\"؛ مذكور أيضًا في الدليل"
      ]
-    },
-    "nw": {
-     "title": "Trees plusbig slower",
-     "items": [
-      "Fruit trees, tea plus cocoa now get twice as long to ripen",
-      "Hire workers at ministry unbefore finishing \"Hire workers\" research; plus noted in truthbook"
-     ]
-    },
-    "gk": {
-     "title": "나무는 천천히",
-     "items": [
-      "과일나무와 차나무, 카카오 같은 나무류가 다 자라기까지 두 배 걸립니다",
-      "Hire workers 에서 집 후에 끝내하는 중 그 \"Hire workers\" research; 또한 아니했다 안에 그 안내인"
-     ]
     }
    }
   },
   {
    "date": "2026-10-20",
-   "build": "v0.2 b34",
+   "build": "v0.2 build 34",
    "title": "장터를 원래대로",
    "items": [
     "마을 입구 장터를 누르면 다시 물건 팔기 창이 열려요. 식당 납품은 식당가에서만 해요"
@@ -5249,24 +5374,12 @@
      "items": [
       "سوق بوابة البلدة يفتح نافذة البيع من جديد؛ توصيلات المطاعم في شارع المطاعم فقط"
      ]
-    },
-    "nw": {
-     "title": "Market ungo to good",
-     "items": [
-      "Market at town gate opens selling telescreen re; restaurant deliveries is only at restaurant row"
-     ]
-    },
-    "gk": {
-     "title": "Market 등 에게 정상",
-     "items": [
-      "그 market 에서 그 town 문 연다 그 팔하는 중 창문 다시; restaurant deliveries 이다 오직 에서 그 restaurant 노 젓다"
-     ]
     }
    }
   },
   {
    "date": "2026-10-19",
-   "build": "v0.2 b32",
+   "build": "v0.2 build 32",
    "title": "새 계정 주소로 로그인",
    "items": [
     "로그인이 새 계정 주소를 먼저 쓰고, 안 되면 옛 주소로 다시 시도해요. 아이디와 비밀번호는 그대로예요"
@@ -5348,7 +5461,7 @@
   },
   {
    "date": "2026-10-19",
-   "build": "v0.2 b31",
+   "build": "v0.2 build 31",
    "title": "계정 도메인 이전 준비",
    "items": [
     "로그인할 때 새 계정 주소로도 시도해요. 아이디와 비밀번호는 그대로 쓰면 돼요"
@@ -5430,7 +5543,7 @@
   },
   {
    "date": "2026-10-19",
-   "build": "v0.2 b30",
+   "build": "v0.2 build 30",
    "title": "주택가와 마을의 움직임",
    "items": [
     "호수 서쪽에 울타리와 정원이 있는 주택가가 생겼어요. 굴뚝에서 연기가 올라요",
@@ -5538,7 +5651,7 @@
   },
   {
    "date": "2026-10-19",
-   "build": "v0.2 b29",
+   "build": "v0.2 build 29",
    "title": "마을 건물과 납품 가게",
    "items": [
     "광장 북쪽에 학교, 도서관, 병원, 소방서, 경찰서, 극장이 들어섰어요. 눌러서 둘러볼 수 있어요",
@@ -5646,7 +5759,7 @@
   },
   {
    "date": "2026-10-19",
-   "build": "v0.2 b28",
+   "build": "v0.2 build 28",
    "title": "마을이 남쪽으로 넓어졌어요",
    "items": [
     "철로 남쪽으로 새 땅이 펼쳐졌어요. 맵이 두 배 가까이 넓어졌어요",
@@ -5767,7 +5880,7 @@
   },
   {
    "date": "2026-10-19",
-   "build": "v0.2 b27",
+   "build": "v0.2 build 27",
    "title": "사이트로 돌아가기",
    "items": [
     "설정 화면에 \"사이트로 돌아가기\" 버튼이 생겼어요. 누르면 저장하고 게임 사이트로 돌아가요"
@@ -5849,7 +5962,7 @@
   },
   {
    "date": "2026-10-19",
-   "build": "v0.2 b26",
+   "build": "v0.2 build 26",
    "title": "연구: 무한 씨앗",
    "items": [
     "연구에 무한 씨앗이 생겼어요. 연구하면 씨앗이 줄지 않아 사지 않고도 해금한 작물을 마음껏 심어요",
@@ -5944,7 +6057,7 @@
   },
   {
    "date": "2026-10-19",
-   "build": "v0.2 b25",
+   "build": "v0.2 build 25",
    "title": "선로를 달리는 기차",
    "items": [
     "기차를 타면 역에서 출발한 기차가 선로를 따라 터널로 들어가요. 화면이 기차를 따라가요",
@@ -6052,7 +6165,7 @@
   },
   {
    "date": "2026-10-19",
-   "build": "v0.2 b24",
+   "build": "v0.2 build 24",
    "title": "섬 상륙 맵 대확장",
    "items": [
     "상륙했을 때 섬이 가로세로 3.5배, 넓이로는 약 12배 커졌어요",
@@ -6160,7 +6273,7 @@
   },
   {
    "date": "2026-10-19",
-   "build": "v0.2 b23",
+   "build": "v0.2 build 23",
    "title": "내 섬이 대륙으로",
    "items": [
     "해도에서 내 섬이 큰 대륙으로 바뀌었어요. 산과 숲과 마을이 더 넓게 펼쳐져요",
@@ -6255,7 +6368,7 @@
   },
   {
    "date": "2026-10-19",
-   "build": "v0.2 b22",
+   "build": "v0.2 build 22",
    "title": "신문 가판대",
    "items": [
     "은행 대신 마을에 신문 가판대가 생겼어요. 3골드에 한 부를 사면 신문이 바로 펼쳐져요",
@@ -6350,7 +6463,7 @@
   },
   {
    "date": "2026-10-19",
-   "build": "v0.2 b21",
+   "build": "v0.2 build 21",
    "title": "화산섬",
    "items": [
     "지도 조각을 더 모으면 새 섬 화산섬이 나타나요. 흑요석, 유황, 홍옥을 캘 수 있어요",
@@ -6458,7 +6571,7 @@
   },
   {
    "date": "2026-10-19",
-   "build": "v0.2 b20",
+   "build": "v0.2 build 20",
    "title": "외곽 기차역과 웅장한 박물관",
    "items": [
     "기차역을 마을 남쪽 외곽으로 옮기고 크게 새로 지었어요. 시계탑과 지붕 달린 승강장, 기관차와 객차가 있어요",
@@ -6579,7 +6692,7 @@
   },
   {
    "date": "2026-10-19",
-   "build": "v0.2 b19",
+   "build": "v0.2 build 19",
    "title": "계절 축제, 부동산, 상인 길드",
    "items": [
     "마을 회관에서 계절마다 열리는 축제에 참가할 수 있어요. 요리나 특산물을 출품해 다른 참가자와 점수를 겨루고 상금과 트로피를 받아요",
@@ -6687,7 +6800,7 @@
   },
   {
    "date": "2026-10-19",
-   "build": "v0.2 b18",
+   "build": "v0.2 build 18",
    "title": "우체국과 숙소",
    "items": [
     "항구 쪽에 우체국이 생겼어요. 항구와 지방으로 소포를 보내고 답장과 보상을 받아요",
@@ -6808,7 +6921,7 @@
   },
   {
    "date": "2026-10-19",
-   "build": "v0.2 b17",
+   "build": "v0.2 build 17",
    "title": "항구 이름 정리",
    "items": [
     "보랏항, 흰구름항, 푸른만의 이름을 특산품에 맞춰 라벤더포트, 코튼포트, 솔트베이로 바꿨어요"
@@ -6890,7 +7003,7 @@
   },
   {
    "date": "2026-10-19",
-   "build": "v0.2 b16",
+   "build": "v0.2 build 16",
    "title": "항구 이름 정리",
    "items": [
     "붉은항의 이름을 레드포트로 바꿨어요"
@@ -6972,7 +7085,7 @@
   },
   {
    "date": "2026-10-19",
-   "build": "v0.2 b15",
+   "build": "v0.2 build 15",
    "title": "지방 이름 정리",
    "items": [
     "내륙 지방의 이름을 블루힐스 고원, 파인우드 마을, 레드리지 역참으로 바꿨어요"
@@ -7054,7 +7167,7 @@
   },
   {
    "date": "2026-10-19",
-   "build": "v0.2 b14",
+   "build": "v0.2 build 14",
    "title": "NPC 이름 정리",
    "items": [
     "섬 주민과 이야기 속 NPC의 이름을 신문 속 인물처럼 서양식 이름으로 바꿨어요"
@@ -7136,7 +7249,7 @@
   },
   {
    "date": "2026-10-19",
-   "build": "v0.2 b13",
+   "build": "v0.2 build 13",
    "title": "기차역과 내륙 지방",
    "items": [
     "홈 섬 장터 옆에 기차역이 생겼어요. 기차를 타고 내륙의 세 지방으로 갈 수 있어요",
@@ -7244,7 +7357,7 @@
   },
   {
    "date": "2026-10-19",
-   "build": "v0.2 b12",
+   "build": "v0.2 build 12",
    "title": "NPC와 이야기",
    "items": [
     "섬에 말을 걸 수 있는 NPC 셋이 생겼어요. 밭 옆의 마사 할멈, 부두의 항해사 오르간, 장터의 상인 미라예요",
@@ -7365,7 +7478,7 @@
   },
   {
    "date": "2026-10-19",
-   "build": "v0.2 b11",
+   "build": "v0.2 build 11",
    "title": "새 항구 음악",
    "items": [
     "Isleport 배경음악을 새 곡으로 바꿨어요. 기타와 피아노, 현악이 겹쳐지는 느긋한 곡이에요",
@@ -7460,7 +7573,7 @@
   },
   {
    "date": "2026-10-19",
-   "build": "v0.2 b10",
+   "build": "v0.2 build 10",
    "title": "광산섬",
    "items": [
     "지도를 모아 찾는 새 섬, 광산섬이 생겼어요. 섬을 걸어 다니며 바위를 쳐서 돌, 철광석, 구리 광석, 보석 원석을 캐요",
@@ -7581,7 +7694,7 @@
   },
   {
    "date": "2026-10-19",
-   "build": "v0.2 b9",
+   "build": "v0.2 build 9",
    "title": "식당, 박물관, 주민 의뢰",
    "items": [
     "시장 옆에 식당이 생겼어요. 재료로 요리를 만들어 손님 주문을 받아요",
@@ -7702,7 +7815,7 @@
   },
   {
    "date": "2026-10-19",
-   "build": "v0.2 b8",
+   "build": "v0.2 build 8",
    "title": "항구 음악",
    "items": [
     "Isleport 전용 배경음악이 생겼어요. 기타와 전자 피아노가 어우러진 느긋한 곡이에요",
@@ -7797,7 +7910,7 @@
   },
   {
    "date": "2026-10-19",
-   "build": "v0.2 b7",
+   "build": "v0.2 build 7",
    "title": "마을 회관, 낚시, 개간, 도전 과제",
    "items": [
     "집 옆에 마을 회관이 생겼어요. 도전 과제와 뒷산 개간지를 여기서 열어요",
@@ -7918,7 +8031,7 @@
   },
   {
    "date": "2026-10-19",
-   "build": "v0.2 b6",
+   "build": "v0.2 build 6",
    "title": "시세 신문과 무역 보험",
    "items": [
     "은행에 시세 신문 탭이 생겼어요. 현재 주식 시세, 다음 호까지의 예측, 지난 호 예측 결과, 시장 소식이 실려요",
@@ -8039,7 +8152,7 @@
   },
   {
    "date": "2026-10-18",
-   "build": "v0.2 b5",
+   "build": "v0.2 build 5",
    "title": "은행 확장",
    "items": [
     "은행에서 주식을 사고팔 수 있어요. 곡물·과수원·와인·직물·수산·무역 여섯 종목이 있어요",
@@ -8147,7 +8260,7 @@
   },
   {
    "date": "2026-10-18",
-   "build": "v0.2 b3",
+   "build": "v0.2 build 3",
    "title": "항구 건물",
    "items": [
     "우리 항구에 건물이 생겼어요. 항만 사무소(배와 계약), 해운 창고, 어시장, 등대, 크레인이 부두 옆에 있어요",
@@ -8242,7 +8355,7 @@
   },
   {
    "date": "2026-10-18",
-   "build": "v0.2 b2",
+   "build": "v0.2 build 2",
    "title": "섬 상륙",
    "items": [
     "직접 항해로 섬에 닿으면 그 섬의 맵으로 상륙해요. 섬마다 모양과 풍경이 달라요: 황금항은 밀밭과 풍차, 레드포트은 사과 과수원, 라벤더포트은 포도밭과 돌 저택, 코튼포트은 목화밭과 양, 솔트베이은 어촌과 만, 향신항은 시장 천막, 산호섬은 산호 웅덩이, 호박섬은 송진 숲, 유적 환초는 옛 기둥과 제단이에요",
@@ -8337,7 +8450,7 @@
   },
   {
    "date": "2026-10-18",
-   "build": "v0.2 b1",
+   "build": "v0.2 build 1",
    "title": "다듬기",
    "items": [
     "새로 시작하면 긴 설명 대신 화면 아래에 지금 할 일 한 줄이 나와요. 밭 심기, 수확, 판매, 출항 순서로 안내하고, 건너뛸 수 있어요",

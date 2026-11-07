@@ -11,8 +11,8 @@
    "title": "큰 항해",
    "summary": "캐릭터를 직접 조종하고, 하나로 이어진 섬 지도에서 키우고 팔고, 배를 몰아 다른 섬과 비밀 섬을 찾아가는 버전",
    "latest": true,
-   "size": 2140902,
-   "sha256": "e7d973225168afac43ab6dde9bcd42db0e0f6b163ba56ab731505e51923bfd93",
+   "size": 2148897,
+   "sha256": "2e55390fe8eac9eb76e2f7ba662e55213be18fe8c620fdb2d01f727976da5b84",
    "tr": {
     "title": {
      "en": "The big voyage",
@@ -47,7 +47,7 @@
      "gk": "Steer 당신의 성격 directly, farm 그리고 팔다 위에 하나 connected 섬 지도, 그리고 sail 에게 다른 섬들 그리고 secret 섬들"
     }
    },
-   "build": 89
+   "build": 90
   },
   {
    "version": "0.1",
@@ -56,8 +56,8 @@
    "title": "첫 출항",
    "summary": "밭, 목장, 항구 무역과 멀티플레이 방 코드가 있는 첫 공개",
    "latest": false,
-   "size": 57511,
-   "sha256": "fad7380e913f4085fafb1a849a64b4d663bb676827c86d07a120982fcc2e29af",
+   "size": 57495,
+   "sha256": "7f2cb5afa934185f332054c507e6b115010b51f2eccf7407df6ae201a1e8a21e",
    "tr": {
     "title": {
      "en": "First sailing",
