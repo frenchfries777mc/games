@@ -1596,7 +1596,7 @@ const ULTS = {
 /* ================= GOLD & COSMETICS ================= */
 const SAVE_KEY='arenaClashSave_v1';
 window.addEventListener('DOMContentLoaded', ()=>{ const t=document.getElementById('buildTag'); if(t && typeof GAME_BUILD!=='undefined') t.textContent='v'+GAME_VERSION+' '+GAME_VERSION_NAME; /* the in-match top bar: no build number */ const bv=document.getElementById('brandVer'); if(bv && typeof GAME_BUILD!=='undefined') bv.textContent='v'+GAME_VERSION; const lb=document.getElementById('lobbyBuild'); if(lb && typeof GAME_BUILD!=='undefined') lb.textContent='v'+GAME_VERSION+' '+GAME_VERSION_NAME+' · '+GAME_BUILD.replace(/^build \S*-v(\d+)$/,'b$1'); });
-const KILL_GOLD=5, ASSIST_GOLD=3, ASSIST_WINDOW=10;
+const KILL_GOLD=5, ASSIST_GOLD=3, ASSIST_WINDOW=10, TERRAIN_KILL_WINDOW=15;
 /* the purple currency: a kill gives SOUL_PER_KILL of them (an assist, a match end or practice give none); they are spent on random boxes only.
    To rename it change the name / icon / colour right here - every text, the shop and the kill feed read it from this one place. */
 const SOUL={name:'영혼석', icon:'💜', color:'#b86bff'};       // (icon = the plain-text stand-in; on screen the picture currency/soulstone.svg is used: soulImg)
@@ -5999,7 +5999,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-07-v733';
+const GAME_BUILD='build 2026-11-07-v734';
 const GAME_VERSION='1.0', GAME_VERSION_NAME='신화의 전설';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -17148,6 +17148,11 @@ function broadcastKillEvent(victim, killerName, killerX, killerY, killerColor, t
 function handleDeath(p, killer, t, killerNameFallback){
   if(p.isVault){ p.alive=false; p.hp=0; pushFx('explosion', p.x, p.y-PLAYER_H/2, t, {}); if(!matchEnded && xm && xm.id==='defend'){ xmWin((xm.wave||1)+' 웨이브 동안 버텼습니다...', xmPlayers().map(q=>q.id)); } else if(!matchEnded && xm && xm.id==='vault'){ const w=1-p.team; xmWin('팀 '+(w+1)+' 승리! 상대 금고를 부쉈어요', xmTeamMembers(w).map(q=>q.id)); } return; }
   if(p.isGuard || p.isClone){ p.alive=false; p.hp=0; pushFx('death', p.x, p.y-PLAYER_H/2, t, {color:p.isClone?p.color:'#ff7ac8'}); delete players[p.id]; return; }      // a summon just disappears
+  if(!killer && p.dmgBy && !p.isBoss){      // died to the terrain / a hazard: if somebody hit him in the last 15 s the kill is theirs (owner 11-07)
+    const nowS=t/1000; let bestId=null, bestT=-1;
+    for(const aid in p.dmgBy){ const q=players[aid], at=p.dmgBy[aid]; if(!q || aid===p.id || q.isVault) continue; if(q.team!==null && q.team!==undefined && q.team===p.team) continue; if(nowS-at<=TERRAIN_KILL_WINDOW && at>bestT){ bestT=at; bestId=aid; } }
+    if(bestId) killer=players[bestId];
+  }
   if(killer && (killer.isGuard || killer.isClone) && players[killer.ownerId]) killer=players[killer.ownerId];      // the kill is the master's
   if(killer && killer.id!==p.id && killer.puppetBy){ const mk=puppetSide(killer); if(mk && mk.id!==killer.id && mk.id!==p.id) killer=mk; }      // a kill made by a puppet counts as the puppeteer's kill (kill count, gold, feed, achievements)
   p.pzStacks=0; p.pzMarkUntil=0;                                   // 피사로 loses the stacks of his ultimate when he dies
