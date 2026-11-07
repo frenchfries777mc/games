@@ -10550,8 +10550,11 @@ function modTitle(text,sec){
   el.innerHTML=modRich(text);el.style.opacity='1';clearTimeout(el._t);el._t=setTimeout(()=>{el.style.opacity='0';},Math.max(1,Math.min(10,sec||3))*1000);
 }
 let MODWIN=null;
-function modWinClose(){if(MODWIN){try{MODWIN.remove();}catch(e){}MODWIN=null;}}
+function modWinClose(){if(MODWIN){try{MODWIN.remove();}catch(e){}MODWIN=null;}MODWC=null;}
 window.addEventListener('keydown',e=>{if(e.key==='Escape'&&MODWIN){e.preventDefault();e.stopImmediatePropagation();modWinClose();}},true);   // 창이 열려 있으면 ESC 는 무조건 먼저 창을 닫아요
+let MODWC=null;   // 지금 열려 있는 창 (add input / add button 이 여기에 더해요)
+const MODWOPS=['addin','addbtn','rmin','rmbtn'];
+const modKeepsWin=d=>Array.isArray(d)&&d.some(a=>a&&typeof a==='object'&&(MODWOPS.some(k=>a[k]!==undefined)));   // 창을 고치는 버튼은 눌러도 창이 안 닫혀요
 function modWindow(w){
   if(!w||typeof w.t!=='string'||mode!=='play')return;
   modWinClose();
@@ -10562,30 +10565,48 @@ function modWindow(w){
   const hd=document.createElement('div');hd.style.cssText='font-size:18px;font-weight:700;margin:0 28px 10px 0;color:#e9d9a4';hd.innerHTML=modRich(modTxt(w.t.slice(0,30)));pn.appendChild(hd);
   const x=document.createElement('button');x.textContent='✕';x.className='btn sm';x.style.cssText='position:absolute;right:8px;top:8px;padding:2px 8px';x.onclick=modWinClose;pn.appendChild(x);
   for(const t of (Array.isArray(w.tx)?w.tx:[]).slice(0,8)){const d=document.createElement('div');d.style.cssText='margin:6px 0;line-height:1.5';d.innerHTML=modRich(modTxt(String(t).slice(0,200)));pn.appendChild(d);}
-  const ins=[];
-  for(const q of (Array.isArray(w.inp)?w.inp:[]).slice(0,3)){
-    if(!q||typeof q.v!=='string'||!/^(s__)?[a-z0-9_]{1,17}$/.test(q.v))continue;
-    const lb=document.createElement('div');lb.style.cssText='margin:10px 0 3px;font-size:13px;color:#8fd3ff';lb.textContent=String(q.l||'').slice(0,30);
+  const ins=[];   // [변수, input, 나중에 더한 칸인가]
+  const mkIn=(q,host,dyn)=>{
+    if(!q||typeof q.v!=='string'||!/^(s__)?[a-z0-9_]{1,17}$/.test(q.v))return null;
+    const wr=document.createElement('div'),lb=document.createElement('div');lb.style.cssText='margin:10px 0 3px;font-size:13px;color:#8fd3ff';lb.textContent=String(q.l||'').slice(0,30);
     const ip=document.createElement('input');ip.maxLength=40;ip.style.cssText='width:100%;box-sizing:border-box;padding:6px;background:#0b0f16;color:#fff;border:2px solid #e9d9a4;font:inherit';
     for(const ev of ['keydown','keyup','keypress'])ip.addEventListener(ev,e=>{e.stopPropagation();});
-    pn.appendChild(lb);pn.appendChild(ip);ins.push([q.v,ip]);
-  }
+    wr.appendChild(lb);wr.appendChild(ip);host.appendChild(wr);const r=[q.v,ip,!!dyn,wr,String(q.l||'')];ins.push(r);return r;
+  };
+  for(const q of (Array.isArray(w.inp)?w.inp:[]).slice(0,6))mkIn(q,pn,false);
   const area=document.createElement('div');area.style.cssText='display:flex;flex-direction:column;gap:8px;margin-top:14px';
-  const rows={};for(const r of ['t','c','b']){const d=document.createElement('div');d.style.cssText='display:flex;flex-wrap:wrap;gap:6px;justify-content:space-between;align-items:flex-start';rows[r]=d;area.appendChild(d);}
-  const zone={};
+  const rows={},dynIn=document.createElement('div');
+  for(const r of ['t','c']){const d=document.createElement('div');d.style.cssText='display:flex;flex-wrap:wrap;gap:6px;justify-content:space-between;align-items:flex-start';rows[r]=d;area.appendChild(d);}
+  area.appendChild(dynIn);   // add input 으로 더한 칸은 가운데 버튼 줄 아래, 아래쪽 버튼 위에 나와요
+  {const d=document.createElement('div');d.style.cssText='display:flex;flex-wrap:wrap;gap:6px;justify-content:space-between;align-items:flex-start';rows.b=d;area.appendChild(d);}
+  const zone={},btns=[];
   const mk=p=>{const z=document.createElement('div');z.style.cssText='display:flex;flex-wrap:wrap;gap:6px;max-width:100%;'+(/right/.test(p)?'margin-left:auto;justify-content:flex-end;':p==='center'?'margin:0 auto;justify-content:center;':'');rows[p==='center'?'c':/^top/.test(p)?'t':'b'].appendChild(z);return z;};
-  for(const b of (Array.isArray(w.btn)?w.btn:[]).slice(0,6)){
-    if(!b||typeof b.l!=='string'||!Array.isArray(b.do))continue;
+  const mkBtn=b=>{
+    if(!b||typeof b.l!=='string'||!Array.isArray(b.do))return;
     const p=['top left','top right','bottom left','bottom right','center'].includes(b.p)?b.p:'bottom right';
     const z=zone[p]||(zone[p]=mk(p));
     const bt=document.createElement('button');bt.className='btn sm';bt.style.maxWidth='100%';bt.innerHTML=modRich(String(b.l).slice(0,20));
     if(typeof b.c==='string'&&/^#[0-9a-f]{6}$/.test(b.c)){bt.style.background=b.c;bt.style.borderColor=b.c;bt.style.color='#fff';}
-    bt.onclick=e=>{e.stopPropagation();Object.assign(MODX,cx,{loc:{}});for(const [v,ip] of ins){const t=ip.value.trim();modVarSet(v,t!==''&&/^-?\d{1,9}(\.\d{1,3})?$/.test(t)?+t:t);}modWinClose();try{modRun(b.do,0,{n:20000});}catch(er){}};
-    z.appendChild(bt);
-  }
-  for(const r in rows)if(!rows[r].children.length)rows[r].remove();
+    const keep=modKeepsWin(b.do);
+    bt.onclick=e=>{e.stopPropagation();Object.assign(MODX,cx,{loc:{}});
+      for(const [v,ip,dy] of ins){const t=ip.value.trim();if(dy&&t===''){if(v.startsWith('s__'))modVarSet(v,'');else delete modVars()[v];}else modVarSet(v,t!==''&&/^-?\d{1,9}(\.\d{1,3})?$/.test(t)?+t:t);}
+      if(!keep)modWinClose();try{modRun(b.do,0,{n:20000});}catch(er){}};
+    z.appendChild(bt);btns.push([String(b.l),bt,z]);
+  };
+  for(const b of (Array.isArray(w.btn)?w.btn:[]).slice(0,6))mkBtn(b);
   pn.appendChild(area);el.appendChild(pn);document.body.appendChild(el);MODWIN=el;
+  MODWC={addIn:q=>{if(ins.length<8&&!ins.some(r=>r[0]===q.v))mkIn(q,dynIn,true);},
+    addBtn:b=>{if(btns.length<12&&!btns.some(r=>r[0]===String(b.l)))mkBtn(b);},
+    rmIn:l=>{for(let i=ins.length-1;i>=0;i--){const r=ins[i];if(r[2]&&r[4]===l){r[3].remove();ins.splice(i,1);const v=r[0];if(v.startsWith('s__'))modVarSet(v,'');else delete modVars()[v];}}},   // 지우면 그 변수도 비워요
+    rmBtn:l=>{for(let i=btns.length-1;i>=0;i--){if(btns[i][0]===l){btns[i][1].remove();btns.splice(i,1);}}}};
   const f=ins[0];if(f)setTimeout(()=>f[1].focus(),30);
+}
+function modWinEdit(a){   // add input / add button / remove input / remove button: 열려 있는 창을 고쳐요
+  if(!MODWC||!MODWIN)return;
+  if(a.addin&&typeof a.addin.l==='string')MODWC.addIn(a.addin);
+  else if(a.addbtn&&typeof a.addbtn.l==='string'&&Array.isArray(a.addbtn.do))MODWC.addBtn(a.addbtn);
+  else if(typeof a.rmin==='string')MODWC.rmIn(a.rmin);
+  else if(typeof a.rmbtn==='string')MODWC.rmBtn(a.rmbtn);
 }
 function modButton(b){
   if(!b||typeof b.label!=='string'||!Array.isArray(b.do))return;
@@ -10736,6 +10757,7 @@ function modRun0(acts,depth,box){
     else if(a.button){modButton(a.button);}
     else if(a.window){modWindow(a.window);}
     else if(a.wclose){modWinClose();}
+    else if(a.addin||a.addbtn||a.rmin!==undefined||a.rmbtn!==undefined){modWinEdit(a);}
     else if(typeof a.openw==='string'){let w=(MOD.wins[MODX.mid]||{})[a.openw];if(!w)for(const k in MOD.wins){if(MOD.wins[k][a.openw]){w=MOD.wins[k][a.openw];break;}}if(w)modWindow(w);else modSay('Window not found: '+a.openw.slice(0,30));}
     else if(a.ui&&Array.isArray(a.ui.lines)){const ls=a.ui.lines.slice(0,12).map(x=>'<p>'+modRich(modTxt(x).slice(0,120))+'</p>').join('');openModal('<h2>'+modRich(modTxt(a.ui.title||'').slice(0,40))+'</h2>'+ls+'<div class="actions"><button class="btn sm" data-close>닫기</button></div>',null,'modui');}
     else if(a.set){modSet(a.set);}
@@ -10791,7 +10813,7 @@ function modRun0(acts,depth,box){
     else if(a.genx&&host&&box.gen&&box.fresh){modGenThing(a.genx);}
     else if(a.genp&&host&&box.gen&&box.fresh){modGenPlace(a.genp);}
     else if(a.gens&&host&&box.gen&&box.fresh&&GAMEST.includes(a.gens.id)){modGenGame(a.gens);}
-    else if(a.fill&&(Array.isArray(a.fill.v)||a.fill.tv)&&!a.fill.vd){modFillVar(a.fill,depth,box);}
+    else if(a.fill&&(Array.isArray(a.fill.v)||a.fill.tv||a.fill.tl||a.fill.chv||a.fill.rv)&&!a.fill.vd){modFillVar(a.fill,depth,box);}
     else if(a.fill&&host&&world&&TER&&Array.isArray(a.fill.c)&&a.fill.c.length===4){modTf('fill',a.fill);}   // fill 은 아무 때나 (새 월드가 아니어도) 돼요
     else if(a.fillx&&host&&world&&TER&&Array.isArray(a.fillx.c)&&a.fillx.c.length===4){modGenPlace({k:a.fillx.k,c:a.fillx.c,ch:a.fillx.ch});}
     else if(a.fillb&&host&&world&&TER&&Array.isArray(a.fillb.c)&&a.fillb.c.length===4){modFillBlocks(a.fillb);}
@@ -10952,26 +10974,35 @@ function modTfLive(t){
   };
   requestAnimationFrame(pump);
 }
-function modFillVar(o,depth,box){   // fill %{pos1}% %{pos2}% to %{block}%: 좌표·대상을 변수에서 읽어서 실행해요
+function modBlockId(raw){   // 블록 이름(id·한글 이름) → 아이템 id
+  const v=String(raw).trim(),l=v.toLowerCase();let id=ITEMS[v]?v:ITEMS[l]?l:'';
+  if(!id)for(const k in ITEMS){if(ITEMS[k]&&String(ITEMS[k].name)===v){id=k;break;}}
+  return id;
+}
+function modFillVar(o,depth,box){   // fill %{pos1}% %{pos2}% to %{block}% [replace %{x}%] [chance %{n}%]: 좌표·대상·확률을 변수에서 읽어서 실행해요
   let c=o.c;
   if(Array.isArray(o.v)){const n=[];for(const k of o.v){const t=String(modVGet(k)==null?'':modVGet(k)).trim().split(/\s+/);n.push(+t[0],+t[1]);}
     if(n.length!==4||n.some(q=>!isFinite(q))){modSay('Set position first ('+o.v.join(', ')+')');return;}
     c=n.map(q=>[0,q]);}   // %player_location% 은 게임 안의 실제 좌표라서 캠프 기준으로 다시 옮기지 않아요
+  let ch=o.ch,rp=o.rp,rb=o.rb;
+  if(o.chv){const t=modVGet(o.chv);if(t!==undefined&&t!==null&&String(t).trim()!==''){const n=Math.round(+t);if(!(n>=1&&n<=100)){modSay('Chance must be 1 to 100');return;}ch=n;}}
+  if(o.rv){const t=String(modVGet(o.rv)==null?'':modVGet(o.rv)).trim();
+    if(t){const l=t.toLowerCase();if(l==='ocean'||l==='water')rp=1;else if(l==='land')rp=2;else{const id=modBlockId(t);if(!id){modSay('Unknown block: '+t.slice(0,30));return;}rb=id;}}}
   let a2;
-  if(o.tv){
-    const raw=String(modVGet(o.tv)==null?'':modVGet(o.tv)).trim(),v=raw.toLowerCase();
-    if(/^(land|beach|ocean|mountain)$/.test(v))a2={fill:{c,mode:v,b:null,rp:o.rp,ch:o.ch,vd:1}};
-    else if(/^(tree|rock|iron|gold|copper|zinc)$/.test(v))a2={fillx:{k:v,c,ch:o.ch||100}};
-    else{let id=ITEMS[raw]?raw:ITEMS[v]?v:'';if(!id)for(const k in ITEMS){if(ITEMS[k]&&String(ITEMS[k].name)===raw){id=k;break;}}
+  if(o.tv||o.tl){
+    const raw=o.tv?String(modVGet(o.tv)==null?'':modVGet(o.tv)).trim():String(o.tl),v=raw.toLowerCase();
+    if(/^(land|beach|ocean|mountain)$/.test(v))a2={fill:{c,mode:v,b:null,rp,ch:ch<100?ch:undefined,vd:1}};
+    else if(/^(tree|rock|iron|gold|copper|zinc)$/.test(v))a2={fillx:{k:v,c,ch:ch||100}};
+    else{const id=o.tl&&raw[0]==='@'?raw:modBlockId(raw);
       if(!id){modSay('Unknown block: '+raw.slice(0,30));return;}
-      a2={fillb:{it:id,c,ch:o.ch||100}};}
-  }else a2={fill:Object.assign({},o,{c,v:null,vd:1})};
+      a2={fillb:{it:id,c,ch:ch||100,rb}};}
+  }else a2={fill:Object.assign({},o,{c,v:null,vd:1,rp,ch:ch<100?ch:undefined})};
   modRun0([a2],depth,box);
 }
 function modFillBlocks(a){   // fill x0 z0 x1 z1 to <블록> [chance N%]: 땅 위 16×16 칸마다 (원래 지형은 그대로 두고 그 위에 세워요)
   const an=modAnchor(null,true),c=a.c.map((p,i)=>{const v=Math.round(+p[1])||0;return p[0]?(i%2?an.y:an.x)+v:v;});
   const box=[Math.max(0,Math.min(c[0],c[2])),Math.max(0,Math.min(c[1],c[3])),Math.min(W,Math.max(c[0],c[2])),Math.min(H,Math.max(c[1],c[3]))];
-  (MOD.bPend=MOD.bPend||[]).push({fb:String(a.it||''),gr:box,ch:Math.max(1,Math.min(100,a.ch|0||100))});
+  (MOD.bPend=MOD.bPend||[]).push({fb:String(a.it||''),rb:a.rb?String(a.rb):'',gr:box,ch:Math.max(1,Math.min(100,a.ch|0||100))});
 }
 function modGenGame(a){   // generate village|ruin_forest|fossil|... [x0 z0 x1 z1]: 지형이 정해진 뒤에 자리를 골라 놓아요
   let box=null;
@@ -11002,6 +11033,14 @@ function modFbPump(){   // fill ... to <블록>: 대기 중인 칸을 프레임�
       j.tot++;
       try{
         if(j.ch<100&&(((Math.imul(gx,73856093)^Math.imul(gy,19349663)^0x2f1b)>>>0)%100)>=j.ch)continue;
+        if(j.rk){   // replace: 그 블록이 있는 칸만 지우고 새 블록을 놓아요 (못 놓으면 원래 블록을 되돌려요)
+          const rl=STRUCT[j.rk].layer,mp=structMap(rl),key=skey(rl,gx,gy),ob=mp.get(key);
+          if(!ob||ob.id!==j.rk)continue;
+          removeStructCell(gx,gy,rl);
+          if(canPlaceCell(gx,gy,j.k,true)){if(isHost())bcastAll({t:'smashed',gx,gy,l:rl,drops:[]});addStruct(j.k,gx,gy,'host',j.it);j.n++;}
+          else{mp.set(key,ob);world.structs.push(ob);world.structs.sort((a,c)=>a.y-c.y);}
+          continue;
+        }
         ptShape(gx*GRID+8,gy*GRID+8);if(sV<SEA+0.02||sV>=0.97||(sB&128))continue;
         if(canPlaceCell(gx,gy,j.k,true)){addStruct(j.k,gx,gy,'host',j.it);j.n++;}
       }catch(e){}
@@ -11014,7 +11053,8 @@ function modBuildPend(){const L=MOD.bPend||[];MOD.bPend=[];for(const b0 of L){tr
     let it=b0.fb,k=it;if(it[0]==='@'){it=MODDEF.item[it.slice(1)]||'';k=(it&&ITEMS[it]&&ITEMS[it].place)||'';}else k=(ITEMS[it]&&ITEMS[it].place)||'';
     if(!k||!STRUCT[k])continue;
     const g=b0.gr,gx0=Math.ceil(g[0]/GRID),gy0=Math.ceil(g[1]/GRID),gx1=Math.floor(g[2]/GRID),gy1=Math.floor(g[3]/GRID);
-    (MOD.fbQ=MOD.fbQ||[]).push({k,it,gx0,gx1,gy1,gx:gx0,gy:gy0,n:0,tot:0,ch:b0.ch});   // 한 번에 다 놓으면 렉이 걸려서 프레임마다 조금씩 놓아요
+    let rk='';if(b0.rb){let ri=b0.rb;rk=ri[0]==='@'?(MODDEF.item[ri.slice(1)]?ITEMS[MODDEF.item[ri.slice(1)]]&&ITEMS[MODDEF.item[ri.slice(1)]].place:''):(ITEMS[ri]&&ITEMS[ri].place);rk=rk||'';if(!rk||!STRUCT[rk]||STRUCT[rk].layer==='c')continue;}   // replace <블록>: 그 블록이 있는 칸만 바꿔요
+    (MOD.fbQ=MOD.fbQ||[]).push({k,it,rk,gx0,gx1,gy1,gx:gx0,gy:gy0,n:0,tot:0,ch:b0.ch});   // 한 번에 다 놓으면 렉이 걸려서 프레임마다 조금씩 놓아요
     if(!MOD.fbRun){MOD.fbRun=1;requestAnimationFrame(modFbPump);}
     continue;
   }
