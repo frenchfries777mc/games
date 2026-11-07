@@ -408,7 +408,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.6<br>build 200</p>
+    <p class="foot">v0.6<br>build 201</p>
   </nav>
 </div>
 
@@ -4363,21 +4363,32 @@ function renderRecipes(){
 }
 function fillRecipe(r){
   if(held){toast('손에 든 아이템을 먼저 내려놓아 주세요.');return;}
-  for(let i=0;i<7;i++){
-    const q=craft[i];if(!q)continue;
-    if(!roomFor(q.id,q.n)){toast('인벤토리가 가득 차서 자동으로 채울 수 없어요.');return;}
-    addStack(q.id,q.n,q.d);craft[i]=null;
-  }
-  linkPull(r);
-  const rs=resolveRecipe(r,true);
-  if(!rs.can){toast('재료가 부족해요: '+Object.keys(rs.miss).map(lb=>lb+' '+rs.miss[lb]+'개').join(', '));afterChange();return;}
-  rs.pat.forEach((q,i)=>{
-    if(!q)return;
-    let left=q.n;
-    for(let j=0;j<inv.length&&left>0;j++){const z=inv[j];if(z&&z.id===q.id){const t=Math.min(z.n,left);z.n-=t;left-=t;if(z.n<=0)inv[j]=null;}}
-    craft[i]={id:q.id,n:q.n};
-  });
-  afterChange();
+  const arranged=r.pat.every((p,i)=>p?(craft[i]&&matchSlot(p,{id:craft[i].id,n:p.n})):!craft[i])&&craft.every((q,i)=>i<r.pat.length||!q);
+  const snapI=inv.map(cp),snapB=bag.map(cp),snapC=craft.map(cp);
+  const undo=()=>{for(let i=0;i<inv.length;i++)inv[i]=snapI[i];for(let i=0;i<bag.length;i++)bag[i]=snapB[i];for(let i=0;i<craft.length;i++)craft[i]=snapC[i];};
+  const take=(id,n)=>{let left=n;for(let j=0;j<inv.length&&left>0;j++){const z=inv[j];if(z&&z.id===id){const t=Math.min(z.n,left);z.n-=t;left-=t;if(z.n<=0)inv[j]=null;}}};
+  bulk=true;
+  try{
+    if(arranged){   // 이미 그 레시피대로 놓여 있으면 한 번 분량씩 더 얹어요
+      linkPull(r);
+      const need={};
+      r.pat.forEach((p,i)=>{if(p)need[craft[i].id]=(need[craft[i].id]||0)+p.n;});
+      for(const id in need)if(haveN(id)<need[id]){toast('재료가 부족해요: '+ITEMS[id].name+' '+need[id]+'개');return;}
+      for(let i=0;i<r.pat.length;i++){const p=r.pat[i];if(p&&craft[i].n+p.n>maxStack(craft[i].id)){toast('제작칸이 가득 찼어요.');return;}}
+      for(const id in need)take(id,need[id]);
+      r.pat.forEach((p,i)=>{if(p)craft[i].n+=p.n;});
+    }else{   // 아니면 제작칸을 가방으로 비우고 레시피대로 한 번 분량을 놓아요. 하나라도 안 되면 모두 취소해요
+      for(let i=0;i<7;i++){
+        const q=craft[i];if(!q)continue;
+        if(!roomFor(q.id,q.n)){undo();toast('인벤토리가 가득 차서 자동으로 채울 수 없어요.');return;}
+        addStack(q.id,q.n,q.d);craft[i]=null;
+      }
+      linkPull(r);
+      const rs=resolveRecipe(r,true);
+      if(!rs.can){undo();toast('재료가 부족해요: '+Object.keys(rs.miss).map(lb=>lb+' '+rs.miss[lb]+'개').join(', '));return;}
+      rs.pat.forEach((q,i)=>{if(!q)return;take(q.id,q.n);craft[i]={id:q.id,n:q.n};});
+    }
+  }finally{bulk=false;afterChange();}
 }
 function consumePat(pat){
   for(const q of pat){
