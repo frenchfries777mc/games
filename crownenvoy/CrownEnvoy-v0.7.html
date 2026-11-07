@@ -557,7 +557,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 165</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 166</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div><p class="tagline">사절을 보내 동맹을 맺고, 군대를 보내 왕관을 차지하세요.</p></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -1496,9 +1496,9 @@ function place(pid,n,prefer,from,mix,foe){
   if(gh!=null){const GT=G.terr[gh];addUnits(GT,pid,mu);return;}
   if(p.landless){const any=G.terr.find(t=>!t.sea&&t.gst&&t.gst[pid]>0)||G.terr.find(t=>!t.sea&&t.owner!=null&&guestOK(pid,t));if(any){addUnits(any,pid,mu);}return;}
   let dest=(prefer||[]).find(t=>G.terr[t].owner===pid);
-  if(dest==null&&from!=null){const fo=(foe!=null&&TDEF[foe])?TDEF[foe]:null;const dd=t=>fo?Math.hypot(TDEF[t].x-fo.x,TDEF[t].y-fo.y):0;const c=GEO.adj[from].filter(t=>G.terr[t].owner===pid&&t!==foe).sort((a,b)=>fo?dd(b)-dd(a):G.terr[b].troops-G.terr[a].troops);dest=c[0]!=null?c[0]:GEO.adj[from].filter(t=>G.terr[t].owner===pid).sort((a,b)=>G.terr[b].troops-G.terr[a].troops)[0];}
-  if(dest==null&&G.terr[p.cap]&&G.terr[p.cap].owner===pid)dest=p.cap;
-  if(dest==null){const o=owned(pid);if(o.length)dest=o[0].id;}
+  if(dest==null&&from!=null){const fo=(foe!=null&&TDEF[foe])?TDEF[foe]:null;const dd=t=>fo?Math.hypot(TDEF[t].x-fo.x,TDEF[t].y-fo.y):0;const c=adjAll(from).filter(t=>G.terr[t].owner===pid&&t!==foe).sort((a,b)=>fo?dd(b)-dd(a):G.terr[b].troops-G.terr[a].troops);dest=c[0]!=null?c[0]:adjAll(from).filter(t=>G.terr[t].owner===pid).sort((a,b)=>G.terr[b].troops-G.terr[a].troops)[0];}
+  /* 퇴로가 없으면 맞닿지 않은 먼 영토로 순간이동하지 않고 흩어진다 (출발지를 모를 때만 수도로) */
+  if(dest==null&&from==null){if(G.terr[p.cap]&&G.terr[p.cap].owner===pid)dest=p.cap;else{const o=owned(pid);if(o.length)dest=o[0].id;}}
   if(dest==null){log(`${pname(pid)}의 패잔병 ${n}명이 퇴로를 잃고 흩어졌다.`,'war');return;}
   addUnits(G.terr[dest],pid,mu);
 }
