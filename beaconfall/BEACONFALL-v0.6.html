@@ -413,7 +413,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.6<br>build 202</p>
+    <p class="foot">v0.6<br>build 203</p>
   </nav>
 </div>
 
@@ -5804,6 +5804,18 @@ let LAVA_WALK=false;   // 내화 물약·화산석 갑옷을 입은 플레이어
 const lavaProt=()=>(P.buff&&P.buff.fire>0)||fullSet('obsidian');
 const sbIn=(x,y)=>x>=8&&y>=8&&x<W-8&&y<H-8;   // 샌드박스: 어디든 이동
 function modBlk(id){const c=MOD.col,v=c[id];if(v!==undefined)return v;if(c.block!==undefined)return c.block;return STRUCT[id].block;}
+function inTree(x,y,xi,yi){
+  const T=world.trees;
+  for(let gy=(yi-4)>>4;gy<=(yi+4)>>4;gy++)for(let gx=(xi-4)>>4;gx<=(xi+4)>>4;gx++){
+    const cell=tgrid.get(gy*tgw+gx); if(!cell)continue;
+    for(let n=0;n<cell.length;n++){
+      const k=cell[n], bush=T.t[k]===4;
+      if(world.removed[k])continue;
+      if(Math.abs(x-T.x[k])<(bush?2.5:3.2)&&Math.abs(y-T.y[k])<(bush?1.8:2.2))return true;
+    }
+  }
+  return false;
+}
 function walkable(x,y){
   const xi=Math.round(x), yi=Math.round(y);
   if(xi<6||yi<6||xi>=W-6||yi>=H-6)return false;
@@ -5815,14 +5827,7 @@ function walkable(x,y){
   const c=world.camp; if(Math.abs(x-c.x)<4&&Math.abs(y-c.y)<3)return false;
   {const sb=world.sgrid.get(Math.floor(y/GRID)*GW+Math.floor(x/GRID));if(sb&&modBlk(sb.id)&&!(sb.id==='door'&&sb.op)&&!(sb.id==='tgate'&&gateOpenFor(sb))&&!(sb.id==='ruin'&&(sb.k==='field'||sb.k==='chick'||sb.k==='leaves'||sb.k==='vport')))return false;}
   const T=world.trees;
-  if(MOD.col.tree!==false)for(let gy=(yi-4)>>4;gy<=(yi+4)>>4;gy++)for(let gx=(xi-4)>>4;gx<=(xi+4)>>4;gx++){
-    const cell=tgrid.get(gy*tgw+gx); if(!cell)continue;
-    for(let n=0;n<cell.length;n++){
-      const k=cell[n], bush=T.t[k]===4;
-      if(world.removed[k])continue;
-      if(Math.abs(x-T.x[k])<(bush?2.5:3.2)&&Math.abs(y-T.y[k])<(bush?1.8:2.2))return false;
-    }
-  }
+  if(MOD.col.tree===true&&inTree(x,y,xi,yi))return false;   // 나무는 지나갈 수 있어요 (모드가 enable collision of tree 를 켰을 때만 막혀요). 지나가면 느려져요: updatePlayer
   const Bd=world.boulders;
   for(let gy=(yi-5)>>4;gy<=(yi+5)>>4;gy++)for(let gx=(xi-5)>>4;gx<=(xi+5)>>4;gx++){
     const cell=bgrid.get(gy*tgw+gx);if(!cell)continue;
@@ -6503,7 +6508,7 @@ function updatePlayer(dt){
         const sp2=80*dt,nx=P.x+dx*sp2;if(swimOK(nx,P.y))P.x=nx;
         const ny=P.y+dy*sp2;if(swimOK(P.x,ny))P.y=ny;
       }else{
-        const wet=rvAt(Math.round(P.x),Math.round(P.y))>0, sp=50*(wet?0.6:1)*(P.bioId===7?0.8:1)*(bufOn('spd')?1.15:1)*(P.mount?1.9:1)*(cartOn&&!P.mount?0.92:1)*dt;
+        const wet=rvAt(Math.round(P.x),Math.round(P.y))>0, sp=50*(wet?0.6:1)*(P.bioId===7?0.8:1)*(bufOn('spd')?1.15:1)*(P.mount?1.9:1)*(cartOn&&!P.mount?0.92:1)*((MOD.col.tree===undefined&&inTree(P.x,P.y,Math.round(P.x),Math.round(P.y)))?0.8:1)*dt;
         LAVA_WALK=lavaProt();
         const stuck=!walkable(P.x,P.y);
         const nx=P.x+dx*sp; if(stuck||walkable(nx,P.y))P.x=nx;
