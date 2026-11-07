@@ -4,6 +4,11 @@
 <head><style id="ffTap">html,body{touch-action:manipulation}</style>
 <meta charset="utf-8">
 <link rel="icon" type="image/svg+xml" href="https://frenchfries777.com/games/gamelogo/beaconfall.svg">
+<script>/* Fry Code 「바로 적용」 테스트 모드 (?bstest=1): 저장소를 메모리로 바꿔서 진짜 기록·모드 목록을 건드리지 않아요 */
+(function(){if(!/[?&]bstest=1/.test(location.search))return;window.BST=1;var m={};var S={getItem:function(k){return Object.prototype.hasOwnProperty.call(m,k)?m[k]:null},setItem:function(k,v){m[k]=String(v)},removeItem:function(k){delete m[k]},clear:function(){m={}},key:function(i){return Object.keys(m)[i]||null}};Object.defineProperty(S,'length',{get:function(){return Object.keys(m).length}});try{Object.defineProperty(window,'localStorage',{value:S,configurable:true});}catch(e){}
+window.__bstQ=null;addEventListener('message',function(e){var d=e.data;if(!d||d.type!=='bs-apply'||e.source!==parent)return;if(window.bstApply)window.bstApply(d);else window.__bstQ=d;});
+var st=document.createElement('style');st.textContent='#introScr,#me,#authgate,#backbtn{display:none!important}';document.head.appendChild(st);})();
+</script>
 <script src="https://frenchfries777.com/games/ff-lang.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>BEACONFALL</title>
@@ -408,7 +413,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.6<br>build 200</p>
+    <p class="foot">v0.6<br>build 202</p>
   </nav>
 </div>
 
@@ -526,7 +531,7 @@ const BGM=(()=>{
 //==GEN_START
 /* ---------- 월드 생성 (DOM 의존 없음) ---------- */
 let W=21504, H=13312;const SEA=0.5;   // 옛 월드는 21504×13312, 새 월드는 25565×25565 (월드마다 setWorldSize 로 바꿔요)
-const WS_OLD=[21504,13312],WS_NEW=[25565,25565];   // 구역(256×256)별로 불러오는 아주 큰 월드
+const WS_OLD=[21504,13312],WS_NEW=[25565,25565],WS_TEST=[6144,6144];   /* WS_TEST: Fry Code 「바로 적용」 전용 작은 월드 */   // 구역(256×256)별로 불러오는 아주 큰 월드
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 var MODBLK={},MODPKO=[],MODPPL={},MODUI={},MODPKQ=[],MODSND={},MODMUSP={};   // 리소스팩 그림
 function hashStr(s){let h=2166136261;s=String(s);for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
@@ -601,7 +606,9 @@ function shape(x,y,hb,fb,L){
     for(let k=0;k<tf.r.length;k++){
       const q=tf.r[k];if(x<q[0]||x>q[2]||y<q[1]||y>q[3])continue;
       if(q[4]===4){v=v0;bv=bv0;sC=0;continue;}
-      if(q[8]===1&&v>SEA)continue;   // fill ... replace water: 물이었던 곳만 바꿔요
+      if(q[8]===1&&v>SEA)continue;   // fill ... replace ocean: 물이었던 곳만 바꿔요
+      if(q[8]===2&&v<=SEA)continue;   // fill ... replace land: 땅이었던 곳만 바꿔요
+      if(q[9]>0&&q[9]<100&&(((Math.imul(x|0,73856093)^Math.imul(y|0,19349663)^Math.imul(k+1,83492791))>>>0)%100)>=q[9])continue;   // fill ... chance N%: 픽셀마다 N% 확률로만
       if(q[4]===5){if(q[7]===1){const ex=(x-(q[0]+q[2])/2)/((q[2]-q[0])/2),ey=(y-(q[1]+q[3])/2)/((q[3]-q[1])/2);if(ex*ex+ey*ey>=1)continue;}if(v>SEA+0.01){if(q[5]>=0)bv=q[5];sC=(q[6]&&MODBIO.id[q[6]])||0;}continue;}   // 길 칠하기: 높이는 그대로, 땅 색과 바이옴만 바꿔요
       if(q[7]===1){   // 타원 섬 (새 바이옴)
         const ex=(x-(q[0]+q[2])/2)/((q[2]-q[0])/2),ey=(y-(q[1]+q[3])/2)/((q[3]-q[1])/2),ed=Math.sqrt(ex*ex+ey*ey);
@@ -1441,7 +1448,7 @@ function setWorldSize(w,h){   // 월드 크기에 따라 달라지는 값을 한
   seaC=seaG=seaP=seaS=null;seaRoutes.clear();
 }
 async function loadWorld(seed,name,id,sz){
-  {const q=settings.worlds.find(x=>x.id===id),z=sz||(q&&q.sz)||0;const d=z?WS_NEW:WS_OLD;if(d[0]!==W||d[1]!==H)setWorldSize(d[0],d[1]);}
+  {const q=settings.worlds.find(x=>x.id===id),z=sz||(q&&q.sz)||0;const d=z===2?WS_TEST:z?WS_NEW:WS_OLD;if(d[0]!==W||d[1]!==H)setWorldSize(d[0],d[1]);}
   if(world)saveWorld(true);
   const L=$('#loading');L.classList.remove('done');L.style.display='flex';
   const progress=async(p,msg)=>{$('#barfill').style.width=(p*100)+'%';$('#loadmsg').textContent=msg;await new Promise(r=>requestAnimationFrame(()=>setTimeout(r,0)));};
@@ -4363,21 +4370,32 @@ function renderRecipes(){
 }
 function fillRecipe(r){
   if(held){toast('손에 든 아이템을 먼저 내려놓아 주세요.');return;}
-  for(let i=0;i<7;i++){
-    const q=craft[i];if(!q)continue;
-    if(!roomFor(q.id,q.n)){toast('인벤토리가 가득 차서 자동으로 채울 수 없어요.');return;}
-    addStack(q.id,q.n,q.d);craft[i]=null;
-  }
-  linkPull(r);
-  const rs=resolveRecipe(r,true);
-  if(!rs.can){toast('재료가 부족해요: '+Object.keys(rs.miss).map(lb=>lb+' '+rs.miss[lb]+'개').join(', '));afterChange();return;}
-  rs.pat.forEach((q,i)=>{
-    if(!q)return;
-    let left=q.n;
-    for(let j=0;j<inv.length&&left>0;j++){const z=inv[j];if(z&&z.id===q.id){const t=Math.min(z.n,left);z.n-=t;left-=t;if(z.n<=0)inv[j]=null;}}
-    craft[i]={id:q.id,n:q.n};
-  });
-  afterChange();
+  const arranged=r.pat.every((p,i)=>p?(craft[i]&&matchSlot(p,{id:craft[i].id,n:p.n})):!craft[i])&&craft.every((q,i)=>i<r.pat.length||!q);
+  const snapI=inv.map(cp),snapB=bag.map(cp),snapC=craft.map(cp);
+  const undo=()=>{for(let i=0;i<inv.length;i++)inv[i]=snapI[i];for(let i=0;i<bag.length;i++)bag[i]=snapB[i];for(let i=0;i<craft.length;i++)craft[i]=snapC[i];};
+  const take=(id,n)=>{let left=n;for(let j=0;j<inv.length&&left>0;j++){const z=inv[j];if(z&&z.id===id){const t=Math.min(z.n,left);z.n-=t;left-=t;if(z.n<=0)inv[j]=null;}}};
+  bulk=true;
+  try{
+    if(arranged){   // 이미 그 레시피대로 놓여 있으면 한 번 분량씩 더 얹어요
+      linkPull(r);
+      const need={};
+      r.pat.forEach((p,i)=>{if(p)need[craft[i].id]=(need[craft[i].id]||0)+p.n;});
+      for(const id in need)if(haveN(id)<need[id]){toast('재료가 부족해요: '+ITEMS[id].name+' '+need[id]+'개');return;}
+      for(let i=0;i<r.pat.length;i++){const p=r.pat[i];if(p&&craft[i].n+p.n>maxStack(craft[i].id)){toast('제작칸이 가득 찼어요.');return;}}
+      for(const id in need)take(id,need[id]);
+      r.pat.forEach((p,i)=>{if(p)craft[i].n+=p.n;});
+    }else{   // 아니면 제작칸을 가방으로 비우고 레시피대로 한 번 분량을 놓아요. 하나라도 안 되면 모두 취소해요
+      for(let i=0;i<7;i++){
+        const q=craft[i];if(!q)continue;
+        if(!roomFor(q.id,q.n)){undo();toast('인벤토리가 가득 차서 자동으로 채울 수 없어요.');return;}
+        addStack(q.id,q.n,q.d);craft[i]=null;
+      }
+      linkPull(r);
+      const rs=resolveRecipe(r,true);
+      if(!rs.can){undo();toast('재료가 부족해요: '+Object.keys(rs.miss).map(lb=>lb+' '+rs.miss[lb]+'개').join(', '));return;}
+      rs.pat.forEach((q,i)=>{if(!q)return;take(q.id,q.n);craft[i]={id:q.id,n:q.n};});
+    }
+  }finally{bulk=false;afterChange();}
 }
 function consumePat(pat){
   for(const q of pat){
@@ -4450,6 +4468,7 @@ $('#rlist').addEventListener('contextmenu',e=>{
 const SAVE_KEY=id=>'stranded.save.v5.'+id;   // 섬 구성이 바뀌어 예전 저장과는 호환되지 않아요
 let lastSaveT=0;
 function saveWorld(force){
+  if(window.BST)return;
   if(!world||!world.id||!force||window.bfCloudLoading||world.bakHold||window.__bpBulk)return;
   bakMaybe(world.id);
   try{
@@ -10472,7 +10491,7 @@ function modTxt(s){   // Potato API: %player_name% 같은 값을 글에 넣어�
     if(!MOD.phAll)return m;   // 옛 api potato 모드만 게임이 풀어줘요
     switch(k){
       case 'player_name':return myName();
-      case 'player_location':return Math.round(P.x)+', '+(Math.round((P.alt||0)*10)/10)+', '+Math.round(P.y);   // x, y(고도), z
+      case 'player_location':return Math.round(P.x)+' '+Math.round(P.y);   // 'x z' (예: 300 20)
       case 'player_x':return String(Math.round(P.x));
       case 'player_y':return String(Math.round((P.alt||0)*10)/10);   // 열기구 고도 (0~3, 땅 위는 0)
       case 'player_z':return String(Math.round(P.y));   // 위에서 보는 2D라 z는 세로 좌표
@@ -10745,6 +10764,9 @@ function modCondOk(c){   // if A or B: 안의 조건 하나
   return false;
 }
 function modRun(acts,depth,box){
+  try{modRun0(acts,depth,box);}finally{if(!depth)modFlush();}   // fill 로 바뀐 지형이 있으면 맨 바깥 명령이 끝났을 때 한 번에 적용해요
+}
+function modRun0(acts,depth,box){
   if(!Array.isArray(acts)||depth>12)return;
   for(const a of acts){
     if(!a||typeof a!=='object'||--box.n<0)return;
@@ -10814,7 +10836,9 @@ function modRun(acts,depth,box){
     else if(a.genx&&host&&box.gen&&box.fresh){modGenThing(a.genx);}
     else if(a.genp&&host&&box.gen&&box.fresh){modGenPlace(a.genp);}
     else if(a.gens&&host&&box.gen&&box.fresh&&GAMEST.includes(a.gens.id)){modGenGame(a.gens);}
-    else if(a.fill&&host&&box.gen&&box.fresh&&Array.isArray(a.fill.c)&&a.fill.c.length===4){modTf('fill',a.fill);}
+    else if(a.fill&&host&&world&&TER&&Array.isArray(a.fill.c)&&a.fill.c.length===4){modTf('fill',a.fill);}   // fill 은 아무 때나 (새 월드가 아니어도) 돼요
+    else if(a.fillx&&host&&world&&TER&&Array.isArray(a.fillx.c)&&a.fillx.c.length===4){modGenPlace({k:a.fillx.k,c:a.fillx.c,ch:a.fillx.ch});}
+    else if(a.fillb&&host&&world&&TER&&Array.isArray(a.fillb.c)&&a.fillb.c.length===4){modFillBlocks(a.fillb);}
     else if(typeof a.wipe==='string'&&host&&box.gen&&box.fresh){modTf('wipe',a.wipe);}
     else if(a.remove&&host&&(a.remove.what==='tree'||a.remove.what==='rock')){
       const an=modAnchor(a.remove.of,box.gen),R=Math.max(1,Math.min(60,a.remove.r|0||5))*GRID,R2=R*R;
@@ -10837,7 +10861,8 @@ function cleanTF(t){
     const n=q.slice(0,6).map(v=>Math.round(+v));if(n.some(v=>!Number.isFinite(v)))continue;
     const o=[Math.max(0,n[0]),Math.max(0,n[1]),Math.min(W,n[2]),Math.min(H,n[3]),n[4]>=0&&n[4]<=5?n[4]:0,n[5]>=-1&&n[5]<=8?n[5]:-1];
     if(typeof q[6]==='string'&&q[6].length<=20&&(q[6]||q[7]===1)){o.push(q[6].slice(0,20),q[7]===1?1:0);}
-    if(q[8]===1&&o[4]!==4){while(o.length<8)o.push(o.length===6?'':0);o.push(1);}   // replace water
+    const rp=(q[8]===1||q[8]===2)&&o[4]!==4?q[8]:0,ch=Math.round(+q[9]);
+    if(rp||(ch>=1&&ch<=99&&o[4]!==4)){while(o.length<8)o.push(o.length===6?'':0);o.push(rp);if(ch>=1&&ch<=99&&o[4]!==4)o.push(ch);}   // replace ocean|land, chance N%
     r.push(o);
   }
   const o={r,nt:t.nt?1:0,nr:t.nr?1:0,no:t.no?1:0,ns:t.ns?1:0};
@@ -10943,6 +10968,25 @@ function modGenThing(a){   // generate island|mountain|forest|"구조물" [x0 z0
   else tf.r.push([x0,y0,x1,y1,5,1,'',1]);
   MOD.tfDirty=1;
 }
+function modFlush(){   // fill 로 바뀐 지형·나무·블록을 지금 열려 있는 월드에 바로 적용 (이미 지은 건물과 베어 낸 나무는 그대로)
+  if(MOD.tfHold||!world||!TER)return;
+  if(MOD.tfDirty){
+    MOD.tfDirty=0;
+    try{const t=cleanTF(world.tf);if(t){modTfLive(t);if(isHost())bcastAll({t:'tfu',tf:t});}}catch(x){}
+  }
+  if(MOD.bPend&&MOD.bPend.length){try{modBuildPend();}catch(x){}}
+}
+function modTfLive(t){
+  const rem=collectRemoved(),brm=collectBrem(),cv=(world.conv||[]).slice();
+  applyTF(t,false);
+  markRemoved(rem);markBrem(brm);markOres(cv,5);world.conv=cv;
+  saveWorld(true);
+}
+function modFillBlocks(a){   // fill x0 z0 x1 z1 to <블록> [chance N%]: 땅 위 16×16 칸마다 (원래 지형은 그대로 두고 그 위에 세워요)
+  const an=modAnchor(null,true),c=a.c.map((p,i)=>{const v=Math.round(+p[1])||0;return p[0]?(i%2?an.y:an.x)+v:v;});
+  const box=[Math.max(0,Math.min(c[0],c[2])),Math.max(0,Math.min(c[1],c[3])),Math.min(W,Math.max(c[0],c[2])),Math.min(H,Math.max(c[1],c[3]))];
+  (MOD.bPend=MOD.bPend||[]).push({fb:String(a.it||''),gr:box,ch:Math.max(1,Math.min(100,a.ch|0||100))});
+}
 function modGenGame(a){   // generate village|ruin_forest|fossil|... [x0 z0 x1 z1]: 지형이 정해진 뒤에 자리를 골라 놓아요
   let box=null;
   if(Array.isArray(a.c)&&a.c.length===4){const an=modAnchor(null,true),c=a.c.map((p,i)=>{const v=Math.round(+p[1])||0;return p[0]?(i%2?an.y:an.x)+v:v;});box=[Math.min(c[0],c[2]),Math.min(c[1],c[3]),Math.max(c[0],c[2]),Math.max(c[1],c[3])];}
@@ -10953,10 +10997,27 @@ function modGenPlace(a){   // generate tree|rock|iron|gold|copper|zinc [x0 z0 x1
   let box=[0,0,W,H];
   if(Array.isArray(a.c)&&a.c.length===4){const an=modAnchor(null,true),c=a.c.map((p,i)=>{const v=Math.round(+p[1])||0;return p[0]?(i%2?an.y:an.x)+v:v;});box=[Math.max(0,Math.min(c[0],c[2])),Math.max(0,Math.min(c[1],c[3])),Math.min(W,Math.max(c[0],c[2])),Math.min(H,Math.max(c[1],c[3]))];}
   const kind={tree:-1,rock:0,iron:2,gold:3,copper:4,zinc:5}[a.k];if(kind===undefined)return;
-  tf.pl.push([box[0],box[1],box[2],box[3],kind,Math.max(1,Math.min(20000,a.n|0||20)),(Math.random()*2147483647)|0]);
+  let cnt=Math.max(1,Math.min(20000,a.n|0||20));
+  if(a.ch>0)cnt=Math.max(1,Math.min(20000,Math.round((box[2]-box[0])*(box[3]-box[1])/(GRID*GRID)*Math.min(100,a.ch)/100)));   // fill ... to tree chance N%: 칸(16×16)마다 N% 확률로
+  if(tf.pl.some(q=>q[0]===box[0]&&q[1]===box[1]&&q[2]===box[2]&&q[3]===box[3]&&q[4]===kind&&q[5]===cnt))return;
+  tf.pl.push([box[0],box[1],box[2],box[3],kind,cnt,(Math.random()*2147483647)|0]);
   MOD.tfDirty=1;
 }
 function modBuildPend(){const L=MOD.bPend||[];MOD.bPend=[];for(const b0 of L){try{
+  if(b0.fb){   // fill ... to <블록>
+    let it=b0.fb,k=it;if(it[0]==='@'){it=MODDEF.item[it.slice(1)]||'';k=(it&&ITEMS[it]&&ITEMS[it].place)||'';}else k=(ITEMS[it]&&ITEMS[it].place)||'';
+    if(!k||!STRUCT[k])continue;
+    const g=b0.gr,gx0=Math.ceil(g[0]/GRID),gy0=Math.ceil(g[1]/GRID),gx1=Math.floor(g[2]/GRID),gy1=Math.floor(g[3]/GRID),bulk=window.__bpBulk;let n=0,tot=0;
+    window.__bpBulk=1;
+    try{for(let gy=gy0;gy<=gy1&&n<3000&&tot<60000;gy++)for(let gx=gx0;gx<=gx1&&n<3000&&tot<60000;gx++){
+      tot++;
+      if(b0.ch<100&&(((Math.imul(gx,73856093)^Math.imul(gy,19349663)^0x2f1b)>>>0)%100)>=b0.ch)continue;
+      ptShape(gx*GRID+8,gy*GRID+8);if(sV<SEA+0.02||sV>=0.97||(sB&128))continue;
+      if(canPlaceCell(gx,gy,k,true)){addStruct(k,gx,gy,'host',it);n++;}
+    }}finally{window.__bpBulk=bulk;}
+    if(n)saveWorld(true);
+    continue;
+  }
   if(b0.gsid){
     const seed=(Math.random()*2147483647)|0,g=gsLay(b0.gsid,seed);if(!g)continue;
     const lw=g.lay[0].length,lh=g.lay.length,gr=b0.gr===1?[400,400,W-400,H-400]:b0.gr;let site=null;
@@ -10996,9 +11057,13 @@ function modTf(kind,a){
     const md={land:0,beach:1,ocean:2,mountain:3,load:4,paint:5}[a.mode];let bi=a.b==null?-1:TF_BIO.indexOf(String(a.b)),cn='';
     if(typeof a.cb==='string'){const D=MODBIO.by[MODBIO.id[a.cb]];if(D){bi=D.bs;cn=D.n;}}
     if(md===undefined||tf.r.length>=200)return;
-    const rg=[Math.min(c[0],c[2]),Math.min(c[1],c[3]),Math.max(c[0],c[2]),Math.max(c[1],c[3]),md,md===0&&bi<0?0:md===4?-1:bi];
-    if(cn||a.rp)rg.push(cn||'',0);
-    if(a.rp&&md!==4)rg.push(1);
+    const cl=(v,m)=>Math.max(0,Math.min(m,Math.round(v)));
+    const rg=[cl(Math.min(c[0],c[2]),W),cl(Math.min(c[1],c[3]),H),cl(Math.max(c[0],c[2]),W),cl(Math.max(c[1],c[3]),H),md,md===0&&bi<0?0:md===4?-1:bi];
+    const ch=md!==4&&a.ch>=1&&a.ch<=99?Math.round(a.ch):0;
+    if(cn||a.rp||ch)rg.push(cn||'',0);
+    if((a.rp||ch)&&md!==4)rg.push(a.rp===2?2:a.rp?1:0);
+    if(ch)rg.push(ch);
+    if(tf.r.some(q=>q.length===rg.length&&q.every((v,i)=>v===rg[i])))return;   // 똑같은 구역을 또 넣지 않아요 (on world load 로 불러올 때마다 쌓이지 않게)
     tf.r.push(rg);
   }
   MOD.tfDirty=1;
@@ -11037,7 +11102,7 @@ function modGen(){
   for(const m of MOD.on){
     if(done.includes(m.id)||(world.pt||0)>=1)continue;   // on world generate 는 월드가 새로 만들어졌을 때만 (게임을 켤 때마다 도는 건 on game load)
     const evs=MOD.ev.filter(e=>e.mid===m.id&&e.on==='generate');if(!evs.length)continue;
-    for(const e of evs){try{modRun(e.do,0,{n:100000,gen:1,fresh:(world.pt||0)<1});}catch(x){}}
+    MOD.tfHold=1;try{for(const e of evs){try{modRun(e.do,0,{n:100000,gen:1,fresh:(world.pt||0)<1});}catch(x){}}}finally{MOD.tfHold=0;}
     done.push(m.id);ran=true;
   }
   if(MOD.tfDirty){MOD.tfDirty=0;try{const t=cleanTF(world.tf);if(t)applyTF(t,true);}catch(x){}}
@@ -11047,10 +11112,9 @@ function modGen(){
 function modWorldLoad(){   // on world load: 월드를 불러올 때마다 (방장·혼자일 때만, 월드를 바꾸는 명령은 새 월드일 때만 먹혀요)
   if(isGuest()||!world||!world.id||!MOD.ev.length)return;
   for(const m of MOD.on){
-    for(const e of MOD.ev.filter(e=>e.mid===m.id&&e.on==='wload')){try{modRun(e.do,0,{n:100000,gen:1,fresh:false});}catch(x){}}
+    MOD.tfHold=1;try{for(const e of MOD.ev.filter(e=>e.mid===m.id&&e.on==='wload')){try{modRun(e.do,0,{n:100000,gen:1,fresh:false});}catch(x){}}}finally{MOD.tfHold=0;}
   }
-  if(MOD.tfDirty){MOD.tfDirty=0;try{const t=cleanTF(world.tf);if(t)applyTF(t,true);}catch(x){}}
-  try{modBuildPend();}catch(x){}
+  modFlush();   // 불러온 월드에는 fill 을 바로 적용해요 (지은 건물은 그대로)
 }
 function modKey(e,down){
   if(e._mod)return;
@@ -14408,6 +14472,7 @@ async function guestHandle(d){
   else if(d.t==='msg'){if(typeof d.s==='string')toast(d.s.slice(0,60));}
   else if(d.t==='bback'){const k=boulderIdAtKey(d.key);if(k!==undefined)world.brem[k]=0;}
   else if(d.t==='mined'){applyMined(d.key,d.drops,false);}
+  else if(d.t==='tfu'&&d.tf){try{const t=cleanTF(d.tf);if(t)modTfLive(t);}catch(e){}}
   else if(d.t==='ore'){const k=boulderIdAtKey(d.key);if(k!==undefined&&!world.brem[k]&&(d.tt>=2&&d.tt<=4)){world.boulders.t[k]=d.tt;world.conv.push([d.key,d.tt]);}}
   else if(d.t==='dmg'){LASTHIT={n:String(d.an||'').slice(0,20),t:time};damagePlayer(+d.n||0,+d.kx||0,+d.ky||0);applyFx(d.fx);}else if(d.t==='placefail'){toast('여기에는 설치할 수 없어요.');}
   else if(d.t==='dropgone'){const i=drops.findIndex(o=>o.id===d.id);if(i>=0)drops.splice(i,1);}
@@ -14661,9 +14726,63 @@ function frame(now){
   try{drawLabels();}catch(e){STLBL.length=0;}
   requestAnimationFrame(frame);
 }
+/* ---- Fry Code 「바로 적용」 (?bstest=1) : 부모(Fry Code)가 {type:'bs-apply',code,reset}을 보내면 .bs를 읽어 적용하고 {type:'bs-ready'} 또는 {type:'bs-error',msg}를 돌려줘요 ---- */
+let bstFrame=null,bstFrameP=null,bstSeq=0,bstBusy=false,bstNext=null;
+function bstPost(o){try{if(parent&&parent!==window)parent.postMessage(o,'*');}catch(e){}}
+function bstParser(){
+  if(bstFrameP)return bstFrameP;
+  return bstFrameP=new Promise((res,rej)=>{
+    const f=document.createElement('iframe');f.style.display='none';f.src='mods.html?bsparse=1';bstFrame=f;
+    const t=setTimeout(()=>{bstFrameP=null;rej(new Error('parser timeout'));},15000);
+    const h=e=>{if(e.source===f.contentWindow&&e.data&&e.data.type==='bs-parser-ready'){clearTimeout(t);removeEventListener('message',h);res(f);}};
+    addEventListener('message',h);document.body.appendChild(f);
+  });
+}
+function bstParse(code){
+  return bstParser().then(f=>new Promise((res,rej)=>{
+    const id=++bstSeq,t=setTimeout(()=>{removeEventListener('message',h);rej(new Error('parser timeout'));},10000);
+    const h=e=>{const d=e.data;if(e.source!==f.contentWindow||!d||d.type!=='bs-parsed'||d.id!==id)return;clearTimeout(t);removeEventListener('message',h);d.error?rej(new Error(d.error)):res(d);};
+    addEventListener('message',h);f.contentWindow.postMessage({type:'bs-parse',code:String(code),id},'*');
+  }));
+}
+async function bstRun(d){
+  if(bstBusy){bstNext=d;return;}
+  bstBusy=true;
+  try{
+    let ent=null;
+    if(d&&typeof d.code==='string'&&d.code.trim()){
+      const ps=await bstParse(d.code);
+      ent={id:'bstest',kind:ps.kind||'mod',name:ps.name||'테스트',descr:ps.descr||'',data:ps.data};
+    }
+    if(d&&d.reset===false&&world&&mode==='play'){
+      modApply(ent?[ent]:[]);
+    }else{
+      modApply(ent?[ent]:[]);
+      closeModal();
+      const seed=randSeedNum().replace(/^0+(?=\d)/,'');
+      const w={id:'bst'+Date.now().toString(36),name:'테스트',seed,sz:2,created:Date.now()};
+      settings.worlds=[w];settings.current=w.id;
+      await loadWorld(w.seed,w.name,w.id);
+      world.introSeen=true;enterPlay();
+    }
+    bstPost({type:'bs-ready'});
+  }catch(e){
+    bstPost({type:'bs-error',msg:String((e&&e.message)||e).slice(0,500)});
+  }
+  bstBusy=false;
+  if(bstNext){const n=bstNext;bstNext=null;bstRun(n);}
+}
 (async()=>{
   try{await document.fonts.ready;}catch(e){}
   resize();
+  if(window.BST){
+    window.bstApply=bstRun;
+    requestAnimationFrame(t=>{last=t;frame(t);});
+    bstPost({type:'bs-boot'});
+    if(window.__bstQ){const q=window.__bstQ;window.__bstQ=null;bstRun(q);}
+    else setTimeout(()=>{if(!world&&!bstBusy)bstRun({code:'',reset:true});},3000);
+    return;
+  }
   const cw=curWorld();
   await loadWorld(cw.seed,cw.name,cw.id);
   requestAnimationFrame(t=>{last=t;frame(t);});
@@ -15050,6 +15169,7 @@ gate.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter')login
 gate.addEventListener('keyup',e=>e.stopPropagation(),true);
 me.onclick=async()=>{try{if(csOn&&csDirty)await csPush();}catch(e){}csUid=null;csOn=false;csState='';frStop();try{await sb.auth.signOut({scope:'local'});}catch(e){}   /* 이 브라우저만 로그아웃 (허브·다른 게임과 같은 로그인 칸을 써요) */window.bfUser=null;window.bfUid=null;marked=false;me.classList.remove('show');prof.classList.remove('show');$g('apass').value='';say('');gate.classList.add('show');};
 (async()=>{
+ if(window.BST){window.bfTrial=true;enter('체험',null);return;}
  gate.classList.add('show');
  if(!sb){say('서버에 연결하지 못했어요. 인터넷을 확인하고 다시 시도해 주세요.');return;}
  say('계정을 확인하는 중…',true);
