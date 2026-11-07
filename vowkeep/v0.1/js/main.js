@@ -121,31 +121,12 @@ function paintWho() {
 }
 // 계정 연동: 플레이 기록과 업적을 Frenchfries777 계정 프로필로 보내요
 let ffMarked = '', ffAchT = 0;
-function ffProfile() {
-  if (window.FFProfile) return Promise.resolve(true);
-  return new Promise(res => { const s = document.createElement('script'); s.src = 'https://frenchfries777.com/games/ff-profile.js?v=20261103e'; s.onload = () => res(!!window.FFProfile); s.onerror = () => res(false); document.head.appendChild(s); });
-}
-function ffSync() {
-  clearTimeout(ffAchT); ffAchT = setTimeout(async () => {
-    try {
-      const sb = window.FFAuth && FFAuth.client && FFAuth.client(), u = window.FFAuth && FFAuth.user(); if (!sb || !u || !(await ffProfile())) return;
-      if (ffMarked !== u.id) { ffMarked = u.id; FFProfile.markPlayed(sb, 'vowkeep'); }
-      const ids = ACHIEVEMENTS.filter(a => SAVE.ach[a.id]).map(a => a.id);
-      if (false) FFProfile.setAchievements(sb, 'vowkeep', ids.length, ACHIEVEMENTS.length, ids);
-    } catch (e) { }
-  }, 1500);
-}
-if (window.FFAuth) { FFAuth.ready.then(() => { paintWho(); autoJoin(); ffSync(); }); FFAuth.onChange(() => { paintWho(); ffSync(); }); }
+// 이전 버전: 로그인만 쓰고, 프로필·접속 표시·초대 등 Supabase 연동은 끊었어요 (혼자 원정만 돼요)
+function ffSync() { }
+if (window.FFAuth) { FFAuth.ready.then(() => { paintWho(); }); FFAuth.onChange(() => { paintWho(); }); }
 paintWho();
 function needLogin() { if (!window.FFAuth) return false; if (loggedIn()) return false; homeMsg('친구와 원정은 Frenchfries777 계정으로 로그인해야 해요.'); try { FFAuth.openLogin(); } catch (e) { } return true; }
-function hubRoom(on) { try { if (window.FFAuth && FFAuth.setRoom) FFAuth.setRoom(on && S.code ? { game: 'vowkeep', code: S.code, path: 'vowkeep/v0.1/index.html' } : null); } catch (e) { } }
-let autoDone = false;
-function autoJoin() { const c = (qs.get('join') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6); if (autoDone || c.length !== 6 || S.net) return; autoDone = true; if (needLogin()) return;
-  // 초대 링크로 들어왔을 때: 취소됐거나 30분이 지난 초대면 들어가지 않아요 (확인 기능이 아직 없으면 그냥 들어가요)
-  const sb = window.FFAuth && FFAuth.client && FFAuth.client();
-  if (!sb) { startGuest(c); return; }
-  sb.rpc('ff_invite_live', { p_code: c }).then(r => { if (r && !r.error && r.data === false) homeMsg('취소됐거나 30분이 지나 만료된 초대예요.'); else startGuest(c); }, () => startGuest(c));
-}
+function hubRoom(on) { }
 
 /* ---------- 메뉴 ---------- */
 document.querySelectorAll('#menu button').forEach(b => b.addEventListener('click', () => { SFX.unlock(); SFX.play('click'); menu(b.dataset.go); }));
@@ -153,7 +134,7 @@ document.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click'
 function menu(go) {
   homeMsg('');
   if (go === 'solo') { leaveNet(); S.net = 'solo'; S.slots = ROLE_IDS.map(r => ({ role: r, uid: r === SAVE.role ? UID : null, name: r === SAVE.role ? myName() : '' })); openRoom(); }
-  else if (go === 'host') { if (needLogin()) return; startHost(); }
+  else if (go === 'host') { homeMsg('이전 버전은 혼자 원정만 할 수 있어요. 친구와 함께는 최신 버전에서 해 주세요.'); }
   else if (go === 'roles') { paintRoles(); show('sRoles'); }
   else if (go === 'achs') { paintAchs(); show('sAchs'); }
   else if (go === 'settings') { paintSettings(); show('sSettings'); }
@@ -230,61 +211,7 @@ function pickRole(r) {
   if (!tgt || tgt.uid) return; if (cur) { cur.uid = null; cur.name = ''; }
   tgt.uid = UID; tgt.name = myName(); paintSlots(); hostLobby();
 }
-$('inviteBtn').onclick = () => { SFX.play('click'); openInvite(); };
-/* 초대 창: 친구는 접속 여부와 상관없이 맨 위(접속 중인 친구 먼저), 그 아래 지금 접속 중인 다른 플레이어 */
-const GN = { stickseum: 'Stickseum', crownenvoy: 'Crown Envoy', beaconfall: 'Beaconfall', isleport: 'Isleport', dummyparty: 'Dummy Party', vowkeep: 'Vowkeep', hub: '허브' };
-const INV_T = 30 * 60 * 1000; S.sent = {};
-function sentLive(id) { const v = S.sent[id]; if (!v || v.code !== S.code || Date.now() - v.at >= INV_T) return null; return v; }
-// 방을 나가면 아직 살아 있는 초대를 모두 취소해요
-function cancelInvites() {
-  const sb = window.FFAuth && FFAuth.client && FFAuth.client();
-  for (const id in S.sent) { const v = sentLive(id); if (sb && v && v.id != null) try { sb.rpc('ff_uninvite', { p_id: v.id }).then(() => { }, () => { }); } catch (e) { } }
-  S.sent = {};
-}
-async function openInvite() {
-  if (needLogin()) return;
-  const sb = window.FFAuth && FFAuth.client && FFAuth.client(), me = FFAuth.user(); if (!sb || !me) return;
-  const L = $('invList'); $('inv').classList.add('on'); L.innerHTML = '<p class="note">불러오는 중이에요...</p>';
-  const blocked = id => { try { return FFAuth.isBlocked(id); } catch (e) { return false; } };
-  const fr = (FFAuth.friends() || []).filter(f => f.status === 'accepted' && !blocked(f.otherId));
-  let onF = {}, others = [], otherErr = false;
-  try { const r = await sb.rpc('ff_online_friends'); ((r && r.data) || []).forEach(x => { onF[x.user_id] = x.place; }); } catch (e) { }
-  try { const r = await sb.rpc('ff_online_players', { p_limit: 40 }); if (r.error) otherErr = true; others = ((r && r.data) || []).filter(x => x.user_id !== me.id && !blocked(x.user_id) && !fr.some(f => f.otherId === x.user_id)); } catch (e) { otherErr = true; }
-  fr.sort((a, b) => ((onF[b.otherId] ? 1 : 0) - (onF[a.otherId] ? 1 : 0)) || a.name.localeCompare(b.name, 'ko'));
-  L.innerHTML = '';
-  const head = t => { const h = document.createElement('h4'); h.textContent = t; L.appendChild(h); };
-  const row = (id, name, tag, on) => {
-    const d = document.createElement('div'); d.className = 'r' + (on ? ' on' : ''); d.innerHTML = '<b></b><small></small><button class="btn gold">초대</button>';
-    d.querySelector('b').textContent = name; d.querySelector('small').textContent = tag;
-    const bt = d.querySelector('button'), sm = d.querySelector('small');
-    // 보낸 초대는 '취소'로 바뀌고, 30분이 지나면 저절로 만료돼서 다시 '초대'로 돌아와요
-    const paint = () => {
-      clearTimeout(bt._t); const v = sentLive(id); bt.disabled = false; bt.textContent = v ? '취소' : '초대'; bt.className = v ? 'btn' : 'btn gold';
-      sm.textContent = v ? '초대함 · ' + Math.max(1, Math.ceil((v.at + INV_T - Date.now()) / 60000)) + '분 남음' : tag;
-      if (v) bt._t = setTimeout(() => { if (d.isConnected) paint(); }, Math.min(30000, v.at + INV_T - Date.now() + 50));
-    };
-    bt.onclick = async () => {
-      SFX.play('click'); bt.disabled = true; const v = sentLive(id);
-      if (v) {
-        let ok = false; try { const r = await sb.rpc('ff_uninvite', { p_id: v.id }); ok = !(r && r.error); } catch (e) { }
-        if (ok) { delete S.sent[id]; paint(); } else { bt.textContent = '못 취소했어요'; setTimeout(paint, 2000); }
-        return;
-      }
-      let ok = false, nid = null;
-      try { const r = await sb.rpc('ff_invite', { p_to: id, p_game: 'vowkeep', p_code: S.code, p_path: 'vowkeep/v0.1/index.html' }); ok = !(r && r.error); nid = ok ? r.data : null; } catch (e) { }
-      if (ok) { S.sent[id] = { id: nid, at: Date.now(), code: S.code }; paint(); } else { bt.textContent = '못 보냈어요'; setTimeout(paint, 2000); }
-    };
-    paint();
-    L.appendChild(d);
-  };
-  head('친구 (' + fr.length + ')');
-  if (!fr.length) L.insertAdjacentHTML('beforeend', '<p class="note">아직 친구가 없어요.</p>');
-  fr.forEach(f => row(f.otherId, f.name, onF[f.otherId] ? '🟢 ' + (GN[onF[f.otherId]] || onF[f.otherId]) : '접속 안 함', !!onF[f.otherId]));
-  head('지금 접속 중인 플레이어 (' + others.length + ')');
-  if (otherErr) L.insertAdjacentHTML('beforeend', '<p class="note">접속 중인 플레이어 목록은 곧 열려요.</p>');
-  else if (!others.length) L.insertAdjacentHTML('beforeend', '<p class="note">지금 접속 중인 다른 플레이어가 없어요.</p>');
-  others.forEach(x => row(x.user_id, x.name || '???', '🟢 ' + (GN[x.place] || x.place || ''), true));
-}
+function cancelInvites() { }
 $('invX').onclick = () => $('inv').classList.remove('on');
 $('inv').addEventListener('click', e => { if (e.target === $('inv')) $('inv').classList.remove('on'); });
 $('startBtn').onclick = () => { SFX.unlock(); SFX.play('click'); if (S.net === 'guest') return; beginGame(); };
