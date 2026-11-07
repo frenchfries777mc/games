@@ -342,10 +342,10 @@ function parseScript(text,lenient){
       else throw PE(l.n,"'"+ev+"' does not take '"+tw+"'");}
     return {on:ev,tg:tg};
   }
-  var GN={hp:'player',maxhp:'player',x:'player',y:'player',z:'player',biome:'player',item:'player',name:'player',day:'world',hour:'world',players:'world'};
+  var GN={hp:'player',maxhp:'player',x:'player',y:'player',z:'player',biome:'player',dimension:'player',item:'player',name:'player',day:'world',hour:'world',players:'world'};
   function gameCond(l,m){
-    var sc=m[1].toLowerCase(),k=m[2].toLowerCase().replace(/\s+/g,''),op=m[3].toLowerCase().replace(/\s+/g,' '),rv=m[4].trim();
-    if(GN[k]!==sc)throw PE(l.n,"'"+sc+" "+k+"' is not available. player: hp, max hp, x, y, z, biome, item, name. world: day, hour, players");
+    var sc=m[1].toLowerCase(),k=m[2].toLowerCase().replace(/\s+/g,'').replace('dimention','dimension'),op=m[3].toLowerCase().replace(/\s+/g,' '),rv=m[4].trim();
+    if(GN[k]!==sc)throw PE(l.n,"'"+sc+" "+k+"' is not available. player: hp, max hp, x, y, z, biome, dimension, item, name. world: day, hour, players");
     var NUMK=['hp','maxhp','x','y','z','day','hour','players'];
     if(op==='is')op='=';else if(op==='is not')op='!=';
     if(NUMK.indexOf(k)>=0){
@@ -355,6 +355,7 @@ function parseScript(text,lenient){
       return {ifg:{k:k,op:op,v:+rv}};
     }
     if(op!=='='&&op!=='!=')throw PE(l.n,k+' can only be checked with  is  or  is not');
+    if(k==='dimension'){var dw=rv.toLowerCase().replace(/[\s"]+/g,'_').replace(/^_+|_+$/g,'');if(dw==='main'||dw==='overworld'||dw==='main_world')dw='overworld';if(dw==='deepvoid')dw='deep_void';if(dw!=='overworld'&&dw!=='deep_void')throw PE(l.n,"unknown dimension '"+rv+"'. You can use: overworld, deep_void");return {ifg:{k:k,op:op,s:dw}};}
     if(k==='biome'){var bw=rv.toLowerCase();if(BIOMES.indexOf(bw)<0){var gb=guess(bw,BIOMES);throw PE(l.n,"unknown biome '"+rv+"'."+(gb?" Did you mean '"+gb+"'?":" You can use: "+BIOMES.join(', ')));}return {ifg:{k:k,op:op,s:bw}};}
     if(k==='item')return {ifg:{k:k,op:op,s:item(l,rv)}};
     var nm=rv.match(/^"([^"]{1,40})"$/);if(!nm)throw PE(l.n,'write the name in quotes, like  if player name is "Bob":');
@@ -364,7 +365,7 @@ function parseScript(text,lenient){
   function condOf(l,c){
     c=c.trim();var m;
     if(m=c.match(/^(not\s+)?mod\s+"([^"]{1,40})"$/i))return {md:{n:m[2],not:!!m[1]}};
-    if(m=c.match(/^(player|world)\s+(max\s*hp|hp|x|y|z|biome|item|name|day|hour|players)\s*(>=|<=|!=|>|<|=|is\s+not|is)\s*(.+)$/i))return gameCond(l,m);
+    if(m=c.match(/^(player|world)\s+(max\s*hp|hp|x|y|z|biome|dimen[st]ion|item|name|day|hour|players)\s*(>=|<=|!=|>|<|=|is\s+not|is)\s*(.+)$/i))return gameCond(l,m);
     if(m=c.match(/^(not\s+)?(.+?)\s+in\s+player_hand$/i)){var hq1=m[2].trim().match(/^"([^"]{1,20})"$/);return {hand:{item:hq1?'@'+hq1[1]:item(l,m[2].trim()),not:!!m[1]}};}
     if(m=c.match(/^has\s+(?:(\d+)\s+)?(.+)$/i)){var hq0=m[2].trim().match(/^"([^"]{1,20})"$/);return {has:{item:hq0?'@'+hq0[1]:item(l,m[2].trim()),n:m[1]?+m[1]:1}};}
     if(m=c.match(/^%(attacker|victim)%\s+is\s+(not\s+)?player$/i))return {ifp:{w:m[1].toLowerCase(),not:!!m[2]}};
