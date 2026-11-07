@@ -66,7 +66,7 @@ function paintNews(){
     return '<article class="nw '+G.cls+'"'+(nc?' style="border-top:3px solid '+nc+'"':'')+'><div class="nh"><span class="ng"'+(nc?' style="color:'+nc+'"':'')+'>'+esc(G.name)+'</span>'+(isNew(n)?'<span class="nnew">'+esc(F('새 패치노트'))+'</span>':'')+'<span class="nd" data-notr>'+esc(n.date)+(n.build?' · '+esc(String(n.build).replace(/\s*build\s*(\d+)/i,' b$1')):'')+'</span></div>'+
       '<h3 data-notr>'+esc(n.title)+'</h3><ul data-notr>'+it.map(function(x){ return '<li>'+esc(x)+'</li>'; }).join('')+'</ul>'+
       (n.items.length>4?'<div class="nmore">'+esc(F('외 {0}개',n.items.length-4))+'</div>':'')+
-      (n.g==='hub'?'<a class="nl" href="#hubnotes">패치노트 전체 보기 →</a>':'<a class="nl" href="'+G.site+'#notes">패치노트 전체 보기 →</a>')+'</article>'; }).join('');
+      (n.g==='hub'?'<a class="nl" href="https://frenchfries777.com/patchnotes/#hub">패치노트 전체 보기 →</a>':'<a class="nl" href="'+G.site+'#notes">패치노트 전체 보기 →</a>')+'</article>'; }).join('');
 }
 
 /* ---- 게임별 소식 받기: 구독한 게임에 새 패치노트가 올라오면 뉴스에 표시 (supabase-ff-follow.sql) ---- */
@@ -103,16 +103,8 @@ async function markSeen(){
   try{ var r=await sb.from('ff_follow').upsert(rows,{onConflict:'user_id,game'}); if(r.error) return; }catch(e){ return; }
   rows.forEach(function(x){ follows[x.game]=x.seen; }); paintFollow(); paintNews();
 }
-/* 허브 패치노트 전체 목록 (뉴스의 '허브 패치노트' 버튼, 또는 주소 끝 #hubnotes) */
-function openHubNotes(){
-  var el=$('#hubNotes'); if(!el){ el=document.createElement('div'); el.id='hubNotes'; el.className='hn-bg'; document.body.appendChild(el);
-    el.addEventListener('click',function(e){ if(e.target===el||e.target.closest('.hn-x')) closeHubNotes(); }); }
-  el.innerHTML='<div class="hn-b"><div class="hn-h"><b>🍟 허브 패치노트</b><button type="button" class="hn-x" aria-label="닫기">×</button></div>'+
-    (hubNotes.length?hubNotes.map(function(n){ return '<div class="hn-n"><div class="nd" data-notr>'+esc(n.date)+'</div><h3 data-notr>'+esc(n.title)+'</h3><ul data-notr>'+n.items.map(function(x){ return '<li>'+esc(x)+'</li>'; }).join('')+'</ul></div>'; }).join(''):'<div class="cm-e">아직 소식이 없어요.</div>')+'</div>';
-  el.style.display='flex';
-}
-function closeHubNotes(){ var el=$('#hubNotes'); if(el) el.style.display='none'; if(location.hash==='#hubnotes') try{ history.replaceState(null,'',location.pathname+location.search+'#news'); }catch(e){} }
-document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeHubNotes(); });
+/* 허브 패치노트는 패치노트 사이트에서 봐요 (옛 주소 #hubnotes 는 그쪽으로 보내요) */
+function toPN(){ if(location.hash==='#hubnotes') location.replace('https://frenchfries777.com/patchnotes/#hub'); }
 
 /* ===================== 공지 · 이벤트 배너 (관리자만 올리고, 닫으면 그 공지는 다시 안 보여요) ===================== */
 var ANN_KEY='ff.annHide', anns=[];
@@ -941,7 +933,7 @@ function fromUrl(){
   var m=/[?&]post=(\d+)/.exec(location.search); if(m){ bOpen=+m[1]; bScroll=true; tab='board'; try{ history.replaceState(null,'',location.pathname+'#community'); }catch(e){} }
   if(location.hash==='#feedback') tab='fb'; else if(location.hash==='#lfg') tab='lfg'; else if(location.hash==='#gallery') tab='gal'; else if(location.hash==='#friends') tab='feed'; else if(location.hash==='#chat') tab='chat';
 }
-window.addEventListener('hashchange',function(){ if(location.hash==='#poll') openPolls(); else if(location.hash==='#hubnotes') openHubNotes(); else if(location.hash==='#feedback'){ setTab('fb'); scrollToCm(); } });
+window.addEventListener('hashchange',function(){ if(location.hash==='#poll') openPolls(); else if(location.hash==='#hubnotes') toPN(); else if(location.hash==='#feedback'){ setTab('fb'); scrollToCm(); } });
 /* ===== 게임 배너 슬라이드 + 게임별 분위기 (body[data-g] 로 배경 색이 바뀜) ===== */
 function banner(){
   var B=$('#bnr'); if(!B) return; var S=B.querySelectorAll('.sl'), D=B.querySelectorAll('.dots button'), cur=0, timer=null, hoverG=null;
@@ -1017,9 +1009,9 @@ function searchInit(){
 function start(){
   if(!CMP&&(/[?&]post=\d+/.test(location.search)||/^#(feedback|lfg|gallery|friends|chat|community)$/.test(location.hash))){ location.replace(CMURL+location.search+(location.hash==='#community'?'':location.hash)); return; }
   coinChip(); coinWatch(); banner(); searchInit();
-  fromUrl(); loadNews().then(function(){ if(location.hash==='#hubnotes') openHubNotes(); });
+  fromUrl(); loadNews(); toPN();
   if(location.hash==='#poll') setTimeout(openPolls,400);
-  if(tab==='fb'){ setTimeout(scrollToCm,300); } var hb=$('#hubNotesBtn'); if(hb) hb.onclick=function(e){ e.preventDefault(); openHubNotes(); };
+  if(tab==='fb'){ setTimeout(scrollToCm,300); }
   var rh=$('.rk-c h3'); if(rh) hCoinSwap(rh);
   var rf=$('.rk-f'); if(rf) rf.onclick=function(e){ var b=e.target.closest('button'); if(!b) return; rkGame=b.getAttribute('data-g'); [].forEach.call(this.children,function(x){ x.classList.toggle('on',x===b); }); ranking(); };
   var tabs=$('.cm-tabs'); if(tabs) tabs.onclick=function(e){ var b=e.target.closest('button'); if(b) setTab(b.getAttribute('data-t')); };
