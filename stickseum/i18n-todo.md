@@ -22,3 +22,5 @@ versions.json | 1.0 summary[1] | 새 맵 올림포스 신전·미궁·파라오�
 versions.json | 1.0 summary[2] | 시즌 패스 한정 스킨 7종·팀전 3라운드제·새 모드 데스매치 더블 | build 728 | 2026-11-07
 versions.json | 1.0 summary[3] | 새 인트로·1.0 로고·예고 영상 | build 728 | 2026-11-07
 versions.json | 1.0 summary[4] | 친선과 연습 개편 (인터넷 없이도 봇과 플레이)·맵 에디터 맵 공개·봇 난이도 7단계 | build 728 | 2026-11-07
+patchnotes.json | v729 title | 친선과 연습 모드 설명 줄이기 | build 729 | 2026-11-07
+patchnotes.json | v729 items[0] | 친선과 연습 모드 선택 카드의 설명을 짧게 변경 | build 729 | 2026-11-07
