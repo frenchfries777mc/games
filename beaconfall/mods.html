@@ -401,7 +401,7 @@ function parseScript(text,lenient){
       else if(m=l.t.match(/^set\s+time\s+(day|night|noon|midnight|sunrise|sunset|\d{1,2})$/i)){var TM={day:8,night:21,noon:12,midnight:0,sunrise:6,sunset:18},tv=/^\d+$/.test(m[1])?+m[1]:TM[m[1].toLowerCase()];if(tv>23)throw PE(l.n,'hour must be 0 to 23');acts.push({time:tv});}
       else if(m=l.t.match(/^set\s+weather\s+(clear|rain|storm)$/i)){acts.push({weather:m[1].toLowerCase()});}
       else if(m=l.t.match(/^set\s+variable\s+([a-z0-9_]{1,20})\s+to\s+variable\s+([a-z0-9_]{1,20})$/i)){acts.push({setv:{n:m[1].toLowerCase(),v:{ref:m[2].toLowerCase()}}});}
-      else if(m=l.t.match(/^set\s+variable\s+([a-z0-9_]{1,20})\s+to\s+player\s+(name|uuid)$/i)){acts.push({setv:{n:m[1].toLowerCase(),v:{src:m[2].toLowerCase()}}});}
+      else if(m=l.t.match(/^set\s+variable\s+([a-z0-9_]{1,20})\s+to\s+player\s+(name|uuid|x|y|z)$/i)){acts.push({setv:{n:m[1].toLowerCase(),v:{src:m[2].toLowerCase()}}});}
       else if(m=l.t.match(/^set\s+variable\s+([a-z0-9_]{1,20})\s+to\s+distance\s+player\s+to\s+(nearest\s+monster|nearest\s+mob|[a-z0-9_]{1,30})$/i)){acts.push({setv:{n:m[1].toLowerCase(),v:{dist:m[2].toLowerCase().replace(/\s+/g,' ')}}});}
       else if((m=l.t.match(/^(add)\s+(-?\d{1,9}(?:\.\d{1,3})?|variable\s+[a-z0-9_]{1,20})\s+to\s+variable\s+([a-z0-9_]{1,20})$/i))||(m=l.t.match(/^(subtract)\s+(-?\d{1,9}(?:\.\d{1,3})?|variable\s+[a-z0-9_]{1,20})\s+from\s+variable\s+([a-z0-9_]{1,20})$/i))||(m=l.t.match(/^(multiply|divide)\s+variable\s+([a-z0-9_]{1,20})\s+by\s+(-?\d{1,9}(?:\.\d{1,3})?|variable\s+[a-z0-9_]{1,20})$/i))){
         var aop=m[1].toLowerCase(),isMD=aop==='multiply'||aop==='divide',tgt=(isMD?m[2]:m[3]).toLowerCase(),opd=(isMD?m[3]:m[2]),ar={op:aop,n:tgt};
