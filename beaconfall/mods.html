@@ -502,7 +502,8 @@ if(nv===''||nv==='-')nv=0;fc.push([rel?1:0,+nv]);}
       else if(m=l.t.match(/^(disable|enable)\s+collision\s+of\s+(.+)$/i)){acts.push({col:{t:colT(l,m[2].trim()),on:m[1].toLowerCase()==='enable'}});}
       else if(m=l.t.match(/^remove\s+(tree|rock)s?\s+in\s+(\d+)\s+blocks?\s+of\s+(spawn|player)$/i)){var r=+m[2];if(r<1||r>60)throw PE(l.n,'range must be 1 to 60 blocks');acts.push({remove:{what:m[1].toLowerCase(),r:r,of:m[3].toLowerCase()}});}
       else if(/^close\s+window$/i.test(l.t)){acts.push({wclose:1});}   // 열려 있는 창 닫기
-      else if(m=l.t.match(/^(?:open\s+)?window\s+"([^"]{1,30})"\s*:$/i)){
+      else if(/^window\s+"[^"]{1,30}"\s*:$/i.test(l.t)){throw PE(l.n,'use  open window "title":  (and  close window  to close it)');}
+      else if(m=l.t.match(/^open\s+window\s+"([^"]{1,30})"\s*:$/i)){
         if(!(pos<L.length&&L[pos].ind>l.ind))throw PE(l.n,'nothing is written under this line');
         var wi=L[pos].ind,w={t:m[1],tx:[],inp:[],btn:[]};
         while(pos<L.length&&L[pos].ind>=wi){
