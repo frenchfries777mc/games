@@ -48,7 +48,7 @@ if(now&&now!=='en'&&auOn()){ try{ localStorage.removeItem(AU); }catch(x){} }    
 try{ if(!document.getElementById('ffTap')){ var tp=document.createElement('style'); tp.id='ffTap'; tp.textContent='html,body{touch-action:manipulation}'; (document.head||document.documentElement).appendChild(tp); } }catch(e){}
 /* 모든 페이지에서 접속 신호(+게임 화면이면 "지금 하는 게임")를 보내는 ff-presence.js 도 불러요 */
 try{ var me=document.currentScript, base=(me&&me.src)?me.src.replace(/[^\/]*$/,''):'https://frenchfries777.com/games/';
-  if(!window.FFPresence){ var ps=document.createElement('script'); ps.src=base+'ff-presence.js?v=20261028c'; ps.async=true; (document.head||document.documentElement).appendChild(ps); } }catch(e){}
+  if(!window.FFPresence){ var ps=document.createElement('script'); ps.src=base+'ff-presence.js?v=20261107a'; ps.async=true; (document.head||document.documentElement).appendChild(ps); } }catch(e){}
 /* 테마(다크 · 라이트)와 글자 크기: 허브나 게임 사이트의 ⚙️ 에서 고르면 모두 같이 바뀌어요.
    <html> 에 data-ff-theme="dark|light" 와 data-ff-size="s|m|l|xl" 를 붙이고, 허브와 게임 사이트(게임 화면은 빼고)는 크기만큼 확대해요.
    라이트 색은 각 페이지 CSS 가 html[data-ff-theme=light] 로 정해요. */
@@ -224,6 +224,9 @@ function notes(e){
 window.FF_REG=REG; window.FF_REG_NOTES=notes;
 /* 게임이 아닌 사이트: 접속 표시(ff_online)에서 인원 칸으로만 써요 */
 window.FF_SITES=[{id:'educations',name:'Educations'},{id:'tools',name:'Tools'}];
+/* 접속 장소 이름: 게임 사이트 / 사이트 / 그 안의 프로그램 */
+window.FF_PLACES={games:'Games',educations:'Educations',tools:'Tools',edu_planetsearch:'행성 탐사',edu_speedcode:'SpeedCode',edu_timeline:'Timeline Battle',edu_munjang:'문장 수리공',edu_balance:'평형 설계실',edu_proverb:'속담 탐정',edu_gravity:'중력',
+  tools_python:'Fry Code',tools_blocks:'Fry Blocks',tools_sheet:'Fry Sheet',tools_docs:'Fry Docs',tools_slides:'Fry Slides',tools_lab:'Fry Lab',tools_draw:'Fry Draw',tools_score:'Fry Score',tools_video:'Fry Video',tools_aichat:'AI Chat',tools_claudekey:'Claude Key',tools_emoji:'Emoji',tools_teach:'Teach',tools_train:'Train',tools_mcp:'MCP',tools_server:'Server'};
 })();
 window.FFLang={ get:function(){ return now; }, script:function(){ return scr(); }, pick:function(){ return scr()||now; }, slogan:slogan, set:function(l){ set(l); now=SCR[l]?'en':l; }, sync:function(){ now=sync()||now; if(SCR[now]) now='en'; return now; } };
 })();
