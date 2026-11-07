@@ -46,3 +46,4 @@ patchnotes.json | v737 items[0] | 토너먼트, 배틀로얄 등에서 탈락하
 patchnotes.json | v738 title | 하랄드 상향 | build 738 | 2026-11-07
 patchnotes.json | v738 items[0] | 하랄드 도끼 쿨타임 1.3초→1.2초 | build 738 | 2026-11-07
 patchnotes.json | v738 items[1] | 하랄드 도끼 사거리 112→125 | build 738 | 2026-11-07
+patchnotes.json | v739 title+items | 시즌 패스 좌우 화살표 | build 739 | 2026-11-07
