@@ -329,7 +329,7 @@ function parseScript(text,lenient){
   }
   function splitOr(t){var parts=[],cur='',q=false;for(var i=0;i<t.length;i++){var ch=t[i];if(ch==='"')q=!q;if(!q&&/\s/.test(ch)){var r=t.slice(i).match(/^\s+or\s+/i);if(r){parts.push(cur);cur='';i+=r[0].length-1;continue;}}cur+=ch;}parts.push(cur);return parts;}
   function evOf(l,en,tw){
-    var ev=EVS[en.toLowerCase()];if(!ev){var g=guess(en,Object.keys(EVS));throw PE(l.n,"unknown event '"+en+"'."+(g?" Did you mean '"+g+"'?":" You can use: world generate, world load, game load, join, quit, key, every, mine, chop, kill, craft, fish, place, destroy, damage, death, respawn, roll, interaction, spawn"));}
+    var ev=EVS[en.toLowerCase()];if(!ev){var g=guess(en,Object.keys(EVS));throw PE(l.n,"unknown event '"+en+"'."+(g?" Did you mean '"+g+"'?":" You can use: world generate, world load, game load, join, quit, key, click, right click, every, mine, chop, kill, craft, fish, place, destroy, damage, death, respawn, roll, interaction, spawn"));}
     var tg=tw?tw.toLowerCase():'';
     if(tg&&ev==='spawn')return {on:ev,tg:'',ofn:tw};
     if(tg&&ev==='interaction')return {on:ev,tg:thingOf(l,tw)};
@@ -366,6 +366,7 @@ function parseScript(text,lenient){
     c=c.trim();var m;
     if(m=c.match(/^(not\s+)?mod\s+"([^"]{1,40})"$/i))return {md:{n:m[2],not:!!m[1]}};
     if(m=c.match(/^(player|world)\s+(max\s*hp|hp|x|y|z|biome|dimen[st]ion|item|name|day|hour|players)\s*(>=|<=|!=|>|<|=|is\s+not|is)\s*(.+)$/i))return gameCond(l,m);
+    if(m=c.match(/^(not\s+)?(left\s+|right\s+)?click\s+press$/i))return {mouse:{b:/right/i.test(m[2]||'')?2:0,not:!!m[1]}};
     if(m=c.match(/^(not\s+)?key\s+"([^"]+)"\s+press$/i)){var kc0=keyCode(m[2]);if(!kc0)throw PE(l.n,"unknown key '"+m[2]+"'. Use A-Z, 0-9 or F1-F12");return {key:{c:kc0,not:!!m[1]}};}
     if(m=c.match(/^(not\s+)?(.+?)\s+in\s+player_hand$/i)){var hq1=m[2].trim().match(/^"([^"]{1,20})"$/);return {hand:{item:hq1?'@'+hq1[1]:item(l,m[2].trim()),not:!!m[1]}};}
     if(m=c.match(/^has\s+(?:(\d+)\s+)?(.+)$/i)){var hq0=m[2].trim().match(/^"([^"]{1,20})"$/);return {has:{item:hq0?'@'+hq0[1]:item(l,m[2].trim()),n:m[1]?+m[1]:1}};}
@@ -386,7 +387,7 @@ function parseScript(text,lenient){
       if(em){
         var tl=acts[acts.length-1];
         while(tl&&tl.elseIf&&tl.else&&tl.else.length===1)tl=tl.else[0];
-        if(!tl||!Array.isArray(tl.do)||!(tl.has||tl.hand||tl.key||tl.ifp||tl.ifv||tl.ifc||tl.ifg||tl.md||tl.anyof||typeof tl.chance==='number'))throw PE(l.n,'else has to come right under an if, with the same indent');
+        if(!tl||!Array.isArray(tl.do)||!(tl.has||tl.hand||tl.key||tl.mouse||tl.ifp||tl.ifv||tl.ifc||tl.ifg||tl.md||tl.anyof||typeof tl.chance==='number'))throw PE(l.n,'else has to come right under an if, with the same indent');
         if(tl.else)throw PE(l.n,'this if already has an else');
         if(!em[1]){tl.else=sub(l,depth);continue;}
         pe=tl;l={n:l.n,ind:l.ind,t:'if '+em[1]+':'};
@@ -439,6 +440,8 @@ function parseScript(text,lenient){
         acts.push({md:{n:m[2],not:!!m[1]},do:sub(l,depth)});
       }else if((m=l.t.match(/^if\s+(.+?)\s*:$/i))&&splitOr(m[1]).length>1){
         acts.push({anyof:splitOr(m[1]).map(function(c){return condOf(l,c);}),do:sub(l,depth)});
+      }else if(m=l.t.match(/^if\s+(not\s+)?(left\s+|right\s+)?click\s+press\s*:$/i)){
+        acts.push({mouse:{b:/right/i.test(m[2]||'')?2:0,not:!!m[1]},do:sub(l,depth)});
       }else if(m=l.t.match(/^if\s+(not\s+)?key\s+"([^"]+)"\s+press\s*:$/i)){
         var kc1=keyCode(m[2]);if(!kc1)throw PE(l.n,"unknown key '"+m[2]+"'. Use A-Z, 0-9 or F1-F12");acts.push({key:{c:kc1,not:!!m[1]},do:sub(l,depth)});
       }else if(m=l.t.match(/^if\s+(not\s+)?(.+?)\s+in\s+player_hand\s*:$/i)){
@@ -484,7 +487,8 @@ if(nv===''||nv==='-')nv=0;fc.push([rel?1:0,+nv]);}
       }else if((m=l.t.match(/^load\s+(~?-?\d*)\s+(~?-?\d*)\s+(~?-?\d*)\s+(~?-?\d*)$/i))&&m[1]&&m[2]&&m[3]&&m[4]){
         var lc=[];for(var li=1;li<=4;li++){var lk=m[li],lrel=lk.charAt(0)==='~',lv=lk.replace('~','');if(lv===''||lv==='-')lv=0;lc.push([lrel?1:0,+lv]);}
         acts.push({fill:{c:lc,mode:'load',b:null}});
-      }else if(m=l.t.match(/^remove\s+all\s+(trees|rocks|ores|structures)$/i)){acts.push({wipe:m[1].toLowerCase()});}
+      }else if(/^cancel\s+event$/i.test(l.t)){acts.push({cancel:1});}   // on key / on click 안에서: 그 키·클릭으로 일어날 일을 막아요
+      else if(m=l.t.match(/^remove\s+all\s+(trees|rocks|ores|structures)$/i)){acts.push({wipe:m[1].toLowerCase()});}
       else if(m=l.t.match(/^set\s+variable\s+([a-z0-9_]{1,20})\s+to\s+(?:"([^"]{0,40})"|(-?\d{1,9}(?:\.\d{1,3})?))$/i)){acts.push({setv:{n:m[1].toLowerCase(),v:m[2]!==undefined?m[2]:+m[3]}});}
       else if(m=l.t.match(/^(add|subtract)\s+(\d{1,9}(?:\.\d{1,3})?)\s+(?:to|from)\s+variable\s+([a-z0-9_]{1,20})$/i)){acts.push({addv:{n:m[3].toLowerCase(),d:(m[1].toLowerCase()==='add'?1:-1)*+m[2]}});}
       else if(m=l.t.match(/^reset\s+variable\s+([a-z0-9_]{1,20})$/i)){acts.push({resv:m[1].toLowerCase()});}
@@ -534,6 +538,7 @@ if(nv===''||nv==='-')nv=0;fc.push([rel?1:0,+nv]);}
     else if(m=l.t.match(/^on\s+kill\s+"([^"]{1,20})"\s*:$/i)){out.events.push({on:'kill',target:'@'+m[1],do:sub(l,0)});}
     else if(m=l.t.match(/^on\s+world\s+generate\s*:$/i)){out.events.push({on:'generate',do:sub(l,0)});}
     else if(m=l.t.match(/^on\s+game\s+load\s*:$/i)){out.events.push({on:'load',do:sub(l,0)});}
+    else if(m=l.t.match(/^on\s+(left\s+|right\s+)?click\s*:$/i)){out.events.push({on:/right/i.test(m[1]||'')?'rclick':'click',do:sub(l,0)});}   // 마우스 왼쪽·오른쪽 클릭
     else if(m=l.t.match(/^on\s+world\s+load\s*:$/i)){out.events.push({on:'wload',do:sub(l,0)});}   // 월드를 불러올 때마다   // 게임이 시작될 때마다
     else if(m=l.t.match(/^every\s+%\{([a-z0-9_]{1,20})\}%\s+seconds?\s*:$/i)){out.events.push({on:'every',n:1,nv:m[1].toLowerCase(),do:sub(l,0)});}
     else if(m=l.t.match(/^every\s+(\S+)\s+seconds?\s*:$/i)){if(!/^\d+$/.test(m[1])||+m[1]<1)throw PE(l.n,'every needs a whole number of seconds, 1 or more');if(+m[1]>3600)throw PE(l.n,'every can be at most 3600 seconds');out.events.push({on:'every',n:+m[1],do:sub(l,0)});}
