@@ -55,3 +55,5 @@ patchnotes.json | v743 title | 용살자 드래곤 위치 수정 | build 743 | 2
 patchnotes.json | v743 items[0] | 용살자 드래곤이 맵의 가장 높은 발판 조금 위에서 나오도록 변경 | build 743 | 2026-11-07
 patchnotes.json | v744 title | 원거리 봇 거리 유지 | build 744 | 2026-11-07
 patchnotes.json | v744 items[0] | 원거리 캐릭터 봇이 적에게 달라붙지 않고 더 멀리서 싸우도록 수정 | build 744 | 2026-11-07
+patchnotes.json | v745 title | 공동 처치 | build 745 | 2026-11-07
+patchnotes.json | v745 items[0] | 죽기 전 5초 동안 피해의 60% 이상을 준 사람은 마지막 타격자와 함께 처치로 인정 (처치 수, 골드, 처치 알림에 반영) | build 745 | 2026-11-07
