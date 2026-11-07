@@ -1,0 +1,2681 @@
+mod "Potato API"
+
+on damage of player:
+    set variable {victim} to "player"
+
+on damage of slime:
+    set variable {victim} to "slime"
+    set variable {attacker} to "player"
+
+on damage of player by slime:
+    set variable {attacker} to "slime"
+
+on damage of wolf:
+    set variable {victim} to "wolf"
+    set variable {attacker} to "player"
+
+on damage of player by wolf:
+    set variable {attacker} to "wolf"
+
+on damage of scorpion:
+    set variable {victim} to "scorpion"
+    set variable {attacker} to "player"
+
+on damage of player by scorpion:
+    set variable {attacker} to "scorpion"
+
+on damage of spirit:
+    set variable {victim} to "spirit"
+    set variable {attacker} to "player"
+
+on damage of player by spirit:
+    set variable {attacker} to "spirit"
+
+on damage of spider:
+    set variable {victim} to "spider"
+    set variable {attacker} to "player"
+
+on damage of player by spider:
+    set variable {attacker} to "spider"
+
+on damage of snake:
+    set variable {victim} to "snake"
+    set variable {attacker} to "player"
+
+on damage of player by snake:
+    set variable {attacker} to "snake"
+
+on damage of golem:
+    set variable {victim} to "golem"
+    set variable {attacker} to "player"
+
+on damage of player by golem:
+    set variable {attacker} to "golem"
+
+on damage of croc:
+    set variable {victim} to "croc"
+    set variable {attacker} to "player"
+
+on damage of player by croc:
+    set variable {attacker} to "croc"
+
+on damage of bwolf:
+    set variable {victim} to "bwolf"
+    set variable {attacker} to "player"
+
+on damage of player by bwolf:
+    set variable {attacker} to "bwolf"
+
+on damage of bscorp:
+    set variable {victim} to "bscorp"
+    set variable {attacker} to "player"
+
+on damage of player by bscorp:
+    set variable {attacker} to "bscorp"
+
+on damage of bmagma:
+    set variable {victim} to "bmagma"
+    set variable {attacker} to "player"
+
+on damage of player by bmagma:
+    set variable {attacker} to "bmagma"
+
+on damage of bspider:
+    set variable {victim} to "bspider"
+    set variable {attacker} to "player"
+
+on damage of player by bspider:
+    set variable {attacker} to "bspider"
+
+on damage of bsnake:
+    set variable {victim} to "bsnake"
+    set variable {attacker} to "player"
+
+on damage of player by bsnake:
+    set variable {attacker} to "bsnake"
+
+on damage of bgolem:
+    set variable {victim} to "bgolem"
+    set variable {attacker} to "player"
+
+on damage of player by bgolem:
+    set variable {attacker} to "bgolem"
+
+on damage of bcroc:
+    set variable {victim} to "bcroc"
+    set variable {attacker} to "player"
+
+on damage of player by bcroc:
+    set variable {attacker} to "bcroc"
+
+on damage of yeti:
+    set variable {victim} to "yeti"
+    set variable {attacker} to "player"
+
+on damage of player by yeti:
+    set variable {attacker} to "yeti"
+
+on damage of byeti:
+    set variable {victim} to "byeti"
+    set variable {attacker} to "player"
+
+on damage of player by byeti:
+    set variable {attacker} to "byeti"
+
+on damage of pirate:
+    set variable {victim} to "pirate"
+    set variable {attacker} to "player"
+
+on damage of player by pirate:
+    set variable {attacker} to "pirate"
+
+on damage of gship:
+    set variable {victim} to "gship"
+    set variable {attacker} to "player"
+
+on damage of player by gship:
+    set variable {attacker} to "gship"
+
+on damage of bvoid:
+    set variable {victim} to "bvoid"
+    set variable {attacker} to "player"
+
+on damage of player by bvoid:
+    set variable {attacker} to "bvoid"
+
+on damage of bsky:
+    set variable {victim} to "bsky"
+    set variable {attacker} to "player"
+
+on damage of player by bsky:
+    set variable {attacker} to "bsky"
+
+on eat bread:
+    set variable {eaten_item} to "bread"
+
+on eat baked_potato:
+    set variable {eaten_item} to "baked_potato"
+
+on eat popcorn:
+    set variable {eaten_item} to "popcorn"
+
+on eat stew:
+    set variable {eaten_item} to "stew"
+
+on eat fried_egg:
+    set variable {eaten_item} to "fried_egg"
+
+on eat milk:
+    set variable {eaten_item} to "milk"
+
+on eat steak:
+    set variable {eaten_item} to "steak"
+
+on eat grilled_fish:
+    set variable {eaten_item} to "grilled_fish"
+
+on eat seafood_stew:
+    set variable {eaten_item} to "seafood_stew"
+
+on eat feast:
+    set variable {eaten_item} to "feast"
+
+on eat marlin_dish:
+    set variable {eaten_item} to "marlin_dish"
+
+on eat goldcarp_dish:
+    set variable {eaten_item} to "goldcarp_dish"
+
+on eat anchovy:
+    set variable {eaten_item} to "anchovy"
+
+on eat mackerel:
+    set variable {eaten_item} to "mackerel"
+
+on eat seabream:
+    set variable {eaten_item} to "seabream"
+
+on eat flounder:
+    set variable {eaten_item} to "flounder"
+
+on eat tuna:
+    set variable {eaten_item} to "tuna"
+
+on eat pufferfish:
+    set variable {eaten_item} to "pufferfish"
+
+on eat marlin:
+    set variable {eaten_item} to "marlin"
+
+on eat crucian:
+    set variable {eaten_item} to "crucian"
+
+on eat minnow:
+    set variable {eaten_item} to "minnow"
+
+on eat trout:
+    set variable {eaten_item} to "trout"
+
+on eat catfish:
+    set variable {eaten_item} to "catfish"
+
+on eat carp:
+    set variable {eaten_item} to "carp"
+
+on eat sturgeon:
+    set variable {eaten_item} to "sturgeon"
+
+on eat goldcarp:
+    set variable {eaten_item} to "goldcarp"
+
+on eat pot_heal:
+    set variable {eaten_item} to "pot_heal"
+
+on eat pot_swift:
+    set variable {eaten_item} to "pot_swift"
+
+on eat pot_might:
+    set variable {eaten_item} to "pot_might"
+
+on eat pot_guard:
+    set variable {eaten_item} to "pot_guard"
+
+on eat pot_night:
+    set variable {eaten_item} to "pot_night"
+
+on eat pot_breath:
+    set variable {eaten_item} to "pot_breath"
+
+on eat fire_potion:
+    set variable {eaten_item} to "fire_potion"
+
+on eat antidote:
+    set variable {eaten_item} to "antidote"
+
+on eat raw_meat:
+    set variable {eaten_item} to "raw_meat"
+
+on eat egg:
+    set variable {eaten_item} to "egg"
+on interaction chest:
+    set variable {interacted_item} to "chest"
+
+on interaction door:
+    set variable {interacted_item} to "door"
+
+on interaction bed:
+    set variable {interacted_item} to "bed"
+
+on interaction oven:
+    set variable {interacted_item} to "oven"
+
+on interaction furnace:
+    set variable {interacted_item} to "furnace"
+
+on interaction anvil:
+    set variable {interacted_item} to "anvil"
+
+on interaction alchemy:
+    set variable {interacted_item} to "alchemy"
+
+on interaction runetable:
+    set variable {interacted_item} to "runetable"
+
+on interaction bench:
+    set variable {interacted_item} to "bench"
+
+on interaction armorbench:
+    set variable {interacted_item} to "armorbench"
+
+on interaction tradepost:
+    set variable {interacted_item} to "tradepost"
+
+on interaction mailbox:
+    set variable {interacted_item} to "mailbox"
+
+on interaction stall:
+    set variable {interacted_item} to "stall"
+
+on interaction bell:
+    set variable {interacted_item} to "bell"
+
+on interaction crafter:
+    set variable {interacted_item} to "crafter"
+
+on interaction aquarium:
+    set variable {interacted_item} to "aquarium"
+
+on interaction horse:
+    set variable {interacted_item} to "horse"
+
+on interaction cart:
+    set variable {interacted_item} to "cart"
+
+on interaction boat:
+    set variable {interacted_item} to "boat"
+
+on interaction hut:
+    set variable {interacted_item} to "hut"
+on destroy tree:
+    set variable {destroyed_block} to "tree"
+
+on destroy rock:
+    set variable {destroyed_block} to "rock"
+
+on destroy iron:
+    set variable {destroyed_block} to "iron"
+
+on destroy gold:
+    set variable {destroyed_block} to "gold"
+
+on destroy copper:
+    set variable {destroyed_block} to "copper"
+
+on destroy zinc:
+    set variable {destroyed_block} to "zinc"
+
+on craft stick:
+    set variable {crafted_item} to "stick"
+
+on craft bench:
+    set variable {crafted_item} to "bench"
+
+on craft sapling:
+    set variable {crafted_item} to "sapling"
+
+on craft log:
+    set variable {crafted_item} to "log"
+
+on craft plank:
+    set variable {crafted_item} to "plank"
+
+on craft stone:
+    set variable {crafted_item} to "stone"
+
+on craft iron:
+    set variable {crafted_item} to "iron"
+
+on craft gold:
+    set variable {crafted_item} to "gold"
+
+on craft copper:
+    set variable {crafted_item} to "copper"
+
+on craft rwood:
+    set variable {crafted_item} to "rwood"
+
+on craft riron:
+    set variable {crafted_item} to "riron"
+
+on craft rcopper:
+    set variable {crafted_item} to "rcopper"
+
+on craft rgold:
+    set variable {crafted_item} to "rgold"
+
+on craft pickaxe_log:
+    set variable {crafted_item} to "pickaxe_log"
+
+on craft pickaxe_stone:
+    set variable {crafted_item} to "pickaxe_stone"
+
+on craft pickaxe_rwood:
+    set variable {crafted_item} to "pickaxe_rwood"
+
+on craft pickaxe_iron:
+    set variable {crafted_item} to "pickaxe_iron"
+
+on craft pickaxe_copper:
+    set variable {crafted_item} to "pickaxe_copper"
+
+on craft pickaxe_riron:
+    set variable {crafted_item} to "pickaxe_riron"
+
+on craft pickaxe_gold:
+    set variable {crafted_item} to "pickaxe_gold"
+
+on craft pickaxe_rcopper:
+    set variable {crafted_item} to "pickaxe_rcopper"
+
+on craft pickaxe_rgold:
+    set variable {crafted_item} to "pickaxe_rgold"
+
+on craft axe_log:
+    set variable {crafted_item} to "axe_log"
+
+on craft axe_stone:
+    set variable {crafted_item} to "axe_stone"
+
+on craft axe_rwood:
+    set variable {crafted_item} to "axe_rwood"
+
+on craft axe_iron:
+    set variable {crafted_item} to "axe_iron"
+
+on craft axe_copper:
+    set variable {crafted_item} to "axe_copper"
+
+on craft axe_riron:
+    set variable {crafted_item} to "axe_riron"
+
+on craft axe_gold:
+    set variable {crafted_item} to "axe_gold"
+
+on craft axe_rcopper:
+    set variable {crafted_item} to "axe_rcopper"
+
+on craft axe_rgold:
+    set variable {crafted_item} to "axe_rgold"
+
+on craft sword_log:
+    set variable {crafted_item} to "sword_log"
+
+on craft sword_stone:
+    set variable {crafted_item} to "sword_stone"
+
+on craft sword_rwood:
+    set variable {crafted_item} to "sword_rwood"
+
+on craft sword_iron:
+    set variable {crafted_item} to "sword_iron"
+
+on craft sword_copper:
+    set variable {crafted_item} to "sword_copper"
+
+on craft sword_riron:
+    set variable {crafted_item} to "sword_riron"
+
+on craft sword_gold:
+    set variable {crafted_item} to "sword_gold"
+
+on craft sword_rcopper:
+    set variable {crafted_item} to "sword_rcopper"
+
+on craft sword_rgold:
+    set variable {crafted_item} to "sword_rgold"
+
+on craft dagger_log:
+    set variable {crafted_item} to "dagger_log"
+
+on craft dagger_stone:
+    set variable {crafted_item} to "dagger_stone"
+
+on craft dagger_rwood:
+    set variable {crafted_item} to "dagger_rwood"
+
+on craft dagger_iron:
+    set variable {crafted_item} to "dagger_iron"
+
+on craft dagger_copper:
+    set variable {crafted_item} to "dagger_copper"
+
+on craft dagger_riron:
+    set variable {crafted_item} to "dagger_riron"
+
+on craft dagger_gold:
+    set variable {crafted_item} to "dagger_gold"
+
+on craft dagger_rcopper:
+    set variable {crafted_item} to "dagger_rcopper"
+
+on craft dagger_rgold:
+    set variable {crafted_item} to "dagger_rgold"
+
+on craft hoe_log:
+    set variable {crafted_item} to "hoe_log"
+
+on craft hoe_stone:
+    set variable {crafted_item} to "hoe_stone"
+
+on craft hoe_rwood:
+    set variable {crafted_item} to "hoe_rwood"
+
+on craft hoe_iron:
+    set variable {crafted_item} to "hoe_iron"
+
+on craft hoe_copper:
+    set variable {crafted_item} to "hoe_copper"
+
+on craft hoe_riron:
+    set variable {crafted_item} to "hoe_riron"
+
+on craft hoe_gold:
+    set variable {crafted_item} to "hoe_gold"
+
+on craft hoe_rcopper:
+    set variable {crafted_item} to "hoe_rcopper"
+
+on craft hoe_rgold:
+    set variable {crafted_item} to "hoe_rgold"
+
+on craft rune_fire:
+    set variable {crafted_item} to "rune_fire"
+
+on craft rune_ice:
+    set variable {crafted_item} to "rune_ice"
+
+on craft rune_venom:
+    set variable {crafted_item} to "rune_venom"
+
+on craft rune_life:
+    set variable {crafted_item} to "rune_life"
+
+on craft pot_heal:
+    set variable {crafted_item} to "pot_heal"
+
+on craft pot_swift:
+    set variable {crafted_item} to "pot_swift"
+
+on craft pot_might:
+    set variable {crafted_item} to "pot_might"
+
+on craft pot_guard:
+    set variable {crafted_item} to "pot_guard"
+
+on craft pot_night:
+    set variable {crafted_item} to "pot_night"
+
+on craft pot_breath:
+    set variable {crafted_item} to "pot_breath"
+
+on craft alchemy:
+    set variable {crafted_item} to "alchemy"
+
+on craft runetable:
+    set variable {crafted_item} to "runetable"
+
+on craft trap:
+    set variable {crafted_item} to "trap"
+
+on craft hut:
+    set variable {crafted_item} to "hut"
+
+on craft balloon:
+    set variable {crafted_item} to "balloon"
+
+on craft diving:
+    set variable {crafted_item} to "diving"
+
+on craft pearl:
+    set variable {crafted_item} to "pearl"
+
+on craft coral:
+    set variable {crafted_item} to "coral"
+
+on craft stall:
+    set variable {crafted_item} to "stall"
+
+on craft mailbox:
+    set variable {crafted_item} to "mailbox"
+
+on craft gpil:
+    set variable {crafted_item} to "gpil"
+
+on craft arch:
+    set variable {crafted_item} to "arch"
+
+on craft spire:
+    set variable {crafted_item} to "spire"
+
+on craft monument:
+    set variable {crafted_item} to "monument"
+
+on craft feller_log:
+    set variable {crafted_item} to "feller_log"
+
+on craft feller_stone:
+    set variable {crafted_item} to "feller_stone"
+
+on craft feller_rwood:
+    set variable {crafted_item} to "feller_rwood"
+
+on craft feller_iron:
+    set variable {crafted_item} to "feller_iron"
+
+on craft feller_copper:
+    set variable {crafted_item} to "feller_copper"
+
+on craft feller_riron:
+    set variable {crafted_item} to "feller_riron"
+
+on craft feller_gold:
+    set variable {crafted_item} to "feller_gold"
+
+on craft feller_rcopper:
+    set variable {crafted_item} to "feller_rcopper"
+
+on craft feller_rgold:
+    set variable {crafted_item} to "feller_rgold"
+
+on craft miner_log:
+    set variable {crafted_item} to "miner_log"
+
+on craft miner_stone:
+    set variable {crafted_item} to "miner_stone"
+
+on craft miner_rwood:
+    set variable {crafted_item} to "miner_rwood"
+
+on craft miner_iron:
+    set variable {crafted_item} to "miner_iron"
+
+on craft miner_copper:
+    set variable {crafted_item} to "miner_copper"
+
+on craft miner_riron:
+    set variable {crafted_item} to "miner_riron"
+
+on craft miner_gold:
+    set variable {crafted_item} to "miner_gold"
+
+on craft miner_rcopper:
+    set variable {crafted_item} to "miner_rcopper"
+
+on craft miner_rgold:
+    set variable {crafted_item} to "miner_rgold"
+
+on craft bread:
+    set variable {crafted_item} to "bread"
+
+on craft baked_potato:
+    set variable {crafted_item} to "baked_potato"
+
+on craft popcorn:
+    set variable {crafted_item} to "popcorn"
+
+on craft stew:
+    set variable {crafted_item} to "stew"
+
+on craft egg:
+    set variable {crafted_item} to "egg"
+
+on craft fried_egg:
+    set variable {crafted_item} to "fried_egg"
+
+on craft milk:
+    set variable {crafted_item} to "milk"
+
+on craft raw_meat:
+    set variable {crafted_item} to "raw_meat"
+
+on craft steak:
+    set variable {crafted_item} to "steak"
+
+on craft iron_ingot:
+    set variable {crafted_item} to "iron_ingot"
+
+on craft copper_ingot:
+    set variable {crafted_item} to "copper_ingot"
+
+on craft gold_ingot:
+    set variable {crafted_item} to "gold_ingot"
+
+on craft boat:
+    set variable {crafted_item} to "boat"
+
+on craft ar_helm_leather_1:
+    set variable {crafted_item} to "ar_helm_leather_1"
+
+on craft ar_helm_leather_2:
+    set variable {crafted_item} to "ar_helm_leather_2"
+
+on craft ar_helm_leather_3:
+    set variable {crafted_item} to "ar_helm_leather_3"
+
+on craft ar_helm_iron_1:
+    set variable {crafted_item} to "ar_helm_iron_1"
+
+on craft ar_helm_iron_2:
+    set variable {crafted_item} to "ar_helm_iron_2"
+
+on craft ar_helm_iron_3:
+    set variable {crafted_item} to "ar_helm_iron_3"
+
+on craft ar_helm_copper_1:
+    set variable {crafted_item} to "ar_helm_copper_1"
+
+on craft ar_helm_copper_2:
+    set variable {crafted_item} to "ar_helm_copper_2"
+
+on craft ar_helm_copper_3:
+    set variable {crafted_item} to "ar_helm_copper_3"
+
+on craft ar_helm_riron_1:
+    set variable {crafted_item} to "ar_helm_riron_1"
+
+on craft ar_helm_riron_2:
+    set variable {crafted_item} to "ar_helm_riron_2"
+
+on craft ar_helm_riron_3:
+    set variable {crafted_item} to "ar_helm_riron_3"
+
+on craft ar_helm_gold_1:
+    set variable {crafted_item} to "ar_helm_gold_1"
+
+on craft ar_helm_gold_2:
+    set variable {crafted_item} to "ar_helm_gold_2"
+
+on craft ar_helm_gold_3:
+    set variable {crafted_item} to "ar_helm_gold_3"
+
+on craft ar_helm_rcopper_1:
+    set variable {crafted_item} to "ar_helm_rcopper_1"
+
+on craft ar_helm_rcopper_2:
+    set variable {crafted_item} to "ar_helm_rcopper_2"
+
+on craft ar_helm_rcopper_3:
+    set variable {crafted_item} to "ar_helm_rcopper_3"
+
+on craft ar_helm_rgold_1:
+    set variable {crafted_item} to "ar_helm_rgold_1"
+
+on craft ar_helm_rgold_2:
+    set variable {crafted_item} to "ar_helm_rgold_2"
+
+on craft ar_helm_rgold_3:
+    set variable {crafted_item} to "ar_helm_rgold_3"
+
+on craft ar_helm_crystal_1:
+    set variable {crafted_item} to "ar_helm_crystal_1"
+
+on craft ar_helm_crystal_2:
+    set variable {crafted_item} to "ar_helm_crystal_2"
+
+on craft ar_helm_crystal_3:
+    set variable {crafted_item} to "ar_helm_crystal_3"
+
+on craft ar_helm_obsidian_1:
+    set variable {crafted_item} to "ar_helm_obsidian_1"
+
+on craft ar_helm_obsidian_2:
+    set variable {crafted_item} to "ar_helm_obsidian_2"
+
+on craft ar_helm_obsidian_3:
+    set variable {crafted_item} to "ar_helm_obsidian_3"
+
+on craft ar_helm_frost_1:
+    set variable {crafted_item} to "ar_helm_frost_1"
+
+on craft ar_helm_frost_2:
+    set variable {crafted_item} to "ar_helm_frost_2"
+
+on craft ar_helm_frost_3:
+    set variable {crafted_item} to "ar_helm_frost_3"
+
+on craft ar_chest_leather_1:
+    set variable {crafted_item} to "ar_chest_leather_1"
+
+on craft ar_chest_leather_2:
+    set variable {crafted_item} to "ar_chest_leather_2"
+
+on craft ar_chest_leather_3:
+    set variable {crafted_item} to "ar_chest_leather_3"
+
+on craft ar_chest_iron_1:
+    set variable {crafted_item} to "ar_chest_iron_1"
+
+on craft ar_chest_iron_2:
+    set variable {crafted_item} to "ar_chest_iron_2"
+
+on craft ar_chest_iron_3:
+    set variable {crafted_item} to "ar_chest_iron_3"
+
+on craft ar_chest_copper_1:
+    set variable {crafted_item} to "ar_chest_copper_1"
+
+on craft ar_chest_copper_2:
+    set variable {crafted_item} to "ar_chest_copper_2"
+
+on craft ar_chest_copper_3:
+    set variable {crafted_item} to "ar_chest_copper_3"
+
+on craft ar_chest_riron_1:
+    set variable {crafted_item} to "ar_chest_riron_1"
+
+on craft ar_chest_riron_2:
+    set variable {crafted_item} to "ar_chest_riron_2"
+
+on craft ar_chest_riron_3:
+    set variable {crafted_item} to "ar_chest_riron_3"
+
+on craft ar_chest_gold_1:
+    set variable {crafted_item} to "ar_chest_gold_1"
+
+on craft ar_chest_gold_2:
+    set variable {crafted_item} to "ar_chest_gold_2"
+
+on craft ar_chest_gold_3:
+    set variable {crafted_item} to "ar_chest_gold_3"
+
+on craft ar_chest_rcopper_1:
+    set variable {crafted_item} to "ar_chest_rcopper_1"
+
+on craft ar_chest_rcopper_2:
+    set variable {crafted_item} to "ar_chest_rcopper_2"
+
+on craft ar_chest_rcopper_3:
+    set variable {crafted_item} to "ar_chest_rcopper_3"
+
+on craft ar_chest_rgold_1:
+    set variable {crafted_item} to "ar_chest_rgold_1"
+
+on craft ar_chest_rgold_2:
+    set variable {crafted_item} to "ar_chest_rgold_2"
+
+on craft ar_chest_rgold_3:
+    set variable {crafted_item} to "ar_chest_rgold_3"
+
+on craft ar_chest_crystal_1:
+    set variable {crafted_item} to "ar_chest_crystal_1"
+
+on craft ar_chest_crystal_2:
+    set variable {crafted_item} to "ar_chest_crystal_2"
+
+on craft ar_chest_crystal_3:
+    set variable {crafted_item} to "ar_chest_crystal_3"
+
+on craft ar_chest_obsidian_1:
+    set variable {crafted_item} to "ar_chest_obsidian_1"
+
+on craft ar_chest_obsidian_2:
+    set variable {crafted_item} to "ar_chest_obsidian_2"
+
+on craft ar_chest_obsidian_3:
+    set variable {crafted_item} to "ar_chest_obsidian_3"
+
+on craft ar_chest_frost_1:
+    set variable {crafted_item} to "ar_chest_frost_1"
+
+on craft ar_chest_frost_2:
+    set variable {crafted_item} to "ar_chest_frost_2"
+
+on craft ar_chest_frost_3:
+    set variable {crafted_item} to "ar_chest_frost_3"
+
+on craft ar_legs_leather_1:
+    set variable {crafted_item} to "ar_legs_leather_1"
+
+on craft ar_legs_leather_2:
+    set variable {crafted_item} to "ar_legs_leather_2"
+
+on craft ar_legs_leather_3:
+    set variable {crafted_item} to "ar_legs_leather_3"
+
+on craft ar_legs_iron_1:
+    set variable {crafted_item} to "ar_legs_iron_1"
+
+on craft ar_legs_iron_2:
+    set variable {crafted_item} to "ar_legs_iron_2"
+
+on craft ar_legs_iron_3:
+    set variable {crafted_item} to "ar_legs_iron_3"
+
+on craft ar_legs_copper_1:
+    set variable {crafted_item} to "ar_legs_copper_1"
+
+on craft ar_legs_copper_2:
+    set variable {crafted_item} to "ar_legs_copper_2"
+
+on craft ar_legs_copper_3:
+    set variable {crafted_item} to "ar_legs_copper_3"
+
+on craft ar_legs_riron_1:
+    set variable {crafted_item} to "ar_legs_riron_1"
+
+on craft ar_legs_riron_2:
+    set variable {crafted_item} to "ar_legs_riron_2"
+
+on craft ar_legs_riron_3:
+    set variable {crafted_item} to "ar_legs_riron_3"
+
+on craft ar_legs_gold_1:
+    set variable {crafted_item} to "ar_legs_gold_1"
+
+on craft ar_legs_gold_2:
+    set variable {crafted_item} to "ar_legs_gold_2"
+
+on craft ar_legs_gold_3:
+    set variable {crafted_item} to "ar_legs_gold_3"
+
+on craft ar_legs_rcopper_1:
+    set variable {crafted_item} to "ar_legs_rcopper_1"
+
+on craft ar_legs_rcopper_2:
+    set variable {crafted_item} to "ar_legs_rcopper_2"
+
+on craft ar_legs_rcopper_3:
+    set variable {crafted_item} to "ar_legs_rcopper_3"
+
+on craft ar_legs_rgold_1:
+    set variable {crafted_item} to "ar_legs_rgold_1"
+
+on craft ar_legs_rgold_2:
+    set variable {crafted_item} to "ar_legs_rgold_2"
+
+on craft ar_legs_rgold_3:
+    set variable {crafted_item} to "ar_legs_rgold_3"
+
+on craft ar_legs_crystal_1:
+    set variable {crafted_item} to "ar_legs_crystal_1"
+
+on craft ar_legs_crystal_2:
+    set variable {crafted_item} to "ar_legs_crystal_2"
+
+on craft ar_legs_crystal_3:
+    set variable {crafted_item} to "ar_legs_crystal_3"
+
+on craft ar_legs_obsidian_1:
+    set variable {crafted_item} to "ar_legs_obsidian_1"
+
+on craft ar_legs_obsidian_2:
+    set variable {crafted_item} to "ar_legs_obsidian_2"
+
+on craft ar_legs_obsidian_3:
+    set variable {crafted_item} to "ar_legs_obsidian_3"
+
+on craft ar_legs_frost_1:
+    set variable {crafted_item} to "ar_legs_frost_1"
+
+on craft ar_legs_frost_2:
+    set variable {crafted_item} to "ar_legs_frost_2"
+
+on craft ar_legs_frost_3:
+    set variable {crafted_item} to "ar_legs_frost_3"
+
+on craft ar_boots_leather_1:
+    set variable {crafted_item} to "ar_boots_leather_1"
+
+on craft ar_boots_leather_2:
+    set variable {crafted_item} to "ar_boots_leather_2"
+
+on craft ar_boots_leather_3:
+    set variable {crafted_item} to "ar_boots_leather_3"
+
+on craft ar_boots_iron_1:
+    set variable {crafted_item} to "ar_boots_iron_1"
+
+on craft ar_boots_iron_2:
+    set variable {crafted_item} to "ar_boots_iron_2"
+
+on craft ar_boots_iron_3:
+    set variable {crafted_item} to "ar_boots_iron_3"
+
+on craft ar_boots_copper_1:
+    set variable {crafted_item} to "ar_boots_copper_1"
+
+on craft ar_boots_copper_2:
+    set variable {crafted_item} to "ar_boots_copper_2"
+
+on craft ar_boots_copper_3:
+    set variable {crafted_item} to "ar_boots_copper_3"
+
+on craft ar_boots_riron_1:
+    set variable {crafted_item} to "ar_boots_riron_1"
+
+on craft ar_boots_riron_2:
+    set variable {crafted_item} to "ar_boots_riron_2"
+
+on craft ar_boots_riron_3:
+    set variable {crafted_item} to "ar_boots_riron_3"
+
+on craft ar_boots_gold_1:
+    set variable {crafted_item} to "ar_boots_gold_1"
+
+on craft ar_boots_gold_2:
+    set variable {crafted_item} to "ar_boots_gold_2"
+
+on craft ar_boots_gold_3:
+    set variable {crafted_item} to "ar_boots_gold_3"
+
+on craft ar_boots_rcopper_1:
+    set variable {crafted_item} to "ar_boots_rcopper_1"
+
+on craft ar_boots_rcopper_2:
+    set variable {crafted_item} to "ar_boots_rcopper_2"
+
+on craft ar_boots_rcopper_3:
+    set variable {crafted_item} to "ar_boots_rcopper_3"
+
+on craft ar_boots_rgold_1:
+    set variable {crafted_item} to "ar_boots_rgold_1"
+
+on craft ar_boots_rgold_2:
+    set variable {crafted_item} to "ar_boots_rgold_2"
+
+on craft ar_boots_rgold_3:
+    set variable {crafted_item} to "ar_boots_rgold_3"
+
+on craft ar_boots_crystal_1:
+    set variable {crafted_item} to "ar_boots_crystal_1"
+
+on craft ar_boots_crystal_2:
+    set variable {crafted_item} to "ar_boots_crystal_2"
+
+on craft ar_boots_crystal_3:
+    set variable {crafted_item} to "ar_boots_crystal_3"
+
+on craft ar_boots_obsidian_1:
+    set variable {crafted_item} to "ar_boots_obsidian_1"
+
+on craft ar_boots_obsidian_2:
+    set variable {crafted_item} to "ar_boots_obsidian_2"
+
+on craft ar_boots_obsidian_3:
+    set variable {crafted_item} to "ar_boots_obsidian_3"
+
+on craft ar_boots_frost_1:
+    set variable {crafted_item} to "ar_boots_frost_1"
+
+on craft ar_boots_frost_2:
+    set variable {crafted_item} to "ar_boots_frost_2"
+
+on craft ar_boots_frost_3:
+    set variable {crafted_item} to "ar_boots_frost_3"
+
+on craft armorbench:
+    set variable {crafted_item} to "armorbench"
+
+on craft leaf:
+    set variable {crafted_item} to "leaf"
+
+on craft feather:
+    set variable {crafted_item} to "feather"
+
+on craft thread:
+    set variable {crafted_item} to "thread"
+
+on craft rod_log:
+    set variable {crafted_item} to "rod_log"
+
+on craft rod_stone:
+    set variable {crafted_item} to "rod_stone"
+
+on craft rod_rwood:
+    set variable {crafted_item} to "rod_rwood"
+
+on craft rod_iron:
+    set variable {crafted_item} to "rod_iron"
+
+on craft rod_copper:
+    set variable {crafted_item} to "rod_copper"
+
+on craft rod_riron:
+    set variable {crafted_item} to "rod_riron"
+
+on craft rod_gold:
+    set variable {crafted_item} to "rod_gold"
+
+on craft rod_rcopper:
+    set variable {crafted_item} to "rod_rcopper"
+
+on craft rod_rgold:
+    set variable {crafted_item} to "rod_rgold"
+
+on craft bow_log:
+    set variable {crafted_item} to "bow_log"
+
+on craft bow_stone:
+    set variable {crafted_item} to "bow_stone"
+
+on craft bow_rwood:
+    set variable {crafted_item} to "bow_rwood"
+
+on craft bow_iron:
+    set variable {crafted_item} to "bow_iron"
+
+on craft bow_copper:
+    set variable {crafted_item} to "bow_copper"
+
+on craft bow_riron:
+    set variable {crafted_item} to "bow_riron"
+
+on craft bow_gold:
+    set variable {crafted_item} to "bow_gold"
+
+on craft bow_rcopper:
+    set variable {crafted_item} to "bow_rcopper"
+
+on craft bow_rgold:
+    set variable {crafted_item} to "bow_rgold"
+
+on craft arrow_f:
+    set variable {crafted_item} to "arrow_f"
+
+on craft arrow:
+    set variable {crafted_item} to "arrow"
+
+on craft anchovy:
+    set variable {crafted_item} to "anchovy"
+
+on craft mackerel:
+    set variable {crafted_item} to "mackerel"
+
+on craft seabream:
+    set variable {crafted_item} to "seabream"
+
+on craft flounder:
+    set variable {crafted_item} to "flounder"
+
+on craft tuna:
+    set variable {crafted_item} to "tuna"
+
+on craft pufferfish:
+    set variable {crafted_item} to "pufferfish"
+
+on craft marlin:
+    set variable {crafted_item} to "marlin"
+
+on craft crucian:
+    set variable {crafted_item} to "crucian"
+
+on craft minnow:
+    set variable {crafted_item} to "minnow"
+
+on craft trout:
+    set variable {crafted_item} to "trout"
+
+on craft catfish:
+    set variable {crafted_item} to "catfish"
+
+on craft carp:
+    set variable {crafted_item} to "carp"
+
+on craft sturgeon:
+    set variable {crafted_item} to "sturgeon"
+
+on craft goldcarp:
+    set variable {crafted_item} to "goldcarp"
+
+on craft grilled_fish:
+    set variable {crafted_item} to "grilled_fish"
+
+on craft hammer_log:
+    set variable {crafted_item} to "hammer_log"
+
+on craft hammer_stone:
+    set variable {crafted_item} to "hammer_stone"
+
+on craft hammer_rwood:
+    set variable {crafted_item} to "hammer_rwood"
+
+on craft hammer_iron:
+    set variable {crafted_item} to "hammer_iron"
+
+on craft hammer_copper:
+    set variable {crafted_item} to "hammer_copper"
+
+on craft hammer_riron:
+    set variable {crafted_item} to "hammer_riron"
+
+on craft hammer_gold:
+    set variable {crafted_item} to "hammer_gold"
+
+on craft hammer_rcopper:
+    set variable {crafted_item} to "hammer_rcopper"
+
+on craft hammer_rgold:
+    set variable {crafted_item} to "hammer_rgold"
+
+on craft riron_plate:
+    set variable {crafted_item} to "riron_plate"
+
+on craft anvil:
+    set variable {crafted_item} to "anvil"
+
+on craft slime:
+    set variable {crafted_item} to "slime"
+
+on craft snake_fang:
+    set variable {crafted_item} to "snake_fang"
+
+on craft leather:
+    set variable {crafted_item} to "leather"
+
+on craft bone:
+    set variable {crafted_item} to "bone"
+
+on craft ash:
+    set variable {crafted_item} to "ash"
+
+on craft glue:
+    set variable {crafted_item} to "glue"
+
+on craft frost:
+    set variable {crafted_item} to "frost"
+
+on craft cactus_fiber:
+    set variable {crafted_item} to "cactus_fiber"
+
+on craft rubber:
+    set variable {crafted_item} to "rubber"
+
+on craft mangrove_root:
+    set variable {crafted_item} to "mangrove_root"
+
+on craft resin:
+    set variable {crafted_item} to "resin"
+
+on craft clay:
+    set variable {crafted_item} to "clay"
+
+on craft obsidian:
+    set variable {crafted_item} to "obsidian"
+
+on craft crystal:
+    set variable {crafted_item} to "crystal"
+
+on craft cactus_juice:
+    set variable {crafted_item} to "cactus_juice"
+
+on craft fire_potion:
+    set variable {crafted_item} to "fire_potion"
+
+on craft antidote:
+    set variable {crafted_item} to "antidote"
+
+on craft torch:
+    set variable {crafted_item} to "torch"
+
+on craft brick:
+    set variable {crafted_item} to "brick"
+
+on craft conveyor:
+    set variable {crafted_item} to "conveyor"
+
+on craft paper:
+    set variable {crafted_item} to "paper"
+
+on craft compass:
+    set variable {crafted_item} to "compass"
+
+on craft island_map:
+    set variable {crafted_item} to "island_map"
+
+on craft bag:
+    set variable {crafted_item} to "bag"
+
+on craft trash:
+    set variable {crafted_item} to "trash"
+
+on craft circuit:
+    set variable {crafted_item} to "circuit"
+
+on craft sorter:
+    set variable {crafted_item} to "sorter"
+
+on craft rcopper_plate:
+    set variable {crafted_item} to "rcopper_plate"
+
+on craft rgold_plate:
+    set variable {crafted_item} to "rgold_plate"
+
+on craft circuit_device:
+    set variable {crafted_item} to "circuit_device"
+
+on craft bell:
+    set variable {crafted_item} to "bell"
+
+on craft rsd:
+    set variable {crafted_item} to "rsd"
+
+on craft gauge:
+    set variable {crafted_item} to "gauge"
+
+on craft controller:
+    set variable {crafted_item} to "controller"
+
+on craft zinc:
+    set variable {crafted_item} to "zinc"
+
+on craft zinc_ingot:
+    set variable {crafted_item} to "zinc_ingot"
+
+on craft obsidian_ingot:
+    set variable {crafted_item} to "obsidian_ingot"
+
+on craft rzinc:
+    set variable {crafted_item} to "rzinc"
+
+on craft rzinc_plate:
+    set variable {crafted_item} to "rzinc_plate"
+
+on craft brass:
+    set variable {crafted_item} to "brass"
+
+on craft brass_plate:
+    set variable {crafted_item} to "brass_plate"
+
+on craft rgold_c:
+    set variable {crafted_item} to "rgold_c"
+
+on craft rgold_cp:
+    set variable {crafted_item} to "rgold_cp"
+
+on craft rcopper_c:
+    set variable {crafted_item} to "rcopper_c"
+
+on craft rcopper_cp:
+    set variable {crafted_item} to "rcopper_cp"
+
+on craft riron_c:
+    set variable {crafted_item} to "riron_c"
+
+on craft riron_cp:
+    set variable {crafted_item} to "riron_cp"
+
+on craft brass_c:
+    set variable {crafted_item} to "brass_c"
+
+on craft brass_cp:
+    set variable {crafted_item} to "brass_cp"
+
+on craft circuit_crystal:
+    set variable {crafted_item} to "circuit_crystal"
+
+on craft ult_signal:
+    set variable {crafted_item} to "ult_signal"
+
+on craft wave_device:
+    set variable {crafted_item} to "wave_device"
+
+on craft beacon:
+    set variable {crafted_item} to "beacon"
+
+on craft crafter:
+    set variable {crafted_item} to "crafter"
+
+on craft relay:
+    set variable {crafted_item} to "relay"
+
+on craft gear:
+    set variable {crafted_item} to "gear"
+
+on craft clock:
+    set variable {crafted_item} to "clock"
+
+on craft tele:
+    set variable {crafted_item} to "tele"
+
+on craft port:
+    set variable {crafted_item} to "port"
+
+on craft guard:
+    set variable {crafted_item} to "guard"
+
+on craft coin:
+    set variable {crafted_item} to "coin"
+
+on craft flag:
+    set variable {crafted_item} to "flag"
+
+on craft rstone:
+    set variable {crafted_item} to "rstone"
+
+on craft sbrick:
+    set variable {crafted_item} to "sbrick"
+
+on craft bwall:
+    set variable {crafted_item} to "bwall"
+
+on craft bwin:
+    set variable {crafted_item} to "bwin"
+
+on craft aquarium:
+    set variable {crafted_item} to "aquarium"
+
+on craft horse:
+    set variable {crafted_item} to "horse"
+
+on craft cart:
+    set variable {crafted_item} to "cart"
+
+on craft tradepost:
+    set variable {crafted_item} to "tradepost"
+
+on craft door:
+    set variable {crafted_item} to "door"
+
+on craft roof:
+    set variable {crafted_item} to "roof"
+
+on craft carpet:
+    set variable {crafted_item} to "carpet"
+
+on craft table:
+    set variable {crafted_item} to "table"
+
+on craft chair:
+    set variable {crafted_item} to "chair"
+
+on craft shelf:
+    set variable {crafted_item} to "shelf"
+
+on craft bucket:
+    set variable {crafted_item} to "bucket"
+
+on craft bucket_w:
+    set variable {crafted_item} to "bucket_w"
+
+on craft fence:
+    set variable {crafted_item} to "fence"
+
+on craft oven:
+    set variable {crafted_item} to "oven"
+
+on craft furnace:
+    set variable {crafted_item} to "furnace"
+
+on craft wheat_seed:
+    set variable {crafted_item} to "wheat_seed"
+
+on craft potato:
+    set variable {crafted_item} to "potato"
+
+on craft corn:
+    set variable {crafted_item} to "corn"
+
+on craft bed:
+    set variable {crafted_item} to "bed"
+
+on craft chest:
+    set variable {crafted_item} to "chest"
+
+on craft rl_bwolf:
+    set variable {crafted_item} to "rl_bwolf"
+
+on craft rl_bscorp:
+    set variable {crafted_item} to "rl_bscorp"
+
+on craft rl_bmagma:
+    set variable {crafted_item} to "rl_bmagma"
+
+on craft rl_bspider:
+    set variable {crafted_item} to "rl_bspider"
+
+on craft rl_bsnake:
+    set variable {crafted_item} to "rl_bsnake"
+
+on craft rl_bgolem:
+    set variable {crafted_item} to "rl_bgolem"
+
+on craft rl_bcroc:
+    set variable {crafted_item} to "rl_bcroc"
+
+on craft rl_byeti:
+    set variable {crafted_item} to "rl_byeti"
+
+on craft void_essence:
+    set variable {crafted_item} to "void_essence"
+
+on craft vkey_a:
+    set variable {crafted_item} to "vkey_a"
+
+on craft vkey_b:
+    set variable {crafted_item} to "vkey_b"
+
+on craft voidcore:
+    set variable {crafted_item} to "voidcore"
+
+on craft pot:
+    set variable {crafted_item} to "pot"
+
+on craft seafood_stew:
+    set variable {crafted_item} to "seafood_stew"
+
+on craft feast:
+    set variable {crafted_item} to "feast"
+
+on craft marlin_dish:
+    set variable {crafted_item} to "marlin_dish"
+
+on craft goldcarp_dish:
+    set variable {crafted_item} to "goldcarp_dish"
+
+on craft wheat:
+    set variable {crafted_item} to "wheat"
+
+on craft hammock:
+    set variable {crafted_item} to "hammock"
+
+on craft fishtrap:
+    set variable {crafted_item} to "fishtrap"
+
+on craft dinoskel:
+    set variable {crafted_item} to "dinoskel"
+
+on craft soulwisp:
+    set variable {crafted_item} to "soulwisp"
+
+on place stick:
+    set variable {placed_block} to "stick"
+
+on place bench:
+    set variable {placed_block} to "bench"
+
+on place sapling:
+    set variable {placed_block} to "sapling"
+
+on place log:
+    set variable {placed_block} to "log"
+
+on place plank:
+    set variable {placed_block} to "plank"
+
+on place stone:
+    set variable {placed_block} to "stone"
+
+on place iron:
+    set variable {placed_block} to "iron"
+
+on place gold:
+    set variable {placed_block} to "gold"
+
+on place copper:
+    set variable {placed_block} to "copper"
+
+on place rwood:
+    set variable {placed_block} to "rwood"
+
+on place riron:
+    set variable {placed_block} to "riron"
+
+on place rcopper:
+    set variable {placed_block} to "rcopper"
+
+on place rgold:
+    set variable {placed_block} to "rgold"
+
+on place pickaxe_log:
+    set variable {placed_block} to "pickaxe_log"
+
+on place pickaxe_stone:
+    set variable {placed_block} to "pickaxe_stone"
+
+on place pickaxe_rwood:
+    set variable {placed_block} to "pickaxe_rwood"
+
+on place pickaxe_iron:
+    set variable {placed_block} to "pickaxe_iron"
+
+on place pickaxe_copper:
+    set variable {placed_block} to "pickaxe_copper"
+
+on place pickaxe_riron:
+    set variable {placed_block} to "pickaxe_riron"
+
+on place pickaxe_gold:
+    set variable {placed_block} to "pickaxe_gold"
+
+on place pickaxe_rcopper:
+    set variable {placed_block} to "pickaxe_rcopper"
+
+on place pickaxe_rgold:
+    set variable {placed_block} to "pickaxe_rgold"
+
+on place axe_log:
+    set variable {placed_block} to "axe_log"
+
+on place axe_stone:
+    set variable {placed_block} to "axe_stone"
+
+on place axe_rwood:
+    set variable {placed_block} to "axe_rwood"
+
+on place axe_iron:
+    set variable {placed_block} to "axe_iron"
+
+on place axe_copper:
+    set variable {placed_block} to "axe_copper"
+
+on place axe_riron:
+    set variable {placed_block} to "axe_riron"
+
+on place axe_gold:
+    set variable {placed_block} to "axe_gold"
+
+on place axe_rcopper:
+    set variable {placed_block} to "axe_rcopper"
+
+on place axe_rgold:
+    set variable {placed_block} to "axe_rgold"
+
+on place sword_log:
+    set variable {placed_block} to "sword_log"
+
+on place sword_stone:
+    set variable {placed_block} to "sword_stone"
+
+on place sword_rwood:
+    set variable {placed_block} to "sword_rwood"
+
+on place sword_iron:
+    set variable {placed_block} to "sword_iron"
+
+on place sword_copper:
+    set variable {placed_block} to "sword_copper"
+
+on place sword_riron:
+    set variable {placed_block} to "sword_riron"
+
+on place sword_gold:
+    set variable {placed_block} to "sword_gold"
+
+on place sword_rcopper:
+    set variable {placed_block} to "sword_rcopper"
+
+on place sword_rgold:
+    set variable {placed_block} to "sword_rgold"
+
+on place dagger_log:
+    set variable {placed_block} to "dagger_log"
+
+on place dagger_stone:
+    set variable {placed_block} to "dagger_stone"
+
+on place dagger_rwood:
+    set variable {placed_block} to "dagger_rwood"
+
+on place dagger_iron:
+    set variable {placed_block} to "dagger_iron"
+
+on place dagger_copper:
+    set variable {placed_block} to "dagger_copper"
+
+on place dagger_riron:
+    set variable {placed_block} to "dagger_riron"
+
+on place dagger_gold:
+    set variable {placed_block} to "dagger_gold"
+
+on place dagger_rcopper:
+    set variable {placed_block} to "dagger_rcopper"
+
+on place dagger_rgold:
+    set variable {placed_block} to "dagger_rgold"
+
+on place hoe_log:
+    set variable {placed_block} to "hoe_log"
+
+on place hoe_stone:
+    set variable {placed_block} to "hoe_stone"
+
+on place hoe_rwood:
+    set variable {placed_block} to "hoe_rwood"
+
+on place hoe_iron:
+    set variable {placed_block} to "hoe_iron"
+
+on place hoe_copper:
+    set variable {placed_block} to "hoe_copper"
+
+on place hoe_riron:
+    set variable {placed_block} to "hoe_riron"
+
+on place hoe_gold:
+    set variable {placed_block} to "hoe_gold"
+
+on place hoe_rcopper:
+    set variable {placed_block} to "hoe_rcopper"
+
+on place hoe_rgold:
+    set variable {placed_block} to "hoe_rgold"
+
+on place rune_fire:
+    set variable {placed_block} to "rune_fire"
+
+on place rune_ice:
+    set variable {placed_block} to "rune_ice"
+
+on place rune_venom:
+    set variable {placed_block} to "rune_venom"
+
+on place rune_life:
+    set variable {placed_block} to "rune_life"
+
+on place pot_heal:
+    set variable {placed_block} to "pot_heal"
+
+on place pot_swift:
+    set variable {placed_block} to "pot_swift"
+
+on place pot_might:
+    set variable {placed_block} to "pot_might"
+
+on place pot_guard:
+    set variable {placed_block} to "pot_guard"
+
+on place pot_night:
+    set variable {placed_block} to "pot_night"
+
+on place pot_breath:
+    set variable {placed_block} to "pot_breath"
+
+on place alchemy:
+    set variable {placed_block} to "alchemy"
+
+on place runetable:
+    set variable {placed_block} to "runetable"
+
+on place trap:
+    set variable {placed_block} to "trap"
+
+on place hut:
+    set variable {placed_block} to "hut"
+
+on place balloon:
+    set variable {placed_block} to "balloon"
+
+on place diving:
+    set variable {placed_block} to "diving"
+
+on place pearl:
+    set variable {placed_block} to "pearl"
+
+on place coral:
+    set variable {placed_block} to "coral"
+
+on place stall:
+    set variable {placed_block} to "stall"
+
+on place mailbox:
+    set variable {placed_block} to "mailbox"
+
+on place gpil:
+    set variable {placed_block} to "gpil"
+
+on place arch:
+    set variable {placed_block} to "arch"
+
+on place spire:
+    set variable {placed_block} to "spire"
+
+on place monument:
+    set variable {placed_block} to "monument"
+
+on place feller_log:
+    set variable {placed_block} to "feller_log"
+
+on place feller_stone:
+    set variable {placed_block} to "feller_stone"
+
+on place feller_rwood:
+    set variable {placed_block} to "feller_rwood"
+
+on place feller_iron:
+    set variable {placed_block} to "feller_iron"
+
+on place feller_copper:
+    set variable {placed_block} to "feller_copper"
+
+on place feller_riron:
+    set variable {placed_block} to "feller_riron"
+
+on place feller_gold:
+    set variable {placed_block} to "feller_gold"
+
+on place feller_rcopper:
+    set variable {placed_block} to "feller_rcopper"
+
+on place feller_rgold:
+    set variable {placed_block} to "feller_rgold"
+
+on place miner_log:
+    set variable {placed_block} to "miner_log"
+
+on place miner_stone:
+    set variable {placed_block} to "miner_stone"
+
+on place miner_rwood:
+    set variable {placed_block} to "miner_rwood"
+
+on place miner_iron:
+    set variable {placed_block} to "miner_iron"
+
+on place miner_copper:
+    set variable {placed_block} to "miner_copper"
+
+on place miner_riron:
+    set variable {placed_block} to "miner_riron"
+
+on place miner_gold:
+    set variable {placed_block} to "miner_gold"
+
+on place miner_rcopper:
+    set variable {placed_block} to "miner_rcopper"
+
+on place miner_rgold:
+    set variable {placed_block} to "miner_rgold"
+
+on place bread:
+    set variable {placed_block} to "bread"
+
+on place baked_potato:
+    set variable {placed_block} to "baked_potato"
+
+on place popcorn:
+    set variable {placed_block} to "popcorn"
+
+on place stew:
+    set variable {placed_block} to "stew"
+
+on place egg:
+    set variable {placed_block} to "egg"
+
+on place fried_egg:
+    set variable {placed_block} to "fried_egg"
+
+on place milk:
+    set variable {placed_block} to "milk"
+
+on place raw_meat:
+    set variable {placed_block} to "raw_meat"
+
+on place steak:
+    set variable {placed_block} to "steak"
+
+on place iron_ingot:
+    set variable {placed_block} to "iron_ingot"
+
+on place copper_ingot:
+    set variable {placed_block} to "copper_ingot"
+
+on place gold_ingot:
+    set variable {placed_block} to "gold_ingot"
+
+on place boat:
+    set variable {placed_block} to "boat"
+
+on place ar_helm_leather_1:
+    set variable {placed_block} to "ar_helm_leather_1"
+
+on place ar_helm_leather_2:
+    set variable {placed_block} to "ar_helm_leather_2"
+
+on place ar_helm_leather_3:
+    set variable {placed_block} to "ar_helm_leather_3"
+
+on place ar_helm_iron_1:
+    set variable {placed_block} to "ar_helm_iron_1"
+
+on place ar_helm_iron_2:
+    set variable {placed_block} to "ar_helm_iron_2"
+
+on place ar_helm_iron_3:
+    set variable {placed_block} to "ar_helm_iron_3"
+
+on place ar_helm_copper_1:
+    set variable {placed_block} to "ar_helm_copper_1"
+
+on place ar_helm_copper_2:
+    set variable {placed_block} to "ar_helm_copper_2"
+
+on place ar_helm_copper_3:
+    set variable {placed_block} to "ar_helm_copper_3"
+
+on place ar_helm_riron_1:
+    set variable {placed_block} to "ar_helm_riron_1"
+
+on place ar_helm_riron_2:
+    set variable {placed_block} to "ar_helm_riron_2"
+
+on place ar_helm_riron_3:
+    set variable {placed_block} to "ar_helm_riron_3"
+
+on place ar_helm_gold_1:
+    set variable {placed_block} to "ar_helm_gold_1"
+
+on place ar_helm_gold_2:
+    set variable {placed_block} to "ar_helm_gold_2"
+
+on place ar_helm_gold_3:
+    set variable {placed_block} to "ar_helm_gold_3"
+
+on place ar_helm_rcopper_1:
+    set variable {placed_block} to "ar_helm_rcopper_1"
+
+on place ar_helm_rcopper_2:
+    set variable {placed_block} to "ar_helm_rcopper_2"
+
+on place ar_helm_rcopper_3:
+    set variable {placed_block} to "ar_helm_rcopper_3"
+
+on place ar_helm_rgold_1:
+    set variable {placed_block} to "ar_helm_rgold_1"
+
+on place ar_helm_rgold_2:
+    set variable {placed_block} to "ar_helm_rgold_2"
+
+on place ar_helm_rgold_3:
+    set variable {placed_block} to "ar_helm_rgold_3"
+
+on place ar_helm_crystal_1:
+    set variable {placed_block} to "ar_helm_crystal_1"
+
+on place ar_helm_crystal_2:
+    set variable {placed_block} to "ar_helm_crystal_2"
+
+on place ar_helm_crystal_3:
+    set variable {placed_block} to "ar_helm_crystal_3"
+
+on place ar_helm_obsidian_1:
+    set variable {placed_block} to "ar_helm_obsidian_1"
+
+on place ar_helm_obsidian_2:
+    set variable {placed_block} to "ar_helm_obsidian_2"
+
+on place ar_helm_obsidian_3:
+    set variable {placed_block} to "ar_helm_obsidian_3"
+
+on place ar_helm_frost_1:
+    set variable {placed_block} to "ar_helm_frost_1"
+
+on place ar_helm_frost_2:
+    set variable {placed_block} to "ar_helm_frost_2"
+
+on place ar_helm_frost_3:
+    set variable {placed_block} to "ar_helm_frost_3"
+
+on place ar_chest_leather_1:
+    set variable {placed_block} to "ar_chest_leather_1"
+
+on place ar_chest_leather_2:
+    set variable {placed_block} to "ar_chest_leather_2"
+
+on place ar_chest_leather_3:
+    set variable {placed_block} to "ar_chest_leather_3"
+
+on place ar_chest_iron_1:
+    set variable {placed_block} to "ar_chest_iron_1"
+
+on place ar_chest_iron_2:
+    set variable {placed_block} to "ar_chest_iron_2"
+
+on place ar_chest_iron_3:
+    set variable {placed_block} to "ar_chest_iron_3"
+
+on place ar_chest_copper_1:
+    set variable {placed_block} to "ar_chest_copper_1"
+
+on place ar_chest_copper_2:
+    set variable {placed_block} to "ar_chest_copper_2"
+
+on place ar_chest_copper_3:
+    set variable {placed_block} to "ar_chest_copper_3"
+
+on place ar_chest_riron_1:
+    set variable {placed_block} to "ar_chest_riron_1"
+
+on place ar_chest_riron_2:
+    set variable {placed_block} to "ar_chest_riron_2"
+
+on place ar_chest_riron_3:
+    set variable {placed_block} to "ar_chest_riron_3"
+
+on place ar_chest_gold_1:
+    set variable {placed_block} to "ar_chest_gold_1"
+
+on place ar_chest_gold_2:
+    set variable {placed_block} to "ar_chest_gold_2"
+
+on place ar_chest_gold_3:
+    set variable {placed_block} to "ar_chest_gold_3"
+
+on place ar_chest_rcopper_1:
+    set variable {placed_block} to "ar_chest_rcopper_1"
+
+on place ar_chest_rcopper_2:
+    set variable {placed_block} to "ar_chest_rcopper_2"
+
+on place ar_chest_rcopper_3:
+    set variable {placed_block} to "ar_chest_rcopper_3"
+
+on place ar_chest_rgold_1:
+    set variable {placed_block} to "ar_chest_rgold_1"
+
+on place ar_chest_rgold_2:
+    set variable {placed_block} to "ar_chest_rgold_2"
+
+on place ar_chest_rgold_3:
+    set variable {placed_block} to "ar_chest_rgold_3"
+
+on place ar_chest_crystal_1:
+    set variable {placed_block} to "ar_chest_crystal_1"
+
+on place ar_chest_crystal_2:
+    set variable {placed_block} to "ar_chest_crystal_2"
+
+on place ar_chest_crystal_3:
+    set variable {placed_block} to "ar_chest_crystal_3"
+
+on place ar_chest_obsidian_1:
+    set variable {placed_block} to "ar_chest_obsidian_1"
+
+on place ar_chest_obsidian_2:
+    set variable {placed_block} to "ar_chest_obsidian_2"
+
+on place ar_chest_obsidian_3:
+    set variable {placed_block} to "ar_chest_obsidian_3"
+
+on place ar_chest_frost_1:
+    set variable {placed_block} to "ar_chest_frost_1"
+
+on place ar_chest_frost_2:
+    set variable {placed_block} to "ar_chest_frost_2"
+
+on place ar_chest_frost_3:
+    set variable {placed_block} to "ar_chest_frost_3"
+
+on place ar_legs_leather_1:
+    set variable {placed_block} to "ar_legs_leather_1"
+
+on place ar_legs_leather_2:
+    set variable {placed_block} to "ar_legs_leather_2"
+
+on place ar_legs_leather_3:
+    set variable {placed_block} to "ar_legs_leather_3"
+
+on place ar_legs_iron_1:
+    set variable {placed_block} to "ar_legs_iron_1"
+
+on place ar_legs_iron_2:
+    set variable {placed_block} to "ar_legs_iron_2"
+
+on place ar_legs_iron_3:
+    set variable {placed_block} to "ar_legs_iron_3"
+
+on place ar_legs_copper_1:
+    set variable {placed_block} to "ar_legs_copper_1"
+
+on place ar_legs_copper_2:
+    set variable {placed_block} to "ar_legs_copper_2"
+
+on place ar_legs_copper_3:
+    set variable {placed_block} to "ar_legs_copper_3"
+
+on place ar_legs_riron_1:
+    set variable {placed_block} to "ar_legs_riron_1"
+
+on place ar_legs_riron_2:
+    set variable {placed_block} to "ar_legs_riron_2"
+
+on place ar_legs_riron_3:
+    set variable {placed_block} to "ar_legs_riron_3"
+
+on place ar_legs_gold_1:
+    set variable {placed_block} to "ar_legs_gold_1"
+
+on place ar_legs_gold_2:
+    set variable {placed_block} to "ar_legs_gold_2"
+
+on place ar_legs_gold_3:
+    set variable {placed_block} to "ar_legs_gold_3"
+
+on place ar_legs_rcopper_1:
+    set variable {placed_block} to "ar_legs_rcopper_1"
+
+on place ar_legs_rcopper_2:
+    set variable {placed_block} to "ar_legs_rcopper_2"
+
+on place ar_legs_rcopper_3:
+    set variable {placed_block} to "ar_legs_rcopper_3"
+
+on place ar_legs_rgold_1:
+    set variable {placed_block} to "ar_legs_rgold_1"
+
+on place ar_legs_rgold_2:
+    set variable {placed_block} to "ar_legs_rgold_2"
+
+on place ar_legs_rgold_3:
+    set variable {placed_block} to "ar_legs_rgold_3"
+
+on place ar_legs_crystal_1:
+    set variable {placed_block} to "ar_legs_crystal_1"
+
+on place ar_legs_crystal_2:
+    set variable {placed_block} to "ar_legs_crystal_2"
+
+on place ar_legs_crystal_3:
+    set variable {placed_block} to "ar_legs_crystal_3"
+
+on place ar_legs_obsidian_1:
+    set variable {placed_block} to "ar_legs_obsidian_1"
+
+on place ar_legs_obsidian_2:
+    set variable {placed_block} to "ar_legs_obsidian_2"
+
+on place ar_legs_obsidian_3:
+    set variable {placed_block} to "ar_legs_obsidian_3"
+
+on place ar_legs_frost_1:
+    set variable {placed_block} to "ar_legs_frost_1"
+
+on place ar_legs_frost_2:
+    set variable {placed_block} to "ar_legs_frost_2"
+
+on place ar_legs_frost_3:
+    set variable {placed_block} to "ar_legs_frost_3"
+
+on place ar_boots_leather_1:
+    set variable {placed_block} to "ar_boots_leather_1"
+
+on place ar_boots_leather_2:
+    set variable {placed_block} to "ar_boots_leather_2"
+
+on place ar_boots_leather_3:
+    set variable {placed_block} to "ar_boots_leather_3"
+
+on place ar_boots_iron_1:
+    set variable {placed_block} to "ar_boots_iron_1"
+
+on place ar_boots_iron_2:
+    set variable {placed_block} to "ar_boots_iron_2"
+
+on place ar_boots_iron_3:
+    set variable {placed_block} to "ar_boots_iron_3"
+
+on place ar_boots_copper_1:
+    set variable {placed_block} to "ar_boots_copper_1"
+
+on place ar_boots_copper_2:
+    set variable {placed_block} to "ar_boots_copper_2"
+
+on place ar_boots_copper_3:
+    set variable {placed_block} to "ar_boots_copper_3"
+
+on place ar_boots_riron_1:
+    set variable {placed_block} to "ar_boots_riron_1"
+
+on place ar_boots_riron_2:
+    set variable {placed_block} to "ar_boots_riron_2"
+
+on place ar_boots_riron_3:
+    set variable {placed_block} to "ar_boots_riron_3"
+
+on place ar_boots_gold_1:
+    set variable {placed_block} to "ar_boots_gold_1"
+
+on place ar_boots_gold_2:
+    set variable {placed_block} to "ar_boots_gold_2"
+
+on place ar_boots_gold_3:
+    set variable {placed_block} to "ar_boots_gold_3"
+
+on place ar_boots_rcopper_1:
+    set variable {placed_block} to "ar_boots_rcopper_1"
+
+on place ar_boots_rcopper_2:
+    set variable {placed_block} to "ar_boots_rcopper_2"
+
+on place ar_boots_rcopper_3:
+    set variable {placed_block} to "ar_boots_rcopper_3"
+
+on place ar_boots_rgold_1:
+    set variable {placed_block} to "ar_boots_rgold_1"
+
+on place ar_boots_rgold_2:
+    set variable {placed_block} to "ar_boots_rgold_2"
+
+on place ar_boots_rgold_3:
+    set variable {placed_block} to "ar_boots_rgold_3"
+
+on place ar_boots_crystal_1:
+    set variable {placed_block} to "ar_boots_crystal_1"
+
+on place ar_boots_crystal_2:
+    set variable {placed_block} to "ar_boots_crystal_2"
+
+on place ar_boots_crystal_3:
+    set variable {placed_block} to "ar_boots_crystal_3"
+
+on place ar_boots_obsidian_1:
+    set variable {placed_block} to "ar_boots_obsidian_1"
+
+on place ar_boots_obsidian_2:
+    set variable {placed_block} to "ar_boots_obsidian_2"
+
+on place ar_boots_obsidian_3:
+    set variable {placed_block} to "ar_boots_obsidian_3"
+
+on place ar_boots_frost_1:
+    set variable {placed_block} to "ar_boots_frost_1"
+
+on place ar_boots_frost_2:
+    set variable {placed_block} to "ar_boots_frost_2"
+
+on place ar_boots_frost_3:
+    set variable {placed_block} to "ar_boots_frost_3"
+
+on place armorbench:
+    set variable {placed_block} to "armorbench"
+
+on place leaf:
+    set variable {placed_block} to "leaf"
+
+on place feather:
+    set variable {placed_block} to "feather"
+
+on place thread:
+    set variable {placed_block} to "thread"
+
+on place rod_log:
+    set variable {placed_block} to "rod_log"
+
+on place rod_stone:
+    set variable {placed_block} to "rod_stone"
+
+on place rod_rwood:
+    set variable {placed_block} to "rod_rwood"
+
+on place rod_iron:
+    set variable {placed_block} to "rod_iron"
+
+on place rod_copper:
+    set variable {placed_block} to "rod_copper"
+
+on place rod_riron:
+    set variable {placed_block} to "rod_riron"
+
+on place rod_gold:
+    set variable {placed_block} to "rod_gold"
+
+on place rod_rcopper:
+    set variable {placed_block} to "rod_rcopper"
+
+on place rod_rgold:
+    set variable {placed_block} to "rod_rgold"
+
+on place bow_log:
+    set variable {placed_block} to "bow_log"
+
+on place bow_stone:
+    set variable {placed_block} to "bow_stone"
+
+on place bow_rwood:
+    set variable {placed_block} to "bow_rwood"
+
+on place bow_iron:
+    set variable {placed_block} to "bow_iron"
+
+on place bow_copper:
+    set variable {placed_block} to "bow_copper"
+
+on place bow_riron:
+    set variable {placed_block} to "bow_riron"
+
+on place bow_gold:
+    set variable {placed_block} to "bow_gold"
+
+on place bow_rcopper:
+    set variable {placed_block} to "bow_rcopper"
+
+on place bow_rgold:
+    set variable {placed_block} to "bow_rgold"
+
+on place arrow_f:
+    set variable {placed_block} to "arrow_f"
+
+on place arrow:
+    set variable {placed_block} to "arrow"
+
+on place anchovy:
+    set variable {placed_block} to "anchovy"
+
+on place mackerel:
+    set variable {placed_block} to "mackerel"
+
+on place seabream:
+    set variable {placed_block} to "seabream"
+
+on place flounder:
+    set variable {placed_block} to "flounder"
+
+on place tuna:
+    set variable {placed_block} to "tuna"
+
+on place pufferfish:
+    set variable {placed_block} to "pufferfish"
+
+on place marlin:
+    set variable {placed_block} to "marlin"
+
+on place crucian:
+    set variable {placed_block} to "crucian"
+
+on place minnow:
+    set variable {placed_block} to "minnow"
+
+on place trout:
+    set variable {placed_block} to "trout"
+
+on place catfish:
+    set variable {placed_block} to "catfish"
+
+on place carp:
+    set variable {placed_block} to "carp"
+
+on place sturgeon:
+    set variable {placed_block} to "sturgeon"
+
+on place goldcarp:
+    set variable {placed_block} to "goldcarp"
+
+on place grilled_fish:
+    set variable {placed_block} to "grilled_fish"
+
+on place hammer_log:
+    set variable {placed_block} to "hammer_log"
+
+on place hammer_stone:
+    set variable {placed_block} to "hammer_stone"
+
+on place hammer_rwood:
+    set variable {placed_block} to "hammer_rwood"
+
+on place hammer_iron:
+    set variable {placed_block} to "hammer_iron"
+
+on place hammer_copper:
+    set variable {placed_block} to "hammer_copper"
+
+on place hammer_riron:
+    set variable {placed_block} to "hammer_riron"
+
+on place hammer_gold:
+    set variable {placed_block} to "hammer_gold"
+
+on place hammer_rcopper:
+    set variable {placed_block} to "hammer_rcopper"
+
+on place hammer_rgold:
+    set variable {placed_block} to "hammer_rgold"
+
+on place riron_plate:
+    set variable {placed_block} to "riron_plate"
+
+on place anvil:
+    set variable {placed_block} to "anvil"
+
+on place slime:
+    set variable {placed_block} to "slime"
+
+on place snake_fang:
+    set variable {placed_block} to "snake_fang"
+
+on place leather:
+    set variable {placed_block} to "leather"
+
+on place bone:
+    set variable {placed_block} to "bone"
+
+on place ash:
+    set variable {placed_block} to "ash"
+
+on place glue:
+    set variable {placed_block} to "glue"
+
+on place frost:
+    set variable {placed_block} to "frost"
+
+on place cactus_fiber:
+    set variable {placed_block} to "cactus_fiber"
+
+on place rubber:
+    set variable {placed_block} to "rubber"
+
+on place mangrove_root:
+    set variable {placed_block} to "mangrove_root"
+
+on place resin:
+    set variable {placed_block} to "resin"
+
+on place clay:
+    set variable {placed_block} to "clay"
+
+on place obsidian:
+    set variable {placed_block} to "obsidian"
+
+on place crystal:
+    set variable {placed_block} to "crystal"
+
+on place cactus_juice:
+    set variable {placed_block} to "cactus_juice"
+
+on place fire_potion:
+    set variable {placed_block} to "fire_potion"
+
+on place antidote:
+    set variable {placed_block} to "antidote"
+
+on place torch:
+    set variable {placed_block} to "torch"
+
+on place brick:
+    set variable {placed_block} to "brick"
+
+on place conveyor:
+    set variable {placed_block} to "conveyor"
+
+on place paper:
+    set variable {placed_block} to "paper"
+
+on place compass:
+    set variable {placed_block} to "compass"
+
+on place island_map:
+    set variable {placed_block} to "island_map"
+
+on place bag:
+    set variable {placed_block} to "bag"
+
+on place trash:
+    set variable {placed_block} to "trash"
+
+on place circuit:
+    set variable {placed_block} to "circuit"
+
+on place sorter:
+    set variable {placed_block} to "sorter"
+
+on place rcopper_plate:
+    set variable {placed_block} to "rcopper_plate"
+
+on place rgold_plate:
+    set variable {placed_block} to "rgold_plate"
+
+on place circuit_device:
+    set variable {placed_block} to "circuit_device"
+
+on place bell:
+    set variable {placed_block} to "bell"
+
+on place rsd:
+    set variable {placed_block} to "rsd"
+
+on place gauge:
+    set variable {placed_block} to "gauge"
+
+on place controller:
+    set variable {placed_block} to "controller"
+
+on place zinc:
+    set variable {placed_block} to "zinc"
+
+on place zinc_ingot:
+    set variable {placed_block} to "zinc_ingot"
+
+on place obsidian_ingot:
+    set variable {placed_block} to "obsidian_ingot"
+
+on place rzinc:
+    set variable {placed_block} to "rzinc"
+
+on place rzinc_plate:
+    set variable {placed_block} to "rzinc_plate"
+
+on place brass:
+    set variable {placed_block} to "brass"
+
+on place brass_plate:
+    set variable {placed_block} to "brass_plate"
+
+on place rgold_c:
+    set variable {placed_block} to "rgold_c"
+
+on place rgold_cp:
+    set variable {placed_block} to "rgold_cp"
+
+on place rcopper_c:
+    set variable {placed_block} to "rcopper_c"
+
+on place rcopper_cp:
+    set variable {placed_block} to "rcopper_cp"
+
+on place riron_c:
+    set variable {placed_block} to "riron_c"
+
+on place riron_cp:
+    set variable {placed_block} to "riron_cp"
+
+on place brass_c:
+    set variable {placed_block} to "brass_c"
+
+on place brass_cp:
+    set variable {placed_block} to "brass_cp"
+
+on place circuit_crystal:
+    set variable {placed_block} to "circuit_crystal"
+
+on place ult_signal:
+    set variable {placed_block} to "ult_signal"
+
+on place wave_device:
+    set variable {placed_block} to "wave_device"
+
+on place beacon:
+    set variable {placed_block} to "beacon"
+
+on place crafter:
+    set variable {placed_block} to "crafter"
+
+on place relay:
+    set variable {placed_block} to "relay"
+
+on place gear:
+    set variable {placed_block} to "gear"
+
+on place clock:
+    set variable {placed_block} to "clock"
+
+on place tele:
+    set variable {placed_block} to "tele"
+
+on place port:
+    set variable {placed_block} to "port"
+
+on place guard:
+    set variable {placed_block} to "guard"
+
+on place coin:
+    set variable {placed_block} to "coin"
+
+on place flag:
+    set variable {placed_block} to "flag"
+
+on place rstone:
+    set variable {placed_block} to "rstone"
+
+on place sbrick:
+    set variable {placed_block} to "sbrick"
+
+on place bwall:
+    set variable {placed_block} to "bwall"
+
+on place bwin:
+    set variable {placed_block} to "bwin"
+
+on place aquarium:
+    set variable {placed_block} to "aquarium"
+
+on place horse:
+    set variable {placed_block} to "horse"
+
+on place cart:
+    set variable {placed_block} to "cart"
+
+on place tradepost:
+    set variable {placed_block} to "tradepost"
+
+on place door:
+    set variable {placed_block} to "door"
+
+on place roof:
+    set variable {placed_block} to "roof"
+
+on place carpet:
+    set variable {placed_block} to "carpet"
+
+on place table:
+    set variable {placed_block} to "table"
+
+on place chair:
+    set variable {placed_block} to "chair"
+
+on place shelf:
+    set variable {placed_block} to "shelf"
+
+on place bucket:
+    set variable {placed_block} to "bucket"
+
+on place bucket_w:
+    set variable {placed_block} to "bucket_w"
+
+on place fence:
+    set variable {placed_block} to "fence"
+
+on place oven:
+    set variable {placed_block} to "oven"
+
+on place furnace:
+    set variable {placed_block} to "furnace"
+
+on place wheat_seed:
+    set variable {placed_block} to "wheat_seed"
+
+on place potato:
+    set variable {placed_block} to "potato"
+
+on place corn:
+    set variable {placed_block} to "corn"
+
+on place bed:
+    set variable {placed_block} to "bed"
+
+on place chest:
+    set variable {placed_block} to "chest"
+
+on place rl_bwolf:
+    set variable {placed_block} to "rl_bwolf"
+
+on place rl_bscorp:
+    set variable {placed_block} to "rl_bscorp"
+
+on place rl_bmagma:
+    set variable {placed_block} to "rl_bmagma"
+
+on place rl_bspider:
+    set variable {placed_block} to "rl_bspider"
+
+on place rl_bsnake:
+    set variable {placed_block} to "rl_bsnake"
+
+on place rl_bgolem:
+    set variable {placed_block} to "rl_bgolem"
+
+on place rl_bcroc:
+    set variable {placed_block} to "rl_bcroc"
+
+on place rl_byeti:
+    set variable {placed_block} to "rl_byeti"
+
+on place void_essence:
+    set variable {placed_block} to "void_essence"
+
+on place vkey_a:
+    set variable {placed_block} to "vkey_a"
+
+on place vkey_b:
+    set variable {placed_block} to "vkey_b"
+
+on place voidcore:
+    set variable {placed_block} to "voidcore"
+
+on place pot:
+    set variable {placed_block} to "pot"
+
+on place seafood_stew:
+    set variable {placed_block} to "seafood_stew"
+
+on place feast:
+    set variable {placed_block} to "feast"
+
+on place marlin_dish:
+    set variable {placed_block} to "marlin_dish"
+
+on place goldcarp_dish:
+    set variable {placed_block} to "goldcarp_dish"
+
+on place wheat:
+    set variable {placed_block} to "wheat"
+
+on place hammock:
+    set variable {placed_block} to "hammock"
+
+on place fishtrap:
+    set variable {placed_block} to "fishtrap"
+
+on place dinoskel:
+    set variable {placed_block} to "dinoskel"
+
+on place soulwisp:
+    set variable {placed_block} to "soulwisp"

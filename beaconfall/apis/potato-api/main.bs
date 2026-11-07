@@ -1,0 +1,384 @@
+mod "Potato API"
+
+publish_aliases:
+    aliases_name: "%player_location%"
+    use_command:
+        set variable {_got_} to ""
+        signal send "%player_location%" to mod "potato api"
+        every 1 second:
+            if signal receive "%player_location%" into {_got_} run text replace "%player_location%" to {_got_}
+
+    aliases_name: "%player_x%"
+    use_command:
+        set variable {_got_} to ""
+        signal send "%player_x%" to mod "potato api"
+        every 1 second:
+            if signal receive "%player_x%" into {_got_} run text replace "%player_x%" to {_got_}
+
+    aliases_name: "%random_player%"
+    use_command:
+        set variable {_got_} to ""
+        signal send "%random_player%" to mod "potato api"
+        every 1 second:
+            if signal receive "%random_player%" into {_got_} run text replace "%random_player%" to {_got_}
+
+    aliases_name: "%player_z%"
+    use_command:
+        set variable {_got_} to ""
+        signal send "%player_z%" to mod "potato api"
+        every 1 second:
+            if signal receive "%player_z%" into {_got_} run text replace "%player_z%" to {_got_}
+
+    aliases_name: "%player_y%"
+    use_command:
+        set variable {_got_} to ""
+        signal send "%player_y%" to mod "potato api"
+        every 1 second:
+            if signal receive "%player_y%" into {_got_} run text replace "%player_y%" to {_got_}
+
+    aliases_name: "%player_hp%"
+    use_command:
+        set variable {_got_} to ""
+        signal send "%player_hp%" to mod "potato api"
+        every 1 second:
+            if signal receive "%player_hp%" into {_got_} run text replace "%player_hp%" to {_got_}
+
+    aliases_name: "%player_max_hp%"
+    use_command:
+        set variable {_got_} to ""
+        signal send "%player_max_hp%" to mod "potato api"
+        every 1 second:
+            if signal receive "%player_max_hp%" into {_got_} run text replace "%player_max_hp%" to {_got_}
+
+    aliases_name: "%world_day%"
+    use_command:
+        set variable {_got_} to ""
+        signal send "%world_day%" to mod "potato api"
+        every 1 second:
+            if signal receive "%world_day%" into {_got_} run text replace "%world_day%" to {_got_}
+
+    aliases_name: "%world_time%"
+    use_command:
+        set variable {_got_} to ""
+        signal send "%world_time%" to mod "potato api"
+        every 1 second:
+            if signal receive "%world_time%" into {_got_} run text replace "%world_time%" to {_got_}
+
+    aliases_name: "%world_player_count%"
+    use_command:
+        set variable {_got_} to ""
+        signal send "%world_player_count%" to mod "potato api"
+        every 1 second:
+            if signal receive "%world_player_count%" into {_got_} run text replace "%world_player_count%" to {_got_}
+
+    aliases_name: "%player_biome%"
+    use_command:
+        set variable {_got_} to ""
+        signal send "%player_biome%" to mod "potato api"
+        every 1 second:
+            if signal receive "%player_biome%" into {_got_} run text replace "%player_biome%" to {_got_}
+
+    aliases_name: "%player_dimension%"
+    use_command:
+        set variable {_got_} to ""
+        signal send "%player_dimension%" to mod "potato api"
+        every 1 second:
+            if signal receive "%player_dimension%" into {_got_} run text replace "%player_dimension%" to {_got_}
+
+    aliases_name: "%random%"
+    use_command:
+        set variable {_got_} to ""
+        signal send "%random%" to mod "potato api"
+        every 1 second:
+            if signal receive "%random%" into {_got_} run text replace "%random%" to {_got_}
+
+    aliases_name: "%eaten_item%"
+    use_command:
+        set variable {_got_} to ""
+        signal send "%eaten_item%" to mod "potato api"
+        every 1 second:
+            if signal receive "%eaten_item%" into {_got_} run text replace "%eaten_item%" to {_got_}
+
+    aliases_name: "%eaten%"
+    use_command:
+        set variable {_got_} to ""
+        signal send "%eaten%" to mod "potato api"
+        every 1 second:
+            if signal receive "%eaten%" into {_got_} run text replace "%eaten%" to {_got_}
+
+    aliases_name: "%interacted%"
+    use_command:
+        set variable {_got_} to ""
+        signal send "%interacted%" to mod "potato api"
+        every 1 second:
+            if signal receive "%interacted%" into {_got_} run text replace "%interacted%" to {_got_}
+
+    aliases_name: "%interacted_item%"
+    use_command:
+        set variable {_got_} to ""
+        signal send "%interacted_item%" to mod "potato api"
+        every 1 second:
+            if signal receive "%interacted_item%" into {_got_} run text replace "%interacted_item%" to {_got_}
+
+    aliases_name: "%crafted_item%"
+    use_command:
+        set variable {_got_} to ""
+        signal send "%crafted_item%" to mod "potato api"
+        every 1 second:
+            if signal receive "%crafted_item%" into {_got_} run text replace "%crafted_item%" to {_got_}
+
+    aliases_name: "%placed_block%"
+    use_command:
+        set variable {_got_} to ""
+        signal send "%placed_block%" to mod "potato api"
+        every 1 second:
+            if signal receive "%placed_block%" into {_got_} run text replace "%placed_block%" to {_got_}
+
+    aliases_name: "%distroyed_block%"
+    use_command:
+        set variable {_got_} to ""
+        signal send "%distroyed_block%" to mod "potato api"
+        every 1 second:
+            if signal receive "%distroyed_block%" into {_got_} run text replace "%distroyed_block%" to {_got_}
+
+    aliases_name: "%destroyed_block%"
+    use_command:
+        set variable {_got_} to ""
+        signal send "%destroyed_block%" to mod "potato api"
+        every 1 second:
+            if signal receive "%destroyed_block%" into {_got_} run text replace "%destroyed_block%" to {_got_}
+
+    aliases_name: "%attacker%"
+    use_command:
+        set variable {_got_} to ""
+        signal send "%attacker%" to mod "potato api"
+        every 1 second:
+            if signal receive "%attacker%" into {_got_} run text replace "%attacker%" to {_got_}
+
+    aliases_name: "%victim%"
+    use_command:
+        set variable {_got_} to ""
+        signal send "%victim%" to mod "potato api"
+        every 1 second:
+            if signal receive "%victim%" into {_got_} run text replace "%victim%" to {_got_}
+
+    aliases_name: "%player_name%"
+    use_command:
+        set variable {_got_} to ""
+        signal send "%player_name%" to mod "potato api"
+        every 1 second:
+            if signal receive "%player_name%" into {_got_} run text replace "%player_name%" to {_got_}
+
+    aliases_name: "%player_uuid%"
+    use_command:
+        set variable {_got_} to ""
+        signal send "%player_uuid%" to mod "potato api"
+        every 1 second:
+            if signal receive "%player_uuid%" into {_got_} run text replace "%player_uuid%" to {_got_}
+
+on signal "%player_location%":
+    set variable {_v_} to "%player_x% %player_z%"
+    signal send "%player_location%" {_v_} to mod back
+
+on signal "%player_dimension%":
+    set variable {_v_} to "overworld"
+    if player dimension is deep_void:
+        set variable {_v_} to "deep_void"
+    signal send "%player_dimension%" {_v_} to mod back
+
+on signal "%player_x%":
+    set variable {_v_} to 0
+    set variable {_t_} to 1000
+    loop 27 times:
+        if player x >= variable {_t_}:
+            add 1000 to variable {_v_}
+        add 1000 to variable {_t_}
+    set variable {_t_} to variable {_v_}
+    add 100 to variable {_t_}
+    loop 9 times:
+        if player x >= variable {_t_}:
+            add 100 to variable {_v_}
+        add 100 to variable {_t_}
+    set variable {_t_} to variable {_v_}
+    add 10 to variable {_t_}
+    loop 9 times:
+        if player x >= variable {_t_}:
+            add 10 to variable {_v_}
+        add 10 to variable {_t_}
+    set variable {_t_} to variable {_v_}
+    add 1 to variable {_t_}
+    loop 9 times:
+        if player x >= variable {_t_}:
+            add 1 to variable {_v_}
+        add 1 to variable {_t_}
+    signal send "%player_x%" {_v_} to mod back
+
+on signal "%player_z%":
+    set variable {_v_} to 0
+    set variable {_t_} to 1000
+    loop 27 times:
+        if player z >= variable {_t_}:
+            add 1000 to variable {_v_}
+        add 1000 to variable {_t_}
+    set variable {_t_} to variable {_v_}
+    add 100 to variable {_t_}
+    loop 9 times:
+        if player z >= variable {_t_}:
+            add 100 to variable {_v_}
+        add 100 to variable {_t_}
+    set variable {_t_} to variable {_v_}
+    add 10 to variable {_t_}
+    loop 9 times:
+        if player z >= variable {_t_}:
+            add 10 to variable {_v_}
+        add 10 to variable {_t_}
+    set variable {_t_} to variable {_v_}
+    add 1 to variable {_t_}
+    loop 9 times:
+        if player z >= variable {_t_}:
+            add 1 to variable {_v_}
+        add 1 to variable {_t_}
+    signal send "%player_z%" {_v_} to mod back
+
+on signal "%player_y%":
+    set variable {_v_} to ""
+    set variable {_f_} to 0
+    loop 30 times:
+        add 1 to variable {_f_}
+        set variable {_g_} to variable {_f_}
+        divide variable {_g_} by 10
+        if player y = variable {_g_}:
+            set variable {_v_} to variable {_g_}
+    signal send "%player_y%" {_v_} to mod back
+
+on signal "%player_hp%":
+    set variable {_v_} to ""
+    set variable {_f_} to 0
+    loop 1000 times:
+        add 1 to variable {_f_}
+        set variable {_g_} to variable {_f_}
+        divide variable {_g_} by 10
+        if player hp = variable {_g_}:
+            set variable {_v_} to variable {_g_}
+    signal send "%player_hp%" {_v_} to mod back
+
+on signal "%player_max_hp%":
+    set variable {_v_} to ""
+    set variable {_f_} to 0
+    loop 1000 times:
+        add 1 to variable {_f_}
+        set variable {_g_} to variable {_f_}
+        divide variable {_g_} by 10
+        if player max hp = variable {_g_}:
+            set variable {_v_} to variable {_g_}
+    signal send "%player_max_hp%" {_v_} to mod back
+
+on signal "%world_day%":
+    set variable {_v_} to ""
+    set variable {_f_} to 0
+    loop 1000 times:
+        if world day = variable {_f_}:
+            set variable {_v_} to variable {_f_}
+        add 1 to variable {_f_}
+    signal send "%world_day%" {_v_} to mod back
+
+on signal "%world_time%":
+    set variable {_v_} to ""
+    set variable {_f_} to 0
+    loop 24 times:
+        if world hour = variable {_f_}:
+            set variable {_v_} to variable {_f_}
+        add 1 to variable {_f_}
+    signal send "%world_time%" {_v_} to mod back
+
+on signal "%world_player_count%":
+    set variable {_v_} to ""
+    set variable {_f_} to 0
+    loop 16 times:
+        if world players = variable {_f_}:
+            set variable {_v_} to variable {_f_}
+        add 1 to variable {_f_}
+    signal send "%world_player_count%" {_v_} to mod back
+
+on signal "%player_biome%":
+    set variable {_v_} to ""
+    if player biome is start:
+        set variable {_v_} to "시작섬"
+    if player biome is forest:
+        set variable {_v_} to "숲섬"
+    if player biome is desert:
+        set variable {_v_} to "사막섬"
+    if player biome is volcano:
+        set variable {_v_} to "화산섬"
+    if player biome is jungle:
+        set variable {_v_} to "정글섬"
+    if player biome is mesa:
+        set variable {_v_} to "메사섬"
+    if player biome is rock:
+        set variable {_v_} to "돌섬"
+    if player biome is mangrove:
+        set variable {_v_} to "맹그로브섬"
+    if player biome is ice:
+        set variable {_v_} to "얼음섬"
+    signal send "%player_biome%" {_v_} to mod back
+
+on signal "%random%":
+    set variable {_v_} to ""
+    set variable {_v_} to random 1 to 100
+    signal send "%random%" {_v_} to mod back
+
+on signal "%eaten_item%":
+    set variable {_v_} to variable {eaten_item}
+    signal send "%eaten_item%" {_v_} to mod back
+
+on signal "%eaten%":
+    set variable {_v_} to variable {eaten_item}
+    signal send "%eaten%" {_v_} to mod back
+
+on signal "%interacted%":
+    set variable {_v_} to variable {interacted_item}
+    signal send "%interacted%" {_v_} to mod back
+
+on signal "%interacted_item%":
+    set variable {_v_} to variable {interacted_item}
+    signal send "%interacted_item%" {_v_} to mod back
+
+on signal "%crafted_item%":
+    set variable {_v_} to variable {crafted_item}
+    signal send "%crafted_item%" {_v_} to mod back
+
+on signal "%placed_block%":
+    set variable {_v_} to variable {placed_block}
+    signal send "%placed_block%" {_v_} to mod back
+
+on signal "%distroyed_block%":
+    set variable {_v_} to variable {destroyed_block}
+    signal send "%distroyed_block%" {_v_} to mod back
+
+on signal "%destroyed_block%":
+    set variable {_v_} to variable {destroyed_block}
+    signal send "%destroyed_block%" {_v_} to mod back
+
+on signal "%attacker%":
+    set variable {_v_} to variable {attacker}
+    signal send "%attacker%" {_v_} to mod back
+
+on signal "%victim%":
+    set variable {_v_} to variable {victim}
+    signal send "%victim%" {_v_} to mod back
+
+on signal "%player_name%":
+    set variable {_v_} to ""
+    set variable {_v_} to player name
+    signal send "%player_name%" {_v_} to mod back
+
+on signal "%player_uuid%":
+    set variable {_v_} to ""
+    set variable {_v_} to player uuid
+    signal send "%player_uuid%" {_v_} to mod back
+
+
+on signal "%random_player%":
+    set variable {_v_} to ""
+    set variable {_v_} to player name
+    signal send "%random_player%" {_v_} to mod back
