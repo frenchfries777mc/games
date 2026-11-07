@@ -450,8 +450,8 @@ function parseScript(text,lenient){
         var tq=m[2].trim().match(/^"([^"]{1,20})"$/),ts=m[3]?+m[3]:0;if(m[3]&&(ts<1||ts>7))throw PE(l.n,'inventory slot must be 1 to 7');
         var ta={item:tq?'@'+tq[1]:item(l,m[2].trim()),n:tn};if(ts)ta.slot=ts;acts.push({take:ta});
       }
-      else if(m=l.t.match(/^give\s+(?:(\d+)\s+)?"([^"]{1,20})"$/i)){var n0=m[1]?+m[1]:1;if(n0<1||n0>9999)throw PE(l.n,'give amount must be 1 to 9999');acts.push({give:{item:'@'+m[2],n:n0}});}
-      else if(m=l.t.match(/^give\s+(?:(\d+)\s+)?(.+)$/i)){
+      else if(m=l.t.match(/^give\s+(?:(\d+)\s+)?"([^"]{1,20})"(?:\s+to\s+player)?$/i)){var n0=m[1]?+m[1]:1;if(n0<1||n0>9999)throw PE(l.n,'give amount must be 1 to 9999');acts.push({give:{item:'@'+m[2],n:n0}});}
+      else if(m=l.t.match(/^give\s+(?:(\d+)\s+)?(.+?)(?:\s+to\s+player)?$/i)){
         var n=m[1]?+m[1]:1;if(n<1||n>9999)throw PE(l.n,'give amount must be 1 to 9999');
         acts.push({give:{item:item(l,m[2].trim()),n:n}});
       }else if(m=l.t.match(/^(?:say|chat)\s+"([^"]{1,100})"(?:\s+to\s+(.+?))?$/i)){var ca={say:m[1]};if(m[2])ca.to=toT(l,m[2]);acts.push(ca);}
