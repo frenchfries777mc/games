@@ -4,6 +4,9 @@
 <meta name="copyright" content="© 2026 Frenchfries777. CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)">
 <meta charset="UTF-8">
 <link rel="icon" type="image/svg+xml" href="https://frenchfries777.com/games/gamelogo/beaconfall.svg">
+<script>/* ?bsparse=1 : 비콘폴 테스트 모드가 .bs 글을 읽을 때 쓰는 숨은 읽기 창이에요. 저장소는 메모리로 바꿔서 건드리지 않아요 */
+(function(){if(!/[?&]bsparse=1/.test(location.search))return;var m={};var S={getItem:function(k){return Object.prototype.hasOwnProperty.call(m,k)?m[k]:null},setItem:function(k,v){m[k]=String(v)},removeItem:function(k){delete m[k]},clear:function(){m={}},key:function(i){return Object.keys(m)[i]||null}};Object.defineProperty(S,'length',{get:function(){return Object.keys(m).length}});try{Object.defineProperty(window,'localStorage',{value:S,configurable:true});}catch(e){}})();
+</script>
 <script src="https://frenchfries777.com/games/ff-lang.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>BEACONFALL · 모드/리소스팩</title>
@@ -803,6 +806,17 @@ $('us').addEventListener('click',async function(){
   if(r.error){umsg('올리지 못했어요. 서버가 아직 준비되지 않았을 수 있어요.',1);return;}
   LIST.unshift(r.data);SERVER='ok';$('upl').classList.remove('on');$('un').value='';$('ud').value='';TEX={};FD=null;ULOGO=null;$('ulg').value='';$('ulgm').textContent='';$('uprev').innerHTML='';$('uf').value='';K='all';CAT='';draw();
 });
+if(/[?&]bsparse=1/.test(location.search)){
+  window.addEventListener('message',function(e){
+    var d=e.data;if(!d||d.type!=='bs-parse'||e.source!==window.parent)return;
+    var out={type:'bs-parsed',id:d.id};
+    try{var ps=parseScript(String(d.code),true),k=ps.kind||'mod',er=check(k,ps.data);
+      if(er)out.error=String(er);else{out.kind=k;out.name=ps.name||'';out.descr=ps.descr||'';out.data=ps.data;}
+    }catch(x){out.error=x&&x.script?x.message:'읽지 못했어요: '+(x&&x.message||x);}
+    try{e.source.postMessage(out,'*');}catch(x){}
+  });
+  try{window.parent.postMessage({type:'bs-parser-ready'},'*');}catch(x){}
+}
 window.addEventListener('storage',draw);
 draw();
 if(document.readyState==='complete')load();else window.addEventListener('load',load);
