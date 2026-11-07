@@ -806,12 +806,33 @@ function paintIntro() {
   sk.textContent = (voted ? T('건너뛰기 기다리는 중') : T('건너뛰기')) + (S.snap.hu > 1 ? ' (' + S.snap.sk + '/' + S.snap.hu + ')' : '');
   sk.classList.toggle('on', !!voted);
 }
+/* 작은 지도: 내 둘레만 보여 주고, 동료만 점으로 찍어요 (적·상자 등은 안 보여요). 위쪽이 북쪽이에요 */
+let miniT = 0;
+function paintMini(sn, me) {
+  const cv = $('mini'); if (!cv || !me) return;
+  const now = performance.now(); if (now - miniT < 140) return; miniT = now;
+  const W = cv.width, R = 32, k = W / (R * 2), g = cv.getContext('2d');
+  g.clearRect(0, 0, W, W); g.fillStyle = 'rgba(14,10,20,.78)'; g.fillRect(0, 0, W, W);
+  const c0 = Math.floor((me.x - R) / CS), c1 = Math.ceil((me.x + R) / CS), r0 = Math.floor((me.z - R) / CS), r1 = Math.ceil((me.z + R) / CS);
+  g.fillStyle = '#4a3f58';
+  for (let j = r0; j <= r1; j++) for (let i = c0; i <= c1; i++) if (floorCell(i, j) && !hiddenCell(i, j)) g.fillRect(Math.floor((i * CS - me.x + R) * k), Math.floor((j * CS - me.z + R) * k), Math.ceil(CS * k), Math.ceil(CS * k));
+  for (const p of sn.pl) {
+    if (p.id === me.id || p.dd) continue;
+    let dx = (p.x - me.x) * k, dz = (p.z - me.z) * k; const far = Math.max(Math.abs(dx), Math.abs(dz)) > W / 2 - 5;
+    if (far) { const s = (W / 2 - 5) / Math.max(Math.abs(dx), Math.abs(dz)); dx *= s; dz *= s; }
+    g.globalAlpha = p.dn ? 0.55 : 1; g.fillStyle = ROLES[p.role].color; g.beginPath(); g.arc(W / 2 + dx, W / 2 + dz, far ? 3 : 4, 0, 6.3); g.fill();
+    g.globalAlpha = 1; if (p.dn) { g.strokeStyle = '#ff5a4e'; g.lineWidth = 2; g.stroke(); }
+  }
+  g.fillStyle = '#fff'; g.beginPath(); g.arc(W / 2, W / 2, 3, 0, 6.3); g.fill();
+  g.strokeStyle = 'rgba(255,255,255,.35)'; g.lineWidth = 2; g.strokeRect(1, 1, W - 2, W - 2);
+}
 function paintHud() {
   const sn = S.snap, me = myP();
   $('roomTag').textContent = CH.title + (S.area >= 0 ? ' · ' + MAP.areas[S.area].name : '') + ' · ' + T('남은 적 {0}', sn.w.left);
   const boss = sn.w.boss && !sn.w.bd ? sn.en.find(e => e.k === 'boss') : null;
   $('bossBar').style.display = boss ? 'block' : 'none'; if (boss && $('bossName').textContent !== CH.boss.name) $('bossName').textContent = CH.boss.name;
   if (boss) { $('bossHp').style.width = Math.max(0, boss.hp / boss.mx * 100) + '%'; $('bossPh').textContent = boss.sn ? T('기절!') : ['', T('1단계'), T('2단계') + ' · ' + CH.boss.ph[0], T('3단계') + ' · ' + CH.boss.ph[1], T('마지막 단계') + ' · ' + (CH.boss.ph[2] || '')][boss.ph] || ''; }
+  paintMini(sn, me);
   // 동료 칸
   const pb = $('party'); if (pb.children.length !== sn.pl.length) { pb.innerHTML = ''; sn.pl.forEach(() => { const d = document.createElement('div'); d.className = 'pf'; d.innerHTML = '<div class="n"><i></i><b></b><span></span></div><div class="hp"><i></i><em></em></div><div class="st"></div>'; pb.appendChild(d); }); }
   sn.pl.forEach((p, i) => {
@@ -1008,7 +1029,8 @@ function showResult() {
   S.resultShown = true; const h = clearChapter();
   const ci = chapterIndex(); S.chSel = chOpen();
   const next = ci + 1 < CHAPTERS.length ? `<p class="note">${T('{0}이 열렸어요.', CHAPTERS[ci + 1].title)}</p>` : '<p class="note">' + T('모든 장을 깼어요. 서약을 끝까지 지켰어요.') + '</p>';
-  const rows = S.snap.pl.map(p => `<tr><td style="color:${ROLES[p.role].color}">${ROLES[p.role].name}</td><td>${esc(p.id === S.me ? T('나') : p.bot ? T('봇') : p.name)}</td><td>${(p.b || []).map(b => (BLESSINGS.find(x => x.id === b) || {}).name).join(', ') || '-'}</td></tr>`).join('');
+  const top = Math.max(1, ...S.snap.pl.map(p => p.sd | 0));
+  const rows = S.snap.pl.map(p => `<tr><td style="color:${ROLES[p.role].color}">${ROLES[p.role].name}</td><td>${esc(p.id === S.me ? T('나') : p.bot ? T('봇') : p.name)}</td><td>${(p.b || []).map(b => (BLESSINGS.find(x => x.id === b) || {}).name).join(', ') || '-'}</td></tr><tr class="ctr"><td colspan="3"><div class="cbar"><i style="width:${Math.round((p.sd | 0) / top * 100)}%;background:${ROLES[p.role].color}"></i></div><span>${T('준 피해 {0}', p.sd | 0)} · ${T('일으켜 세움 {0}', p.sr | 0)} · ${T('쓰러짐 {0}', p.sk | 0)}</span></td></tr>`).join('');
   $('result').innerHTML = `<div class="big">${T('{0} 완료', CH.title)}</div><p class="note">${CH.outro.join(' ')}</p><table>${rows}</table><p>${T('받은 vC {0}', '<b style="color:#ffd36b">' + h + '</b>')} · ${T('지금 vC {0}', SAVE.honor)}</p>${next}<div class="row"><button class="btn gold" id="resBack">${T('로비로')}</button></div>`;
   $('resBack').onclick = () => endToLobby('');
   setHud(false); show('sResult');
