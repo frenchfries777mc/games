@@ -88,6 +88,36 @@ async function setUser(u){
   paint(); subs.forEach(function(f){ try{ f(user, prof); }catch(e){} });
   nickEmit();
   if(user&&!prof&&!isIdAcct(user)) setTimeout(openSetup,0);
+  setTimeout(noticeAck,300);
+}
+/* 확인 창: 지정한 사용자가 접속하면 체크해야 닫히는 창을 띄우고, 닫으면 ff_notice_ack 에 기록해요 */
+var NOTICE={id:'cc4-credit-1',names:['수령동지'],text:'이 체크박스를 클릭하면 이제부터 본인은 이 사이트 개발에 참여하지 않았다는 데에 동의하고, 이 사이트를 본인, 혹은 본인을 포함한 단체로 소개하는 것이 CC 4.0에 위배된다는 것을 인정합니다',btn:'닫기'};
+var noticeOpen=false;
+async function noticeAck(){
+  if(noticeOpen||!user||!prof||!sb) return;
+  var hit=[prof.display_name,prof.username].some(function(n){ return n&&NOTICE.names.indexOf(String(n).trim())>=0; });
+  if(!hit) return;
+  var key='ff.ack.'+NOTICE.id+'.'+user.id;
+  try{ if(localStorage.getItem(key)==='1') return; }catch(e){}
+  try{ var r=await sb.from('ff_notice_ack').select('id').eq('user_id',user.id).eq('notice',NOTICE.id).limit(1); if(r&&r.data&&r.data[0]){ try{ localStorage.setItem(key,'1'); }catch(e){} return; } }catch(e){}
+  noticeOpen=true;
+  var uid=user.id, nm=String(prof.display_name||prof.username), done=false;
+  var el=document.createElement('div'); el.id='ffNoticeAck'; el.setAttribute('data-notr','');
+  el.style.cssText='position:fixed;inset:0;z-index:2147483647;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;padding:18px;font-family:inherit';
+  el.innerHTML='<div style="max-width:460px;width:100%;background:#171717;color:#ece6d8;border:1px solid #d9b45f;border-radius:14px;padding:22px 22px 18px;line-height:1.7;font-size:15px"><label style="display:flex;gap:12px;align-items:flex-start;cursor:pointer"><input type="checkbox" id="ffNoticeCb" style="width:22px;height:22px;margin-top:4px;flex:none;accent-color:#d9b45f"><span>'+esc(NOTICE.text)+'</span></label><div style="text-align:right;margin-top:16px"><button type="button" id="ffNoticeGo" disabled style="font:inherit;font-weight:700;padding:9px 22px;border-radius:99px;border:1px solid #d9b45f;background:#d9b45f;color:#111;cursor:pointer;opacity:.45">'+esc(NOTICE.btn)+'</button></div></div>';
+  document.body.appendChild(el);
+  var cb=el.querySelector('#ffNoticeCb'), go=el.querySelector('#ffNoticeGo');
+  cb.addEventListener('change',function(){ go.disabled=!cb.checked; go.style.opacity=cb.checked?'1':'.45'; });
+  var guard=new MutationObserver(function(){ if(!done&&!document.getElementById('ffNoticeAck')) document.body.appendChild(el); });
+  guard.observe(document.body,{childList:true});
+  document.addEventListener('keydown',function k(e){ if(done){ document.removeEventListener('keydown',k,true); return; } if(e.key==='Escape'){ e.preventDefault(); e.stopPropagation(); } },true);
+  go.addEventListener('click',async function(){
+    if(!cb.checked) return; go.disabled=true;
+    var ok=false;
+    try{ var r=await sb.from('ff_notice_ack').insert({user_id:uid,name:nm,notice:NOTICE.id,text:NOTICE.text}); ok=!(r&&r.error); }catch(e){}
+    if(ok){ try{ localStorage.setItem('ff.ack.'+NOTICE.id+'.'+uid,'1'); }catch(e){} }
+    done=true; guard.disconnect(); el.remove(); noticeOpen=false;
+  });
 }
 /* One nickname everywhere: when profiles.display_name changes (here, in another window or on another site) every game that called FFAuth.onNick(fn) hears it at once. */
 var nickSubs=[], lastNick=null, nickAt=0;
