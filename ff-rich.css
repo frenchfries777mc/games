@@ -61,7 +61,11 @@ html[data-ff-theme] .games .game{border-color:var(--fry)!important;border-left:8
 html[data-ff-theme] .games .game .body,html[data-ff-theme] .games .game .badge{transition:transform .4s cubic-bezier(.2,.8,.2,1)}
 html[data-ff-theme] .games .game::after{transition:width .4s cubic-bezier(.2,.8,.2,1)}
 html[data-ff-theme] .games .game h2,html[data-ff-theme] .games .game h2 *{transition:color .35s ease,-webkit-text-fill-color .35s ease}
-html[data-ff-theme] .games .game:hover{box-shadow:inset 10px 0 0 var(--fry),0 0 0 1px var(--fry),0 10px 30px -12px color-mix(in srgb,var(--fry) 55%,transparent)!important;border-color:var(--fry)!important}
-html[data-ff-theme] .games .game:hover .body,html[data-ff-theme] .games .game:hover .badge{transform:translateX(-14px)}
+html[data-ff-theme] .games .game:hover{box-shadow:0 0 0 1px var(--fry),0 10px 30px -12px color-mix(in srgb,var(--fry) 55%,transparent)!important;border-color:var(--fry)!important}
+html[data-ff-theme] .games .game:hover .body,html[data-ff-theme] .games .game:hover .badge{transform:translateX(64px)}
 html[data-ff-theme] .games .game:hover::after{width:240px}
+html[data-ff-theme] .games .game:hover h2,html[data-ff-theme] .games .game:hover h2 *{color:var(--fry)!important;-webkit-text-fill-color:var(--fry)!important}
+/* gold panel on the left grows on hover (under the text, over the picture) */
+html[data-ff-theme] .games .game .shot::before{content:'';position:absolute;left:0;top:0;bottom:0;width:0;background:var(--fry);z-index:3;transition:width .45s cubic-bezier(.2,.8,.2,1)}
+html[data-ff-theme] .games .game:hover .shot::before{width:76px}
 html[data-ff-theme] .games .game:hover h2,html[data-ff-theme] .games .game:hover h2 *{color:var(--fry)!important;-webkit-text-fill-color:var(--fry)!important}
