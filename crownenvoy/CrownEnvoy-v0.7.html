@@ -559,7 +559,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 179</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 180</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div><p class="tagline">사절을 보내 동맹을 맺고, 군대를 보내 왕관을 차지하세요.</p></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -2981,7 +2981,7 @@ function decBlock(p,d){const last=(p.dec||{})[d.id];if(last!=null&&G.round-last<
 function decView(pid){const p=G.players[pid];return DEC.filter(d=>decAvail(p,d)).map(d=>({id:d.id,n:d.n,d:d.d,cost:d.cost,uni:d.nk?1:0,block:decBlock(p,d)||''}));}
 function decRun(p,d){p.gold-=d.cost;(p.dec=p.dec||{})[d.id]=G.round;d.go(p);log(`${p.kingdom}이(가) '${d.n}'을(를) 선포했다.`,'sys');}
 /* ---------- 대리전 지원 / 무기 수출 ---------- */
-const PX_COST=25,PX_MAX=2,PX_N=100,PX_SEE=0.12,ARMS_PRICE=120,ARMS_N=600,ARMS_CD=6;
+const TSW_COST=40,TSW_CD=10,PX_COST=25,PX_MAX=2,PX_N=100,PX_SEE=0.12,ARMS_PRICE=120,ARMS_N=600,ARMS_CD=6;
 function pxTick(){G.players.forEach(p=>{if(!p.alive||!p.px||!p.px.length)return;
     p.px=p.px.filter(t=>{const q=G.players[t];if(!q||!q.alive||q.landless||!hasWar(t)||p.gold<PX_COST)return false;p.gold-=PX_COST;if(capOk(q))G.terr[q.cap].troops+=PX_N;
       if(Math.random()<PX_SEE){const foes=G.players.filter(x=>x.alive&&x.id!==t&&x.id!==p.id&&isHostile(t,x.id));const e=foes.length?foes[Math.floor(Math.random()*foes.length)]:null;
@@ -8135,6 +8135,16 @@ function ext(pid,m){const p=G.players[pid];if(!p||!p.alive)return fail('대상 �
     const rank={prot:0,vas:1,pup:2};if(rank[lv]>rank[was])opnAdd(to,pid,'lvup','종속을 강화했다',-20,30);else opnAdd(to,pid,'lvdn','종속을 느슨하게 해 주었다',15,30);
     hooks.toast(to,`${pname(pid)}이(가) 우리를 ${LV[lv].n}으로 바꿨어요.`);
     return ok(`${snm(to)}을(를) ${LV[lv].n}으로 바꿨습니다. (${LV[lv].d})`);}
+  if(m.op==='tswap'){const q=G.players[to];if(!q||!q.alive||to===pid)return fail('대상 오류');if(!q.isBot)return fail('사람이 맡은 나라와는 교환할 수 없어요.');if(q.landless)return fail('땅이 없는 나라예요.');if(isHostile(pid,to))return fail('교전 중인 나라예요.');
+    if(!(treatyBetween(pid,to,'alliance')||treatyBetween(pid,to,'trade')||opnOf(to,pid).total>=25))return fail('동맹, 무역 협정, 또는 충분한 호감이 있어야 해요.');
+    const last=(p.tsw||{})[to];if(last!=null&&G.round-last<TSW_CD)return fail(`${TSW_CD-(G.round-last)}턴 뒤에 다시 교환할 수 있어요.`);if(p.gold<TSW_COST)return fail(`금화가 부족합니다 (필요 ${TSW_COST})`);
+    p.tech=p.tech||{done:[],cur:null,pool:0};q.tech=q.tech||{done:[],cur:null,pool:0};
+    const mine=TECH.filter(t=>techHas(pid,t.id)&&!techBlock(to,t)).sort((a,b)=>b.cost-a.cost),theirs=TECH.filter(t=>techHas(to,t.id)&&!techBlock(pid,t)).sort((a,b)=>b.cost-a.cost);
+    if(!mine.length||!theirs.length)return fail('서로 주고받을 수 있는 기술이 없어요.');
+    const a=theirs[0],b=mine[0];p.gold-=TSW_COST;q.gold=Math.max(0,q.gold-TSW_COST);(p.tsw=p.tsw||{})[to]=G.round;
+    p.tech.done.push(a.id);if(p.tech.cur===a.id)p.tech.cur=null;q.tech.done.push(b.id);if(q.tech.cur===b.id)q.tech.cur=null;
+    presAdd(pid,1);presAdd(to,1);opnAdd(to,pid,'tswap','기술을 교환했다',10,30);log(`${p.kingdom}와(과) ${q.kingdom}이(가) 기술을 교환했다. (${a.n} ↔ ${b.n})`,'dip');
+    return ok(`${q.kingdom}에서 '${a.n}'을(를) 받고 '${b.n}'을(를) 주었어요. (금화 −${TSW_COST})`);}
   if(m.op==='px'){const q=G.players[to];p.px=p.px||[];
     if(p.px.includes(to)){p.px=p.px.filter(x=>x!==to);return ok(`${snm(to)} 지원을 멈췄어요.`);}
     if(!q||!q.alive||to===pid)return fail('대상 오류');if(!q.isBot)return fail('사람이 맡은 나라는 도울 수 없어요.');if(q.landless)return fail('땅이 없는 나라예요.');if(!hasWar(to))return fail('전쟁 중인 나라만 도울 수 있어요.');if(isHostile(pid,to))return fail('교전 중인 나라예요.');
@@ -8540,7 +8550,7 @@ function renderCard(v){const p=v.players[NC.id];if(!p)return '';const me=v.playe
     const pts=p.mysph||0;
     if(pts||p.mysc||p.spo)rel+=`<div class="nc-row"><span class="l">영향력</span><div class="nc-bar"><i style="width:${pts}%;background:#4f9be0"></i></div><b>${pts}/100</b></div>`+(p.spo&&p.spo[0]!==v.me&&v.players[p.spo[0]]?`<div class="muted" style="font-size:12px">가장 큰 영향력: ${esc(v.players[p.spo[0]].kingdom)} (${p.spo[1]})</div>`:'');
     if(p.isBot&&me.over==null&&p.over==null&&!p.landless&&v.phase==='plan'&&!v.spec)acts+=`<div class="nc-acts"><button data-b158="sph" data-to="${p.id}" class="${p.mysc?'on':''}">${p.mysc?'영향력 행사 중단':'영향력 행사 (매턴 12금)'}</button></div>`;}
-  if(p.id!==v.me&&p.alive&&p.isBot&&!p.landless&&v.phase==='plan'&&!v.spec&&me.over==null){let b2='';if(p.wr||p.mypx)b2+=`<button data-b158="px" data-to="${p.id}" class="${p.mypx?'on':''}">${p.mypx?'대리전 지원 중단':'대리전 지원 (매턴 25금)'}</button>`;b2+=`<button data-b158="arms" data-to="${p.id}">무기 수출 (+120금)</button>`;acts+=`<div class="nc-acts">${b2}</div>`;}
+  if(p.id!==v.me&&p.alive&&p.isBot&&!p.landless&&v.phase==='plan'&&!v.spec&&me.over==null){let b2='';if(p.wr||p.mypx)b2+=`<button data-b158="px" data-to="${p.id}" class="${p.mypx?'on':''}">${p.mypx?'대리전 지원 중단':'대리전 지원 (매턴 25금)'}</button>`;b2+=`<button data-b158="arms" data-to="${p.id}">무기 수출 (+120금)</button><button data-b158="tswap" data-to="${p.id}">기술 교환 (40금)</button>`;acts+=`<div class="nc-acts">${b2}</div>`;}
   if(p.id!==v.me&&p.alive&&p.bcmd!=null&&p.bcmd===v.me&&v.phase==='plan'&&!v.spec)acts+=`<div class="nc-acts"><button data-b158="cmd" data-to="${p.id}">총사령관 맡기기</button></div>`;
   acts+=`<div class="nc-acts"><button data-b158="cmp" data-to="${p.id}">⚖ 국가 비교</button></div>`;
   return `<div class="wlbox"><div class="wlhead"><button class="btn sm" data-b158="back">← 뒤로</button><h2>국가 정보</h2></div><div class="nc-body">
@@ -8593,7 +8603,8 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
   else if(k==='sph')send({a:'b158',op:'sph',to});
   else if(k==='cmd')send({a:'b158',op:'cmd',to});
   else if(k==='px')send({a:'b158',op:'px',to});
-  else if(k==='arms')send({a:'b158',op:'arms',to});});
+  else if(k==='arms')send({a:'b158',op:'arms',to});
+  else if(k==='tswap')send({a:'b158',op:'tswap',to});});
 document.addEventListener('change',e=>{const s=e.target.closest&&e.target.closest('[data-b158sel]');if(!s)return;NC[s.dataset.b158sel]=+s.value;render();});
 })();
 </script>
