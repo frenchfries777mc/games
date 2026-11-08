@@ -559,7 +559,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 177</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 178</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div><p class="tagline">사절을 보내 동맹을 맺고, 군대를 보내 왕관을 차지하세요.</p></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -2950,6 +2950,37 @@ const DOCT={def:{n:'방어 교리',ic:'🛡',d:'방어 +6%, 참호·요새 비�
 const DOC_FIRST=80,DOC_SW=200;
 const docOf=pid=>{const p=pid!=null?G.players[pid]:null;return p&&p.doc||null;};
 function botDoc(p){const k=p.persona;return k==='turtle'?'def':(k==='conq'||k==='opp'||k==='avenger')?'mob':k==='total'?'mass':['def','mob','mass'][Math.floor(Math.random()*3)];}
+/* ---------- 연합군: 동맹으로 이어진 나라들은 하나의 연합군이 되고, 가장 센 나라가 총사령관을 맡는다 ---------- */
+function blocOf(pid){const seen=new Set([pid]),q=[pid];const al=G.treaties.filter(t=>t.type==='alliance');
+  while(q.length){const x=q.pop();al.forEach(t=>{const o=t.a===x?t.b:t.b===x?t.a:null;if(o!=null&&!seen.has(o)&&G.players[o]&&G.players[o].alive){seen.add(o);q.push(o);}});}
+  const m=[...seen];if(m.length<2)return null;const key=Math.min(...m),pick=(G.cmdPick||{})[key];
+  const cmd=(pick!=null&&seen.has(pick))?pick:m.slice().sort((a,b)=>(presOf(b)+totalTroops(b)/500)-(presOf(a)+totalTroops(a)/500))[0];return {m,cmd,key};}
+const blocFx=pid=>{const b=blocOf(pid);return b?(b.cmd===pid?0.05:0.03):0;};
+/* ---------- 국가 결정: 조건이 맞으면 쓸 수 있는 큰 선택. 나라마다 고유한 결정도 있다 ---------- */
+const hasWar=pid=>G.players.some(x=>x.alive&&x.id!==pid&&isHostile(pid,x.id));
+const capOk=p=>G.terr[p.cap]&&G.terr[p.cap].owner===p.id&&!G.terr[p.cap].sea;
+const DEC=[
+ {id:'parade',n:'대규모 열병식',d:'사기 +8, 안정도 +3',cost:80,cd:15,ok:p=>p.morale<75?null:'사기가 높아서 필요 없어요',go:p=>{morAdd(p,8,'열병식');p.stab=clamp(p.stab+3,0,100);}},
+ {id:'amnesty',n:'대사면령',d:'안정도 +8, 사기 −3',cost:0,cd:20,ok:p=>p.stab<55?null:'안정도가 높아서 필요 없어요',go:p=>{p.stab=clamp(p.stab+8,0,100);morAdd(p,-3,'대사면령');}},
+ {id:'mobil',n:'국가 총동원령',d:'수도에 병력 +1,500, 안정도 −4',cost:120,cd:25,ok:p=>!hasWar(p.id)?'전쟁 중일 때만 쓸 수 있어요':capOk(p)?null:'수도를 잃었어요',go:p=>{G.terr[p.cap].troops+=1500;p.stab=clamp(p.stab-4,0,100);}},
+ {id:'fest',n:'건국 축제',d:'위신 +6, 사기 +5',cost:150,cd:20,ok:p=>p.gold>=300?null:'금화가 300 이상 있어야 해요',go:p=>{presAdd(p.id,6);morAdd(p,5,'건국 축제');}},
+ {id:'patron',n:'학술 후원',d:'연구 포인트 +60',cost:120,cd:15,ok:()=>null,go:p=>{p.tech=p.tech||{done:[],cur:null,pool:0};p.tech.pool+=60;}},
+ {id:'forts',n:'국경 요새화',d:'적과 맞닿은 영토의 요새 +1 (최대 3)',cost:160,cd:20,ok:p=>hasWar(p.id)?null:'전쟁 중일 때만 쓸 수 있어요',go:p=>{owned(p.id).forEach(T=>{if(!T.sea&&GEO.adj[T.id].some(n=>{const N=G.terr[n];return N&&!N.sea&&N.owner!=null&&isHostile(p.id,N.owner);}))T.fort=Math.min(3,(T.fort||0)+1);});}},
+ {id:'versailles',nk:['fra'],n:'궁정 대건설',d:'위신 +10, 안정도 +3',cost:250,cd:999,ok:()=>null,go:p=>{presAdd(p.id,10);p.stab=clamp(p.stab+3,0,100);}},
+ {id:'navy',nk:['gbr','eng','por','nld','ned'],n:'해군 대확장',d:'해전 공격 보너스 증가',cost:200,cd:999,ok:p=>(p.navy||1)<1.5?null:'이미 최대예요',go:p=>{p.navy=Math.min(1.5,(p.navy||1)+0.25);}},
+ {id:'janissary',nk:['ott'],n:'예니체리 재편',d:'수도에 병력 +1,200, 사기 +4, 안정도 −2',cost:150,cd:30,ok:p=>capOk(p)?null:'수도를 잃었어요',go:p=>{G.terr[p.cap].troops+=1200;morAdd(p,4,'예니체리 재편');p.stab=clamp(p.stab-2,0,100);}},
+ {id:'serf',nk:['rus'],n:'농노 해방령',d:'안정도 +6, 위신 +3 (금화 −100)',cost:100,cd:999,ok:()=>null,go:p=>{p.stab=clamp(p.stab+6,0,100);presAdd(p.id,3);}},
+ {id:'genstaff',nk:['pru','deu','ger'],n:'참모본부 개혁',d:'전투 숙련도 +10',cost:180,cd:999,ok:()=>null,go:p=>{p.vet=Math.min(100,(p.vet||0)+10);}},
+ {id:'treasure',nk:['spa','por'],n:'신대륙 보물선단',d:'금화 +300',cost:0,cd:40,ok:()=>null,go:p=>{p.gold+=300;}},
+ {id:'silk',nk:['chn','ming','qing','mng','wei','shu','wu'],n:'비단길 사절단',d:'금화 +200, 위신 +3',cost:0,cd:30,ok:()=>null,go:p=>{p.gold+=200;presAdd(p.id,3);}},
+ {id:'bushi',nk:['jpn'],n:'무사 소집',d:'수도에 병력 +1,000, 사기 +4',cost:100,cd:25,ok:p=>capOk(p)?null:'수도를 잃었어요',go:p=>{G.terr[p.cap].troops+=1000;morAdd(p,4,'무사 소집');}},
+ {id:'jiphyeon',nk:['kor','rok','gogu'],n:'집현전 설립',d:'연구 포인트 +80',cost:100,cd:40,ok:()=>null,go:p=>{p.tech=p.tech||{done:[],cur:null,pool:0};p.tech.pool+=80;}},
+ {id:'industry',nk:['usa','uni','con'],n:'공업 동원',d:'금화 +250, 안정도 −2',cost:0,cd:30,ok:()=>null,go:p=>{p.gold+=250;p.stab=clamp(p.stab-2,0,100);}}];
+function decAvail(p,d){if(d.nk&&!d.nk.includes(p.nkey))return false;return true;}
+function decBlock(p,d){const last=(p.dec||{})[d.id];if(last!=null&&G.round-last<d.cd)return d.cd>=999?'한 번만 쓸 수 있어요':`${d.cd-(G.round-last)}턴 뒤에 다시 쓸 수 있어요`;if(p.gold<d.cost)return `금화가 부족해요 (필요 ${d.cost})`;return d.ok(p);}
+function decView(pid){const p=G.players[pid];return DEC.filter(d=>decAvail(p,d)).map(d=>({id:d.id,n:d.n,d:d.d,cost:d.cost,uni:d.nk?1:0,block:decBlock(p,d)||''}));}
+function decRun(p,d){p.gold-=d.cost;(p.dec=p.dec||{})[d.id]=G.round;d.go(p);log(`${p.kingdom}이(가) '${d.n}'을(를) 선포했다.`,'sys');}
+function decBot(p){if(Math.random()>0.06)return;const L=DEC.filter(d=>decAvail(p,d)&&!decBlock(p,d)&&p.gold>=d.cost+150);if(L.length)decRun(p,L[Math.floor(Math.random()*L.length)]);}
 /* ---------- 위신: 승전·점령·연구·속국으로 쌓이고 패전·영토를 잃으면 깎인다. 순위가 높으면 외교 제안이 잘 받아들여진다 ---------- */
 const presInit=p=>Math.round(8+owned(p.id).length*1.2);
 const presOf=pid=>{const p=G.players[pid];if(!p)return 0;if(p.pres==null)p.pres=presInit(p);return p.pres;};
@@ -2957,21 +2988,21 @@ function presAdd(pid,d){const p=pid!=null?G.players[pid]:null;if(!p||!d)return;p
 function presRanks(){const m={};G.players.filter(x=>x.alive&&!x.landless).map(x=>[x.id,presOf(x.id)]).sort((a,b)=>b[1]-a[1]).forEach((e,i)=>{m[e[0]]=i;});return m;}
 const presRank=pid=>{const r=presRanks()[pid];return r==null?99:r;};
 function presBattle(rec){const w=rec.winner==='att'?rec.att:rec.def,l=rec.winner==='att'?rec.def:rec.att;if(w==null||l==null||w===l)return;
-  const wS=rec.winner==='att'?rec.aStart:rec.dStart,lS=rec.winner==='att'?rec.dStart:rec.aStart;const m=1+(lS>=1500?1:0)+(wS<lS*0.75?1:0);presAdd(w,m);presAdd(l,-Math.ceil(m/2)-(rec.retreat?0:0));}
-function presTick(p){const v=G.treaties.filter(t=>t.type==='vassal'&&t.a===p.id).length;presAdd(p.id,0.3+0.05*owned(p.id).length+0.4*v-(presOf(p.id)>150?0.5:0));
+  const wS=rec.winner==='att'?rec.aStart:rec.dStart,lS=rec.winner==='att'?rec.dStart:rec.aStart;const m=1+(lS>=1500?1:0)+(wS<lS*0.75?1:0);presAdd(w,m);presAdd(l,-Math.ceil(m/2));{const bl=blocOf(w);if(bl&&bl.cmd!==w)presAdd(bl.cmd,0.5);}}
+function presTick(p){const v=G.treaties.filter(t=>t.type==='vassal'&&t.a===p.id).length;{const bl=blocOf(p.id);presAdd(p.id,0.3+0.05*owned(p.id).length+0.4*v+(bl&&bl.cmd===p.id?0.2:0)-(presOf(p.id)>150?0.5:0));}
   if(p.over!=null&&G.players[p.over]&&G.round%10===0&&presOf(p.over)<presOf(p.id)*0.6&&Math.random()<0.08){releaseVassal(p.over,p.id);}}
 const MED_HIDE=['cuir','rifle','assault','tank','spg','mech','air'];const techVis=t=>ERA==='med'?!(MED_HIDE.includes(t.id)||t.yr>=1700):!t.med;
 const techYear=()=>{const d=ymOf(G.round);return d?d.y:null;};
 function techBlock(pid,t){if(techHas(pid,t.id))return '이미 연구했어요.';if(!techVis(t))return '이 시대에는 없는 기술이에요.';const y=techYear();if(y!=null&&y<t.yr)return `${t.yr}년 이후에 연구할 수 있어요.`;const miss=(t.req||[]).filter(r=>!techHas(pid,r));if(miss.length)return `먼저 필요: ${miss.map(r=>TECH.find(x=>x.id===r).n).join(', ')}`;return null;}
-const techAtk=pid=>(techHas(pid,'gunp')?0.06:0)+(techHas(pid,'art')?0.04:0)+(techHas(pid,'mech')?0.08:0)+(docOf(pid)==='mob'?0.05:0)+pfx(pid,'atk');
-const techDef=pid=>(techHas(pid,'fort')?0.05:0)+(techHas(pid,'air')?0.06:0)+(docOf(pid)==='def'?0.06:0);
+const techAtk=pid=>(techHas(pid,'gunp')?0.06:0)+(techHas(pid,'art')?0.04:0)+(techHas(pid,'mech')?0.08:0)+(docOf(pid)==='mob'?0.05:0)+blocFx(pid)+pfx(pid,'atk');
+const techDef=pid=>(techHas(pid,'fort')?0.05:0)+(techHas(pid,'air')?0.06:0)+(docOf(pid)==='def'?0.06:0)+blocFx(pid);
 const techSea=pid=>(techHas(pid,'ship')?0.4:0)+(techHas(pid,'steam')?0.4:0);
 const fortCostOf=pid=>Math.round(CFG.fortCost*(techHas(pid,'fort')?0.7:1)*(docOf(pid)==='def'?0.8:1)*(1+pfx(pid,'bld')));
 const trenchCostOf=pid=>Math.round(CFG.trenchCost*(techHas(pid,'fort')?0.7:1)*(docOf(pid)==='def'?0.8:1));
 const scoutCostOf=pid=>Math.round(CFG.scoutCost*(techHas(pid,'air')?0.5:1));
 function techPick(pid){const L=TECH.filter(t=>!techBlock(pid,t)).sort((a,b)=>a.cost-b.cost);return L.length?L[Math.min(L.length-1,Math.random()<0.3?1:0)].id:null;}
 const techGain=p=>Math.max(3,Math.round((3+Math.max(0,income(p.id))*0.02+(p.landless?3:0))*(1+(polFx(p).tech||0)+0.2*nBld(p.id,'univ',3))+4*nBld(p.id,'univ',3)));
-function techView(pid){const p=G.players[pid];const t=p.tech||{done:[],cur:null,pool:0};return {doc:p.doc||null,docCost:p.doc?DOC_SW:DOC_FIRST,pres:Math.round(presOf(pid)),prk:presRank(pid)+1,up:upgView(pid),done:t.done,cur:t.cur,pool:Math.round(t.pool),gain:techGain(p),list:TECH.filter(techVis).map(x=>({id:x.id,n:x.n,cost:x.cost,desc:x.desc,yr:x.yr,block:techBlock(pid,x)}))};}
+function techView(pid){const p=G.players[pid];const t=p.tech||{done:[],cur:null,pool:0};return {dec:decView(pid),doc:p.doc||null,docCost:p.doc?DOC_SW:DOC_FIRST,pres:Math.round(presOf(pid)),prk:presRank(pid)+1,up:upgView(pid),done:t.done,cur:t.cur,pool:Math.round(t.pool),gain:techGain(p),list:TECH.filter(techVis).map(x=>({id:x.id,n:x.n,cost:x.cost,desc:x.desc,yr:x.yr,block:techBlock(pid,x)}))};}
 
 /* ---------- 선택지가 있는 사건 ---------- */
 function resolveChoice(id,i){const k=(G.choices||[]).findIndex(c=>c.id===id);if(k<0)return false;const c=G.choices[k];G.choices.splice(k,1);const fn=G._cfn&&G._cfn[id]&&G._cfn[id][i];if(G._cfn)delete G._cfn[id];if(fn)fn();log(`${G.players[c.pid].kingdom}의 결정: ${c.head} → ${c.opts[i]}`,'sys');return true;}
@@ -2998,7 +3029,7 @@ function landlessMoves(pid,orders,usedNow){let mv=0;G.terr.forEach(T=>{if(mv>=3|
 
 /* ---------- 정산마다 돌아가는 확장 규칙 ---------- */
 function extSettle(){
-  G.players.forEach(p=>{if(!p.alive)return;p.tech=p.tech||{done:[],cur:null,pool:0};p.tech.pool+=techGain(p);presTick(p);if(p.isBot&&!p.doc&&G.round>=3&&p.gold>=DOC_FIRST+60){p.gold-=DOC_FIRST;p.doc=botDoc(p);}
+  G.players.forEach(p=>{if(!p.alive)return;p.tech=p.tech||{done:[],cur:null,pool:0};p.tech.pool+=techGain(p);presTick(p);if(p.isBot)decBot(p);if(p.isBot&&!p.doc&&G.round>=3&&p.gold>=DOC_FIRST+60){p.gold-=DOC_FIRST;p.doc=botDoc(p);}
     if(p.isBot&&!p.tech.cur){const c=techPick(p.id);if(c)p.tech.cur=c;}
     const cur=TECH.find(x=>x.id===p.tech.cur);if(cur&&p.tech.pool>=cur.cost&&!techBlock(p.id,cur)){p.tech.pool-=cur.cost;p.tech.done.push(cur.id);presAdd(p.id,2);p.tech.cur=null;log(`${p.kingdom}이(가) '${cur.n}'을(를) 개발했다.`,'sys');wlog('tech',p.id,null,`${snm(p.id)}이(가) '${cur.n}'을(를) 개발했다`);hooks.toast(p.id,`연구 완료: ${cur.n} — ${cur.desc}`);}});
   G.players.forEach(p=>{if(p.alive&&p.isBot&&Math.random()<0.5)aiUpgrade(p.id);});
@@ -3459,6 +3490,7 @@ function extAct(pid,m){const p=G.players[pid];const inPlan=G.phase==='plan';if(m
   if(m.a==='mark'){if(G.over)return fail('게임이 끝났어요.');const k=m.k==='arrow'?'arrow':'pin',a=+m.x,b=+m.y;if(!G.terr[a])return fail('대상 오류');if(k==='arrow'&&(!G.terr[b]||a===b))return fail('대상 오류');G.marks=(G.marks||[]).filter(x=>G.round-x.r<5);const mine=G.marks.filter(x=>x.pid===pid);if(mine.length>=6)G.marks=G.marks.filter(x=>x!==mine[0]);G.marks.push({id:G.uid++,pid,k,a,b:k==='arrow'?b:null,r:G.round});return ok('계획을 표시했어요. 동맹도 볼 수 있어요.');}
   if(m.a==='markclr'){G.marks=(G.marks||[]).filter(x=>x.pid!==pid);return ok('내 계획 표시를 지웠어요.');}
   switch(m.a){
+  case 'decide':{if(G.phase!=='plan')return fail('계획 단계에서만 가능합니다.');const d=DEC.find(x=>x.id===m.id);if(!d||!decAvail(p,d))return fail('결정 오류');const why=decBlock(p,d);if(why)return fail(why);decRun(p,d);return ok(`'${d.n}'을(를) 선포했어요. (${d.d})`);}
   case 'doctrine':{const d=DOCT[m.id];if(!d)return fail('교리 오류');if(p.doc===m.id)return fail('이미 이 교리예요.');const cost=p.doc?DOC_SW:DOC_FIRST;if(p.gold<cost)return fail(`금화가 부족합니다 (필요 ${cost})`);p.gold-=cost;if(p.doc)morAdd(p,-3,'교리 변경');p.doc=m.id;return ok(`${d.n}를 채택했어요. (${d.d})`);}
   case 'research':{const t=TECH.find(x=>x.id===m.id);if(!t)return fail('기술 오류');const why=techBlock(pid,t);if(why)return fail(why);p.tech=p.tech||{done:[],cur:null,pool:0};p.tech.cur=t.id;return ok(`${t.n} 연구를 시작했어요. (필요 ${t.cost}, 한 달에 약 ${techGain(p)} 쌓여요)`);}
   case 'colonize':{if(!inPlan)return fail('계획 단계에서만 가능합니다.');const T=G.terr[+m.tid];const tg=colTargets(pid);if(!T||tg[T.id]==null)return fail('개척할 수 없는 땅이에요. 내 영토나 내 함대와 맞닿은 주인 없는 땅만 가능해요.');
@@ -6727,6 +6759,7 @@ const UI={
       case 'barter':{const to=+d.to,gv=id=>(document.getElementById(id)||{}).value;send({a:'barter',to,give:gv('bg'+to),gn:+gv('bgn'+to)||0,get:gv('bt'+to),gm:+gv('bgm'+to)||0});break;}
       case 'research':send({a:'research',id:d.id});break;
       case 'doctrine':send({a:'doctrine',id:d.id});break;
+      case 'decide':send({a:'decide',id:d.id});break;
       case 'pol':{const op=d.op,val=d.v;if(op==='gov'){const g=GOV[val];UI.ask(`${g.n}(으)로 바꿀까요? ${GOV_T}턴 동안 사기 −50%, 반란 확률 2배, 수입 2배가 되고 ${GOV_CD}턴 동안 다시 못 바꿔요.`,()=>send({a:'pol',op,v:val}),{yes:'바꾸기'});}else if(op==='fai'){const f=FAITH[val];UI.ask(`${f.n}(으)로 개종할까요? ${FAI_T}턴 동안 반란 확률 +70%, 사기 +50%, 수입 +20%가 되고 ${FAI_CD}턴 동안 다시 못 바꿔요.`,()=>send({a:'pol',op,v:val}),{yes:'개종'});}else send({a:'pol',op,v:val});break;}
       case 'colonize':send({a:'colonize',tid:+d.tid});break;
       case 'fac':send({a:'fac',k:d.k,op:d.op});break;
@@ -6824,7 +6857,9 @@ Object.assign(UI,{
     const upg=t.up?`<h3>병종 업그레이드</h3>${UT.map(ty=>{const x=t.up[ty];const maxed=x.next==null;return `<div class="card" style="${x.ready?'border-left-color:var(--gold)':''}"><div class="row"><div><b>${UT_NAME[ty]}</b> <span class="tag good">${esc(x.name)}</span>${maxed?'':` <span class="muted sm">→</span> <b>${esc(x.next)}</b>`}<div class="sm muted">${fmt(x.units)}명${maxed?' · 최고 단계예요':''}</div></div>${maxed?'':`<button class="btn sm ${x.ready?'primary':''}" style="flex:none" data-act="upgrade" data-t="${ty}" ${x.ready&&mePl().gold>=x.cost?'':'disabled'}>업그레이드 ${x.cost}금</button>`}</div>${maxed?'':`<div class="sm" style="margin-top:4px;color:${x.ready?'var(--good)':'var(--bad)'}">${x.ready?'기술이 준비됐어요.':`먼저 '${esc(x.needName)}' 기술을 연구하세요.`}</div>`}</div>`;}).join('')}`:'';
     const dcs=Object.keys(DOCT).map(k=>{const d=DOCT[k],on=t.doc===k;return `<div class="card" style="${on?'border-left-color:var(--gold)':''}"><div class="row"><b>${d.ic} ${d.n}</b>${on?'<span class="tag good" style="flex:none">채택</span>':`<button class="btn sm primary" style="flex:none" data-act="doctrine" data-id="${k}" ${mePl().gold>=t.docCost?'':'disabled'}>${t.doc?'바꾸기':'채택'} ${t.docCost}금</button>`}</div><div class="sm muted">${d.d}</div></div>`;}).join('');
     const dct=`<h3>군사 교리 <span class="muted sm">위신 ${t.pres} · ${t.prk}위</span></h3><div class="sm muted" style="margin-bottom:4px">${t.doc?'교리를 바꾸면 사기가 조금 떨어져요.':'하나를 골라 싸우는 방식을 정하세요.'} 위신은 승전·점령·연구로 쌓여요. 순위가 높으면 외교 제안이 잘 받아들여져요.</div>${dcs}`;
-    let h=dct+upg+`<h3>시대 기술 <span class="muted sm">연구 ${t.done.length}/${t.list.length}</span></h3><div class="card"><div class="sm">매달 약 <b>${t.gain}</b> 포인트가 쌓여요. (수입이 많을수록 빨라요)</div>${cur?`<div style="margin-top:6px"><b>연구 중: ${esc(cur.n)}</b> <span class="muted sm">${t.pool}/${cur.cost}</span>${bar(t.pool,cur.cost)}<div class="sm muted">${esc(cur.desc)}</div></div>`:`<div class="sm" style="margin-top:6px;color:var(--gold2)">연구 중인 기술이 없어요. 아래에서 고르세요. (모아 둔 포인트: ${t.pool})</div>`}</div>`;
+    const dcn=(t.dec||[]).map(x=>`<div class="card" style="${x.uni?'border-left-color:var(--gold)':''}"><div class="row"><b>${x.uni?'★ ':''}${esc(x.n)}</b><button class="btn sm ${x.block?'':'primary'}" style="flex:none" data-act="decide" data-id="${x.id}" ${x.block?'disabled':''}>선포 ${x.cost}금</button></div><div class="sm muted">${esc(x.d)}</div>${x.block?`<div class="sm" style="color:var(--bad)">${esc(x.block)}</div>`:''}</div>`).join('');
+    const dch=dcn?`<h3>국가 결정</h3><div class="sm muted" style="margin-bottom:4px">★는 우리 나라에만 있는 결정이에요.</div>${dcn}`:'';
+    let h=dct+dch+upg+`<h3>시대 기술 <span class="muted sm">연구 ${t.done.length}/${t.list.length}</span></h3><div class="card"><div class="sm">매달 약 <b>${t.gain}</b> 포인트가 쌓여요. (수입이 많을수록 빨라요)</div>${cur?`<div style="margin-top:6px"><b>연구 중: ${esc(cur.n)}</b> <span class="muted sm">${t.pool}/${cur.cost}</span>${bar(t.pool,cur.cost)}<div class="sm muted">${esc(cur.desc)}</div></div>`:`<div class="sm" style="margin-top:6px;color:var(--gold2)">연구 중인 기술이 없어요. 아래에서 고르세요. (모아 둔 포인트: ${t.pool})</div>`}</div>`;
     h+=t.list.map(x=>{const done=t.done.includes(x.id),isCur=t.cur===x.id;return `<div class="card" style="${done?'border-left-color:var(--good)':isCur?'border-left-color:var(--gold)':''}"><div class="row"><b>${esc(x.n)}</b><span class="sm muted" style="flex:none">${done?'<span class="tag good">완료</span>':`필요 ${x.cost}`}</span></div><div class="sm muted">${esc(x.desc)}${x.yr>-9000?` · ${x.yr}년~`:''}</div>${done?'':`<div class="row" style="margin-top:6px"><button class="btn sm ${isCur?'':'primary'}" data-act="research" data-id="${x.id}" ${x.block||isCur?'disabled':''}>${isCur?'연구 중':'연구하기'}</button><span class="sm muted" style="flex:2">${x.block?esc(x.block):''}</span></div>`}</div>`;}).join('');
     return h;},
 
@@ -8092,6 +8127,7 @@ function ext(pid,m){const p=G.players[pid];if(!p||!p.alive)return fail('대상 �
     const rank={prot:0,vas:1,pup:2};if(rank[lv]>rank[was])opnAdd(to,pid,'lvup','종속을 강화했다',-20,30);else opnAdd(to,pid,'lvdn','종속을 느슨하게 해 주었다',15,30);
     hooks.toast(to,`${pname(pid)}이(가) 우리를 ${LV[lv].n}으로 바꿨어요.`);
     return ok(`${snm(to)}을(를) ${LV[lv].n}으로 바꿨습니다. (${LV[lv].d})`);}
+  if(m.op==='cmd'){const b=blocOf(pid);if(!b||b.cmd!==pid)return fail('총사령관이 아니에요.');if(!b.m.includes(to)||to===pid)return fail('같은 연합군이 아니에요.');(G.cmdPick=G.cmdPick||{})[b.key]=to;log(`${pname(pid)}이(가) 연합군 총사령관을 ${pname(to)}에게 넘겼다.`,'dip');hooks.toast(to,`${pname(pid)}이(가) 연합군 총사령관을 맡겼어요.`);return ok(`${snm(to)}에게 총사령관을 맡겼어요.`);}
   if(m.op==='sph'){const q=G.players[to];p.sc=p.sc||[];
     if(p.sc.includes(to)){p.sc=p.sc.filter(x=>x!==to);return ok(`${snm(to)}에 대한 영향력 행사를 멈췄습니다.`);}
     if(!q||!q.alive||to===pid)return fail('대상 오류');if(!q.isBot)return fail('사람이 맡은 나라에는 쓸 수 없어요.');if(q.landless)return fail('땅이 없는 나라에는 쓸 수 없어요.');
@@ -8145,7 +8181,7 @@ extBot=function(pid){_eb(pid);try{botSph(pid);const ov=overlordOf(pid);if(ov!=nu
 const _mkv=makeView;
 makeView=function(pid,opts){const v=_mkv(pid,opts);
   try{const me=pid!=null?G.players[pid]:null;
-    v.tplId=G.tplId||null;const _pr=presRanks();v.players.forEach(o=>{const p=G.players[o.id];o.pres=Math.round(presOf(o.id));o.prk=_pr[o.id]==null?null:_pr[o.id]+1;o.nk=p.nkey||null;o.inf=Math.round(p.inf||0);o.vlv=lvOf(o.id);
+    v.tplId=G.tplId||null;const _pr=presRanks();v.players.forEach(o=>{const p=G.players[o.id];o.pres=Math.round(presOf(o.id));{const bl=blocOf(o.id);if(bl){o.bcmd=bl.cmd;o.bn=bl.m.length;}}o.prk=_pr[o.id]==null?null:_pr[o.id]+1;o.nk=p.nkey||null;o.inf=Math.round(p.inf||0);o.vlv=lvOf(o.id);
       let top=null;G.players.forEach(z=>{const pt=(z.sph&&z.sph[o.id])||0;if(pt>=20&&(!top||pt>top[1]))top=[z.id,Math.round(pt)];});if(top)o.spo=top;
       if(me&&o.id!==pid){const mp=(me.sph||{})[o.id];if(mp)o.mysph=Math.round(mp);if((me.sc||[]).includes(o.id))o.mysc=1;}
       if(me&&o.id===pid)o.scN=(me.sc||[]).length;});
@@ -8476,6 +8512,7 @@ function renderCard(v){const p=v.players[NC.id];if(!p)return '';const me=v.playe
   const al=v.players.filter(z=>z.alive);const mxOf=(get)=>Math.max(1,...al.map(z=>get(v,z)||0));
   let rel='';
   if(p.over!=null&&v.players[p.over])rel=`<div class="nc-row"><span class="l">종속</span><span>${esc(v.players[p.over].kingdom)}의 ${LV[p.vlv||'vas'].n}</span></div>`;
+  if(p.bcmd!=null&&v.players[p.bcmd])rel+=`<div class="nc-row"><span class="l">연합군</span><span>${esc(String(v.players[p.bcmd].kingdom).split('(')[0])} 총사령관 · ${p.bn}개국</span></div>`;
   const isMyVas=p.over===v.me;
   let acts='';
   if(isMyVas&&v.phase==='plan'&&!v.spec){const t=(v.treaties||[]).find(x=>x.type==='vassal'&&x.a===v.me&&x.b===p.id)||{};
@@ -8484,6 +8521,7 @@ function renderCard(v){const p=v.players[NC.id];if(!p)return '';const me=v.playe
     const pts=p.mysph||0;
     if(pts||p.mysc||p.spo)rel+=`<div class="nc-row"><span class="l">영향력</span><div class="nc-bar"><i style="width:${pts}%;background:#4f9be0"></i></div><b>${pts}/100</b></div>`+(p.spo&&p.spo[0]!==v.me&&v.players[p.spo[0]]?`<div class="muted" style="font-size:12px">가장 큰 영향력: ${esc(v.players[p.spo[0]].kingdom)} (${p.spo[1]})</div>`:'');
     if(p.isBot&&me.over==null&&p.over==null&&!p.landless&&v.phase==='plan'&&!v.spec)acts+=`<div class="nc-acts"><button data-b158="sph" data-to="${p.id}" class="${p.mysc?'on':''}">${p.mysc?'영향력 행사 중단':'영향력 행사 (매턴 12금)'}</button></div>`;}
+  if(p.id!==v.me&&p.alive&&p.bcmd!=null&&p.bcmd===v.me&&v.phase==='plan'&&!v.spec)acts+=`<div class="nc-acts"><button data-b158="cmd" data-to="${p.id}">총사령관 맡기기</button></div>`;
   acts+=`<div class="nc-acts"><button data-b158="cmp" data-to="${p.id}">⚖ 국가 비교</button></div>`;
   return `<div class="wlbox"><div class="wlhead"><button class="btn sm" data-b158="back">← 뒤로</button><h2>국가 정보</h2></div><div class="nc-body">
     <div class="nc-head"><div class="nc-port">${portrait(R.seed,p.gov,p.color,p.cult,R.look,yrOf(v))}</div><div style="min-width:0"><div style="font-size:18px;font-weight:700">${fl(p)} ${esc(p.kingdom)}</div><div style="margin-top:4px">${g.n} · ${esc(R.title)} <b>${esc(R.name)}</b></div><div class="muted" style="font-size:12px;margin-top:2px">${FAITH[p.fai]?FAITH[p.fai].ic+' '+FAITH[p.fai].n:''}${p.persona?' · '+esc(p.persona):''}</div></div></div>
@@ -8532,7 +8570,8 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
   else if(k==='cmp'){const o=v.players.find(z=>z.alive&&z.id!==v.me&&z.id!==to);openCmp(v.me,(to!=null&&to!==v.me)?to:(o?o.id:v.me));}
   else if(k==='back')UI.back();
   else if(k==='lv')send({a:'b158',op:'lv',to,lv:b.dataset.lv});
-  else if(k==='sph')send({a:'b158',op:'sph',to});});
+  else if(k==='sph')send({a:'b158',op:'sph',to});
+  else if(k==='cmd')send({a:'b158',op:'cmd',to});});
 document.addEventListener('change',e=>{const s=e.target.closest&&e.target.closest('[data-b158sel]');if(!s)return;NC[s.dataset.b158sel]=+s.value;render();});
 })();
 </script>
