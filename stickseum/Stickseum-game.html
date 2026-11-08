@@ -6026,7 +6026,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-08-v752';
+const GAME_BUILD='build 2026-11-08-v753';
 const GAME_VERSION='1.0', GAME_VERSION_NAME='신화의 전설';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -20945,8 +20945,8 @@ function drawStickman(p){
   const ax=Math.cos(ang), ay=Math.sin(ang);
   if(whirling && conceptOfSkin(skinId)==='gold'){ for(let i=0;i<3;i++){ const a=ang+RND(-1.6,0.1), r=RND(30,SWORD_SPIN_RADIUS); addP({x:p.x+Math.cos(a)*r,y:p.y-34+Math.sin(a)*r,vx:RND(-70,70),vy:RND(-120,-20),life:RND(.4,.8),size:RND(1.8,3.6),color:i%2?'#ffd34d':'#fff3b0',grav:80,drag:1.2}); } }
   if(whirling){ ctx.save(); ctx.strokeStyle=(conceptOfSkin(skinId)==='gold')?'rgba(255,211,77,0.75)':'rgba(223,230,240,0.45)'; ctx.lineWidth=4; ctx.beginPath(); ctx.arc(0,SH+6,SWORD_SPIN_RADIUS-10,ang-2.0,ang); ctx.stroke(); ctx.strokeStyle='rgba(255,255,255,0.18)'; ctx.lineWidth=9; ctx.beginPath(); ctx.arc(0,SH+6,SWORD_SPIN_RADIUS-10,ang-3.4,ang-1.8); ctx.stroke(); ctx.restore(); }
-  const mArm=(p.weapon!=='harald')?meleeArmPose(p, Math.atan2(ay,ax)):null;      // (a melee swing moves the whole straight arm like 용살자's, no bent elbow)
-  const mpose=(p.weapon!=='harald')?(mArm||throwArmPose(p, Math.atan2(ay,ax))):null;      // the arm of a melee swing / thrust
+  const mArm=(p.weapon!=='harald' && MELEE_ANIM[p.weapon]==='slash')?meleeArmPose(p, Math.atan2(ay,ax)):null;      // (a melee swing moves the whole straight arm like 용살자's, no bent elbow)
+  const mpose=(p.weapon!=='harald')?(mArm||meleeArmPose(p, Math.atan2(ay,ax))||throwArmPose(p, Math.atan2(ay,ax))):null;      // the arm of a melee swing / thrust
   if(p.weapon!=='harald' && !mpose){ ctx.beginPath(); ctx.moveTo(0,SH+6); ctx.lineTo(ax*24, SH+6+ay*24); ctx.stroke(); }
   let swingProg=0;
   if(p.weapon==='bat'){
