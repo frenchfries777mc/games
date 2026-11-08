@@ -226,7 +226,7 @@ window.FF_REG=REG; window.FF_REG_NOTES=notes;
 window.FF_SITES=[{id:'educations',name:'Educations'},{id:'tools',name:'Tools'}];
 /* 접속 장소 이름: 게임 사이트 / 사이트 / 그 안의 프로그램 */
 window.FF_PLACES={games:'Games',educations:'Educations',tools:'Tools',edu_planetsearch:'행성 탐사',edu_speedcode:'SpeedCode',edu_timeline:'Timeline Battle',edu_munjang:'문장 수리공',edu_balance:'평형 설계실',edu_proverb:'속담 탐정',edu_gravity:'중력',
-  tools_python:'Fry Code',tools_blocks:'Fry Blocks',tools_sheet:'Fry Sheet',tools_docs:'Fry Docs',tools_slides:'Fry Slides',tools_lab:'Fry Lab',tools_draw:'Fry Draw',tools_score:'Fry Score',tools_video:'Fry Video',tools_aichat:'AI Chat',tools_claudekey:'Claude Key',tools_emoji:'Emoji',tools_teach:'Teach',tools_train:'Train',tools_mcp:'MCP',tools_server:'Server'};
+  tools_python:'Fry Code',tools_code:'Fry Code',tools_blocks:'Fry Blocks',tools_sheet:'Fry Sheet',tools_docs:'Fry Docs',tools_slides:'Fry Slides',tools_lab:'Fry Lab',tools_draw:'Fry Draw',tools_score:'Fry Score',tools_video:'Fry Video',tools_aichat:'AI Chat',tools_claudekey:'Claude Key',tools_emoji:'Emoji',tools_teach:'Teach',tools_train:'Train',tools_mcp:'MCP',tools_server:'Server'};
 })();
 window.FFLang={ get:function(){ return now; }, script:function(){ return scr(); }, pick:function(){ return scr()||now; }, slogan:slogan, set:function(l){ set(l); now=SCR[l]?'en':l; }, sync:function(){ now=sync()||now; if(SCR[now]) now='en'; return now; } };
 })();
