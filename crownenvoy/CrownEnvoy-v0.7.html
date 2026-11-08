@@ -559,7 +559,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 176</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 177</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div><p class="tagline">사절을 보내 동맹을 맺고, 군대를 보내 왕관을 차지하세요.</p></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -3251,6 +3251,29 @@ function asmTick(){G.terr.forEach(T=>{if(T.sea||T.st==null)return;if(T.owner==nu
   const act=asmOn(T);T.st=Math.min(100,T.st+(act?ASM_GAIN:ASM_NAT));if(act)T.troops=Math.max(0,Math.round(T.troops*0.97/10)*10);
   if(T.st>=100){delete T.st;T.asmUntil=null;hooks.toast(T.owner,`${TDEF[T.id].name}이(가) 완전히 안정됐어요.`);return;}
   if(T.st<ASM_LOW)T.unrest=Math.max(T.unrest||0,1);});}
+/* ---------- 소수 민족 독립운동 / 점령지 저항군 ---------- */
+const MN_MAX=15,RES_MAX=4,AUT_COST=60;
+const minOf=(T,p)=>{const cu=TDEF[T.id].cu,pc=p&&p.cult;return !!(!T.sea&&T.owner!=null&&cu&&pc&&cu!=='mix'&&pc!=='mix'&&cu!==pc&&T.id!==p.cap);};
+function choiceP(p,spec){if(!p)return;const run=i=>{const o=spec.opts[i];if(o&&o.fn)o.fn();};
+  if(p.isBot||G.noChoice){run(typeof spec.ai==='function'?spec.ai():(spec.ai!=null?spec.ai:0));return;}
+  const id=G.uid++;(G.choices=G.choices||[]).push({id,pid:p.id,head:spec.head,body:spec.body,opts:spec.opts.map(o=>o.t),def:spec.def!=null?spec.def:0,round:G.round});G._cfn=G._cfn||{};G._cfn[id]=spec.opts.map(o=>o.fn);hooks.toast(p.id,`결정할 일이 생겼어요: ${spec.head}`);}
+function minDemand(p,T){const nm=TDEF[T.id].name;const cultN=TDEF[T.id].cu;
+  choiceP(p,{head:`${nm}에서 독립 요구`,body:`${nm}에 사는 다른 민족이 독립을 외치며 거리로 나섰어요. 어떻게 할까요?`,def:1,
+    ai:()=>{const r=Math.random();return (p.gold>=AUT_COST&&r<0.55)?0:(r<0.95?1:2);},
+    opts:[{t:`자치 허용 (금화 ${AUT_COST}, 20턴 동안 잠잠)`,fn:()=>{if(T.owner!==p.id)return;if(p.gold<AUT_COST){T.unrest=Math.max(T.unrest||0,2);T.mn=8;log(`${p.kingdom}이(가) 자금이 없어 ${nm}의 자치 요구를 들어주지 못했다.`,'sys');return;}p.gold-=AUT_COST;T.mn=0;T.autN=G.round+20;p.stab=clamp(p.stab+2,0,100);log(`${p.kingdom}이(가) ${nm}에 자치를 허용했다.`,'sys');}},
+      {t:'진압 (병력 −15%, 소요, 안정도 −3)',fn:()=>{if(T.owner!==p.id)return;T.troops=Math.max(0,Math.round(T.troops*0.85/10)*10);T.unrest=Math.max(T.unrest||0,2);T.mn=8;p.stab=clamp(p.stab-3,0,100);presAdd(p.id,-1);log(`${p.kingdom}이(가) ${nm}의 독립운동을 진압했다.`,'sys');}},
+      {t:'독립 허용 (영토를 잃고 안정도 +3)',fn:()=>{if(T.owner!==p.id)return;T.owner=null;T.occAt=null;T.unrest=0;T.mn=0;T.home=null;p.stab=clamp(p.stab+3,0,100);presAdd(p.id,-2);log(`${nm}이(가) ${p.kingdom}에서 독립했다.`,'war');}}]});}
+function minTick(){G.players.forEach(p=>{if(!p.alive||p.landless)return;owned(p.id).forEach(T=>{
+    if(!minOf(T,p)){if(T.mn)T.mn=Math.max(0,T.mn-1);return;}
+    if(T.autN!=null&&G.round<T.autN){T.mn=Math.max(0,(T.mn||0)-1);return;}
+    const gar=KIND[TDEF[T.id].kind].gar||300;
+    const d=1+(p.stab<50?1:0)+(T.unrest>0?1:0)+(p.morale<40?1:0)-((T.troops>=gar*5)?1:0)-(asmOn(T)?2:0)-(p.stab>=75?1:0);
+    T.mn=clamp((T.mn||0)+d*0.5,0,MN_MAX+2);
+    if(T.mn>=MN_MAX&&G.round-(T.mnR||-99)>=8){T.mnR=G.round;minDemand(p,T);}});});}
+function resTick(){G.terr.forEach(T=>{if(T.sea||T.owner==null||T.st==null||T.home===T.owner)return;const p=G.players[T.owner];if(!p||!p.alive)return;const gar=KIND[TDEF[T.id].kind].gar||300;
+    if(T.troops<gar*3){T.res=(T.res||0)+1;}else T.res=Math.max(0,(T.res||0)-2);
+    if(T.res>=RES_MAX){T.res=0;const lost=Math.round(T.troops*0.1/10)*10,loot=Math.min(Math.max(0,Math.floor(p.gold)),25);T.troops=Math.max(0,T.troops-lost);p.gold-=loot;T.st=Math.max(0,T.st-5);T.unrest=Math.max(T.unrest||0,1);
+      log(`${TDEF[T.id].name}의 저항군이 ${p.kingdom}의 수비대를 습격했다. (병력 −${lost}, 금화 −${loot})`,'war');hooks.toast(p.id,`${TDEF[T.id].name}에서 저항군이 습격했어요. 수비대를 늘리세요.`);}});}
 function asmView(p){const L=[];G.terr.forEach(T=>{if(!T.sea&&T.owner===p.id&&T.st!=null)L.push({id:T.id,name:TDEF[T.id].name,st:Math.round(T.st),left:asmOn(T)?T.asmUntil-G.round:0});});L.sort((a,b)=>a.st-b.st);return {list:L.slice(0,12),n:L.length,cost:ASM_COST,t:ASM_T,gold:Math.round(p.gold)};}
 function telAct(p){if(!telYear())return fail(`전신은 ${TEL_YEAR}년 이후에 쓸 수 있어요.`);if(p.tel)return fail('이미 전신망이 있어요.');if(p.gold<TEL_COST)return fail(`금화가 부족합니다 (필요 ${TEL_COST})`);
   p.gold-=TEL_COST;p.tel=1;log(`${p.kingdom}이(가) 전신망을 깔았다.`,'event');return ok(`전신망을 깔았어요. 첩보 공작이 바로 실행되고 반란 확률이 8% 줄어요. (−${TEL_COST}금)`);}
@@ -3367,7 +3390,7 @@ function empView(p){if(!empOn()||!G.emp)return null;const w=empW(p.id),E=G.emp;i
 function polTick(){G.players.forEach(p=>{if(!p.alive||p.landless)return;polEnsure(p);cnTick(p);rlTick(p);prTick(p);ctlTick(p);const wars=G.players.filter(q=>q.alive&&q.id!==p.id&&isHostile(p.id,q.id)).length;let d;
     {const sh=pubShift(p);if(wars)d=-1-(wars>=2?1:0)-((p.ww||0)>=50?1:0)+sh-Math.floor(nBld(p.id,'guild',6)/2);else{const tg=clamp(60+10*sh,30,85);d=p.pub<tg?2:p.pub>tg?-1:0;}}if(wars&&d<0&&pressOn(p))d=Math.ceil(d/2);if(p.stab<30)d-=1;if(p.gold<0)d-=2;p.pub=clamp(p.pub+d,0,100);
     if(p.pub<15&&wars&&!p.isBot&&G.round-(p.pubWarn==null?-99:p.pubWarn)>=5){p.pubWarn=G.round;hooks.toast(p.id,'여론이 바닥이에요! 백성들이 휴전을 요구해요. (수입·사기 −15%, 반란 위험)');}
-    if(p.isBot)polBot(p,wars);});papTick();empTick();missionTick();asmTick();}
+    if(p.isBot)polBot(p,wars);});papTick();empTick();missionTick();asmTick();minTick();resTick();}
 function polBot(p,wars){const r=Math.random();
   if(p.gold>ASM_COST+150&&r<0.35){const L=G.terr.filter(T=>!T.sea&&T.owner===p.id&&T.st!=null&&T.st<60&&!asmOn(T));if(L.length)polAct(p.id,{op:"asm",v:L[0].id});}
   if(!p.code&&p.gold>CODE_COST+250&&r<0.04)polAct(p.id,{op:'code'});
@@ -4233,7 +4256,7 @@ function makeView(pid,opts){const omni=!!(opts&&opts.omni);setEra(G.era);const D
       if(full){o.troops=totalTroops(p.id);o.morale=Math.round(clamp(p.morale*polMor(p),0,100));}
       if(p.id===pid){o.fin=Object.assign({},p.fin||{});o.strike=(p.strike||0)>=G.round?p.strike-G.round+1:0;o.facN=facN(pid);o.rs={need:rsNeed(pid),prod:rsProd(pid),short:Object.assign({},p.short||{}),rev:Math.round(shortRev(p)*100)};o.mor=morView(p);o.pendN=pendOf(pid);o.cvmax=convMax(pid);o.ut=[utier(pid,'i'),utier(pid,'c'),utier(pid,'a')];o.tav=[convAvail(pid,'i'),convAvail(pid,'c'),convAvail(pid,'a')];o.tvis=UT.map((t,ix)=>Math.max(o.tav[ix],tierVis(pid,t)));o.nsp=nspOf(pid);o.yr=techYear();o.obj=objView(p);o.amb=ambView(p);o.fcost=fortCostOf(pid);o.tcost=trenchCostOf(pid);o.scost=scoutCostOf(pid);o.goals=(p.goals||[]).map(g=>({k:g.k,enemy:g.enemy,prog:g.prog,done:g.done,need:GOALS[g.k].need,n:GOALS[g.k].n}));o.ww=Math.round(p.ww||0);o.tariff=Object.assign({},p.tariff||{});o.autoSell=p.autoSell||0;o.tbk={route:routeGold(pid),market:marketGold(pid),imp:importGold(pid)};o.deals=(G.deals||[]).filter(d=>d.until>=G.round&&(d.a===pid||d.b===pid)).map(d=>{const mineA=d.a===pid;return {id:d.id,w:mineA?d.b:d.a,give:mineA?d.ga:d.gb,get:mineA?d.gb:d.ga,gold:mineA?d.gold:-d.gold,left:d.until-G.round};});o.convoys=(G.convoys||[]).filter(c=>c.owner===pid).map(c=>({to:c.to,left:Math.max(0,c.due-G.round),v:c.value}));{const gg=goodsOf(pid);o.goods={own:[...gg.own],imp:[...gg.imp]};o.tin=tradeIncome(pid);}o.income=income(pid);o.upkeep=upkeep(pid);o.capacity=capacity(pid);o.under=underdog(pid);o.pol=polView(pid);}
       return o;}),
-    terr:G.terr.map(t=>{const full=t.owner==null||sees(t.owner);const o={id:t.id,gv:(t.gvr!=null&&G.round-t.gvr<=10)?(t.gv||0):0,plg:t.plg||0,burn:(t.burn||0)>=G.round?1:0,port:(!t.sea&&isPort(t.id))?(blockaded(t.id,t.owner==null?-1:t.owner)&&t.owner!=null?2:1):0,owner:t.owner,fort:t.fort,trench:t.trench||0,oos:t.oos?1:0,siege:t.siege||0,enc:t.encN||0,unrest:t.unrest,dp:DPT.dp[t.id],cd:DPT.cd[t.id],tier:tierOf(t.troops)};if(t.mark&&t.mark.until>=G.round)o.mk={k:t.mark.k,t:t.mark.t};if(t.post)o.post=t.post.by;if(t.wd)o.wd=t.wd;if(t.wp)o.wp={k:t.wp.k,left:t.wp.left};if(full){if(t.bl)o.bl=t.bl.slice();if(!t.sea&&t.owner!=null)o.pop=Math.round(popIdx(t)*100)/100;o.troops=t.troops;if(t.troops>0){const cu=compOf(t);o.u=[cu.i,cu.c,cu.a];if(t.owner!=null){const vf=vfOf(t),r2=x=>Math.round(x*100)/100;o.uv=[vf.i.map(r2),vf.c.map(r2),vf.a.map(r2)];const ow=t.owner!=null?G.players[t.owner]:null;if(ow){let xl=0;['i','c','a'].forEach(k=>{const j=vf[k].indexOf(Math.max(...vf[k]));xl=Math.max(xl,xlv(ow,k,j));});o.xl=xl;}}}}if(t.inf&&!t.sea){let tk=-1,tv=0;Object.keys(t.inf).forEach(k=>{if(t.inf[k]>tv){tv=t.inf[k];tk=+k;}});const mm=t.inf[pid]||0;if(t.owner===pid&&tv>0)o.inf={m:0,k:tk,tv};else if(mm>0)o.inf={m:mm,k:pid,tv:mm};}if(t.gst&&t.gst[pid]>0){o.mygst=t.gst[pid];{const gu=compOf(t,pid);o.gu=[gu.i,gu.c,gu.a];}}if(t.owner===pid&&!t.sea){if(t.mc&&t.mc.length){o.mcn=t.mc.reduce((q,x)=>q+x.n,0);o.mcl=Math.max(...t.mc.map(x=>x.until))-G.round+1;}o.city=t.city||0;o.mkt=t.mkt||0;o.mcost=(isPort(t.id)&&(t.mkt||0)<2)?MKT_COST[t.mkt||0]:0;o.ccap=conscriptCap(t);o.dr=t.drafted||0;if(t.pend)o.pend=t.pend.reduce((q,x)=>q+x.n,0);o.ccost=(t.city||0)<CITY_MAX?cityCostOf(pid,t.city||0):0;}if(t.owner===pid&&t.gst){const sg=Object.keys(t.gst).reduce((a,k)=>a+(t.gst[k]||0),0);if(sg>0)o.allyg=sg;}return o;}),
+    terr:G.terr.map(t=>{const full=t.owner==null||sees(t.owner);const o={id:t.id,gv:(t.gvr!=null&&G.round-t.gvr<=10)?(t.gv||0):0,plg:t.plg||0,burn:(t.burn||0)>=G.round?1:0,port:(!t.sea&&isPort(t.id))?(blockaded(t.id,t.owner==null?-1:t.owner)&&t.owner!=null?2:1):0,owner:t.owner,fort:t.fort,trench:t.trench||0,oos:t.oos?1:0,siege:t.siege||0,enc:t.encN||0,unrest:t.unrest,dp:DPT.dp[t.id],cd:DPT.cd[t.id],tier:tierOf(t.troops)};if(t.mark&&t.mark.until>=G.round)o.mk={k:t.mark.k,t:t.mark.t};if(t.mn>=3)o.mn=Math.round(t.mn);if(t.res>0)o.res=t.res;if(t.post)o.post=t.post.by;if(t.wd)o.wd=t.wd;if(t.wp)o.wp={k:t.wp.k,left:t.wp.left};if(full){if(t.bl)o.bl=t.bl.slice();if(!t.sea&&t.owner!=null)o.pop=Math.round(popIdx(t)*100)/100;o.troops=t.troops;if(t.troops>0){const cu=compOf(t);o.u=[cu.i,cu.c,cu.a];if(t.owner!=null){const vf=vfOf(t),r2=x=>Math.round(x*100)/100;o.uv=[vf.i.map(r2),vf.c.map(r2),vf.a.map(r2)];const ow=t.owner!=null?G.players[t.owner]:null;if(ow){let xl=0;['i','c','a'].forEach(k=>{const j=vf[k].indexOf(Math.max(...vf[k]));xl=Math.max(xl,xlv(ow,k,j));});o.xl=xl;}}}}if(t.inf&&!t.sea){let tk=-1,tv=0;Object.keys(t.inf).forEach(k=>{if(t.inf[k]>tv){tv=t.inf[k];tk=+k;}});const mm=t.inf[pid]||0;if(t.owner===pid&&tv>0)o.inf={m:0,k:tk,tv};else if(mm>0)o.inf={m:mm,k:pid,tv:mm};}if(t.gst&&t.gst[pid]>0){o.mygst=t.gst[pid];{const gu=compOf(t,pid);o.gu=[gu.i,gu.c,gu.a];}}if(t.owner===pid&&!t.sea){if(t.mc&&t.mc.length){o.mcn=t.mc.reduce((q,x)=>q+x.n,0);o.mcl=Math.max(...t.mc.map(x=>x.until))-G.round+1;}o.city=t.city||0;o.mkt=t.mkt||0;o.mcost=(isPort(t.id)&&(t.mkt||0)<2)?MKT_COST[t.mkt||0]:0;o.ccap=conscriptCap(t);o.dr=t.drafted||0;if(t.pend)o.pend=t.pend.reduce((q,x)=>q+x.n,0);o.ccost=(t.city||0)<CITY_MAX?cityCostOf(pid,t.city||0):0;}if(t.owner===pid&&t.gst){const sg=Object.keys(t.gst).reduce((a,k)=>a+(t.gst[k]||0),0);if(sg>0)o.allyg=sg;}return o;}),
     um:G.umod||null,sbx:G.sbx?1:0,wars:Object.keys(G.hostile||{}).filter(k=>G.hostile[k]).map(k=>{const [a,b]=k.split('-').map(Number);const e=(G.tally||{})[k]||{},x=e[a]||{},y=e[b]||{};return {a,b,ak:Math.round(x.k||0),bk:Math.round(y.k||0),ac:x.c||0,bc:y.c||0};}),
     gens:G.gens.filter(g=>g.status!=='dead').map(g=>{const full=g.owner===pid||sees(g.owner)||g.captor===pid;const o={id:g.id,owner:g.owner,name:g.name,xp:g.xp||0,grade:gradeOf(g),loc:g.loc,status:g.status,captor:g.captor,wins:g.wins||0};if(full){o.atk=g.atk;o.def=g.def;o.lead=g.lead;o.trait=g.trait;}return o;}),
     relics:Object.assign({},G.relics||{}),
@@ -8487,6 +8510,7 @@ const _th=UI.tipHTML;
 UI.tipHTML=function(id){const h=_th.apply(this,arguments);
   try{const v=C.view;if(!v||v.draft||!TDEF[id]||TDEF[id].kind==='sea')return h;const T=v.terr[id];const o=T.owner!=null?v.players[T.owner]:null;let x='';
     if(T.pop!=null)x+=`<div>👥 인구 지수 ${T.pop.toFixed(2)}</div>`;
+    if(T.mn)x+=`<div style="color:var(--bad)">✊ 독립 요구 ${T.mn}/15</div>`;if(T.res)x+=`<div style="color:var(--bad)">🗡 저항군 ${T.res}/4 · 수비대를 늘리세요</div>`;
     if(T.bl&&T.bl.length)x+=`<div>${T.bl.map(b=>BLD[b]?BLD[b].ic:'').join(' ')}</div>`;
     if(o){const g=GOV[o.gov]||GOV.mon;const R=rulerOf(v,o);x+=`<div class="muted">${g.n} · ${esc(R.title)} ${esc(R.name)}${FAITH[o.fai]?' · '+FAITH[o.fai].ic+FAITH[o.fai].n:''}${(o.inf||0)>=10?` · <span style="color:var(--bad)">악명 ${o.inf}</span>`:''}</div>`;}
     return h+x;}catch(e){return h;}};
