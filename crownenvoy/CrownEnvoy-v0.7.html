@@ -559,7 +559,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 178</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 179</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div><p class="tagline">사절을 보내 동맹을 맺고, 군대를 보내 왕관을 차지하세요.</p></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -2980,6 +2980,14 @@ function decAvail(p,d){if(d.nk&&!d.nk.includes(p.nkey))return false;return true;
 function decBlock(p,d){const last=(p.dec||{})[d.id];if(last!=null&&G.round-last<d.cd)return d.cd>=999?'한 번만 쓸 수 있어요':`${d.cd-(G.round-last)}턴 뒤에 다시 쓸 수 있어요`;if(p.gold<d.cost)return `금화가 부족해요 (필요 ${d.cost})`;return d.ok(p);}
 function decView(pid){const p=G.players[pid];return DEC.filter(d=>decAvail(p,d)).map(d=>({id:d.id,n:d.n,d:d.d,cost:d.cost,uni:d.nk?1:0,block:decBlock(p,d)||''}));}
 function decRun(p,d){p.gold-=d.cost;(p.dec=p.dec||{})[d.id]=G.round;d.go(p);log(`${p.kingdom}이(가) '${d.n}'을(를) 선포했다.`,'sys');}
+/* ---------- 대리전 지원 / 무기 수출 ---------- */
+const PX_COST=25,PX_MAX=2,PX_N=100,PX_SEE=0.12,ARMS_PRICE=120,ARMS_N=600,ARMS_CD=6;
+function pxTick(){G.players.forEach(p=>{if(!p.alive||!p.px||!p.px.length)return;
+    p.px=p.px.filter(t=>{const q=G.players[t];if(!q||!q.alive||q.landless||!hasWar(t)||p.gold<PX_COST)return false;p.gold-=PX_COST;if(capOk(q))G.terr[q.cap].troops+=PX_N;
+      if(Math.random()<PX_SEE){const foes=G.players.filter(x=>x.alive&&x.id!==t&&x.id!==p.id&&isHostile(t,x.id));const e=foes.length?foes[Math.floor(Math.random()*foes.length)]:null;
+        log(`${p.kingdom}이(가) ${q.kingdom}의 전쟁을 몰래 돕던 일이 드러났다.`,'dip');presAdd(p.id,-3);p.trust=clamp(p.trust-8,0,100);if(e){opnAdd(e.id,p.id,'proxy','대리전 지원이 드러났다',-25,30);hooks.toast(e.id,`${p.kingdom}이(가) ${q.kingdom}을(를) 몰래 돕고 있었어요.`);}hooks.toast(p.id,`${q.kingdom} 지원이 들통났어요. 위신 −3, 신뢰도 −8`);return false;}
+      return true;});
+    if(p.isBot&&p.px.length<PX_MAX&&p.gold>300&&Math.random()<(p.persona==='opp'||p.persona==='avenger'?0.06:0.02)){const c=G.players.filter(q=>q.alive&&!q.landless&&q.id!==p.id&&hasWar(q.id)&&!isHostile(p.id,q.id)&&!p.px.includes(q.id)&&(treatyBetween(p.id,q.id,'alliance')||opnOf(p.id,q.id).total>=20));if(c.length)p.px.push(c[Math.floor(Math.random()*c.length)].id);}});}
 function decBot(p){if(Math.random()>0.06)return;const L=DEC.filter(d=>decAvail(p,d)&&!decBlock(p,d)&&p.gold>=d.cost+150);if(L.length)decRun(p,L[Math.floor(Math.random()*L.length)]);}
 /* ---------- 위신: 승전·점령·연구·속국으로 쌓이고 패전·영토를 잃으면 깎인다. 순위가 높으면 외교 제안이 잘 받아들여진다 ---------- */
 const presInit=p=>Math.round(8+owned(p.id).length*1.2);
@@ -3421,7 +3429,7 @@ function empView(p){if(!empOn()||!G.emp)return null;const w=empW(p.id),E=G.emp;i
 function polTick(){G.players.forEach(p=>{if(!p.alive||p.landless)return;polEnsure(p);cnTick(p);rlTick(p);prTick(p);ctlTick(p);const wars=G.players.filter(q=>q.alive&&q.id!==p.id&&isHostile(p.id,q.id)).length;let d;
     {const sh=pubShift(p);if(wars)d=-1-(wars>=2?1:0)-((p.ww||0)>=50?1:0)+sh-Math.floor(nBld(p.id,'guild',6)/2);else{const tg=clamp(60+10*sh,30,85);d=p.pub<tg?2:p.pub>tg?-1:0;}}if(wars&&d<0&&pressOn(p))d=Math.ceil(d/2);if(p.stab<30)d-=1;if(p.gold<0)d-=2;p.pub=clamp(p.pub+d,0,100);
     if(p.pub<15&&wars&&!p.isBot&&G.round-(p.pubWarn==null?-99:p.pubWarn)>=5){p.pubWarn=G.round;hooks.toast(p.id,'여론이 바닥이에요! 백성들이 휴전을 요구해요. (수입·사기 −15%, 반란 위험)');}
-    if(p.isBot)polBot(p,wars);});papTick();empTick();missionTick();asmTick();minTick();resTick();}
+    if(p.isBot)polBot(p,wars);});papTick();empTick();missionTick();asmTick();minTick();resTick();pxTick();}
 function polBot(p,wars){const r=Math.random();
   if(p.gold>ASM_COST+150&&r<0.35){const L=G.terr.filter(T=>!T.sea&&T.owner===p.id&&T.st!=null&&T.st<60&&!asmOn(T));if(L.length)polAct(p.id,{op:"asm",v:L[0].id});}
   if(!p.code&&p.gold>CODE_COST+250&&r<0.04)polAct(p.id,{op:'code'});
@@ -8127,6 +8135,16 @@ function ext(pid,m){const p=G.players[pid];if(!p||!p.alive)return fail('대상 �
     const rank={prot:0,vas:1,pup:2};if(rank[lv]>rank[was])opnAdd(to,pid,'lvup','종속을 강화했다',-20,30);else opnAdd(to,pid,'lvdn','종속을 느슨하게 해 주었다',15,30);
     hooks.toast(to,`${pname(pid)}이(가) 우리를 ${LV[lv].n}으로 바꿨어요.`);
     return ok(`${snm(to)}을(를) ${LV[lv].n}으로 바꿨습니다. (${LV[lv].d})`);}
+  if(m.op==='px'){const q=G.players[to];p.px=p.px||[];
+    if(p.px.includes(to)){p.px=p.px.filter(x=>x!==to);return ok(`${snm(to)} 지원을 멈췄어요.`);}
+    if(!q||!q.alive||to===pid)return fail('대상 오류');if(!q.isBot)return fail('사람이 맡은 나라는 도울 수 없어요.');if(q.landless)return fail('땅이 없는 나라예요.');if(!hasWar(to))return fail('전쟁 중인 나라만 도울 수 있어요.');if(isHostile(pid,to))return fail('교전 중인 나라예요.');
+    if(p.px.length>=PX_MAX)return fail(`대리전 지원은 동시에 ${PX_MAX}개국까지 가능해요.`);if(p.gold<PX_COST)return fail(`금화가 부족합니다 (매턴 ${PX_COST}금)`);
+    p.px.push(to);return ok(`${snm(to)}의 전쟁을 몰래 돕기 시작했어요. (매턴 ${PX_COST}금, 수도에 병력 +${PX_N}) 들키면 위신과 신뢰도가 깎여요.`);}
+  if(m.op==='arms'){const q=G.players[to];if(!q||!q.alive||to===pid)return fail('대상 오류');if(!q.isBot)return fail('사람이 맡은 나라에는 팔 수 없어요.');if(q.landless||!capOk(q))return fail('팔 수 없는 나라예요.');if(isHostile(pid,to))return fail('교전 중인 나라에는 팔 수 없어요.');
+    const last=(p.arms||{})[to];if(last!=null&&G.round-last<ARMS_CD)return fail(`${ARMS_CD-(G.round-last)}턴 뒤에 다시 팔 수 있어요.`);if(q.gold<ARMS_PRICE)return fail('상대의 금고가 비었어요.');
+    q.gold-=ARMS_PRICE;p.gold+=ARMS_PRICE;(p.arms=p.arms||{})[to]=G.round;G.terr[q.cap].troops+=ARMS_N;opnAdd(to,pid,'arms','무기를 팔았다',8,20);
+    G.players.forEach(a=>{if(a.alive&&a.id!==pid&&a.id!==to&&isHostile(a.id,to)&&treatyBetween(a.id,pid,'alliance'))opnAdd(a.id,pid,'arms2','적국에 무기를 팔았다',-12,25);});
+    log(`${p.kingdom}이(가) ${q.kingdom}에 무기를 팔았다.`,'dip');return ok(`${snm(to)}에 무기를 팔았어요. (금화 +${ARMS_PRICE}, 상대 수도에 병력 +${ARMS_N}) 상대가 강해지는 점에 유의하세요.`);}
   if(m.op==='cmd'){const b=blocOf(pid);if(!b||b.cmd!==pid)return fail('총사령관이 아니에요.');if(!b.m.includes(to)||to===pid)return fail('같은 연합군이 아니에요.');(G.cmdPick=G.cmdPick||{})[b.key]=to;log(`${pname(pid)}이(가) 연합군 총사령관을 ${pname(to)}에게 넘겼다.`,'dip');hooks.toast(to,`${pname(pid)}이(가) 연합군 총사령관을 맡겼어요.`);return ok(`${snm(to)}에게 총사령관을 맡겼어요.`);}
   if(m.op==='sph'){const q=G.players[to];p.sc=p.sc||[];
     if(p.sc.includes(to)){p.sc=p.sc.filter(x=>x!==to);return ok(`${snm(to)}에 대한 영향력 행사를 멈췄습니다.`);}
@@ -8183,7 +8201,8 @@ makeView=function(pid,opts){const v=_mkv(pid,opts);
   try{const me=pid!=null?G.players[pid]:null;
     v.tplId=G.tplId||null;const _pr=presRanks();v.players.forEach(o=>{const p=G.players[o.id];o.pres=Math.round(presOf(o.id));{const bl=blocOf(o.id);if(bl){o.bcmd=bl.cmd;o.bn=bl.m.length;}}o.prk=_pr[o.id]==null?null:_pr[o.id]+1;o.nk=p.nkey||null;o.inf=Math.round(p.inf||0);o.vlv=lvOf(o.id);
       let top=null;G.players.forEach(z=>{const pt=(z.sph&&z.sph[o.id])||0;if(pt>=20&&(!top||pt>top[1]))top=[z.id,Math.round(pt)];});if(top)o.spo=top;
-      if(me&&o.id!==pid){const mp=(me.sph||{})[o.id];if(mp)o.mysph=Math.round(mp);if((me.sc||[]).includes(o.id))o.mysc=1;}
+      if(me&&o.id!==pid){const mp=(me.sph||{})[o.id];if(mp)o.mysph=Math.round(mp);if((me.sc||[]).includes(o.id))o.mysc=1;if((me.px||[]).includes(o.id))o.mypx=1;}
+      o.wr=hasWar(o.id)?1:0;
       if(me&&o.id===pid)o.scN=(me.sc||[]).length;});
   }catch(e){console.error('b158 view',e);}
   return v;};
@@ -8521,6 +8540,7 @@ function renderCard(v){const p=v.players[NC.id];if(!p)return '';const me=v.playe
     const pts=p.mysph||0;
     if(pts||p.mysc||p.spo)rel+=`<div class="nc-row"><span class="l">영향력</span><div class="nc-bar"><i style="width:${pts}%;background:#4f9be0"></i></div><b>${pts}/100</b></div>`+(p.spo&&p.spo[0]!==v.me&&v.players[p.spo[0]]?`<div class="muted" style="font-size:12px">가장 큰 영향력: ${esc(v.players[p.spo[0]].kingdom)} (${p.spo[1]})</div>`:'');
     if(p.isBot&&me.over==null&&p.over==null&&!p.landless&&v.phase==='plan'&&!v.spec)acts+=`<div class="nc-acts"><button data-b158="sph" data-to="${p.id}" class="${p.mysc?'on':''}">${p.mysc?'영향력 행사 중단':'영향력 행사 (매턴 12금)'}</button></div>`;}
+  if(p.id!==v.me&&p.alive&&p.isBot&&!p.landless&&v.phase==='plan'&&!v.spec&&me.over==null){let b2='';if(p.wr||p.mypx)b2+=`<button data-b158="px" data-to="${p.id}" class="${p.mypx?'on':''}">${p.mypx?'대리전 지원 중단':'대리전 지원 (매턴 25금)'}</button>`;b2+=`<button data-b158="arms" data-to="${p.id}">무기 수출 (+120금)</button>`;acts+=`<div class="nc-acts">${b2}</div>`;}
   if(p.id!==v.me&&p.alive&&p.bcmd!=null&&p.bcmd===v.me&&v.phase==='plan'&&!v.spec)acts+=`<div class="nc-acts"><button data-b158="cmd" data-to="${p.id}">총사령관 맡기기</button></div>`;
   acts+=`<div class="nc-acts"><button data-b158="cmp" data-to="${p.id}">⚖ 국가 비교</button></div>`;
   return `<div class="wlbox"><div class="wlhead"><button class="btn sm" data-b158="back">← 뒤로</button><h2>국가 정보</h2></div><div class="nc-body">
@@ -8571,7 +8591,9 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
   else if(k==='back')UI.back();
   else if(k==='lv')send({a:'b158',op:'lv',to,lv:b.dataset.lv});
   else if(k==='sph')send({a:'b158',op:'sph',to});
-  else if(k==='cmd')send({a:'b158',op:'cmd',to});});
+  else if(k==='cmd')send({a:'b158',op:'cmd',to});
+  else if(k==='px')send({a:'b158',op:'px',to});
+  else if(k==='arms')send({a:'b158',op:'arms',to});});
 document.addEventListener('change',e=>{const s=e.target.closest&&e.target.closest('[data-b158sel]');if(!s)return;NC[s.dataset.b158sel]=+s.value;render();});
 })();
 </script>
