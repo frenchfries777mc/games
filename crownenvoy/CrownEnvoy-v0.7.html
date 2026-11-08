@@ -191,7 +191,8 @@ input[type=checkbox]{accent-color:var(--gold)}
 .seal:hover{background:#6532bc;border-color:var(--gold2)}.seal:active{background:#401c7f}
 .seal.done{background:#2b6e45}.seal.done::after{content:'✓';font-size:18px;margin-top:0}.seal:disabled{opacity:.4;cursor:not-allowed}
 #menu{position:absolute;inset:0;z-index:45;background:#050a14cc;display:flex;align-items:center;justify-content:center}
-.menubox{width:min(560px,94vw);max-height:86vh;display:flex;flex-direction:column;padding:22px;background:#160c27;border:1px solid var(--goldd);border-radius:6px;box-shadow:0 30px 70px #000c}
+.menubox{width:min(560px,94vw);max-height:86vh;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;padding:22px;background:#160c27;border:1px solid var(--goldd);border-radius:6px;box-shadow:0 30px 70px #000c}
+.menubox>*{flex-shrink:0}
 .menubox h2{font-family:var(--serif);margin:0 0 12px;font-size:22px}
 .menubox .logs{overflow:auto;min-height:0;margin-top:10px;padding-right:6px}
 #over{position:absolute;inset:0;z-index:40;background:#050a14e8;display:flex;align-items:center;justify-content:center}
@@ -559,7 +560,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 183</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 184</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div><p class="tagline">사절을 보내 동맹을 맺고, 군대를 보내 왕관을 차지하세요.</p></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -7211,7 +7212,7 @@ function ctxTick(){if(!CX)return;const v=C.view;
   if(!d){ctxHide();return;}
   if(d.auto==='map'&&!CX.sk.am){const b=$q('#tabs [data-tab="map"]');if(b){CX.sk.am=1;b.click();}}
   ctxShow(d);}
-const fb=document.createElement('button');fb.id='tutfab';fb.className='btn sm';fb.textContent='❓ 튜토리얼';fb.style.cssText='position:fixed;left:12px;bottom:56px;z-index:9400;opacity:.92';fb.onclick=()=>{if(inGame())ctxStart();else tutShow(0);};document.body.appendChild(fb);
+const fb=document.createElement('button');fb.id='tutfab';fb.className='btn sm';fb.textContent='❓ 튜토리얼';fb.style.cssText='position:fixed;left:66px;bottom:14px;z-index:9400;opacity:.92';fb.onclick=()=>{if(inGame())ctxStart();else tutShow(0);};document.body.appendChild(fb);
 /* 폰에서는 로비 첫 화면에서만 튜토리얼 버튼·언어 선택을 보여 줘서 다른 화면 버튼과 겹치지 않게 한다 (게임 안에서는 기록·설정 메뉴에 있음) */
 setInterval(()=>{try{const narrow=innerWidth<=640;const ai=document.getElementById('btnAI');const main=!inGame()&&ai&&ai.offsetParent!==null;const vis=(!narrow||main)?'':'none';fb.style.display=vis;}catch(e){}},600);
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#menu [data-act="tut"]');if(!b)return;try{UI.closeMenu();}catch(_){}if(inGame())ctxStart();else tutShow(0);});
@@ -8015,7 +8016,7 @@ const css=document.createElement('style');css.textContent=
  '#trep{position:fixed;bottom:110px;left:10px;z-index:40;width:min(300px,calc(100vw - 20px));background:#0e182bf2;border:1px solid #c9a24a;border-radius:10px;padding:8px 10px;color:#eef1f7;font-size:12.5px;box-shadow:0 6px 24px #0008}'
 +'#trep .th{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}#trep .th b{color:#ffe08a;font-size:13.5px}#trep .x{background:none;border:0;color:#9fb0c8;cursor:pointer;font-size:14px;padding:0 2px}'
 +'#trep .ti div{padding:2px 0;line-height:1.35}#trep .ti .bad{color:#ff9a86}#trep .ti .good{color:#8fe0a8}#trep .ti small{color:#9fb0c8}'
-+'#trepChip{position:fixed;bottom:110px;left:10px;z-index:40;background:#0e182bf2;border:1px solid #c9a24a;border-radius:8px;color:#ffe08a;padding:5px 9px;font-size:13px;cursor:pointer}'
++'#trepChip{position:fixed;bottom:62px;left:66px;z-index:40;background:#0e182bf2;border:1px solid #c9a24a;border-radius:8px;color:#ffe08a;padding:5px 9px;font-size:13px;cursor:pointer}'
 +'#ovStars{margin-top:10px;text-align:center}#ovStars .st{font-size:26px;letter-spacing:4px;color:#f3c64f}#ovStars .st i{color:#4a5670;font-style:normal}'
 +'.tplstars{color:#f3c64f;margin-left:6px;letter-spacing:1px;font-size:12px}'
 +'#rkOv{position:fixed;inset:0;background:#000b;z-index:99980;display:flex;align-items:center;justify-content:center;padding:14px}#rkOv .ab{background:#0e182b;border:1px solid #c9a24a;border-radius:12px;padding:16px;width:min(94vw,440px);max-height:86vh;overflow:auto;color:#eef1f7}#rkOv h2{margin:0;font-size:19px}#rkOv .ah{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}#rkOv .x{background:none;border:0;color:#9fb0c8;font-size:16px;cursor:pointer}'
