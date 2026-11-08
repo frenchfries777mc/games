@@ -560,7 +560,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 187</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 188</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div><p class="tagline">사절을 보내 동맹을 맺고, 군대를 보내 왕관을 차지하세요.</p></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -3145,7 +3145,7 @@ function faithGuess(p,y){const k=p.nkey,c=p.cult,n=String(p.kingdom||'');
   if(c==='mix')return 'ath';
   return 'chr';}
 function polEnsure(p){if(!p)return;if(!p.gov||!GOV[p.gov])p.gov=govGuess(p,polYear());if(!p.fai||!FAITH[p.fai])p.fai=faithGuess(p,polYear());if(p.pub==null)p.pub=60;}
-function polFx(p){const f={};if(!p)return f;polEnsure(p);const add=o=>Object.keys(o).forEach(k=>f[k]=(f[k]||0)+o[k]);add(GOV[p.gov].fx);add(FAITH[p.fai].fx);wdList(p.id).forEach(k=>add(WONDERS[k].fx));relicList(p.id).forEach(k=>add(RELICS[k].fx));add(facFx(p));add(taxDecFx(p));add(trFx(p));if(telOn(p))add({reb:-0.08});if(codeDone(p))add({reb:-0.10,inc:0.05});if(nzOn(p))add({inc:0.05});return f;}
+function polFx(p){const f={};if(!p)return f;polEnsure(p);const add=o=>Object.keys(o).forEach(k=>f[k]=(f[k]||0)+o[k]);add(GOV[p.gov].fx);add(FAITH[p.fai].fx);wdList(p.id).forEach(k=>add(WONDERS[k].fx));relicList(p.id).forEach(k=>add(RELICS[k].fx));add(facFx(p));add(taxDecFx(p));add(trFx(p));add(pmFx(p));if(telOn(p))add({reb:-0.08});if(codeDone(p))add({reb:-0.10,inc:0.05});if(nzOn(p))add({inc:0.05});return f;}
 const pfx=(pid,k)=>{const p=pid!=null&&G.players[pid];return p?(polFx(p)[k]||0):0;};
 const inGovT=p=>p.govUntil!=null&&G.round<p.govUntil;
 const inFaiT=p=>p.faiUntil!=null&&G.round<p.faiUntil;
@@ -3181,6 +3181,7 @@ function polAct(pid,m){const p=G.players[pid];if(!p||!p.alive)return fail('대�
   if(m.op==='decend'){if(!decOn(p))return fail('시행 중인 칙령이 없어요.');p.dec=null;return ok('칙령을 거뒀어요.');}
   if(m.op==='cnhire'||m.op==='cnfire')return cnAct(p,m);
   if(m.op==='will')return rlAct(p,m);
+  if(m.op==='pm'||m.op==='pmend')return pmAct(p,m);
   if(m.op==='tel')return telAct(p);
   if(m.op==='asm')return asmAct(p,m);
   if(m.op==='ref')return refAct(p);
@@ -3215,26 +3216,88 @@ function cnAct(p,m){const c=cnEnsure(p);if(c.act===G.round)return fail('의회 �
   const x=c.seats.splice(i,1)[0];c.act=G.round;p.stab=clamp(p.stab-2,0,100);return ok(`${CNL[x.lean].n} 위원 ${x.name}을(를) 해고했어요. (안정도 −2)`);}
 /* ===== 유언장: 군주가 늙어 죽기 전에 후계자를 정해 둬요. 안 정해 두면 계승 전쟁이 나요 ===== */
 const RL_GOV=['mon','emp','tot'],RL_CD=6,RL_NAMES=['알프레드','베른하르트','콘라트','디트리히','에르네스트','페르디난트','게오르크','하인리히','이스트반','요한','레오폴트','막시밀리안','나르시스','오스카','필리프','루돌프','세바스티안','테오도르','우르반','빅토르'];
-const RLW={prince:{n:'왕자',ic:'👑',d:'혈통을 잇는 정통 후계예요. 나라는 흔들리지 않지만 어린 군주라 한동안 사기가 낮아요.'},gen:{n:'장군',ic:'🎖',d:'가장 뛰어난 장군에게 왕위를 넘겨요. 사기와 숙련도가 오르지만 귀족들이 못마땅해해서 안정도가 내려가요. (장군이 없으면 왕자가 이어요)'},cn:{n:'의회 추대',ic:'🏛',d:'의회가 새 군주를 추대해요. 여론이 오르지만 안정도가 조금 내려가요.'}};
+const RLW={prince:{n:'왕자',ic:'👑',d:'혈통을 잇는 정통 후계예요. 나라가 흔들리지 않지만 어린 군주라 사기가 내려가요. 전쟁 중이면 더 크게 흔들리고, 총리가 있으면 섭정을 맡아 충격이 줄어요.'},
+  gen:{n:'장군',ic:'🎖',d:'가장 뛰어난 장군에게 왕위를 넘겨요. 전쟁 중이면 군대가 크게 환호하지만, 평화 때는 귀족들이 못마땅해해서 안정도가 많이 내려가요.'},
+  cn:{n:'의회 추대',ic:'🏛',d:'의회가 위원 중에서 새 군주를 추대해요. 여론이 오르지만, 한 성향으로 쏠린 의회라면 안정도가 크게 내려가요. (위원 2명 이상)'},
+  pm:{n:'총리',ic:'🎩',d:'임명해 둔 총리가 왕위를 이어요. 총리의 통솔이 높으면 안정도가 오르고 군대도 따라요. (총리가 있어야 해요)'},
+  noble:{n:'귀족 회의',ic:'⚜️',d:'귀족들이 먼 친척 중에서 군주를 세우고 즉위 선물로 금화를 바쳐요. 안정도가 내려가고, 안정도가 낮으면 귀족들이 갈라서 계승 전쟁이 날 수도 있어요.'},
+  church:{n:'교회의 추인',ic:'⛪',d:'종교 지도자가 군주를 추인해요. 금화 60이 들지만 여론과 안정도가 오르고 위신이 올라요. 무신론 나라는 못 써요.'},
+  repub:{n:'공화정 전환',ic:'🗳',d:'왕위를 없애고 공화정으로 바꿔요. 여론이 오르지만 안정도가 크게 내려가고 전쟁 중이면 사기도 떨어져요. 여론이 50 이상일 때만 가능해요. (왕국·제국)'},
+  kin:{n:'먼 친척',ic:'🧬',d:'먼 친척을 찾아 왕위에 올려요. 혼인으로 맺은 동맹국이 있으면 그쪽 왕실의 사람을 모셔 와 사이가 좋아져요. 없으면 정통성 시비가 일어요.'}};
 const rlOn=p=>!!p&&p.alive&&!p.neu&&!p.landless&&RL_GOV.includes(p.gov);
 function rlEnsure(p){if(!p.rl)p.rl={n:pick(RL_NAMES),age:ri(32,56),r0:G.round,tr:pick(Object.keys(TR))};if(!p.rl.tr)p.rl.tr=pick(Object.keys(TR));return p.rl;}
 const rlAge=p=>{const r=rlEnsure(p);return r.age+Math.floor((G.round-r.r0)/12);};
 const rlBestGen=p=>gensOf(p.id).filter(g=>g.status==='ok').sort((a,b)=>(b.atk+b.def+b.lead)-(a.atk+a.def+a.lead))[0]||null;
-function rlDie(p){const r=rlEnsure(p),old=r.n;let kind=p.will&&RLW[p.will]?p.will:null;const bg=rlBestGen(p);if(kind==='gen'&&!bg)kind='prince';
-  let nn=pick(RL_NAMES.filter(x=>x!==old)),age=ri(20,34),head,body,fx;const K=snm(p.id);
-  if(kind==='prince'){age=ri(16,26);addMAdj(p,-6,6,'어린 군주 즉위');head=`${K}의 왕이 세상을 떠나다`;body=`${old}왕이 눈을 감고 어린 ${nn}이(가) 왕위를 이었다. 유언대로 혈통이 이어져 나라는 흔들리지 않았다.`;fx='왕자가 즉위했어요. 사기가 잠시 낮아져요.';}
-  else if(kind==='gen'){nn=bg.name;age=ri(38,52);morAdd(p,8,'장군 군주 즉위');p.vet=Math.min(100,(p.vet||0)+4);p.stab=clamp(p.stab-8,0,100);head=`${K}의 왕이 세상을 떠나다`;body=`${old}왕은 유언으로 장군 ${nn}에게 왕위를 넘겼다. 군대는 환호했지만 귀족들은 술렁였다.`;fx=`장군 ${nn}이(가) 즉위했어요. 사기와 숙련도가 오르고 안정도가 내려가요.`;}
-  else if(kind==='cn'){const c=cnEnsure(p);nn=c.seats.length?pick(c.seats).name:nn;age=ri(40,55);p.pub=clamp((p.pub||60)+8,0,100);p.stab=clamp(p.stab-3,0,100);head=`${K}의 왕이 세상을 떠나다`;body=`${old}왕의 유언에 따라 의회가 ${nn}을(를) 새 군주로 추대했다. 백성은 환영했다.`;fx=`의회가 ${nn}을(를) 추대했어요. 여론이 오르고 안정도가 조금 내려가요.`;}
-  else{p.stab=clamp(p.stab-25,0,100);addMAdj(p,-12,10,'계승 전쟁');let n=0;if(owned(p.id).length>=3){while(n<2&&revoltOne(p))n++;}head=`${K}에 계승 전쟁이 일어나다`;body=`${old}왕이 후계자를 정하지 못한 채 숨을 거뒀다. 왕위를 노린 귀족들이 갈라져 ${nn}이(가) 간신히 즉위했지만 나라가 크게 흔들렸다.`;fx=`후계자를 정하지 않아 계승 전쟁이 났어요. 안정도 −25, 사기 하락${n?`, 영토 ${n}곳 이탈`:''}.`;}
-  p.rl={n:nn,age,r0:G.round,tr:pick(Object.keys(TR))};p.will=null;log(`${p.kingdom}의 군주 ${old}이(가) 세상을 떠났다. ${kind?`${RLW[kind].n}(으)로 계승했다.`:'후계자가 없어 계승 전쟁이 일어났다.'}`,'event');wlog('event',p.id,null,`${snm(p.id)}의 군주가 세상을 떠났다`);
+const RL_ALL=Object.keys(RLW);
+const kinOf=p=>{const x=(G.marr||[]).find(m=>(m.a===p.id||m.b===p.id)&&G.players[m.a===p.id?m.b:m.a]&&G.players[m.a===p.id?m.b:m.a].alive);return x?(x.a===p.id?x.b:x.a):null;};
+function rlWhy(p,k){
+  if(k==='gen'&&!rlBestGen(p))return '장군이 없어요';
+  if(k==='cn'&&cnEnsure(p).seats.length<2)return '의회 위원이 2명 이상 필요해요';
+  if(k==='pm'&&!pmG(p))return '임명한 총리가 없어요';
+  if(k==='church'){if(p.fai==='ath')return '무신론 나라는 교회의 추인을 받을 수 없어요';if(p.gold<60)return '금화 60이 필요해요';}
+  if(k==='repub'){if(!['mon','emp'].includes(p.gov))return '왕국·제국만 공화정으로 바꿀 수 있어요';if((p.pub==null?60:p.pub)<50)return '여론이 50 이상이어야 해요';}
+  return '';}
+/* 지금 상황에서 이 후계가 낳을 결과 (미리보기와 실제 적용이 같은 값을 써요) */
+function rlPlan(p,k){const war=hasWar(p.id),stab=p.stab,pub=p.pub==null?60:p.pub;const o={mor:0,stab:0,pub:0,gold:0,vet:0,pres:0,age:[24,40],who:null,txt:''};
+  const T=(n,v)=>v?`${n} ${v>0?'+':''}${v}`:'';
+  if(k==='prince'){const g=pmG(p);o.mor=war?-10:(stab>=70?-4:-6);if(g){o.mor=Math.round(o.mor/2);o.stab=2;}o.age=[16,26];o.g=g;}
+  else if(k==='gen'){const bg=rlBestGen(p);o.mor=war?10:6;o.vet=war?6:3;o.stab=war?-4:-10;if(stab<40)o.stab-=4;o.who=bg?bg.name:null;o.age=[38,52];o.bg=bg;}
+  else if(k==='cn'){const c=cnEnsure(p),st=cnStat(p);o.pub=pub>=70?12:8;o.stab=st.imb?-8:-3;o.who=c.seats.length?pick(c.seats).name:null;o.age=[40,55];o.imb=st.imb;}
+  else if(k==='pm'){const g=pmG(p);o.stab=g&&g.lead>=5?3:-2;o.mor=war?7:4;o.vet=2;o.who=g?g.name:null;o.age=[38,56];o.g=g;}
+  else if(k==='noble'){o.stab=-4;o.gold=80;o.mor=war?3:0;o.age=[20,40];o.risk=stab<50?0.35:0;}
+  else if(k==='church'){o.gold=-60;o.pub=p.fai==='pro'?6:10;o.stab=3;o.pres=1;o.mor=war?2:0;o.age=[24,45];}
+  else if(k==='repub'){o.stab=-10;o.pub=10;o.mor=war?-6:0;o.pres=-1;o.age=[40,58];}
+  else if(k==='kin'){const q=kinOf(p);o.q=q;o.stab=q!=null?-1:-3;o.pres=q!=null?0:-1;o.age=[28,48];}
+  else{o.stab=-25;o.mor=-12;}
+  o.txt=[T('사기',o.mor),T('안정도',o.stab),T('여론',o.pub),T('금화',o.gold),T('위신',o.pres)].filter(Boolean).join(', ')+(o.risk?` · 귀족이 갈라설 위험 ${Math.round(o.risk*100)}%`:'')+(k==='prince'&&o.g?' · 총리가 섭정':'')+(k==='cn'&&o.imb?' · 의회가 한쪽으로 쏠려 있어요':'');
+  return o;}
+function rlFin(p,old,nn,age,head,body,fx,logTxt){p.rl={n:nn,age,r0:G.round,tr:pick(Object.keys(TR))};p.will=null;p.rlPend=0;
+  log(`${p.kingdom}의 군주 ${old}이(가) 세상을 떠났다. ${logTxt}`,'event');wlog('event',p.id,null,`${snm(p.id)}의 군주가 세상을 떠났다`);
   if(!G.turnEvents)G.turnEvents=[];G.turnEvents.push({r:G.round,date:ymOf(G.round),head,body,scene:'meeting',ca:p.color,cb:p.color});hooks.toast(p.id,`군주 ${old}이(가) 세상을 떠났어요. ${fx}`);}
+function rlApply(p,kind){const r=rlEnsure(p),old=r.n,K=snm(p.id);
+  if(kind==='noble'&&Math.random()<rlPlan(p,'noble').risk){log(`${p.kingdom}의 귀족들이 갈라서 합의하지 못했다.`,'event');kind='war';}
+  if(kind!=='war'&&rlWhy(p,kind))kind='war';
+  const o=rlPlan(p,kind),war=hasWar(p.id);let nn=pick(RL_NAMES.filter(x=>x!==old)),age=ri(o.age?o.age[0]:24,o.age?o.age[1]:40),body='',head=`${K}의 왕이 세상을 떠나다`,fx='';
+  const apply=()=>{if(o.mor<0)addMAdj(p,o.mor,6,'새 군주 즉위');else if(o.mor>0)morAdd(p,o.mor,'새 군주 즉위');if(o.vet)p.vet=Math.min(100,(p.vet||0)+o.vet);p.stab=clamp(p.stab+o.stab,0,100);if(o.pub)p.pub=clamp((p.pub==null?60:p.pub)+o.pub,0,100);if(o.gold)p.gold=Math.max(0,p.gold+o.gold);if(o.pres)presAdd(p.id,o.pres);};
+  if(kind==='prince'){const g=o.g;apply();body=`${old}왕이 눈을 감고 어린 ${nn}이(가) 왕위를 이었다.`+(g?` 총리 ${g.name}이(가) 섭정을 맡아 나라는 크게 흔들리지 않았다.`:war?' 전쟁 중에 어린 군주가 올라 군심이 흔들렸다.':' 혈통이 이어져 나라는 흔들리지 않았다.');fx=`왕자가 즉위했어요. ${o.txt}.`;}
+  else if(kind==='gen'){nn=o.who;apply();body=war?`${old}왕이 숨을 거두자 전장의 장군 ${nn}이(가) 왕위에 올랐다. 군대는 환호했고 귀족들은 숨을 죽였다.`:`${old}왕은 장군 ${nn}에게 왕위를 넘겼다. 군대는 환호했지만 평화로운 시절에 칼잡이를 왕으로 맞은 귀족들은 술렁였다.`;fx=`장군 ${nn}이(가) 즉위했어요. ${o.txt}.`;}
+  else if(kind==='cn'){nn=o.who||nn;apply();body=o.imb?`${old}왕이 죽자 한쪽으로 쏠린 의회가 ${nn}을(를) 추대했다. 다른 성향의 위원들이 반발해 나라가 어수선하다.`:`${old}왕이 죽자 의회가 ${nn}을(를) 새 군주로 추대했다. 백성은 환영했다.`;fx=`의회가 ${nn}을(를) 추대했어요. ${o.txt}.`;}
+  else if(kind==='pm'){const g=o.g;nn=g.name;apply();p.pm=null;g.status='ok';if(!(G.terr[g.loc]&&G.terr[g.loc].owner===p.id))g.loc=p.cap;body=`${old}왕이 세상을 떠나자 총리 ${nn}이(가) 왕위를 이었다. ${g.lead>=5?'오랫동안 나랏일을 맡아 온 그라 조정과 군대 모두 따랐다.':'경험이 모자란 그의 즉위에 조정이 술렁였다.'}`;fx=`총리 ${nn}이(가) 즉위했어요. ${o.txt}.`;}
+  else if(kind==='noble'){apply();body=`${old}왕이 죽자 귀족들이 모여 먼 친척 ${nn}을(를) 왕으로 세우고 즉위 선물을 바쳤다.${p.stab<50?' 나라가 어지러워 귀족들의 눈치가 매서웠다.':''}`;fx=`귀족들이 ${nn}을(를) 세웠어요. ${o.txt}.`;}
+  else if(kind==='church'){apply();body=`${old}왕이 죽자 교회가 ${nn}의 즉위를 추인하고 축성했다. 백성은 신이 내린 왕이라며 환호했다.`;fx=`교회가 ${nn}을(를) 추인했어요. ${o.txt}.`;}
+  else if(kind==='repub'){apply();setGov(p,'rep',true);head=`${K}, 왕정을 끝내다`;body=`${old}왕의 죽음을 계기로 왕위를 없애고 공화정을 세웠다. 새 대통령 ${nn}이(가) 취임했다.`;fx=`공화정으로 바뀌었어요. ${o.txt}.`;}
+  else if(kind==='kin'){const q=o.q;apply();if(q!=null){opnAdd(q,p.id,'succ_kin','왕실의 혈통을 이었다',20,30);body=`${old}왕이 후사 없이 죽자 혼인으로 맺어진 ${snm(q)} 왕실의 먼 친척 ${nn}이(가) 왕위를 이었다. ${snm(q)}과(와)의 사이가 한결 가까워졌다.`;fx=`${snm(q)} 왕실의 ${nn}이(가) 즉위했어요. ${o.txt}.`;}else{body=`${old}왕이 후사 없이 죽자 먼 친척 ${nn}이(가) 왕위를 이었다. 정통성을 문제 삼는 목소리가 나온다.`;fx=`먼 친척 ${nn}이(가) 즉위했어요. ${o.txt}.`;}}
+  else{p.stab=clamp(p.stab-25,0,100);addMAdj(p,-12,10,'계승 전쟁');let n=0;if(owned(p.id).length>=3){while(n<2&&revoltOne(p))n++;}head=`${K}에 계승 전쟁이 일어나다`;body=`${old}왕이 후계자를 정하지 못한 채 숨을 거뒀다. 왕위를 노린 귀족들이 갈라져 ${nn}이(가) 간신히 즉위했지만 나라가 크게 흔들렸다.`;fx=`후계자를 정하지 않아 계승 전쟁이 났어요. 안정도 −25, 사기 하락${n?`, 영토 ${n}곳 이탈`:''}.`;}
+  rlFin(p,old,nn,age,head,body,fx,kind==='war'?'후계자가 없어 계승 전쟁이 일어났다.':`${RLW[kind].n}(으)로 계승했다.`);}
+function rlDie(p){if(p.rlPend)return;const r=rlEnsure(p),old=r.n;
+  const av=RL_ALL.filter(k=>!rlWhy(p,k));let kind=p.will&&RLW[p.will]&&!rlWhy(p,p.will)?p.will:null;
+  if(!kind&&p.isBot&&av.length)kind=pick(av);
+  if(kind||p.isBot||G.noChoice||!av.length){rlApply(p,kind||'war');return;}
+  p.rlPend=1;const war=hasWar(p.id);
+  choiceP(p,{head:`${old}왕이 세상을 떠났어요`,body:`유언이 없어요. 지금 상황(${war?'전쟁 중':'평화'} · 안정도 ${Math.round(p.stab)} · 여론 ${Math.round(p.pub==null?60:p.pub)})에 맞는 후계를 골라야 해요. 고르지 않으면 계승 전쟁이 나요.`,def:av.length,
+    opts:av.map(k=>({t:`${RLW[k].ic} ${RLW[k].n} — ${rlPlan(p,k).txt||'큰 변화 없음'}`,fn:()=>{rlApply(p,k);}})).concat([{t:'정하지 못한다 (계승 전쟁: 안정도 −25, 사기 하락)',fn:()=>{rlApply(p,'war');}}])});}
 function rlTick(p){if(!rlOn(p))return;const a=rlAge(p);
-  if(p.isBot&&!p.will&&a>=50&&Math.random()<0.15)p.will=pick(Object.keys(RLW));
+  if(p.isBot&&!p.will&&a>=50&&Math.random()<0.15){const av=RL_ALL.filter(k=>!rlWhy(p,k)&&k!=='repub');if(av.length)p.will=pick(av);}
   if(!p.isBot&&!p.will&&a>=55&&G.round-(p.rlWarn==null?-99:p.rlWarn)>=10){p.rlWarn=G.round;hooks.toast(p.id,`군주 ${rlEnsure(p).n}(${a}세)이(가) 늙었어요. 정치 탭에서 유언장을 써 두세요.`);}
-  if(a>52&&Math.random()<Math.min(0.05,0.0015*(a-52)))rlDie(p);}
-function rlAct(p,m){if(!rlOn(p))return fail('군주제 나라만 쓸 수 있어요.');if(!RLW[m.v])return fail('대상 오류');if(p.will===m.v)return fail('이미 그렇게 정해 뒀어요.');
+  if(!p.rlPend&&a>52&&Math.random()<Math.min(0.05,0.0015*(a-52)))rlDie(p);}
+function rlAct(p,m){if(!rlOn(p))return fail('군주제 나라만 쓸 수 있어요.');if(!RLW[m.v])return fail('대상 오류');if(p.will===m.v)return fail('이미 그렇게 정해 뒀어요.');const why=rlWhy(p,m.v);if(why)return fail(why);
   const cd=p.willAt==null?0:Math.max(0,p.willAt+RL_CD-G.round);if(cd>0)return fail(`유언장은 ${cd}턴 뒤에 다시 고칠 수 있어요.`);p.will=m.v;p.willAt=G.round;return ok(`유언장에 ${RLW[m.v].n}을(를) 후계로 적었어요.`);}
-function rlView(p){if(!rlOn(p))return null;const r=rlEnsure(p),bg=rlBestGen(p);return {n:r.n,age:rlAge(p),tr:trView(r.tr),will:p.will||null,cd:p.willAt==null?0:Math.max(0,p.willAt+RL_CD-G.round),gen:bg?bg.name:null};}
+function rlView(p){if(!rlOn(p))return null;const r=rlEnsure(p),bg=rlBestGen(p);const av={},hint={};RL_ALL.forEach(k=>{av[k]=rlWhy(p,k);if(!av[k])hint[k]=rlPlan(p,k).txt;});
+  return {n:r.n,age:rlAge(p),tr:trView(r.tr),will:p.will||null,cd:p.willAt==null?0:Math.max(0,p.willAt+RL_CD-G.round),gen:bg?bg.name:null,av,hint};}
+/* ===== 총리: 장군 한 명을 총리로 임명해요. 전선에서는 빠지지만 나라 살림을 도와요 ===== */
+const PM_COST=60,PM_CD=8;
+const pmG=p=>{if(!p||p.pm==null)return null;const g=G.gens.find(x=>x.id===p.pm&&x.owner===p.id&&x.status==='pm');if(!g){p.pm=null;return null;}return g;};
+const pmMul=p=>p.gov==='par'?1.5:(p.gov==='rep'?1.2:1);
+function pmFx(p){const g=pmG(p);if(!g)return {};const m=pmMul(p);return {tax:0.012*g.lead*m,reb:-0.012*g.def*m,mor:0.006*g.atk*m};}
+function pmAct(p,m){
+  if(m.op==='pmend'){const g=pmG(p);if(!g)return fail('총리가 없어요.');g.status='ok';if(!(G.terr[g.loc]&&G.terr[g.loc].owner===p.id))g.loc=p.cap;p.pm=null;p.pmAt=G.round;p.stab=clamp(p.stab-1,0,100);return ok(`총리 ${g.name}을(를) 물러나게 했어요. 다시 군대로 돌아가요.`);}
+  const cd=p.pmAt==null?0:Math.max(0,p.pmAt+PM_CD-G.round);if(cd>0)return fail(`총리는 ${cd}턴 뒤에 다시 임명할 수 있어요.`);
+  const g=G.gens.find(x=>x.id===Math.floor(+m.v)&&x.owner===p.id&&x.status==='ok');if(!g)return fail('임명할 수 있는 장군이 아니에요.');
+  if(gensOf(p.id).length<=1)return fail('전선에는 장군이 한 명은 남아야 해요.');if(p.gold<PM_COST)return fail(`금화가 부족합니다 (필요 ${PM_COST})`);
+  const old=pmG(p);if(old){old.status='ok';if(!(G.terr[old.loc]&&G.terr[old.loc].owner===p.id))old.loc=p.cap;}
+  p.gold-=PM_COST;g.status='pm';p.pm=g.id;p.pmAt=G.round;G.orders[p.id]=(G.orders[p.id]||[]).filter(o=>o.gid!==g.id);
+  return ok(`장군 ${g.name}을(를) 총리로 임명했어요. (−${PM_COST}금)`);}
+function pmView(p){const g=pmG(p),m=pmMul(p);return {has:g?{id:g.id,name:g.name,atk:g.atk,def:g.def,lead:g.lead}:null,tax:g?Math.round(g.lead*1.2*m*10)/10:0,reb:g?Math.round(g.def*1.2*m*10)/10:0,mor:g?Math.round(g.atk*0.6*m*10)/10:0,mul:m,cost:PM_COST,cd:p.pmAt==null?0:Math.max(0,p.pmAt+PM_CD-G.round),gold:Math.round(p.gold),can:gensOf(p.id).length>=2,list:gensOf(p.id).map(x=>({id:x.id,name:x.name,atk:x.atk,def:x.def,lead:x.lead}))};}
 /* ===== 통치자 성향: 군주·대통령마다 성향이 있고 작은 보너스를 줘요. 공화정 계열은 12~16턴마다 새 지도자가 취임해요 ===== */
 const TR={war:{n:'호전적',ic:'⚔️',fx:{atk:0.04,dip:-0.05},d:'병사 공격력 +4%, 조약 체결 확률 −5%'},dip:{n:'외교가',ic:'🤝',fx:{dip:0.08,reb:-0.03},d:'조약 체결 확률 +8%, 반란 확률 −3%'},mer:{n:'상인 기질',ic:'💰',fx:{tax:0.05,upk:0.03},d:'세금 +5%, 병사 유지 비용 +3%'},fru:{n:'검소함',ic:'🪙',fx:{upk:-0.07},d:'병사 유지 비용 −7%'},kind:{n:'인자함',ic:'🕊️',fx:{reb:-0.08,mor:-0.02},d:'반란 확률 −8%, 사기 −2%'},sch:{n:'학자풍',ic:'📚',fx:{tech:0.06,gxp:0.03},d:'기술력 +6%, 장군 경험치 +3%'},amb:{n:'야심가',ic:'🔥',fx:{cons:-0.06,reb:0.05},d:'징집 비용 −6%, 반란 확률 +5%'}};
 const trView=k=>TR[k]?{n:TR[k].n,ic:TR[k].ic,d:TR[k].d}:{n:'평범함',ic:'·',d:'특별한 성향이 없어요.'};
@@ -3434,6 +3497,7 @@ function polTick(){G.players.forEach(p=>{if(!p.alive||p.landless)return;polEnsur
     if(p.isBot)polBot(p,wars);});papTick();empTick();missionTick();asmTick();minTick();resTick();pxTick();}
 function polBot(p,wars){const r=Math.random();
   if(p.gold>ASM_COST+150&&r<0.35){const L=G.terr.filter(T=>!T.sea&&T.owner===p.id&&T.st!=null&&T.st<60&&!asmOn(T));if(L.length)polAct(p.id,{op:"asm",v:L[0].id});}
+  if(!p.pm&&gensOf(p.id).length>=2&&p.gold>PM_COST+180&&r<0.08){const bg=rlBestGen(p);if(bg)polAct(p.id,{op:'pm',v:bg.id});}
   if(!p.code&&p.gold>CODE_COST+250&&r<0.04)polAct(p.id,{op:'code'});
   else if(p.pub<35&&p.stab<45&&refCd(p)===0&&p.gold>REF_COST+150&&r<0.3)polAct(p.id,{op:'ref'});
   else if(wars&&p.pub<40&&!pressOn(p)&&!pressCd(p)&&p.gold>PRESS_COST+200&&r<0.3)polAct(p.id,{op:'press'});
@@ -3445,7 +3509,7 @@ function polBot(p,wars){const r=Math.random();
   if(p.gov!=='emp'&&['mon','tot'].includes(p.gov)&&!polCd(p,'gov')&&!wars&&Math.random()<0.04&&!empBlock(p.id))setGov(p,'emp');
   if(p.pub<12&&wars&&Math.random()<0.2){const q=G.players.filter(x=>x.alive&&x.isBot&&x.id!==p.id&&isHostile(p.id,x.id)&&warBalance(p.id,x.id)<=0.1)[0];if(q){makeTruce(p.id,q.id);log(`여론에 밀린 ${p.kingdom}이(가) ${q.kingdom}과(와) 휴전했다.`,'dip');}}}
 function polView(pid){const p=G.players[pid];polEnsure(p);const nd=empNeed();return {gov:p.gov,fai:p.fai,pub:Math.round(p.pub),govT:inGovT(p)?p.govUntil-G.round:0,faiT:inFaiT(p)?p.faiUntil-G.round:0,govCd:polCd(p,'gov'),faiCd:polCd(p,'fai'),emp:empBlock(pid),empNeed:nd.land,
-  propCost:propCost(p),festCost:festCost(p),propCd:p.propAt==null?0:Math.max(0,p.propAt+PROP_CD-G.round),festCd:p.festAt==null?0:Math.max(0,p.festAt+FEST_CD-G.round),mor:+polMor(p).toFixed(2),inc:+polInc(p).toFixed(2),reb:+polReb(p).toFixed(2),base:govBase(p.kingdom),taxr:p.taxr==null?1:p.taxr,taxLock:p.taxAt==null?0:Math.max(0,p.taxAt+TAX_LOCK-G.round),decK:decOn(p)?p.dec.k:null,decLeft:decOn(p)?p.dec.until-G.round:0,decCd:decCd(p),decCost:decCost(p),cn:cnView(p),rl:rlView(p),pr:prView(p),tel:telView(p),ctl:ctlView(p),asm:asmView(p),pap:papView(p),emp:empView(p)};}
+  propCost:propCost(p),festCost:festCost(p),propCd:p.propAt==null?0:Math.max(0,p.propAt+PROP_CD-G.round),festCd:p.festAt==null?0:Math.max(0,p.festAt+FEST_CD-G.round),mor:+polMor(p).toFixed(2),inc:+polInc(p).toFixed(2),reb:+polReb(p).toFixed(2),base:govBase(p.kingdom),taxr:p.taxr==null?1:p.taxr,taxLock:p.taxAt==null?0:Math.max(0,p.taxAt+TAX_LOCK-G.round),decK:decOn(p)?p.dec.k:null,decLeft:decOn(p)?p.dec.until-G.round:0,decCd:decCd(p),decCost:decCost(p),cn:cnView(p),rl:rlView(p),pm:pmView(p),pr:prView(p),tel:telView(p),ctl:ctlView(p),asm:asmView(p),pap:papView(p),emp:empView(p)};}
 /* ---------- 시나리오 이벤트: 편집기에서 정한 턴에 선전포고·휴전·동맹·반란·금화·소식이 일어난다 ---------- */
 function winText(w){const P=i=>(G.players[i]?G.players[i].kingdom:'?');return w.k==='turns'?`${w.n}턴 동안 살아남기`:w.k==='terr'?`영토 ${w.n}곳 차지하기`:w.k==='gold'?`금화 ${w.n} 모으기`:w.k==='cap'?`${P(w.b)}의 수도 점령하기`:'';}
 function winCheck(){if(G.over||!G.wins||!G.wins.length)return;const lands=p=>owned(p.id).filter(t=>!t.sea).length;
@@ -6829,8 +6893,12 @@ Object.assign(UI,{
       <div style="margin-top:6px">${cn.seats.map(x=>`<div class="row" style="gap:8px;align-items:center;margin:3px 0"><span style="flex:1">${CNL[x.lean].ic} <b>${esc(x.name)}</b> <span class="muted sm">${CNL[x.lean].n}</span></span><button class="btn sm" data-act="pol" data-op="cnfire" data-v="${x.id}" ${tot<=CN_MIN||cn.acted?'disabled':''}>해고</button></div>`).join('')}</div>
       <div class="sm muted" style="margin:6px 0 2px">새 위원 임명 (${CN_HIRE}금, 한 턴에 한 번 · 해고하면 안정도 −2)</div>
       <div style="display:flex;flex-wrap:wrap;gap:4px">${Object.keys(CNL).map(k=>`<button class="btn sm" data-act="pol" data-op="cnhire" data-v="${k}" ${tot>=CN_MAX||cn.acted||me.gold<CN_HIRE?'disabled':''}>${CNL[k].ic} ${CNL[k].n}</button>`).join('')}</div></div>`;}}
-    {const rl=P.rl;if(rl){h+=`<h3>📜 유언장</h3><div class="card"><div class="row"><div><b>👑 ${esc(rl.n)}</b> <span class="tag">${rl.age}세</span> <span class="tag">${rl.tr.ic} ${rl.tr.n}</span></div><div class="sm muted">성향: ${rl.tr.d}</div></div><div class="sm muted" style="margin:4px 0 6px">군주가 늙으면 언제든 세상을 떠날 수 있어요. 후계자를 정해 두지 않으면 계승 전쟁이 나서 안정도 −25, 사기 하락, 영토 이탈이 생겨요.${rl.will?'':' <b style="color:var(--bad)">지금은 유언장이 비어 있어요.</b>'}${rl.cd?` <span style="color:var(--gold2)">${rl.cd}턴 뒤 고칠 수 있어요</span>`:''}</div>
-      ${Object.keys(RLW).map(k=>`<div class="row" style="gap:8px;align-items:center;margin:4px 0"><span style="flex:1"><b>${RLW[k].ic} ${RLW[k].n}</b>${k==='gen'&&rl.gen?` <span class="muted sm">(${esc(rl.gen)})</span>`:''}<div class="sm muted">${RLW[k].d}</div></span><button class="btn sm ${rl.will===k?'primary':''}" data-act="pol" data-op="will" data-v="${k}" ${rl.will===k||rl.cd?'disabled':''}>${rl.will===k?'지정됨':'지정'}</button></div>`).join('')}</div>`;}}
+    {const pm=P.pm;if(pm){h+=`<h3>🎩 총리</h3><div class="card"><div class="sm muted" style="margin-bottom:6px">장군 한 명을 총리로 임명하면 전선에서는 빠지지만 나라 살림을 도와요. 통솔은 세금, 수비는 반란 억제, 공격은 사기에 영향을 줘요.${pm.mul>1?` 지금 정치체제에서는 효과가 ×${pm.mul}배예요.`:''} 임명하면 ${PM_COST}금이 들고, 물러난 뒤 ${PM_CD}턴 안에는 다시 임명할 수 없어요. 총리는 왕위 계승에서 섭정이나 후계가 될 수 있어요.</div>
+      ${pm.has?`<div class="row" style="gap:8px;align-items:center"><span style="flex:1"><b>🎩 ${esc(pm.has.name)}</b> <span class="muted sm">공격 ${pm.has.atk} · 수비 ${pm.has.def} · 통솔 ${pm.has.lead}</span><div class="sm">세금 +${pm.tax}% · 반란 확률 −${pm.reb}% · 사기 +${pm.mor}%</div></span><button class="btn sm" data-act="pol" data-op="pmend">물러나게 하기</button></div>`:''}
+      <div class="sm muted" style="margin:6px 0 2px">${pm.has?'다른 장군으로 바꾸기':'임명할 장군'}${pm.cd?` · ${pm.cd}턴 뒤 가능`:''}${pm.can?'':' · 전선에 장군이 한 명은 남아야 해요'}</div>
+      ${pm.list.map(x=>`<div class="row" style="gap:8px;align-items:center;margin:3px 0"><span style="flex:1"><b>${esc(x.name)}</b> <span class="muted sm">공격 ${x.atk} · 수비 ${x.def} · 통솔 ${x.lead}</span></span><button class="btn sm primary" data-act="pol" data-op="pm" data-v="${x.id}" ${pm.cd||!pm.can||pm.gold<pm.cost?'disabled':''}>임명 ${pm.cost}금</button></div>`).join('')||'<div class="sm muted">임명할 수 있는 장군이 없어요.</div>'}</div>`;}}
+    {const rl=P.rl;if(rl){h+=`<h3>📜 유언장</h3><div class="card"><div class="row"><div><b>👑 ${esc(rl.n)}</b> <span class="tag">${rl.age}세</span> <span class="tag">${rl.tr.ic} ${rl.tr.n}</span></div><div class="sm muted">성향: ${rl.tr.d}</div></div><div class="sm muted" style="margin:4px 0 6px">군주가 늙으면 언제든 세상을 떠날 수 있어요. 후계자를 정해 두면 그대로 이어지고, 정해 두지 않으면 그때 상황에 맞는 후계를 직접 골라야 해요. 그것도 못 고르면 계승 전쟁이 나서 안정도 −25, 사기 하락, 영토 이탈이 생겨요. 같은 후계라도 전쟁 중인지, 안정도·여론이 어떤지에 따라 결과가 달라져요.${rl.will?'':' <b style="color:var(--bad)">지금은 유언장이 비어 있어요.</b>'}${rl.cd?` <span style="color:var(--gold2)">${rl.cd}턴 뒤 고칠 수 있어요</span>`:''}</div>
+      ${Object.keys(RLW).map(k=>`<div class="row" style="gap:8px;align-items:center;margin:4px 0"><span style="flex:1"><b>${RLW[k].ic} ${RLW[k].n}</b>${k==='gen'&&rl.gen?` <span class="muted sm">(${esc(rl.gen)})</span>`:''}<div class="sm muted">${RLW[k].d}</div>${rl.av[k]?`<div class="sm" style="color:var(--bad)">지금은 못 써요: ${rl.av[k]}</div>`:`<div class="sm" style="color:var(--gold2)">지금이라면: ${rl.hint[k]||'큰 변화 없음'}</div>`}</span><button class="btn sm ${rl.will===k?'primary':''}" data-act="pol" data-op="will" data-v="${k}" ${rl.will===k||rl.cd||rl.av[k]?'disabled':''}>${rl.will===k?'지정됨':'지정'}</button></div>`).join('')}</div>`;}}
     {const tl=P.tel;if(tl){h+=`<h3>📡 전신망</h3><div class="card"><div class="sm muted" style="margin-bottom:6px">전신선을 깔면 첩보 공작이 바로 실행되고 반란 확률이 8% 줄어요. 적의 파괴 공작에 선이 끊기면 ${TEL_CUT}턴 동안 쓸 수 없어요. (${TEL_YEAR}년 이후)</div>${tl.has?`<span class="tag good">전신망 가동 중</span>${tl.cut?` <span class="tag" style="color:var(--bad)">끊김 ${tl.cut}턴 남음</span>`:''}`:`<button class="btn primary sm" data-act="pol" data-op="tel" ${tl.gold<tl.cost?'disabled':''}>전신망 깔기 ${tl.cost}금</button>`}</div>`;}}
     {const a=P.asm;if(a&&a.n){h+=`<h3>🏙 점령지 동화</h3><div class="card"><div class="sm muted" style="margin-bottom:6px">새로 점령한 땅은 안정도가 매우 낮아서 소요와 독립 위험이 커요(안정도 ${ASM_LOW} 미만이면 수입이 줄고 건물이 멈춰요). 동화 정책을 펴면 ${a.t}턴 동안 안정도가 빨리 오르지만 주민이 일부 떠나 병력이 줄어요.</div>${a.list.map(x=>`<div class="row" style="gap:8px;align-items:center;margin:4px 0"><b style="flex:1">${esc(x.name)}</b><span class="tag${x.st<ASM_LOW?'':' good'}" style="${x.st<ASM_LOW?'color:var(--bad)':''}">안정 ${x.st}</span>${x.left?`<span class="tag good">동화 중 ${x.left}턴</span>`:`<button class="btn sm primary" data-act="pol" data-op="asm" data-v="${x.id}" ${a.gold<a.cost?'disabled':''}>동화 ${a.cost}금</button>`}</div>`).join('')}${a.n>a.list.length?`<div class="sm muted">그 밖에 ${a.n-a.list.length}곳이 더 있어요.</div>`:''}</div>`;}}
     {const c=P.ctl;if(c){const L=[];
