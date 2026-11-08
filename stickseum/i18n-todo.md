@@ -91,3 +91,4 @@ patchnotes.json | v755 title | 복서 봇·마법사·포탈 조정 | build 755 
 patchnotes.json | v755 items[0] | 복서 봇이 쉬지 않고 계속 연타하도록 수정 | build 755 | 2026-11-08
 patchnotes.json | v755 items[1] | 마법사 데미지 12에서 14로 상향 (한 번 관통하면 7) | build 755 | 2026-11-08
 patchnotes.json | v755 items[2] | 차원여행자 포탈은 만든 사람만 이용 가능 | build 755 | 2026-11-08
+patchnotes.json | v756 title+items | E키 2스킬 추가, 기본 체력 450 | build 756 | 2026-11-08
