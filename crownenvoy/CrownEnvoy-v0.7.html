@@ -559,7 +559,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 175</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 176</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div><p class="tagline">사절을 보내 동맹을 맺고, 군대를 보내 왕관을 차지하세요.</p></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -1135,7 +1135,7 @@ function conscriptCap(T){const k=KIND[TDEF[T.id].kind];const base=Math.max(10*UN
 const pendOf=pid=>G.terr.reduce((s,t)=>s+(t.pend?t.pend.reduce((q,x)=>q+(x.o===pid?x.n:0),0):0),0);
 function pendApply(){G.terr.forEach(t=>{if(!t.pend)return;t.pend.forEach(x=>{if(t.owner===x.o&&!t.sea)addUnits(t,null,{[x.ty]:x.n,v:{[x.ty]:oh(x.vv)}});});delete t.pend;});}
 function conscriptRoom(T){return Math.max(0,Math.floor((conscriptCap(T)-(T.drafted||0))/10)*10);}
-function conscriptCost(pid,n){const p=G.players[pid];return Math.ceil(n*CFG.conscript*(techHas(pid,'drill')?0.85:1)*(1+p.fat/200)*(underdog(pid)?0.8:1)*(G.gens.some(x=>x.owner===pid&&x.status==='ok'&&x.trait==='logistics')?0.88:1)*(1+pfx(pid,'cons'))*(1-0.07*nBld(pid,'forge',2)));}
+function conscriptCost(pid,n){const p=G.players[pid];return Math.ceil(n*CFG.conscript*(techHas(pid,'drill')?0.85:1)*(docOf(pid)==='mass'?0.85:1)*(1+p.fat/200)*(underdog(pid)?0.8:1)*(G.gens.some(x=>x.owner===pid&&x.status==='ok'&&x.trait==='logistics')?0.88:1)*(1+pfx(pid,'cons'))*(1-0.07*nBld(pid,'forge',2)));}
 
 /* ================= 게임 생성 ================= */
 /* ================= 터 잡기(드래프트)와 시작 배치 ================= */
@@ -1405,14 +1405,14 @@ function simulateBattle(A,D,rt){
     if(i===0){if(D.amb&&!(tA==='ambush')){dealtA*=1.25;note+='M';}if(tA==='ambush'){dealtD*=1.8;note+='A';}if(tD==='ambush'){dealtA*=1.8;note+='D';}}
     if(tD==='ironwall')dealtD*=0.8;if(A.sea||D.sea){if(tA==='navalwar'){dealtD*=1.5;dealtA/=1.5;}if(tD==='navalwar'){dealtA*=1.5;dealtD/=1.5;}}if(tA==='medic')dealtA*=0.9;if(tD==='medic')dealtD*=0.9;
     const lossD=Math.min(d,Math.round(dealtD)),lossA=Math.min(a,Math.round(dealtA));a-=lossA;d-=lossD;
-    mA-=8*lossA/a0*(tA==='stalwart'?0.6:1);mD-=8*lossD/d0*(tD==='stalwart'?0.6:1);if(lossA>lossD){mA-=0.5;mD+=0.3;}else if(lossD>lossA){mD-=0.5;mA+=0.3;}mA=clamp(mA,0,100);mD=clamp(mD,0,100);
+    mA-=8*lossA/a0*(tA==='stalwart'?0.6:1)*(docOf(A.pid)==='mass'?0.85:1);mD-=8*lossD/d0*(tD==='stalwart'?0.6:1)*(docOf(D.pid)==='mass'?0.85:1);if(lossA>lossD){mA-=0.5;mD+=0.3;}else if(lossD>lossA){mD-=0.5;mA+=0.3;}mA=clamp(mA,0,100);mD=clamp(mD,0,100);
     phases.push({a,d,mA:Math.round(mA),mD:Math.round(mD),lossA,lossD,note});
     if(rt&&i===rt.k){loser=rt.side;phases[phases.length-1].rout=loser;phases[phases.length-1].retreat=1;break;}
     const decided=(a0-a)+(d0-d)>=minDead;const bA=a<=0||(mA<=thr(A)&&decided&&a<d*1.2),bD=d<=0||(mD<=thr(D)&&decided&&d<a*1.2);/* 사기가 기준 아래로 떨어지면 병력과 무관하게 그 자리에서 패주 */if(bA||bD){loser=(bA&&bD)?(mA<mD?'att':'def'):(bA?'att':'def');if(i<3&&phases.length)phases[phases.length-1].rout=loser;break;}
   }
   if(!loser){const [modA,modD]=mods();loser=a*(1+modA)>=d*(1+modD)?'def':'att';phases[phases.length-1].rout=loser;}
   const winner=loser==='att'?'def':'att';const wGen=winner==='att'?A.gen:D.gen;
-  let ls=loser==='att'?a:d;const need=Math.max(0,Math.round(minDead-((a0-a)+(d0-d))));const pl=rt?Math.round(ls*0.05):Math.min(ls,Math.max(Math.round(ls*(0.15+(wGen&&wGen.trait==='pursuer'?0.15:0))),need));ls-=pl;
+  let ls=loser==='att'?a:d;const need=Math.max(0,Math.round(minDead-((a0-a)+(d0-d))));const lDoc=loser==='att'?docOf(A.pid):docOf(D.pid);let pl=rt?Math.round(ls*0.05):Math.min(ls,Math.max(Math.round(ls*(0.15+(wGen&&wGen.trait==='pursuer'?0.15:0))),need));if(lDoc==='mob')pl=Math.round(pl/2);ls-=pl;
   let aS=loser==='att'?ls:a,dS=loser==='def'?ls:d;if(winner==='att')aS=Math.max(1,aS);else dS=Math.max(1,dS);
   return {phases,winner,loser,retreat:rt?rt.side:null,aSurv:aS,dSurv:dS,pursuit:pl,aStart:a0,dStart:d0,mStart:[Math.round(mA0),Math.round(mD0)],bonus:D.bonus,fm:A.form&&D.form?{a:A.form,d:D.form,w:fe[2]}:null};
 }
@@ -2730,10 +2730,10 @@ function botChat(pid,from){return pick(BOT_LINES);}
 
 /* ---------- 통계와 역사 기록 ---------- */
 const pst=p=>p.stat||(p.stat={fought:0,won:0,killed:0,lost:0,capt:0,lostT:0,wars:0,goals:0});
-function statBattle(rec){if(!rec||rec.walkover)return;const aL=Math.max(0,(rec.aStart||0)-(rec.aSurv||0)),dL=Math.max(0,(rec.dStart||0)-(rec.dSurv||0));
+function statBattle(rec){if(!rec||rec.walkover)return;try{presBattle(rec);}catch(e){}const aL=Math.max(0,(rec.aStart||0)-(rec.aSurv||0)),dL=Math.max(0,(rec.dStart||0)-(rec.dSurv||0));
   const a=G.players[rec.att];if(a){const s=pst(a);s.fought++;s.lost+=aL;s.killed+=dL;if(rec.winner==='att')s.won++;}
   if(rec.def!=null&&G.players[rec.def]){const s=pst(G.players[rec.def]);s.fought++;s.lost+=dL;s.killed+=aL;if(rec.winner!=='att')s.won++;}}
-function statCapture(pid,old,tid,isCap){if(pid==null||!G.players[pid])return;pst(G.players[pid]).capt++;if(old!=null&&G.players[old]){pst(G.players[old]).lostT++;if(isCap)G.players[old].capLostAt=G.round;goalCapture(pid,old,tid,!!isCap);}}
+function statCapture(pid,old,tid,isCap){if(pid==null||!G.players[pid])return;presAdd(pid,isCap?8:2);if(old!=null)presAdd(old,isCap?-8:-2);pst(G.players[pid]).capt++;if(old!=null&&G.players[old]){pst(G.players[old]).lostT++;if(isCap)G.players[old].capLostAt=G.round;goalCapture(pid,old,tid,!!isCap);}}
 function histSnap(final){if(!G)return;if(!G.hist)G.hist=[];const own=(final||G.round%2===1||G.hist.length===0)?G.terr.map(t=>t.owner==null?-1:t.owner):null;
   G.hist.push({r:G.round,d:ymOf(G.round),t:G.players.map(p=>owned(p.id).length),k:G.players.map(p=>totalTroops(p.id)),o:own});if(G.hist.length>1200)G.hist.shift();}
 function summaryData(){const st=G.players.map(p=>{const s=pst(p);return {id:p.id,kingdom:p.kingdom,color:p.color,alive:p.alive,vp:p.vp,landless:!!p.landless,fought:s.fought,won:s.won,killed:s.killed,lost:s.lost,capt:s.capt,lostT:s.lostT,wars:s.wars,goals:s.goals,terrs:owned(p.id).length,troops:totalTroops(p.id),home:G.terr.filter(t=>t.home===p.id&&!t.sea).length,tech:(p.tech?p.tech.done.length:0)};});
@@ -2945,18 +2945,33 @@ const TECH=[
  {id:'bow',n:'장궁 부대',cost:220,desc:'보병을 궁병으로 업그레이드할 수 있어요',yr:-9999,req:['plate','fort'],med:1},
  {id:'spg',n:'자주포',cost:360,desc:'포병을 자주포로 업그레이드할 수 있어요',yr:1935,req:['art','mech']}];
 const techHas=(pid,id)=>{const p=G.players[pid];return !!(p&&p.tech&&p.tech.done.includes(id));};
+/* ---------- 군사 교리: 한 가지를 골라 그 나라의 싸우는 방식을 정한다 ---------- */
+const DOCT={def:{n:'방어 교리',ic:'🛡',d:'방어 +6%, 참호·요새 비용 −20%'},mob:{n:'기동 교리',ic:'🏇',d:'공격 +5%, 후퇴할 때 추격 피해 절반'},mass:{n:'물량 교리',ic:'👥',d:'징집 비용 −15%, 전투 중 사기가 덜 떨어져요 (−15%)'}};
+const DOC_FIRST=80,DOC_SW=200;
+const docOf=pid=>{const p=pid!=null?G.players[pid]:null;return p&&p.doc||null;};
+function botDoc(p){const k=p.persona;return k==='turtle'?'def':(k==='conq'||k==='opp'||k==='avenger')?'mob':k==='total'?'mass':['def','mob','mass'][Math.floor(Math.random()*3)];}
+/* ---------- 위신: 승전·점령·연구·속국으로 쌓이고 패전·영토를 잃으면 깎인다. 순위가 높으면 외교 제안이 잘 받아들여진다 ---------- */
+const presInit=p=>Math.round(8+owned(p.id).length*1.2);
+const presOf=pid=>{const p=G.players[pid];if(!p)return 0;if(p.pres==null)p.pres=presInit(p);return p.pres;};
+function presAdd(pid,d){const p=pid!=null?G.players[pid]:null;if(!p||!d)return;p.pres=clamp(presOf(pid)+d,0,400);}
+function presRanks(){const m={};G.players.filter(x=>x.alive&&!x.landless).map(x=>[x.id,presOf(x.id)]).sort((a,b)=>b[1]-a[1]).forEach((e,i)=>{m[e[0]]=i;});return m;}
+const presRank=pid=>{const r=presRanks()[pid];return r==null?99:r;};
+function presBattle(rec){const w=rec.winner==='att'?rec.att:rec.def,l=rec.winner==='att'?rec.def:rec.att;if(w==null||l==null||w===l)return;
+  const wS=rec.winner==='att'?rec.aStart:rec.dStart,lS=rec.winner==='att'?rec.dStart:rec.aStart;const m=1+(lS>=1500?1:0)+(wS<lS*0.75?1:0);presAdd(w,m);presAdd(l,-Math.ceil(m/2)-(rec.retreat?0:0));}
+function presTick(p){const v=G.treaties.filter(t=>t.type==='vassal'&&t.a===p.id).length;presAdd(p.id,0.3+0.05*owned(p.id).length+0.4*v-(presOf(p.id)>150?0.5:0));
+  if(p.over!=null&&G.players[p.over]&&G.round%10===0&&presOf(p.over)<presOf(p.id)*0.6&&Math.random()<0.08){releaseVassal(p.over,p.id);}}
 const MED_HIDE=['cuir','rifle','assault','tank','spg','mech','air'];const techVis=t=>ERA==='med'?!(MED_HIDE.includes(t.id)||t.yr>=1700):!t.med;
 const techYear=()=>{const d=ymOf(G.round);return d?d.y:null;};
 function techBlock(pid,t){if(techHas(pid,t.id))return '이미 연구했어요.';if(!techVis(t))return '이 시대에는 없는 기술이에요.';const y=techYear();if(y!=null&&y<t.yr)return `${t.yr}년 이후에 연구할 수 있어요.`;const miss=(t.req||[]).filter(r=>!techHas(pid,r));if(miss.length)return `먼저 필요: ${miss.map(r=>TECH.find(x=>x.id===r).n).join(', ')}`;return null;}
-const techAtk=pid=>(techHas(pid,'gunp')?0.06:0)+(techHas(pid,'art')?0.04:0)+(techHas(pid,'mech')?0.08:0)+pfx(pid,'atk');
-const techDef=pid=>(techHas(pid,'fort')?0.05:0)+(techHas(pid,'air')?0.06:0);
+const techAtk=pid=>(techHas(pid,'gunp')?0.06:0)+(techHas(pid,'art')?0.04:0)+(techHas(pid,'mech')?0.08:0)+(docOf(pid)==='mob'?0.05:0)+pfx(pid,'atk');
+const techDef=pid=>(techHas(pid,'fort')?0.05:0)+(techHas(pid,'air')?0.06:0)+(docOf(pid)==='def'?0.06:0);
 const techSea=pid=>(techHas(pid,'ship')?0.4:0)+(techHas(pid,'steam')?0.4:0);
-const fortCostOf=pid=>Math.round(CFG.fortCost*(techHas(pid,'fort')?0.7:1)*(1+pfx(pid,'bld')));
-const trenchCostOf=pid=>Math.round(CFG.trenchCost*(techHas(pid,'fort')?0.7:1));
+const fortCostOf=pid=>Math.round(CFG.fortCost*(techHas(pid,'fort')?0.7:1)*(docOf(pid)==='def'?0.8:1)*(1+pfx(pid,'bld')));
+const trenchCostOf=pid=>Math.round(CFG.trenchCost*(techHas(pid,'fort')?0.7:1)*(docOf(pid)==='def'?0.8:1));
 const scoutCostOf=pid=>Math.round(CFG.scoutCost*(techHas(pid,'air')?0.5:1));
 function techPick(pid){const L=TECH.filter(t=>!techBlock(pid,t)).sort((a,b)=>a.cost-b.cost);return L.length?L[Math.min(L.length-1,Math.random()<0.3?1:0)].id:null;}
 const techGain=p=>Math.max(3,Math.round((3+Math.max(0,income(p.id))*0.02+(p.landless?3:0))*(1+(polFx(p).tech||0)+0.2*nBld(p.id,'univ',3))+4*nBld(p.id,'univ',3)));
-function techView(pid){const p=G.players[pid];const t=p.tech||{done:[],cur:null,pool:0};return {up:upgView(pid),done:t.done,cur:t.cur,pool:Math.round(t.pool),gain:techGain(p),list:TECH.filter(techVis).map(x=>({id:x.id,n:x.n,cost:x.cost,desc:x.desc,yr:x.yr,block:techBlock(pid,x)}))};}
+function techView(pid){const p=G.players[pid];const t=p.tech||{done:[],cur:null,pool:0};return {doc:p.doc||null,docCost:p.doc?DOC_SW:DOC_FIRST,pres:Math.round(presOf(pid)),prk:presRank(pid)+1,up:upgView(pid),done:t.done,cur:t.cur,pool:Math.round(t.pool),gain:techGain(p),list:TECH.filter(techVis).map(x=>({id:x.id,n:x.n,cost:x.cost,desc:x.desc,yr:x.yr,block:techBlock(pid,x)}))};}
 
 /* ---------- 선택지가 있는 사건 ---------- */
 function resolveChoice(id,i){const k=(G.choices||[]).findIndex(c=>c.id===id);if(k<0)return false;const c=G.choices[k];G.choices.splice(k,1);const fn=G._cfn&&G._cfn[id]&&G._cfn[id][i];if(G._cfn)delete G._cfn[id];if(fn)fn();log(`${G.players[c.pid].kingdom}의 결정: ${c.head} → ${c.opts[i]}`,'sys');return true;}
@@ -2983,9 +2998,9 @@ function landlessMoves(pid,orders,usedNow){let mv=0;G.terr.forEach(T=>{if(mv>=3|
 
 /* ---------- 정산마다 돌아가는 확장 규칙 ---------- */
 function extSettle(){
-  G.players.forEach(p=>{if(!p.alive)return;p.tech=p.tech||{done:[],cur:null,pool:0};p.tech.pool+=techGain(p);
+  G.players.forEach(p=>{if(!p.alive)return;p.tech=p.tech||{done:[],cur:null,pool:0};p.tech.pool+=techGain(p);presTick(p);if(p.isBot&&!p.doc&&G.round>=3&&p.gold>=DOC_FIRST+60){p.gold-=DOC_FIRST;p.doc=botDoc(p);}
     if(p.isBot&&!p.tech.cur){const c=techPick(p.id);if(c)p.tech.cur=c;}
-    const cur=TECH.find(x=>x.id===p.tech.cur);if(cur&&p.tech.pool>=cur.cost&&!techBlock(p.id,cur)){p.tech.pool-=cur.cost;p.tech.done.push(cur.id);p.tech.cur=null;log(`${p.kingdom}이(가) '${cur.n}'을(를) 개발했다.`,'sys');wlog('tech',p.id,null,`${snm(p.id)}이(가) '${cur.n}'을(를) 개발했다`);hooks.toast(p.id,`연구 완료: ${cur.n} — ${cur.desc}`);}});
+    const cur=TECH.find(x=>x.id===p.tech.cur);if(cur&&p.tech.pool>=cur.cost&&!techBlock(p.id,cur)){p.tech.pool-=cur.cost;p.tech.done.push(cur.id);presAdd(p.id,2);p.tech.cur=null;log(`${p.kingdom}이(가) '${cur.n}'을(를) 개발했다.`,'sys');wlog('tech',p.id,null,`${snm(p.id)}이(가) '${cur.n}'을(를) 개발했다`);hooks.toast(p.id,`연구 완료: ${cur.n} — ${cur.desc}`);}});
   G.players.forEach(p=>{if(p.alive&&p.isBot&&Math.random()<0.5)aiUpgrade(p.id);});
   objTick();ambTick();facTick();bondTick();bandTick();
   tributes();goalsTick();landlessReinforce();polTick();rebellionTick();extNew();succTick();cowarTick();scenEvTick();spyOpsTick();histSnap();}
@@ -3421,6 +3436,7 @@ function extAct(pid,m){const p=G.players[pid];const inPlan=G.phase==='plan';if(m
   if(m.a==='mark'){if(G.over)return fail('게임이 끝났어요.');const k=m.k==='arrow'?'arrow':'pin',a=+m.x,b=+m.y;if(!G.terr[a])return fail('대상 오류');if(k==='arrow'&&(!G.terr[b]||a===b))return fail('대상 오류');G.marks=(G.marks||[]).filter(x=>G.round-x.r<5);const mine=G.marks.filter(x=>x.pid===pid);if(mine.length>=6)G.marks=G.marks.filter(x=>x!==mine[0]);G.marks.push({id:G.uid++,pid,k,a,b:k==='arrow'?b:null,r:G.round});return ok('계획을 표시했어요. 동맹도 볼 수 있어요.');}
   if(m.a==='markclr'){G.marks=(G.marks||[]).filter(x=>x.pid!==pid);return ok('내 계획 표시를 지웠어요.');}
   switch(m.a){
+  case 'doctrine':{const d=DOCT[m.id];if(!d)return fail('교리 오류');if(p.doc===m.id)return fail('이미 이 교리예요.');const cost=p.doc?DOC_SW:DOC_FIRST;if(p.gold<cost)return fail(`금화가 부족합니다 (필요 ${cost})`);p.gold-=cost;if(p.doc)morAdd(p,-3,'교리 변경');p.doc=m.id;return ok(`${d.n}를 채택했어요. (${d.d})`);}
   case 'research':{const t=TECH.find(x=>x.id===m.id);if(!t)return fail('기술 오류');const why=techBlock(pid,t);if(why)return fail(why);p.tech=p.tech||{done:[],cur:null,pool:0};p.tech.cur=t.id;return ok(`${t.n} 연구를 시작했어요. (필요 ${t.cost}, 한 달에 약 ${techGain(p)} 쌓여요)`);}
   case 'colonize':{if(!inPlan)return fail('계획 단계에서만 가능합니다.');const T=G.terr[+m.tid];const tg=colTargets(pid);if(!T||tg[T.id]==null)return fail('개척할 수 없는 땅이에요. 내 영토나 내 함대와 맞닿은 주인 없는 땅만 가능해요.');
     const cost=tg[T.id];if(p.gold<cost)return fail(`금화가 부족합니다 (필요 ${cost})`);p.gold-=cost;T.owner=pid;T.home=pid;T.troops=Math.max(30*UN,Math.round(Math.min(T.troops*0.5,1500)/10)*10);T.unrest=2;
@@ -4078,6 +4094,7 @@ function dipScore(pid,pr){const p=G.players[pid];const op=opnOf(pid,pr.from);let
   if(T==='passage'){s+=common?10:-2;if(p.persona==='turtle')s-=4;}
   if(T==='alliance'){s+=common?26:-12;if(p.persona==='dipl')s+=8;if((per.war||1)>=1.5)s-=6;if(treatyBetween(pid,pr.from,'nap'))s+=6;const rp=totalTroops(pr.from)/Math.max(1,totalTroops(pid));if(rp>1.5)s+=6;else if(rp<0.5)s-=6;}
   if(['nap','trade','passage','alliance'].includes(T)&&sameEth(pid,pr.from))s+=8;
+  if(['nap','trade','passage','alliance'].includes(T)){s+=clamp((presOf(pr.from)-presOf(pid))*0.08,-5,7)+(presRank(pr.from)<3?3:0);}
   const sw=pr.sweet||0;if(sw>0)s+=Math.min(40,sw/(30+p.gold*0.06)*12);
   return {s,thr:(DIP_TH[T]||20)*(1-pfx(pr.from,'dip')),op,common};}
 function dipReason(pid,pr,sc){if(pr.type==='alliance'&&!sc.common)return '함께 맞설 공동의 적이 없어서';const neg=sc.op.items.filter(x=>x.v<0).sort((a,b)=>a.v-b.v)[0];if(sc.op.total<0&&neg)return `관계가 좋지 않아서(${neg.t} ${neg.v})`;if(sc.op.total<20)return '아직 신뢰할 만큼 가깝지 않아서';return '지금은 득이 크지 않다고 봐서';}
@@ -6686,6 +6703,7 @@ const UI={
       case 'loan':send({a:'loan',to:+d.to,amt:+d.amt});break;
       case 'barter':{const to=+d.to,gv=id=>(document.getElementById(id)||{}).value;send({a:'barter',to,give:gv('bg'+to),gn:+gv('bgn'+to)||0,get:gv('bt'+to),gm:+gv('bgm'+to)||0});break;}
       case 'research':send({a:'research',id:d.id});break;
+      case 'doctrine':send({a:'doctrine',id:d.id});break;
       case 'pol':{const op=d.op,val=d.v;if(op==='gov'){const g=GOV[val];UI.ask(`${g.n}(으)로 바꿀까요? ${GOV_T}턴 동안 사기 −50%, 반란 확률 2배, 수입 2배가 되고 ${GOV_CD}턴 동안 다시 못 바꿔요.`,()=>send({a:'pol',op,v:val}),{yes:'바꾸기'});}else if(op==='fai'){const f=FAITH[val];UI.ask(`${f.n}(으)로 개종할까요? ${FAI_T}턴 동안 반란 확률 +70%, 사기 +50%, 수입 +20%가 되고 ${FAI_CD}턴 동안 다시 못 바꿔요.`,()=>send({a:'pol',op,v:val}),{yes:'개종'});}else send({a:'pol',op,v:val});break;}
       case 'colonize':send({a:'colonize',tid:+d.tid});break;
       case 'fac':send({a:'fac',k:d.k,op:d.op});break;
@@ -6781,7 +6799,9 @@ Object.assign(UI,{
   tabTech(){const v=C.view,t=v.tch;if(!t)return '<div class="card muted sm">관전 중에는 기술을 볼 수 없어요.</div>';
     const cur=t.list.find(x=>x.id===t.cur);const bar=(a,b)=>`<div style="height:8px;background:#0d1626;border-radius:6px;overflow:hidden;margin:4px 0"><div style="height:100%;width:${Math.max(0,Math.min(100,Math.round(a/b*100)))}%;background:linear-gradient(90deg,#c9a24a,#ffd45e)"></div></div>`;
     const upg=t.up?`<h3>병종 업그레이드</h3>${UT.map(ty=>{const x=t.up[ty];const maxed=x.next==null;return `<div class="card" style="${x.ready?'border-left-color:var(--gold)':''}"><div class="row"><div><b>${UT_NAME[ty]}</b> <span class="tag good">${esc(x.name)}</span>${maxed?'':` <span class="muted sm">→</span> <b>${esc(x.next)}</b>`}<div class="sm muted">${fmt(x.units)}명${maxed?' · 최고 단계예요':''}</div></div>${maxed?'':`<button class="btn sm ${x.ready?'primary':''}" style="flex:none" data-act="upgrade" data-t="${ty}" ${x.ready&&mePl().gold>=x.cost?'':'disabled'}>업그레이드 ${x.cost}금</button>`}</div>${maxed?'':`<div class="sm" style="margin-top:4px;color:${x.ready?'var(--good)':'var(--bad)'}">${x.ready?'기술이 준비됐어요.':`먼저 '${esc(x.needName)}' 기술을 연구하세요.`}</div>`}</div>`;}).join('')}`:'';
-    let h=upg+`<h3>시대 기술 <span class="muted sm">연구 ${t.done.length}/${t.list.length}</span></h3><div class="card"><div class="sm">매달 약 <b>${t.gain}</b> 포인트가 쌓여요. (수입이 많을수록 빨라요)</div>${cur?`<div style="margin-top:6px"><b>연구 중: ${esc(cur.n)}</b> <span class="muted sm">${t.pool}/${cur.cost}</span>${bar(t.pool,cur.cost)}<div class="sm muted">${esc(cur.desc)}</div></div>`:`<div class="sm" style="margin-top:6px;color:var(--gold2)">연구 중인 기술이 없어요. 아래에서 고르세요. (모아 둔 포인트: ${t.pool})</div>`}</div>`;
+    const dcs=Object.keys(DOCT).map(k=>{const d=DOCT[k],on=t.doc===k;return `<div class="card" style="${on?'border-left-color:var(--gold)':''}"><div class="row"><b>${d.ic} ${d.n}</b>${on?'<span class="tag good" style="flex:none">채택</span>':`<button class="btn sm primary" style="flex:none" data-act="doctrine" data-id="${k}" ${mePl().gold>=t.docCost?'':'disabled'}>${t.doc?'바꾸기':'채택'} ${t.docCost}금</button>`}</div><div class="sm muted">${d.d}</div></div>`;}).join('');
+    const dct=`<h3>군사 교리 <span class="muted sm">위신 ${t.pres} · ${t.prk}위</span></h3><div class="sm muted" style="margin-bottom:4px">${t.doc?'교리를 바꾸면 사기가 조금 떨어져요.':'하나를 골라 싸우는 방식을 정하세요.'} 위신은 승전·점령·연구로 쌓여요. 순위가 높으면 외교 제안이 잘 받아들여져요.</div>${dcs}`;
+    let h=dct+upg+`<h3>시대 기술 <span class="muted sm">연구 ${t.done.length}/${t.list.length}</span></h3><div class="card"><div class="sm">매달 약 <b>${t.gain}</b> 포인트가 쌓여요. (수입이 많을수록 빨라요)</div>${cur?`<div style="margin-top:6px"><b>연구 중: ${esc(cur.n)}</b> <span class="muted sm">${t.pool}/${cur.cost}</span>${bar(t.pool,cur.cost)}<div class="sm muted">${esc(cur.desc)}</div></div>`:`<div class="sm" style="margin-top:6px;color:var(--gold2)">연구 중인 기술이 없어요. 아래에서 고르세요. (모아 둔 포인트: ${t.pool})</div>`}</div>`;
     h+=t.list.map(x=>{const done=t.done.includes(x.id),isCur=t.cur===x.id;return `<div class="card" style="${done?'border-left-color:var(--good)':isCur?'border-left-color:var(--gold)':''}"><div class="row"><b>${esc(x.n)}</b><span class="sm muted" style="flex:none">${done?'<span class="tag good">완료</span>':`필요 ${x.cost}`}</span></div><div class="sm muted">${esc(x.desc)}${x.yr>-9000?` · ${x.yr}년~`:''}</div>${done?'':`<div class="row" style="margin-top:6px"><button class="btn sm ${isCur?'':'primary'}" data-act="research" data-id="${x.id}" ${x.block||isCur?'disabled':''}>${isCur?'연구 중':'연구하기'}</button><span class="sm muted" style="flex:2">${x.block?esc(x.block):''}</span></div>`}</div>`;}).join('');
     return h;},
 
@@ -8102,7 +8122,7 @@ extBot=function(pid){_eb(pid);try{botSph(pid);const ov=overlordOf(pid);if(ov!=nu
 const _mkv=makeView;
 makeView=function(pid,opts){const v=_mkv(pid,opts);
   try{const me=pid!=null?G.players[pid]:null;
-    v.tplId=G.tplId||null;v.players.forEach(o=>{const p=G.players[o.id];o.nk=p.nkey||null;o.inf=Math.round(p.inf||0);o.vlv=lvOf(o.id);
+    v.tplId=G.tplId||null;const _pr=presRanks();v.players.forEach(o=>{const p=G.players[o.id];o.pres=Math.round(presOf(o.id));o.prk=_pr[o.id]==null?null:_pr[o.id]+1;o.nk=p.nkey||null;o.inf=Math.round(p.inf||0);o.vlv=lvOf(o.id);
       let top=null;G.players.forEach(z=>{const pt=(z.sph&&z.sph[o.id])||0;if(pt>=20&&(!top||pt>top[1]))top=[z.id,Math.round(pt)];});if(top)o.spo=top;
       if(me&&o.id!==pid){const mp=(me.sph||{})[o.id];if(mp)o.mysph=Math.round(mp);if((me.sc||[]).includes(o.id))o.mysc=1;}
       if(me&&o.id===pid)o.scN=(me.sc||[]).length;});
@@ -8426,7 +8446,7 @@ const CSS=`#ncard{position:fixed;inset:0;z-index:9000;background:rgba(6,10,18,.8
 function box(){let b=document.getElementById('ncard');if(!b){const st=document.createElement('style');st.textContent=CSS;document.head.appendChild(st);b=document.createElement('div');b.id='ncard';b.className='hidden';document.body.appendChild(b);
   b.addEventListener('click',e=>{if(e.target===b)UI.back();});}return b;}
 const cnt=(v,id)=>v.terr.reduce((s,t)=>s+((t.owner===id&&TDEF[t.id].kind!=='sea')?1:0),0);
-const METR=[['영토',(v,p)=>cnt(v,p.id)],['병력',(v,p)=>p.troops],['금화',(v,p)=>p.gold],['사기',(v,p)=>p.morale],['안정',(v,p)=>p.stab],['승점',(v,p)=>p.vp],['신뢰도',(v,p)=>p.trust],['악명',(v,p)=>p.inf]];
+const METR=[['영토',(v,p)=>cnt(v,p.id)],['위신',(v,p)=>p.pres],['병력',(v,p)=>p.troops],['금화',(v,p)=>p.gold],['사기',(v,p)=>p.morale],['안정',(v,p)=>p.stab],['승점',(v,p)=>p.vp],['신뢰도',(v,p)=>p.trust],['악명',(v,p)=>p.inf]];
 const num=x=>x==null?'?':Math.round(x).toLocaleString();
 function row(v,label,p,get,mx){const x=get(v,p);return `<div class="nc-row"><span class="l">${label}</span><div class="nc-bar"><i style="width:${x==null?0:Math.max(2,Math.round(x/mx*100))}%;background:${label==='악명'?(x>=70?'#b02a2a':x>=40?'#d08a2a':'#8a8f99'):p.color}"></i></div><b>${num(x)}</b></div>`;}
 function renderCard(v){const p=v.players[NC.id];if(!p)return '';const me=v.players[v.me];const R=rulerOf(v,p);const g=GOV[p.gov]||GOV.mon;
