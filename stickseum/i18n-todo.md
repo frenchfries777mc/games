@@ -70,3 +70,6 @@ patchnotes.json | v748 items[2] | 소형 맵 시작 위치 최대 4개, 중형 �
 patchnotes.json | v749 title | 마법사 데미지 조정 | build 749 | 2026-11-07
 patchnotes.json | v749 items[0] | 마법사 화염구 데미지 14에서 16으로 상향 | build 749 | 2026-11-07
 patchnotes.json | v749 items[1] | 발판·벽·플레이어를 한 번 통과하면 데미지가 8로 감소 | build 749 | 2026-11-07
+balance.html | how li 1 | 같은 실력(어려움)의 봇들을 모든 모드에서 겨루게 했어요. 캐릭터는 랜덤으로 뽑고 한 판에 겹치지 않아요. | b749 | 2026-11-08
+balance.html | how li 2 | 캐릭터마다 모드별 6판 이상, 모두 {0}판이에요. | b749 | 2026-11-08
+balance.html | panel games | {0}판 | b749 | 2026-11-08
