@@ -972,15 +972,15 @@ sting();})();</script>
   <div id="healthWrap"><div id="healthLabel">체력<span id="weaponSep"> · </span><span id="weaponLabel"></span></div><div id="healthBar"><div id="healthFill"></div></div></div>
   <div id="vacuumStackWrap" style="display:none;"><div id="vacuumStackLabel">스택 <span id="vacuumStackCount">0</span>/8</div><div id="vacuumStackDots"></div></div>
   <div id="dashWrap"><div id="dashLabel">대쉬 (Q)</div><div id="dashBar"><div id="dashFill"></div></div></div>
-  <div id="teleportWrap"><div id="teleportLabel">2스킬 (E)</div><div id="teleportBar"><div id="teleportFill"></div></div></div>
+  <div id="teleportWrap"><div id="teleportLabel">순간이동 (E+클릭)</div><div id="teleportBar"><div id="teleportFill"></div></div></div>
   <div id="ultWrap"><div id="ultLabel">궁극기 (R)</div><div id="ultBar"><div id="ultFill"></div></div></div>
   <div id="skillWrap" style="display:none;"><div id="skillLabel">스킬 (F)</div><div id="skillBar"><div id="skillFill"></div></div></div>
   <div id="enemyWrap" style="display:none; margin-left:auto; text-align:right; min-width:130px;">
     <div id="enemyNameLabel"></div>
-    <div id="enemyDots"><span class="enemyDot" id="enemyDotUlt" title="궁극기"></span><span class="enemyDot" id="enemyDotTp" title="2스킬"></span><span class="enemyDot" id="enemyDotDash" title="대쉬"></span></div>
+    <div id="enemyDots"><span class="enemyDot" id="enemyDotUlt" title="궁극기"></span><span class="enemyDot" id="enemyDotTp" title="순간이동"></span><span class="enemyDot" id="enemyDotDash" title="대쉬"></span></div>
     <div id="enemyHealthBar"><div id="enemyHealthFill"></div></div>
   </div>
-  <div id="controls-hint">A/D 이동 · W·Space 점프 · 마우스 조준 · 클릭 발사<br>Q 대쉬 · E 2스킬 · R 궁극기 · F 스킬: <b style="color:#7fffd4">눌렀다 떼면 발동 · 꾹 누르면 조준 표시 · 누른 채 클릭하면 그 위치로</b> (Esc/우클릭 취소) · Tab 순위</div>
+  <div id="controls-hint">A/D 이동 · W·Space 점프 · 마우스 조준 · 클릭 발사<br>Q 대쉬 · E 순간이동 · R 궁극기 · F 스킬: <b style="color:#7fffd4">눌렀다 떼면 발동 · 꾹 누르면 조준 표시 · 누른 채 클릭하면 그 위치로</b> (Esc/우클릭 취소) · Tab 순위</div>
   </div>
   <div id="killFeed"></div>
   <div id="killBanner"></div>
@@ -1022,7 +1022,7 @@ sting();})();</script>
 
 <div id="practicePanel" style="display:none; position:fixed; left:12px; top:92px; z-index:25; width:178px; background:rgba(14,16,22,.9); border:1px solid #2a2f3a; border-radius:10px; padding:10px;">
     <div id="pracHead" style="font-weight:800; font-size:13px;" title="누르면 접고 펼쳐요">🎯 연습 모드 <span style="font-weight:400; color:#8890a4;">▾</span></div>
-    <div style="font-size:10.5px; color:#8890a4; margin-top:2px; line-height:1.4;">보상 없음 · 궁극기 3초 · 스킬 2초 · 2스킬 2초</div>
+    <div style="font-size:10.5px; color:#8890a4; margin-top:2px; line-height:1.4;">보상 없음 · 궁극기 3초 · 스킬 2초 · 순간이동 2초</div>
     <select id="pracWeaponSel" title="캐릭터 바꾸기"></select>
     <button id="pracAddStill">허수아비 +</button>
     <button id="pracAddMoving">움직이는 허수아비 +</button>
@@ -1121,7 +1121,7 @@ sting();})();</script>
   <div class="card" id="practiceScreen" style="width:min(560px,94vw); max-height:92vh; overflow-y:auto;">
     <button class="backlink" id="practiceBackBtn" style="position:absolute; top:14px; right:14px; margin:0;">&larr; 뒤로가기</button>
     <h2 style="margin:0;">🎯 연습 모드</h2>
-    <div style="font-size:12px; color:var(--text-dim); margin:4px 0 0; line-height:1.5;">혼자서 캐릭터와 궁극기·스킬을 마음껏 연습해요. 궁극기·스킬·2스킬 쿨타임이 짧고, 경험치·sC·도전과제·숙련도는 쌓이지 않아요.</div>
+    <div style="font-size:12px; color:var(--text-dim); margin:4px 0 0; line-height:1.5;">혼자서 캐릭터와 궁극기·스킬을 마음껏 연습해요. 궁극기·스킬·순간이동 쿨타임이 짧고, 경험치·sC·도전과제·숙련도는 쌓이지 않아요.</div>
     <div class="pracLabel">맵</div>
     <div style="display:flex; align-items:center; gap:8px;">
       <button class="btn-secondary" id="pracMapPrev" style="padding:6px 14px;">◀</button>
@@ -1207,9 +1207,9 @@ sting();})();</script>
     <div class="profRow"><span class="k">프레임 제한</span><span class="v"><button id="settingsFpsLimitToggle" class="btn-secondary" style="padding:4px 12px;"></button></span></div>
     <div class="profRow"><span class="k">배터리 절약 (메뉴 30프레임 · 경기 60프레임 상한)</span><span class="v"><button id="settingsSaverToggle" class="btn-secondary" style="padding:4px 12px;"></button></span></div>
     <div class="profRow"><span class="k">색약 모드 (팀 색·체력바 색 변경)</span><span class="v"><button id="settingsColorBlindToggle" class="btn-secondary" style="padding:4px 12px;"></button></span></div>
-    <div class="profRow"><span class="k">게임패드: 왼쪽 스틱 이동 · A 점프 · B 대시 · X 스킬 · Y 궁극기 · LB 2스킬 · 오른쪽 스틱 조준 · RT 공격</span></div>
+    <div class="profRow"><span class="k">게임패드: 왼쪽 스틱 이동 · A 점프 · B 대시 · X 스킬 · Y 궁극기 · LB 순간이동 · 오른쪽 스틱 조준 · RT 공격</span></div>
     <div class="profRow"><span class="k">FPS 표시</span><span class="v"><button id="settingsFpsShowToggle" class="btn-secondary" style="padding:4px 12px;"></button></span></div>
-    <div class="profRow"><span class="k">능력(스킬·2스킬·궁극기·대시) 사용 방식</span><span class="v"><button id="settingsAbilityModeToggle" class="btn-secondary" style="padding:4px 12px;"></button></span></div>
+    <div class="profRow"><span class="k">능력(스킬·궁극기·대시·순간이동) 사용 방식</span><span class="v"><button id="settingsAbilityModeToggle" class="btn-secondary" style="padding:4px 12px;"></button></span></div>
     <div class="profRow"><span class="k">피해량 숫자 표시</span><span class="v"><button id="settingsDmgNumToggle" class="btn-secondary" style="padding:4px 12px;"></button></span></div>
   </div>
 
@@ -1511,7 +1511,7 @@ const SELECTABLE_WEAPONS = Object.keys(WEAPONS).filter(w=>!INTERNAL_WEAPONS.incl
 /* character logos (characters/<id>.svg replace the weapon emoji on screen; text-only places and the emote emoji keep the emoji) */
 const CHAR_LOGO_IDS=new Set(["bat", "bazooka", "boomerang", "bow", "cleon", "dagger", "dracula", "flamethrower", "gambler", "gloves", "grenade", "guard", "horemheb", "kan", "kurus", "lightsaber", "magiccard", "pel", "pirate", "pistol", "pizarro", "portalgun", "puppeteer", "rifle", "samurai", "shotgun", "shuriken", "smg", "sword", "syringe", "tionis", "vacuum", "wizard"]);
 function charLogo(wid, px){ px=px||20; const w=WEAPONS[wid]; return CHAR_LOGO_IDS.has(wid) ? '<img src="characters/'+wid+'.svg?v='+buildNum(GAME_BUILD)+'" alt="" width="'+px+'" height="'+px+'" style="vertical-align:middle;">' : escapeHtmlText((w&&w.emoji)||''); }
-const MAX_HP = 450, RESPAWN_TIME = 5;      // (450 since 11-08, was 300)
+const MAX_HP = 300, RESPAWN_TIME = 5;
 // Resting heal (there is NO natural regeneration): a player who has stayed on the same spot for REST_SEC seconds heals REST_AMOUNT hp every
 // REST_INTERVAL seconds, until he moves again (then he has to stand still for REST_SEC again). Standing still is all that counts: he may keep shooting.
 // Survival is left out on purpose: its whole balance (300 hp, 100 per disaster hit, 5 disasters) assumes no healing.
@@ -1895,7 +1895,7 @@ const KEY_ACTIONS=[
   {id:'right', label:'오른쪽 이동', default:'KeyD'},
   {id:'jump', label:'점프', default:'Space'},
   {id:'dash', label:'대쉬', default:'KeyQ'},
-  {id:'teleport', label:'2스킬', default:'KeyE'},
+  {id:'teleport', label:'순간이동', default:'KeyE'},
   {id:'ultimate', label:'궁극기', default:'KeyR'},
   {id:'skill', label:'스킬', default:'KeyF'},
   {id:'chat', label:'채팅 열기', default:'Enter'},
@@ -2035,7 +2035,7 @@ function updateControlsHint(){
   // actively misleading once any rebind happens
   const el=document.getElementById('controls-hint');
   if(!el) return;
-  el.innerHTML='A/D 이동 · '+codeToLabel(keyBindings.jump)+' 점프 · 마우스 조준 · 클릭 발사<br>'+codeToLabel(keyBindings.dash)+' 대쉬 · '+codeToLabel(keyBindings.teleport)+' 2스킬 · '+codeToLabel(keyBindings.ultimate)+' 궁극기 · '+codeToLabel(keyBindings.skill)+' 스킬: <b style="color:#7fffd4">눌렀다 떼면 발동 · 꾹 누르면 조준 표시 · 누른 채 클릭하면 그 위치로</b> (Esc/우클릭 취소) · <b style=\"color:#7fffd4\">Shift+'+codeToLabel(keyBindings.ultimate)+' / Shift+'+codeToLabel(keyBindings.skill)+': 자동 조준 즉시 발동</b> · Tab 순위 · '+codeToLabel(keyBindings.chat)+' 채팅'+(batHint?'<br><b style="color:#d96bff">🦇 박쥐 비행: '+codeToLabel(keyBindings.jump)+' 상승 · S 하강</b>':'');
+  el.innerHTML='A/D 이동 · '+codeToLabel(keyBindings.jump)+' 점프 · 마우스 조준 · 클릭 발사<br>'+codeToLabel(keyBindings.dash)+' 대쉬 · '+codeToLabel(keyBindings.teleport)+' 순간이동 · '+codeToLabel(keyBindings.ultimate)+' 궁극기 · '+codeToLabel(keyBindings.skill)+' 스킬: <b style="color:#7fffd4">눌렀다 떼면 발동 · 꾹 누르면 조준 표시 · 누른 채 클릭하면 그 위치로</b> (Esc/우클릭 취소) · <b style=\"color:#7fffd4\">Shift+'+codeToLabel(keyBindings.ultimate)+' / Shift+'+codeToLabel(keyBindings.skill)+': 자동 조준 즉시 발동</b> · Tab 순위 · '+codeToLabel(keyBindings.chat)+' 채팅'+(batHint?'<br><b style="color:#d96bff">🦇 박쥐 비행: '+codeToLabel(keyBindings.jump)+' 상승 · S 하강</b>':'');
 }
 let batHint=false;                     // true while the local player is a bat (the hint bar then also tells how to go up and down)
 updateControlsHint();
@@ -4183,8 +4183,8 @@ const MODES = {
   duel: {id:'duel', name:'듀얼',            desc:'단둘이 겨루는 3판 2선승제 결투', teams:false, fixedPlayers:2, elim:true, winsNeeded:2},
   conquest: {id:'conquest', name:'점령전', desc:'맵에 따라 6~12명이 두 팀으로 나뉘는 팀전(4인 맵 6명 · 6인 맵 8명 · 8인 맵 10명 · 대형 맵 12명) · 최소 6명 · 맵 중앙 거점을 차지하면 초당 1점, 먼저 100점을 채운 팀이 승리 (사망 시 5초 후 부활)', teams:true, teamSize:'half', extra:2, capMin:6, capMax:12, mapFilterMinPlayers:4, minPlayers:6, elim:false, conquest:true},
   zombie: {id:'zombie', name:'좀비게임', desc:'무기 선택 후 한 명이 좀비로 지목됨(짙은 초록색) · 사람은 좀비에게만, 좀비는 사람에게만 피해를 줄 수 있음 · 좀비는 죽으면 5초 뒤 좀비로 부활, 사람은 좀비에게 죽으면 좀비로 변함 · 전원이 좀비가 되면 처음 좀비만 승리, 사람이 2분간 버티면 사람 승리 · 좀비는 이동속도·체력·공격력·공격속도·대쉬 쿨타임·회복 속도가 강화되고 넉백을 받지 않음', teams:false, extra:0, elim:false, ownMapRules:true, minPlayers:7},
-  hotpotato: {id:'hotpotato', name:'폭탄 돌리기', desc:'무기·궁극기·2스킬 없이 대쉬만 가능한 맨손 스틱맨으로 바로 시작 · 한 명이 폭탄을 들고 시작, 20초 후 터짐 · 가까운 사람을 클릭하면 폭탄을 넘길 수 있음 · 터지면 들고 있던 사람 탈락, 생존자가 처음 인원의 절반 넘게 남아있으면 3초 뒤 다음 라운드 · 절반 이하가 된 상태에서 터지면 그때 생존자들이 승리', teams:false, extra:0, elim:true, ownMapRules:true, noWeapon:true, minPlayers:4},
-  survival: {id:'survival', name:'서바이벌', desc:'8인 이상 맵에서만 가능 · 최소 6명 · 무기선택·2스킬·캐릭터 없음(대쉬는 있음) · 체력 1: 재해에 한 번이라도 맞으면 탈락 · 9초 대기 후 번개·해일·화산·산성비·홍수·운석·폭탄·좀비 중 하나가 랜덤으로 12초간 발생, 버티면 사라지고 다시 9초 대기 · 라운드가 갈수록 재해가 더 자주·더 넓게·더 빠르게 몰아침 · 총 5번의 재해에서 살아남으면 승리, 먼저 죽으면 관전하거나 나갈 수 있음', teams:false, extra:0, elim:true, ownMapRules:true, noWeapon:true, noTeleport:true, minPlayers:6, mapFilterMinPlayers:8}, // noTeleport made explicit here (previously implied only indirectly through noWeapon) to match the mode's own description, which promises no teleport
+  hotpotato: {id:'hotpotato', name:'폭탄 돌리기', desc:'무기·궁극기·순간이동 없이 대쉬만 가능한 맨손 스틱맨으로 바로 시작 · 한 명이 폭탄을 들고 시작, 20초 후 터짐 · 가까운 사람을 클릭하면 폭탄을 넘길 수 있음 · 터지면 들고 있던 사람 탈락, 생존자가 처음 인원의 절반 넘게 남아있으면 3초 뒤 다음 라운드 · 절반 이하가 된 상태에서 터지면 그때 생존자들이 승리', teams:false, extra:0, elim:true, ownMapRules:true, noWeapon:true, minPlayers:4},
+  survival: {id:'survival', name:'서바이벌', desc:'8인 이상 맵에서만 가능 · 최소 6명 · 무기선택·순간이동·캐릭터 없음(대쉬는 있음) · 체력 1: 재해에 한 번이라도 맞으면 탈락 · 9초 대기 후 번개·해일·화산·산성비·홍수·운석·폭탄·좀비 중 하나가 랜덤으로 12초간 발생, 버티면 사라지고 다시 9초 대기 · 라운드가 갈수록 재해가 더 자주·더 넓게·더 빠르게 몰아침 · 총 5번의 재해에서 살아남으면 승리, 먼저 죽으면 관전하거나 나갈 수 있음', teams:false, extra:0, elim:true, ownMapRules:true, noWeapon:true, noTeleport:true, minPlayers:6, mapFilterMinPlayers:8}, // noTeleport made explicit here (previously implied only indirectly through noWeapon) to match the mode's own description, which promises no teleport
   ctf: {id:'ctf', name:'깃발 뺏기', desc:'전용 대형 맵 9종 중 선택 · 두 팀이 상대 기지의 깃발을 가져와 우리 기지에 가져오면 1점(우리 깃발이 밖에 있어도 득점) · 깃발을 든 사람은 순간이동을 못 씀 · 든 사람이 죽으면 깃발이 그 자리에 떨어져 있고 우리 팀이 닿아야 기지로 돌아감 · 먼저 3점 또는 8분 안에 더 많이 득점한 팀 승리, 동점이면 무승부 · 처치당하면 5초 후 우리 기지에서 부활 · 최소 4명(비공개 방에서는 봇 추가 가능)', teams:true, teamSize:'half', extra:0, elim:false, ownMapRules:true, isCtfMode:true, minPlayers:4, respawnTime:5},
   gold: {id:'gold', name:'황금 쟁탈', desc:'전용 대형 맵 9종 중 선택 · 두 팀 대항 3분 · 맵 중앙에 3초마다 하나씩 나오는 금 덩이에 닿아 금을 집어(한 번에 최대 3개, 들수록 조금 느려짐) 우리 팀 광차에 실으면 1개당 10점 · 광차에 닿으면 자동으로 실려요 · 금을 든 사람이 쓰러지면 그 자리에 금이 떨어져 누구나 주울 수 있어요 · 3분 뒤 점수가 높은 팀 승리, 동점이면 무승부 · 쓰러지면 5초 후 우리 기지에서 부활 · 최소 4명(비공개 방에서는 봇 추가 가능)', teams:true, teamSize:'half', extra:0, elim:false, ownMapRules:true, isCtfMode:true, minPlayers:4, respawnTime:5},
   raid: {id:'raid', name:'보스 레이드', desc:'8인 이상 맵에서만 가능 · 4명 고정 · 모두가 한 팀이 되어 거대한 보스 한 마리를 쓰러뜨리는 협동 모드 · 보스는 인원에 맞춰 체력이 늘어나고, 주기적으로 바닥을 내려쳐요(빨간 원이 번쩍이면 점프!) · 팀 목숨이 정해져 있고 쓰러지면 6초 뒤 부활 · 3분 안에 보스를 잡으면 성공', teams:true, teamSize:'half', soloTeam:true, extra:0, fixedPlayers:4, elim:false, ownMapRules:true, mapFilterMinPlayers:8, respawnTime:6},
@@ -4261,7 +4261,7 @@ const SURVIVAL_DISASTER_NAMES = {lightning:'번개', tsunami:'해일', volcano:'
 const SURVIVAL_WAVE_WARN_SEC = 2.2;
 const SURVIVAL_ZOMBIE_COUNT = 4, SURVIVAL_ZOMBIE_SPEED_MULT = 1.12, SURVIVAL_ZOMBIE_HIT_R = 44, SURVIVAL_ZOMBIE_HIT_DY = 70, SURVIVAL_ZOMBIE_HIT_COOLDOWN = 1.0, SURVIVAL_ZOMBIE_WAKE_SEC = 1.3;
 const SURVIVAL_HIT_COOLDOWN = 0.6; // per-player, per-hazard-type minimum gap between hits so one overlapping effect can't multi-tick someone in a single frame
-function maxHpFor(p){ if(p && p.isVault) return vaultMax(); if(p && p.isBoss) return p.bossMaxHp||3000; if(p && p.isGuard) return GUARD_HP; if(p && p.isClone) return ruleHp(); if(p && p.isMinion) return 150; return (p && p.isZombie) ? ZOMBIE_MAX_HP : (gameMode==='survival' ? SURVIVAL_HP : ((p && p.weapon==='harald') ? Math.round(ruleHp()*13/9) : ruleHp())); }      // 하랄드's passive 강인한 맷집: 650 health (450 x 13/9)
+function maxHpFor(p){ if(p && p.isVault) return vaultMax(); if(p && p.isBoss) return p.bossMaxHp||3000; if(p && p.isGuard) return GUARD_HP; if(p && p.isClone) return ruleHp(); if(p && p.isMinion) return 150; return (p && p.isZombie) ? ZOMBIE_MAX_HP : (gameMode==='survival' ? SURVIVAL_HP : ((p && p.weapon==='harald') ? Math.round(ruleHp()*5/3) : ruleHp())); }      // 하랄드's passive 강인한 맷집: 500 health (300 x 5/3)
 function effectiveMaxPlayers(mapId, modeId){
   const base = MAP_TEMPLATES[mapId].maxPlayers;
   const mode = MODES[modeId] || MODES.ffa;
@@ -6026,7 +6026,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-08-v756';
+const GAME_BUILD='build 2026-11-08-v755';
 const GAME_VERSION='1.0', GAME_VERSION_NAME='신화의 전설';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -6298,7 +6298,6 @@ function stepPhysics(p, input, dt){
   p.kbX = (p.kbX||0) * Math.pow(0.02, dt); // exponential decay, frame-rate independent (~0.3-0.4s to settle)
   if(Math.abs(p.kbX) < 2) p.kbX = 0;
   if(p.chargeDir){ vx=p.chargeDir*(p.hrCharge?HR_CHARGE_SPEED:SWORD_CHARGE_SPEED); p.kbX=0; }
-  if(p.s2 && p.s2.k==='smash'){ vx=p.s2.vx||0; p.kbX=0; }          // the knight's 강타: stands still while crouching, then carried at the leap's speed
   if(p.cannonFly){ vx=p.cannonFly.vx; p.kbX=0; }                    // the pirate's cannon ride: carried along at its launch speed, no steering   // the knight's charge: constant speed, no steering, not pushed around
   const totalVx = vx + p.kbX;
   p.vx=totalVx;
@@ -6392,7 +6391,6 @@ function tryDash(p, input, tMs, dirOverride){
   if((gameMode!=='dashbr' && gameMode!=='hyperbr') || !(p._dashFxAt>tMs-220)){ p._dashFxAt=tMs; pushFx('dash', p.x, p.y-30, tMs, {dir:dirSign, color:p.color, lite:(gameMode==='dashbr'||gameMode==='hyperbr')}); }   // (the endless-dash mode would otherwise bury the screen in dust)
 }
 function tryTeleportChannel(p, x, y, tMs){
-  if(p && SKILL2_IMPL[skW(p)]) return trySkill2(p, tMs, x, y);      // E is the second skill (characters that have one no longer teleport)
   if(puppetVictim(p, tMs/1000) || puppetMaster(p, tMs/1000)) return;
   if(duelPick) return;                       // (between duel rounds, while the weapons are being picked again, nobody can act)
   if(!p || !p.alive || !MAP) return;
@@ -12985,7 +12983,7 @@ function renderWeaponUI(){
     drawWeaponPortrait(sel);
     det.innerHTML='';
     const skd=SKILLS[sel];
-    det.appendChild(document.createTextNode(w.desc+'\n궁극기 [R] '+u.name+' - '+u.desc+(skd?('\n스킬 ['+codeToLabel(keyBindings.skill)+'] '+skd.name+' - '+skd.desc+' (쿨타임 '+SKILL_CD+'초)'):'')+(SKILLS2[sel]?('\n2스킬 ['+codeToLabel(keyBindings.teleport)+'] '+SKILLS2[sel].name+' - '+SKILLS2[sel].desc+' (쿨타임 '+TELEPORT_CD+'초)'):'')));
+    det.appendChild(document.createTextNode(w.desc+'\n궁극기 [R] '+u.name+' - '+u.desc+(skd?('\n스킬 ['+codeToLabel(keyBindings.skill)+'] '+skd.name+' - '+skd.desc+' (쿨타임 '+SKILL_CD+'초)'):'')));
     const statsEl=document.getElementById('weaponCharStats');
     if(characterBrowseMode){
       const kc=charKillsFor(sel);
@@ -14055,131 +14053,6 @@ const SKILLS={
   kurus:    {name:'어둠 확산',   kind:'hit',  desc:'내 발밑에 어둠을 일반 공격의 2배 폭으로 넓게 퍼뜨림 (공중에서는 사용 불가)'},
 };
 const SKILL_SFX={buff:'skill_buff', hit:'skill_hit', move:'skill_move'};
-/* ================= 2스킬 (E): the old teleport is gone - every character has a second skill on the E key (cooldown 10 s, owner 11-08) =================
-   Characters without an entry here still teleport for now. The cooldown clock is p.lastTeleport (TELEPORT_CD), so the HUD / replay / practice plumbing is the same. */
-const SKILLS2={
-  wizard:{name:'마력 압축', kind:'hit', desc:'기존 탄환보다 2배 큰 탄환을 발사 · 무한정 관통 · 관통과 상관없이 피해 20'},
-  sword:{name:'강타', kind:'move', desc:'무릎을 굽히고 앞으로 도약해 떨어지며 검을 찍음 · 맞은 상대 0.5초 기절 + 피해 45'},
-  tell:{name:'강행돌파', kind:'move', desc:'대쉬의 2배 거리로 도약 · 다음 2초 동안 일반 공격 게이지가 2.5배 빨리 참'},
-  harald:{name:'방패 강타', kind:'hit', desc:'방패로 앞의 상대를 밀며 0.5초 기절 · 대쉬 쿨타임이 바로 찬 (맞혔을 때만)'},
-  bat:{name:'삼진아웃', kind:'hit', desc:'야구공 3개를 일직선으로 던짐 · 맞은 상대는 공 하나당 0.25초 기절'},
-  rifle:{name:'수류탄 투척', kind:'hit', desc:'수류탄을 던져 떨어진 곳에서 폭발'},
-  pistol:{name:'정확한 발사', kind:'hit', desc:'유도 총알 발사 · 0.75초 동안 상대를 따라가고 그 뒤로는 마지막 방향으로 일직선'},
-  kan:{name:'심장 공양', kind:'hit', desc:'입으로 부는 관으로 근접 찌르기 · 넉백 + 체력 25 회복 (맞혔을 때만)'},
-  dagger:{name:'도약', kind:'move', desc:'높게 점프 · 바닥이나 발판 위에 닿으면 적 쪽으로 대쉬의 3.5배 거리를 점멸하며 지나간 상대에게 피해 36'},
-  portalgun:{name:'시공간 균열', kind:'hit', desc:'2배 큰 탄환 발사 · 맞은 상대와 서로 위치를 바꿈'},
-  grenade:{name:'폭격', kind:'hit', desc:'내 앞과 뒤로 폭탄을 2개씩 바로 발사'},
-  pizarro:{name:'투창', kind:'move', desc:'창을 포물선으로 던짐 · 바닥에 닿거나 상대에 맞으면 그 자리로 이동하고 체력 15 회복'},
-};
-const SKILL2_BOT={wizard:[150,900], sword:[120,520], tell:[250,900], harald:[0,130], bat:[200,900], rifle:[250,800], pistol:[200,900], kan:[0,120], dagger:[220,750], portalgun:[180,800], grenade:[0,360], pizarro:[250,800]};      // the distance at which a bot uses its second skill
-const SKILL2_IMPL={};
-const DASH_DIST=Math.round(DASH_FORCE/3.9);      // how far a dash carries (the push dies off by 0.02^t)
-function skill2Free(x,y,maxUp){ for(let k=0;k<=(maxUp||160);k+=16) if(skillSpotFree(x,y-k)) return {x:x,y:y-k}; return null; }
-function trySkill2(p, tMs, aimX, aimY){ const o=curAur; curAur=auraKind(p); try{ return trySkill2b(p, tMs, aimX, aimY); } finally{ curAur=o; } }
-function trySkill2b(p, tMs, aimX, aimY){
-  const tSec=tMs/1000;
-  if(!p || !p.alive || !MAP || matchEnded || duelPick) return;
-  if(puppetVictim(p, tSec) || puppetMaster(p, tSec) || isStunned(p, tSec)) return;
-  const mode=MODES[gameMode]||{}; if(mode.noWeapon || mode.noAbility || mode.noTeleport) return;
-  if(p.darkSub || p.isClone || p.s2) return;
-  if(tSec-(p.lastTeleport===undefined?-9999:p.lastTeleport) < TELEPORT_CD) return;
-  const w=skW(p), sd=SKILLS2[w], impl=SKILL2_IMPL[w]; if(!sd || !impl) return;
-  if(sd.kind==='move' && (p.ctfCarrying || p.gc>0)) return;                        // (a flag / gold carrier cannot jump or dash across the field with it)
-  if(impl(p, tSec, tMs, aimX, aimY)===false) return;
-  p.lastTeleport=tSec; p.skill2Uses=(p.skill2Uses||0)+1;
-  pushFx('skill', p.x, p.y-40, tMs, {color:p.color, name:sd.name});
-  pushFx('sfx', p.x, p.y-40, tMs, {name:SKILL_SFX[sd.kind]});
-}
-function skill2Tick(p, t){      // the skills that last a while: the knight's leap, the assassin's jump
-  const s=p.s2; if(!s) return; const tSec=t/1000;
-  if(!p.alive || isStunned(p, tSec)){ p.s2=null; return; }
-  if(s.k==='smash'){
-    if(!s.go){ if(tSec>=s.t0+0.16){ s.go=true; s.air=tSec; s.vx=s.dir*(s.speed||330); p.vy=-1000; p.grounded=false; p.kbX=0; pushFx('dash', p.x, p.y-30, t, {dir:s.dir, color:p.color}); } return; }
-    if((p.grounded && tSec-s.air>0.22) || tSec>=s.until){
-      p.s2=null; p.vx=0;
-      skillPulse(p, t, {r:115, dmg:45, stun:0.5, kb:360, up:260, cy:p.y-24});
-      pushFx('explosion', p.x, p.y-10, t, {}); pushFx('skillring', p.x, p.y-12, t, {color:'#dfe6f0', r:115});
-    }
-  } else if(s.k==='leap'){
-    if((p.grounded && tSec-s.t0>0.3) || tSec>=s.until){
-      p.s2=null;
-      const tg=nearestEnemyOf(p), dir=tg ? ((tg.x>=p.x)?1:-1) : ((Math.cos(p.angle||0)>=0)?1:-1), L=Math.round(DASH_DIST*3.5), x0=p.x, y0=p.y;
-      const best=skillMoveSpot(p, x0+dir*L, y0), x1=best.x, lo=Math.min(x0,x1)-40, hi=Math.max(x0,x1)+40;
-      for(const o of enemiesOf(p)){ if(o.swordCharge || o.darkSub || o.isClone || o.x<lo || o.x>hi || Math.abs(o.y-y0)>90) continue; skillDamage(p, o, 36, t, {kb:260, up:200}); }
-      pushFx('blink', x0, y0-30, t, {color:p.color}); p.x=x1; p.y=best.y; p.vx=0; p.vy=0; p.kbX=0; pushFx('blink', p.x, p.y-30, t, {color:p.color});
-      pushFx('iai', x0, y0-34, t, {x2:x1, y2:best.y-34});
-    }
-  }
-}
-function s2SpearLand(b, x, y, pl, hitWho, t){      // 피사로's thrown spear came down: he arrives there and heals 15
-  const ow=players[b.owner]; if(!ow || !ow.alive || !MAP) return;
-  let tx=hitWho?hitWho.x:x, ty=hitWho?hitWho.y:(pl?pl.y:y);
-  tx=clamp(tx, PLAYER_W/2+6, MAP.arenaW-PLAYER_W/2-6); ty=clamp(ty, PLAYER_H, MAP.arenaH-4);
-  let spot=skill2Free(tx, ty-1, 200); if(!spot) spot=skill2Free(tx+40, ty-1, 200); if(!spot) spot=skill2Free(tx-40, ty-1, 200); if(!spot) return;
-  pushFx('blink', ow.x, ow.y-30, t, {color:ow.color}); ow.x=spot.x; ow.y=spot.y; ow.vx=0; ow.vy=0; ow.kbX=0; pushFx('blink', ow.x, ow.y-30, t, {color:ow.color});
-  const before=ow.hp; ow.hp=Math.min(maxHpFor(ow), ow.hp+15*pvHealMul(ow)); if(ow.hp>before) pushFx('heal', ow.x, ow.y-70, t, {v:Math.round(ow.hp-before)});
-}
-SKILL2_IMPL.wizard=function(p,tSec,tMs,ax,ay){
-  const w=WEAPONS.wizard, w2=Object.assign({}, w, {dmg:20, pierceHits:0, platPierce:undefined, hitR:(w.hitR||BULLET_R)*2, life:1.8});
-  spawnBullet(p, aimAngleOf(p,ax,ay), w2, {scale:2, wzHalf:1});
-  pushFx('skillring', p.x, p.y-40, tMs, {color:'#c17bff', r:60}); return true;
-};
-SKILL2_IMPL.sword=function(p,tSec,tMs,ax){
-  if(p.swordCharge) return false; const d=skillAimDir(p,ax), reach=(ax===undefined||ax===null)?300:clamp(Math.abs(ax-p.x),140,520);
-  p.s2={k:'smash', dir:d, t0:tSec, until:tSec+2.4, vx:0, speed:reach/1.3}; p.kbX=0; pushFx('skillring', p.x, p.y-20, tMs, {color:'#dfe6f0', r:50}); return true;
-};
-SKILL2_IMPL.tell=function(p,tSec,tMs,ax){
-  const d=skillAimDir(p,ax); p.kbX=d*DASH_FORCE*2; p.vy=-380; p.grounded=false; p.tellFastUntil=tSec+2;
-  pushFx('dash', p.x, p.y-30, tMs, {dir:d, color:p.color}); pushFx('skillring', p.x, p.y-30, tMs, {color:'#ffd34d', r:56}); return true;
-};
-SKILL2_IMPL.harald=function(p,tSec,tMs,ax){
-  const tg=skillHitFront(p, tMs, skillAimDir(p,ax), {range:120, h:95, dmg:12, stun:0.5, kb:760, up:120});
-  if(!tg) return false; p.lastDash=-9999;
-  pushFx('skillring', tg.x, tg.y-30, tMs, {color:'#cfd8e3', r:56}); pushFx('spark', tg.x, tg.y-30, tMs, {ang:(tg.x>=p.x)?0:Math.PI, color:'#ffffff'}); return true;
-};
-SKILL2_IMPL.bat=function(p,tSec,tMs,ax,ay){
-  const a=aimAngleOf(p,ax,ay), w2={id:'baseball', bulletSpeed:1150, dmg:8, life:0.9, hitR:11};
-  for(let k=0;k<3;k++) hostTimers.push({au:curAur, ta:fxActor, at:tSec+k*0.12, fn:()=>{ if(p.alive) spawnBullet(p, a, w2, {s2stun:0.25}); }});
-  return true;
-};
-SKILL2_IMPL.rifle=function(p,tSec,tMs,ax,ay){
-  const w2=Object.assign({}, WEAPONS.grenade, {dmg:45, splash:130, bulletSpeed:KAN_TOAD_SPEED});
-  spawnBullet(p, lobAngle(p,ax,ay), w2, {}); return true;
-};
-SKILL2_IMPL.pistol=function(p,tSec,tMs,ax,ay){
-  const w2=Object.assign({}, WEAPONS.pistol, {dmg:30, bulletSpeed:1000, life:2.2});
-  spawnBullet(p, aimAngleOf(p,ax,ay), w2, {homeUntil:tSec+0.75}); pushFx('skillring', p.x, p.y-40, tMs, {color:'#ffd34d', r:46}); return true;
-};
-SKILL2_IMPL.kan=function(p,tSec,tMs,ax){
-  const tg=skillHitFront(p, tMs, skillAimDir(p,ax), {range:115, h:95, dmg:25, kb:560, up:140});
-  if(!tg) return false;
-  const before=p.hp; p.hp=Math.min(maxHpFor(p), p.hp+25*pvHealMul(p)); pushFx('heal', p.x, p.y-70, tMs, {v:Math.round(p.hp-before)});
-  pushFx('spark', tg.x, tg.y-30, tMs, {ang:(tg.x>=p.x)?0:Math.PI, color:'#7dffb0'}); return true;
-};
-SKILL2_IMPL.dagger=function(p,tSec,tMs){
-  p.vy=-1150; p.grounded=false; p.kbX=0; p.s2={k:'leap', t0:tSec, until:tSec+2.6}; pushFx('skillring', p.x, p.y-20, tMs, {color:p.color, r:46}); return true;
-};
-SKILL2_IMPL.portalgun=function(p,tSec,tMs,ax,ay){
-  const w=WEAPONS.portalgun, w2=Object.assign({}, w, {dmg:10, hitR:(w.hitR||BULLET_R)*2, bounces:0});
-  spawnBullet(p, aimAngleOf(p,ax,ay), w2, {scale:2, s2swap:true}); pushFx('skillring', p.x, p.y-40, tMs, {color:'#c17bff', r:54}); return true;
-};
-SKILL2_IMPL.grenade=function(p,tSec,tMs,ax){
-  const d=skillAimDir(p,ax), w2=Object.assign({}, WEAPONS.grenade, {dmg:40, splash:105, bulletSpeed:560});
-  for(const side of [d,-d]) for(const ang of [-0.8,-0.38]) spawnBullet(p, side>0?ang:Math.PI-ang, w2, {});
-  pushFx('skillring', p.x, p.y-30, tMs, {color:'#ff9b2e', r:70}); return true;
-};
-SKILL2_IMPL.pizarro=function(p,tSec,tMs,ax,ay){
-  const w2={id:'pizarro_spear', bulletSpeed:KAN_TOAD_SPEED, dmg:25, life:2.2, hitR:12, arcs:true};
-  spawnBullet(p, lobAngle(p,ax,ay), w2, {s2spear:true}); return true;
-};
-function botSkill2Step(p, ai, target, d, tSec, t, dif){
-  if(!target || isStunned(p, tSec) || tSec<(ai.s2At||0)) return;
-  if(tSec-(p.lastTeleport===undefined?-9999:p.lastTeleport)<TELEPORT_CD) return;
-  const rg=SKILL2_BOT[skW(p)]||[0,700]; if(d<rg[0] || d>rg[1]) return;
-  ai.s2At=tSec+0.6; if(Math.random()>Math.max(0.12, dif.useSkill||0.3)) return;
-  tryTeleportChannel(p, target.x, target.y-40, t);
-}
-
 const SANDSTORM_LEN=1725, SANDSTORM_H=360, SANDSTORM_KB=1200, SANDSTORM_SLOW_SEC=3.5, SAND_SLOW_MULT=0.3, SANDSTORM_DMG=36, SANDSTORM_STUN=1.5;     // the sandstorm of 호렘헵: reach, height, push, how long and how much it slows
 const BUFF_ORDER=['rage','barrier','guard','reflect','focus','rapid','haste','rest'];
 const BUFF_COLORS={barrier:'#c17bff', guard:'#6ec6ff', reflect:'#ffffff', focus:'#ff8a3d', rapid:'#ffd34d', haste:'#7ef0a8', rest:'#ffc93c', rage:'#ff5a3a'};
@@ -14560,7 +14433,7 @@ function processTell(p, tMs, dt){
   }
   if(held && (p.tellHold || ready)){
     p.tellHold=true;
-    p.tellG=(p.tellInstUntil>tSec) ? 1 : Math.min(1, (p.tellG||0)+dt/TELL_FULL_SEC*((p.tellFastUntil>tSec)?2.5:1));
+    p.tellG=(p.tellInstUntil>tSec) ? 1 : Math.min(1, (p.tellG||0)+dt/TELL_FULL_SEC);
     if(p.isBot && p.tellG>=(p.botTellTo===undefined?0.95:p.botTellTo)){ tellFire(p, tMs); p.tellG=0; p.tellHold=false; p.tellPreUntil=0; }
   } else if(p.tellHold){
     p.tellHold=false; tellFire(p, tMs); p.tellG=0; p.tellPreUntil=0;
@@ -16127,7 +16000,6 @@ function botPersonalityStep(p, ai, target, d, cx){
 }
 /* ---- bots use the teleport too (E, 1 s channel, 10 s cooldown): to get away when hurt, to reach a conquest point far off (also on the maps where the way up is hard), and (melee) to land next to a far-away target ---- */
 function botTeleportStep(p, ai, target, d, lowHp, tSec, t, dif, goalX, goalY, cqGoal, w){
-  if(SKILL2_IMPL[skW(p)]){ botSkill2Step(p, ai, target, d, tSec, t, dif); return; }      // the second skill instead of the teleport
   const chance=dif.tele||0; if(!chance || !MAP || p.teleportChannel || p.darkSub || p.ctfCarrying || tSec<(ai.teleAt||0)) return;
   if((MODES[gameMode]||{}).noTeleport || (MODES[gameMode]||{}).noWeapon || isStunned(p, tSec)) return;
   if(tSec-(p.lastTeleport===undefined?-9999:p.lastTeleport)<TELEPORT_CD) return;
@@ -16880,8 +16752,6 @@ function pvKill(killer, victim, tMs){
 function pvBulletHit(b, target, tMs){
   const ow=players[b.owner]; if(!ow || ow.id===target.id) return;
   const tS=tMs/1000;
-  if(b.s2stun && target.alive) stunPlayer(target, b.s2stun, tMs);      // 야구선수's 삼진아웃: every ball stuns a little
-  if(b.s2swap && target.alive && ow.alive && ow.x!==undefined){ const ox=ow.x, oy=ow.y; pushFx('blink', ox, oy-30, tMs, {color:ow.color}); pushFx('blink', target.x, target.y-30, tMs, {color:target.color}); ow.x=target.x; ow.y=target.y; target.x=ox; target.y=oy; ow.vx=ow.vy=target.vx=target.vy=0; ow.kbX=target.kbX=0; }      // 차원여행자's 시공간 균열: they trade places
   if(b.cardLine && ow.weapon==='magiccard'){      // 마술사: every card of the skill hit one enemy -> stun
     if(!ow.pvLine || ow.pvLine.id!==b.lid) ow.pvLine={id:b.lid, hits:{}};
     ow.pvLine.hits[target.id]=(ow.pvLine.hits[target.id]||0)+1;
@@ -17001,7 +16871,7 @@ function hostTickCore(dt,t){
   for(const id in players){
     const p=players[id]; fxActor=(gameMode==='tournament')?id:null;
     if(!p.alive){
-      p.ultOn=false; p.invis=false; p.burning=false; p.cannonFly=null; p.s2=null;
+      p.ultOn=false; p.invis=false; p.burning=false; p.cannonFly=null;
       if(p.respawnAt!==Infinity && t/1000>=p.respawnAt){
         if(gameMode==='zombie' && !p.isZombie && p.diedToZombie){ p.isZombie=true; p.team=1; } // humans killed by a zombie come back as a zombie instead of human (resolved before the HP cap below, so a fresh zombie gets the zombie HP cap)
         p.diedToZombie=false;
@@ -17050,7 +16920,6 @@ function hostTickCore(dt,t){
       stepPhysics(p, channelInput||{}, dt);
     }
     if(p.cannonFly) cannonFlyTick(p, t);
-    if(p.s2) skill2Tick(p, t);
     if(p.bladeSpinUntil) bladeSpinTick(p, t);                      // the knight's whirling sword
     if(gameMode==='parkour'){ tryPickupParkourItem(p, t); checkParkourGoal(p, t); }
     if(wasBatting && !p.batting){
@@ -17123,11 +16992,6 @@ function hostTickCore(dt,t){
     const b=bullets[i]; fxActor=(gameMode==='tournament')?b.owner:null;
     if(b.dmgless){ b.life-=dt; if(b.life<=0) bullets.splice(i,1); continue; }
     if(reflectors.length && !b.boomerang) skillTryReflect(b, reflectors, t);
-    if(b.homeUntil && t/1000<b.homeUntil){      // 제임스's 정확한 발사: it curves toward the nearest enemy for 0.75 s, then flies straight on
-      const hw=players[b.owner]; let tg=null, bd=1e9;
-      for(const hid in players){ const q=players[hid]; if(!q.alive || hid===b.owner || q.x===undefined || (hw && isAlly(hw,q)) || q.invis || q.swordCharge || q.darkSub || q.isClone) continue; const dd=Math.hypot(q.x-b.x, (q.y-PLAYER_H/2)-b.y); if(dd<bd){ bd=dd; tg=q; } }
-      if(tg){ const sp=Math.hypot(b.vx,b.vy)||1, cur=Math.atan2(b.vy,b.vx); let da=Math.atan2((tg.y-PLAYER_H/2)-b.y, tg.x-b.x)-cur; while(da>Math.PI) da-=2*Math.PI; while(da<-Math.PI) da+=2*Math.PI; const tn=clamp(da,-12*dt,12*dt); b.vx=Math.cos(cur+tn)*sp; b.vy=Math.sin(cur+tn)*sp; }
-    }
     if(b.boomerang){
       const nx=b.x+b.vx*dt, ny=b.y+b.vy*dt;
       const outOfBounds = (nx<0||nx>MAP.arenaW||ny<0||ny>MAP.arenaH);
@@ -17310,7 +17174,6 @@ function hostTickCore(dt,t){
     if(hit && b.hook) hookLand(b, nx, ny, hitPl, t, hitWho);
     if(hit && b.toad) kanToadLand(b, nx, ny, hitPl, t);
     if(hit && b.lob) lobLand(b, nx, ny, hitPl, t);
-    if(hit && b.s2spear) s2SpearLand(b, nx, ny, hitPl, hitWho, t);
     if(hit && b.wid==='kurus') darkPotionLand(b, nx, ny, hitPl, hitWho, hitPlatform, t);
     if(hit && b.splash){ explodeAt(nx, ny, b, t); pushFx('explosion', nx, ny, t, {}); }
     else if(hit && hitPlatform && !b.dmgless){ pushFx('spark', nx, ny, t, {color:b.color, ang:Math.atan2(b.vy,b.vx)}); }
@@ -17350,7 +17213,7 @@ function hostTickCore(dt,t){
       survival: (gameMode==='survival') ? {zombies:survivalZombies.map(z=>({x:Math.round(z.x*10)/10,y:Math.round(z.y*10)/10,f:z.face,g:z.grounded?1:0,w:(t/1000<z.awakeAt)?1:0,s:Math.round(Math.abs(z.vx||0))})), hazards:survivalHazards.map(hz=>Object.assign({}, hz, hz.warnUntil!==undefined ? {warnRemain: hz.warnUntil - t/1000, warnUntil:undefined} : {}, hz.until!==undefined ? {untilRemain: hz.until - t/1000, until:undefined} : {}, hz.goAt!==undefined ? {goRemain: hz.goAt - t/1000, goAt:undefined} : {}))} : undefined,
       gd: (gameMode==='gold' && gdm) ? {n:gdm.pile.n, ps:gdm.pts, cl:gdm.carts.map(c=>c.lumps), dr:gdm.drops.map(d=>[Math.round(d.x),Math.round(d.y),d.n]), rm:Math.max(0,Math.round((gdm.endsAt-Date.now())/1000)), rf:Math.max(0,Math.ceil((gdm.refillAt||0)-t/1000))} : undefined,
       ctf: (gameMode==='ctf' && ctf) ? {f:ctf.flags.map(f=>({s:(f.state==='home'?0:(f.state==='carried'?1:2)), x:Math.round(f.x), y:Math.round(f.y), c:f.carrierId||null, r:(f.state==='dropped'?Math.round(Math.max(0,f.returnAt-t/1000)*10)/10:0)})), sc:ctf.scores, rm:Math.max(0,Math.round((ctf.endsAt-Date.now())/1000)), ot:!!ctf.overtime, tg:ctf.target} : undefined,
-      bullets:bullets.map(b=>({lob:b.lob,x:b.x,y:b.y,color:b.color,sk:b.sk,wid:b.wid,vx:b.vx,vy:b.vy,dmgless:b.dmgless,swingAngle:b.swingAngle,splash:b.splash,life:b.life,life0:b.life0,sx:b.spawnX,sy:b.spawnY,ult:b.ult,fire:b.fire,reach:b.reach,scale:b.scale})),
+      bullets:bullets.map(b=>({lob:b.lob,x:b.x,y:b.y,color:b.color,sk:b.sk,wid:b.wid,vx:b.vx,vy:b.vy,dmgless:b.dmgless,swingAngle:b.swingAngle,splash:b.splash,life:b.life,life0:b.life0,sx:b.spawnX,sy:b.spawnY,ult:b.ult,fire:b.fire,reach:b.reach})),
       walls:walls.map(w=>({x:w.x,y:w.y,w:w.w,h:w.h,owner:w.owner,rem:w.until-t/1000})),
       magicCircles:magicCircles.map(z=>({x:z.x,y:z.y,r:z.r,owner:z.owner,team:z.team,rem:z.until-t/1000})),
       fieldZones:fieldZones.map(z=>({kind:z.kind,x:Math.round(z.x),y:Math.round(z.y),r:z.r,owner:z.owner,dur:z.dur,rem:z.until-t/1000})),
@@ -20515,9 +20378,6 @@ function drawProjectileBase(b){
   ctx.translate(b.x, b.y);
   ctx.rotate(ang);
   if(rs!==1) ctx.scale(rs, rs);
-  if(b.scale) ctx.scale(b.scale, b.scale);
-  if(b.wid==='baseball'){ ctx.fillStyle='#f4f4f4'; ctx.beginPath(); ctx.arc(0,0,8,0,7); ctx.fill(); ctx.strokeStyle='#d33'; ctx.lineWidth=1.2; ctx.beginPath(); ctx.arc(-6,0,6,-1,1); ctx.stroke(); ctx.beginPath(); ctx.arc(6,0,6,Math.PI-1,Math.PI+1); ctx.stroke(); ctx.restore(); return; }
-  if(b.wid==='pizarro_spear'){ ctx.strokeStyle='#8a5a2a'; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(-24,0); ctx.lineTo(14,0); ctx.stroke(); ctx.fillStyle='#e8ecf2'; ctx.beginPath(); ctx.moveTo(26,0); ctx.lineTo(13,-5); ctx.lineTo(13,5); ctx.closePath(); ctx.fill(); ctx.restore(); return; }
   if(b.lob){      // thrown smoke grenade / molotov: a spinning can or bottle
     ctx.rotate(performance.now()*0.012-ang);
     if(b.lob==='smoke'){ ctx.fillStyle='#8a929e'; ctx.fillRect(-6,-8,12,16); ctx.fillStyle='#d9dee6'; ctx.fillRect(-6,-3,12,5); ctx.fillStyle='#4a505a'; ctx.fillRect(-3,-11,6,4); }
@@ -21540,7 +21400,7 @@ function render(fxDt){
     const tpRemain = isHost ? Math.max(0, TELEPORT_CD-(performance.now()/1000-(me.lastTeleport===undefined?-9999:me.lastTeleport))) : (me.teleportCdRemain||0);
     const tpFrac = clamp(1-tpRemain/TELEPORT_CD, 0, 1);
     document.getElementById('teleportFill').style.width=(tpFrac*100)+'%';
-    { const s2d=SKILLS2[skW(me)], s2n=s2d?s2d.name:'순간이동'; document.getElementById('teleportLabel').textContent = tpRemain>0.05 ? (s2n+' ('+codeToLabel(keyBindings.teleport)+') '+tpRemain.toFixed(1)+'초') : s2n+' ('+codeToLabel(keyBindings.teleport)+') 준비됨'; }
+    document.getElementById('teleportLabel').textContent = tpRemain>0.05 ? ('순간이동 ('+codeToLabel(keyBindings.teleport)+') '+tpRemain.toFixed(1)+'초') : '순간이동 ('+codeToLabel(keyBindings.teleport)+') 준비됨';
     { // unlike teleport (a whole-match mode setting), whether THIS player has an ultimate depends on their
       // current weapon, which can change mid-match even within a noWeapon mode (hide and seek's seeker
       // goes bare-handed -> pistol) - so this has to be re-checked every frame, not set once at match start
