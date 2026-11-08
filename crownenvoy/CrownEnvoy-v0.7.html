@@ -560,7 +560,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 189</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 190</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div><p class="tagline">사절을 보내 동맹을 맺고, 군대를 보내 왕관을 차지하세요.</p></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -4718,6 +4718,8 @@ function alClusters(v){const pl=v.players,par=pl.map((_,i)=>i);const fd=i=>{whil
   const cl={},of={};inA.forEach(i=>{const r=fd(i);(cl[r]=cl[r]||{id:r,ids:[]}).ids.push(i);of[i]=r;});
   Object.values(cl).forEach(c=>{c.ids.sort((a,b)=>(area[b]||0)-(area[a]||0));const big=pl[c.ids[0]];c.col=big.color;let nm=null,nt=0;c.ids.forEach(i=>{const p=pl[i];if(p.aln&&p.alt>nt){nt=p.alt;nm=p.aln;}});c.name=nm||(String(big.kingdom).split('(')[0]+' 동맹');c.auto=!nm;});
   return {cl,of};}
+/* 땅 윤곽(GEO.base) 밖으로 삐져나가 바다처럼 어둡게 보이던 영토들: 지도별로 따로 채운다 */
+const MAP_GAP={0:[14,53,54,55,70,121,135,136,137,138,172,173,200,235,236,297,298,322],1:[16],2:[39,233,234,335,403,421,505,507,563,574,575,580,581,582,608,609,613,631,651,657,668,717,762,907],4:[25,66,104]};
 const MapView={cv:null,ctx:null,W:0,H:0,dpr:1,scale:1,ox:0,oy:0,hover:-1,deco:[],flashes:{},arrows:null,moves:null,sea:null,vel:null,view:{z:1,x:0,y:0},drag:null,layer:null,layerKey:'',
   init(){
     this.cv=$('#map');this.ctx=this.cv.getContext('2d');this.build();
@@ -4805,7 +4807,7 @@ const MapView={cv:null,ctx:null,W:0,H:0,dpr:1,scale:1,ox:0,oy:0,hover:-1,deco:[]
     c.strokeStyle='rgba(120,185,190,.22)';c.lineWidth=(this.big?6:13)*px;c.stroke(this.pAllS);
     c.strokeStyle='rgba(150,210,210,.3)';c.lineWidth=(this.big?3:6)*px;c.stroke(this.pAllS);
     // 바닥 땅: 지역 사이 작은 틈이 바다로 보이지 않도록 먼저 깐다
-    GEO.polys.forEach((_,i)=>{if(TDEF[i].kind!=='sea')return;const t=v.terr[i];if(t.owner!=null){c.fillStyle=pl[t.owner].color+'55';c.fill(this.p2[i],'evenodd');}});c.fillStyle=this.vel;c.fill(this.p2base,'evenodd');
+    GEO.polys.forEach((_,i)=>{if(TDEF[i].kind!=='sea')return;const t=v.terr[i];if(t.owner!=null){c.fillStyle=pl[t.owner].color+'55';c.fill(this.p2[i],'evenodd');}});c.fillStyle=this.vel;c.fill(this.p2base,'evenodd');{const gp=MAP_GAP[MAPID];if(gp)gp.forEach(i=>{if(this.p2[i]){c.fillStyle=this.vel;c.fill(this.p2[i],'evenodd');}});};
     // 소유 색: 불투명하게 칠한 뒤 한 번에 반투명 합성 (경계 틈은 이웃 색으로 메운다)
     const T=this.tint||(this.tint=document.createElement('canvas'));const tw0=c.canvas.width,th0=c.canvas.height;const tc=T.getContext('2d');if(T.width!==tw0||T.height!==th0){T.width=tw0;T.height=th0;}else{tc.setTransform(1,0,0,1,0,0);tc.clearRect(0,0,tw0,th0);}tc.setTransform(c.getTransform());tc.lineJoin='round';
     tc.save();tc.clip(this.p2base,'evenodd');
@@ -4815,6 +4817,7 @@ const MapView={cv:null,ctx:null,W:0,H:0,dpr:1,scale:1,ox:0,oy:0,hover:-1,deco:[]
     const groups=[];for(const o in by){const P=new Path2D();by[o].forEach(i=>P.addPath(this.p2[i]));groups.push({o,P,col:o==='n'?eff('#7a6f58',0.22):eff(gcol(o),0.55),hex:gcol(o)});}
     const gw=Math.max(2.4*px,3.2);tc.lineWidth=gw;groups.forEach(g=>{tc.strokeStyle=g.col;tc.stroke(g.P);});groups.forEach(g=>{tc.fillStyle=g.col;tc.fill(g.P,'evenodd');});
     tc.restore();
+    {const gp=MAP_GAP[MAPID];if(gp&&gp.length){const gg={};gp.forEach(i=>{if(!this.p2[i]||!v.terr[i])return;const o=gkey(v.terr[i].owner);(gg[o]=gg[o]||new Path2D()).addPath(this.p2[i]);});for(const o in gg){const g=groups.find(z=>z.o===o);tc.fillStyle=g?g.col:eff('#7a6f58',0.22);tc.fill(gg[o],'evenodd');}}}
     c.save();c.setTransform(1,0,0,1,0,0);c.globalAlpha=0.8;c.drawImage(T,0,0);c.restore();
     
     c.strokeStyle='rgba(150,205,225,.38)';c.lineWidth=Math.max(1,1.3*px);c.setLineDash([7*px,5*px]);c.stroke(this.pSeaS);c.setLineDash([]);
