@@ -85,3 +85,5 @@ patchnotes.json | v751 items[7] | 야구선수 쿨타임 0.65초에서 0.4초로
 patchnotes.json | v751 items[8] | 도박사 패시브를 일반 공격 데미지 4~36 무작위로 변경·칩 크기 축소 | build 751 | 2026-11-08
 patchnotes.json | v752 title+items | 근접 휘두르기 팔 모션 수정 | build 752 | 2026-11-08
 patchnotes.json | v753 title+items | 찌르기 캐릭터 팔 모션 복구 | build 753 | 2026-11-08
+patchnotes.json | v754 title | 암살자 데미지 상향 | build 754 | 2026-11-08
+patchnotes.json | v754 items[0] | 암살자 단검 데미지 41에서 43으로 상향 | build 754 | 2026-11-08
