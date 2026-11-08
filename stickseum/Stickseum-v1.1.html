@@ -1436,6 +1436,8 @@ const WEAPONS = {
             desc:'꾹 눌러 게이지를 채우고(1.6초) 놓으면 발사 · 패시브: 게이지가 찰수록 피해 1~64, 속도가 빨라지고 점점 일직선에 가까워지며 꽉 차면 완전한 일직선 · 게이지가 차는 동안 이동속도 25% 감소'},
   harald:{id:'harald',name:'전투 도끼',emoji:'🪓', kind:'melee', dmg:73, cd:1.2, range:125, shape:'axe', kbMult:2.6,
             desc:'데미지 73 · 쿨타임 1.2초 · 사거리 125 · 도끼를 번쩍 들어 내려찍음 (느리지만 매우 아프고 크게 밀쳐냄) · 도끼가 손에 없을 땐 방패로 밀침 (피해 절반, 쿨타임 0.75배, 넉백은 같음)'},
+  plague:{id:'plague',name:'랜턴 막대',emoji:'🏮', kind:'melee', dmg:15, cd:0.6, range:100, shape:'lanternstaff',
+            desc:'데미지 15 · 쿨타임 0.6초 · 사거리 100 · 맞은 상대는 5초 동안 감염'},
   samurai:{id:'samurai',name:'카타나',emoji:'⚔️', kind:'melee', dmg:36, cd:0.65, range:95, shape:'katana',
             desc:'데미지 36 · 쿨타임 0.65초 · 사거리 95 · 한 번 베면 묵직하게 들어가는 카타나'},
   dspaper:{id:'dspaper',name:'종이비행기',emoji:'✈️', kind:'gun', dmg:26, cd:1, bulletSpeed:640, shape:'dspaper', hitR:13, life:3, desc:''},
@@ -1507,6 +1509,7 @@ function pirateFlyVel(p, ax, ay){      // launch velocity of the cannon ride: to
   return {vx:Math.cos(a)*PIRATE_FLY_SPEED, vy:Math.sin(a)*PIRATE_FLY_SPEED};
 }
 const ULTS = {
+  plague:{name:'까마귀 떼', desc:'까마귀 3마리를 불러 4초 동안 빠르게 불규칙적으로 날아다니게 함 (발판과 캐릭터를 통과) · 까마귀에 닿은 상대는 5초 동안 감염'},
   cleon:{name:'제국 함대 포격', desc:'조준한 곳 주변 넓은 범위에 분홍 표시가 생기고 1.5초 뒤 제국 함선 5척의 위성 포격 빔이 차례로 떨어져 빔마다 15 피해 (발판 통과, 나는 피해 없음)'},
   pel:{name:'드론 자폭', desc:'3초 동안 드론의 공격력이 50% 증가하고, 그 뒤 모든 드론이 2초 동안 가까운 상대를 추격해 맞거나 2초가 지나면 자폭 (드론 1대당 10 피해) · 자폭한 드론은 스킬로 다시 늘림'},
   tionis:{name:'분신 연극', desc:'4초 동안 분신이 나타나 공격하고 (내 공격력의 절반) 분신은 공격을 받지 않음 · 그동안 나는 투명해지고 피해를 받거나 분신이 사라지고 1초 뒤에 풀림'},
@@ -3191,7 +3194,7 @@ function nameColorFor(id){
 function clanBadgeHtml(emb,col,size){ size=size||16; if(!emb) return ''; const c=(typeof clanSafeColor==='function')?clanSafeColor(col):'#3fe0c5', e=(typeof clanSafeEmblem==='function')?clanSafeEmblem(emb):'🏰'; return '<span style="display:inline-flex; align-items:center; justify-content:center; width:'+size+'px; height:'+size+'px; border-radius:50%; background:'+c+'33; border:1.5px solid '+c+'; font-size:'+Math.round(size*0.6)+'px; margin-right:4px; vertical-align:middle;">'+e+'</span>'; }
 function nameWithStyleHtml(name, nameCosId, emb, col, tag, cname){ return clanBadgeHtml(emb,col,16)+(tag?'<span style="color:#fff; margin-right:3px;">['+escapeHtmlText(tag)+']</span>':'')+(cname?'<span style="color:#fff; margin-right:6px; font-weight:700;">'+escapeHtmlText(cname)+'</span>':'')+'<span '+(nameCosId==='name_rainbow'?'class="nmRainbow" style="font-weight:700;"':'style="color:'+nameColorFor(nameCosId)+'; font-weight:700;"')+'>'+escapeHtmlText(name)+'</span>'; }
 const WEAPON_PERSONA_NAME = {
-  cleon:'크레온 1세', pel:'펠', tionis:'티오니스', harald:'하랄드', tell:'빌헬름 텔',
+  plague:'역병 의사', cleon:'크레온 1세', pel:'펠', tionis:'티오니스', harald:'하랄드', tell:'빌헬름 텔',
   dragonslayer:'용살자', puppeteer:'인형술사', pizarro:'피사로', kan:'칸', horemheb:'호렘헵', lightsaber:'자다이', pistol:'제임스', smg:'특수요원', bow:'로빈 후드', sword:'기사', bat:'야구선수', boomerang:'사냥꾼',
   shuriken:'닌자', shotgun:'보안관', rifle:'군인', gloves:'복서', grenade:'폭발광',
   bazooka:'중화기병', dagger:'암살자', magiccard:'마술사', dracula:'드라큘라', gambler:'도박사', wizard:'마법사', flamethrower:'학살자', portalgun:'차원여행자', vacuum:'청소부', pirate:'해적', samurai:'사무라이', kurus:'쿠루스'
@@ -3300,6 +3303,7 @@ function drawThorSpin(c,p){      // while the knight charges only Mjolnir is see
   c.restore();
   if(Math.random()<0.8){ const a=Math.random()*Math.PI*2; addP({x:p.x+Math.cos(a)*34,y:p.y-30+Math.sin(a)*34,vx:Math.cos(a)*90,vy:Math.sin(a)*90,life:RND(.15,.3),size:RND(1.6,3),color:Math.random()<.5?'#ffe66b':'#ffffff',glow:1,grav:0,drag:2}); }
 }
+let PERSONA_FACE=1;
 function drawWeaponPersona(c,wid,hx,hy,r,shy,tint,concept){
   c.save();
   switch(wid){
@@ -3567,6 +3571,17 @@ function drawWeaponPersona(c,wid,hx,hy,r,shy,tint,concept){
       c.fillStyle='#e8c25a'; c.beginPath(); c.arc(hx-R*0.3,hy-R*0.62,R*0.36,Math.PI*1.08,Math.PI*1.68); c.lineTo(hx-R*0.3,hy-R*0.62); c.closePath(); c.fill();
       break;
     }
+    case 'plague': // 역병 의사: black silk hat + a dark grey beaked mask
+      c.fillStyle='#14141a'; c.beginPath(); c.ellipse(hx,hy-r*0.78,r*1.35,r*0.28,0,0,7); c.fill();
+      c.fillRect(hx-r*0.78,hy-r*2.1,r*1.56,r*1.4); c.fillStyle='#2a2a33'; c.fillRect(hx-r*0.78,hy-r*1.05,r*1.56,r*0.3);
+      c.fillStyle='#6a6a76'; c.beginPath(); c.ellipse(hx,hy-r*2.1,r*0.78,r*0.16,0,0,7); c.fill();
+      { const f=PERSONA_FACE||1;      // the mask covers the whole head; the long beak points the way he looks
+        c.fillStyle='#4a4d56'; c.strokeStyle='#2c2e35'; c.lineWidth=1.1; c.beginPath(); c.arc(hx,hy,r*1.04,0,7); c.moveTo(hx+f*r*0.2+r*0.26,hy-r*0.22); c.ellipse(hx+f*r*0.2,hy-r*0.22,r*0.26,r*0.3,0,0,7); c.fill('evenodd'); c.stroke();      // the eye hole is cut out (see-through)
+        c.fillStyle='#3a3d45'; c.beginPath(); c.moveTo(hx+f*r*0.5,hy-r*0.75); c.quadraticCurveTo(hx+f*r*1.8,hy-r*0.4,hx+f*r*2.5,hy+r*1.0); c.quadraticCurveTo(hx+f*r*1.5,hy+r*1.0,hx+f*r*0.5,hy+r*0.85); c.closePath(); c.fill(); c.stroke();
+        c.strokeStyle='#5e626d'; c.lineWidth=0.9; c.beginPath(); c.moveTo(hx+f*r*0.7,hy+r*0.05); c.quadraticCurveTo(hx+f*r*1.7,hy+r*0.2,hx+f*r*2.35,hy+r*0.95); c.stroke();
+        c.strokeStyle='#33353d'; c.lineWidth=1; c.beginPath(); c.arc(hx-f*r*0.2,hy,r*0.62,Math.PI*0.35,Math.PI*0.9); c.stroke();      // a strap line on the mask
+      }
+      break;
     case 'samurai': // 사무라이: 상투 + 붉은 머리띠
       c.fillStyle='#1b1b22'; c.beginPath(); c.arc(hx,hy-r-3,3.4,0,7); c.fill(); c.fillRect(hx-1,hy-r-1,2,4);
       c.fillStyle=tint||'#c62828'; c.fillRect(hx-r-0.5,hy-r*0.55,(r+0.5)*2,3); c.beginPath(); c.moveTo(hx-r,hy-r*0.55); c.lineTo(hx-r-7,hy-r*0.1); c.lineTo(hx-r-2,hy-r*0.55); c.closePath(); c.fill();
@@ -11835,7 +11850,7 @@ function onClientData(data, mode, code){
     bullets=data.bullets;
     walls=data.walls||[];
     { const nowMs=performance.now(); fieldZones=(data.fieldZones||[]).map(z=>Object.assign(z,{t0:nowMs})); }
-    magicCircles=data.magicCircles||[]; poisonZones=data.poisonZones||[]; hrAxes=(data.hrAx||[]).map(a=>({id:a.id,owner:a.o,x:a.x,y:a.y,vx:a.vx,vy:a.vy,st:a.st,sa:a.sa,rcv:performance.now()})); tellApples=(data.tlA||[]).map(a=>({id:a.id,owner:a.o,x:a.x,y:a.y,vx:a.vx,vy:a.vy,rcv:performance.now()})); turrets=data.turrets||[]; droneBombs=data.dbombs||[]; hzDraw=data.hz||null; syncBridgePlatforms(); if(data.dark!==undefined){ const nowS=performance.now()/1000; darkView=(data.dark||[]).map(z=>Object.assign(z, {t0:nowS-(z.age||0)})); }
+    magicCircles=data.magicCircles||[]; poisonZones=data.poisonZones||[]; hrAxes=(data.hrAx||[]).map(a=>({id:a.id,owner:a.o,x:a.x,y:a.y,vx:a.vx,vy:a.vy,st:a.st,sa:a.sa,rcv:performance.now()})); tellApples=(data.tlA||[]).map(a=>({id:a.id,owner:a.o,x:a.x,y:a.y,vx:a.vx,vy:a.vy,rcv:performance.now()})); turrets=data.turrets||[]; droneBombs=data.dbombs||[]; crows=(data.pcr||[]).map(c=>({id:c.id,x:c.x,y:c.y,ang:c.ang,owner:c.owner})); hzDraw=data.hz||null; syncBridgePlatforms(); if(data.dark!==undefined){ const nowS=performance.now()/1000; darkView=(data.dark||[]).map(z=>Object.assign(z, {t0:nowS-(z.age||0)})); }
     if(data.cq && cq){ cq.scores=data.cq.s; cq.holder=data.cq.h; cq.contested=data.cq.c; }
     xmV=data.xm||null; if(!isHost) brzV=data.bz||null;
     raidView=data.raid||null; tnView=data.tn||null; if(data.bk && rpView) tnBk=data.bk;
@@ -13303,6 +13318,7 @@ function dsAssistFire(p, tSec, tMs, aimX, aimY){      // the skill key while the
 }
 const DS_FIRE_SPEED_V=640;
 const ULT_IMPL = {
+  plague(p,tSec,tMs){ plagueCrowUlt(p,tSec,tMs); },
   dragonslayer(p,tSec,tMs){ dsDragonUlt(p,tSec,tMs); },
   cleon(p,tSec,tMs,ax,ay){ cleonFleet(p,tSec,tMs,ax,ay); },
   pel(p,tSec,tMs){ if(pelN(p)<=0) return false; p.pelUlt={boostEnd:tSec+PEL_BOOST_SEC, chaseAt:tSec+PEL_BOOST_SEC, endAt:tSec+PEL_BOOST_SEC+PEL_CHASE_SEC, launched:false}; },
@@ -13642,13 +13658,21 @@ function drawHrAxes(){                                                          
 function drawAttackPreview(){}      // (owner 11-03: no preview for the normal attack)
 
 // the other melee characters get real arm swings too: the arm goes back and cuts across (blades, claws, hook) or is drawn back and shoved forward (spears, fists)
-const MELEE_ANIM={sword:'slash', samurai:'slash', lightsaber:'slash', pirate:'slash', dracula:'slash', dagger:'slash', pizarro:'thrust', guard:'thrust', horemheb:'thrust', gloves:'thrust'};
+const MELEE_ANIM={plague:'staff', sword:'slash', samurai:'slash', lightsaber:'slash', pirate:'slash', dracula:'slash', dagger:'slash', pizarro:'thrust', guard:'thrust', horemheb:'thrust', gloves:'thrust'};
 function meleeArmPose(p, A){
   const kind=MELEE_ANIM[p.weapon]; if(!kind || p.alive===false) return null;
   const w=WEAPONS[p.weapon]; if(!w) return null;
   const T=clamp(w.cd,0.22,0.5), age=hrAge(p); if(!(age>=0) || age>=T) return null;
   const f=Math.cos(A)>=0?1:-1, S=0.4*T;
   let phi=A, R=24, th=A;
+  if(kind==='staff'){      // 역병 의사: the straight arm goes back overhead, then sweeps a full 180 degrees down; the staff stays square to the arm all the way (tilted 90 degrees at the end)
+    const W=0.2*T, C=0.48*T, O=0.62*T, up=A-f*Math.PI/2, dn=A+f*Math.PI/2;
+    if(age<W){ const k=age/W, e=k*k*(3-2*k); phi=hrLerp(A,up,e); }
+    else if(age<C){ const k=(age-W)/(C-W), e=k*k*(3-2*k); phi=hrLerp(up,dn,e); }
+    else if(age<O){ phi=dn; }
+    else { const k=(age-O)/(T-O), e=k*k*(3-2*k); phi=hrLerp(dn,A,e); }
+    return {x:Math.cos(phi)*25, y:-36+Math.sin(phi)*25, th:phi};
+  }
   if(kind==='slash'){      // natural swing: the arm starts already drawn back, accelerates through the cut, the blade lags behind the hand (a whip), overshoots a little, then eases home
     const C=0.36*T, O=0.52*T;
     if(age<C){ const k=age/C, e=k*k*(3-2*k), e2=Math.pow(e,1.7), sn=Math.sin(k*Math.PI); phi=hrLerp(A-f*1.75,A+f*0.55,e); R=hrLerp(17,28,e)+2*sn; th=hrLerp(A-f*2.3,A+f*0.8,e2); }
@@ -13864,6 +13888,91 @@ function spaceReset(p){
   p.drones=undefined; p.pelUlt=null; p.tioStage='blood'; p.tioFor=null; p.tioUlt=null; p.tioSaved=null; p.disg=false;
   if(p.id){ removeSummons(p.id); droneBombs=droneBombs.filter(b=>b.owner!==p.id); }
 }
+/* ---- 역병 의사: 감염 ---- */
+const PL_INF_SEC=5, PL_TICK=0.5, PL_TICK_DMG=1, PL_SLOW=0.9, PL_SPREAD_DX=44, PL_SPREAD_DY=70, PL_MEDICAL_DMG=15, PL_LEECH=5, PL_CROW_N=3, PL_CROW_SEC=4, PL_CROW_SPEED=640, PL_CROW_R=34;
+let crows=[], crowSeq=0;
+function plInfected(p, tS){ return !!(p && p.inf && p.inf.until>tS); }
+function plagueInfect(t, byId, tMs){
+  const tS=tMs/1000, ow=players[byId];
+  if(!t || !t.alive || !ow || t.id===byId || t.isClone || t.swordCharge || t.darkSub) return false;
+  if(plInfected(t, tS)){ t.inf.until=tS+PL_INF_SEC; return true; }
+  t.inf={until:tS+PL_INF_SEC, by:byId, next:tS+PL_TICK};
+  pushFx('skillring', t.x, t.y-60, tMs, {color:'#8fd36a', r:46});
+  return true;
+}
+function plagueTick(dt, t){
+  const tS=t/1000, list=Object.values(players);
+  for(const a of list){
+    if(!a.inf) continue;
+    if(!a.alive || a.inf.until<=tS || !players[a.inf.by]){ a.inf=null; continue; }
+    const ow=players[a.inf.by];
+    while(a.alive && a.inf && tS>=a.inf.next){
+      a.inf.next+=PL_TICK;
+      const d=absorbIntoShield(a, PL_TICK_DMG); a.hp-=d; markHit(a, ow.id, t, d);
+      pushFx('dmg', a.x, a.y-PLAYER_H-6, t, {v:Math.max(1,Math.round(d)), color:'#8fd36a'});
+      if(a.hp<=0 && a.alive){ handleDeath(a, ow, t, ow.name); a.inf=null; }
+    }
+    if(!a.alive || !a.inf) continue;
+    for(const b of list){     // touching a teammate of the sick one passes the sickness on
+      if(b===a || !b.alive || b.x===undefined || b.isClone || b.swordCharge || b.darkSub || plInfected(b, tS) || !isAlly(a, b)) continue;
+      if(Math.abs(b.x-a.x)<PL_SPREAD_DX && Math.abs(b.y-a.y)<PL_SPREAD_DY) plagueInfect(b, a.inf.by, t);
+    }
+  }
+  if(crows.length) plagueCrowTick(dt, t);
+}
+function plagueCrowTick(dt, t){
+  const tS=t/1000, keep=[];
+  for(const c of crows){
+    const ow=players[c.owner];
+    if(!ow || !ow.alive || tS>=c.until || matchEnded){ pushFx('death', c.x, c.y, t, {color:'#2a2a33'}); continue; }
+    if(tS>=c.turnAt){      // irregular flight: a new heading every 0.15 - 0.45 s, now and then toward somebody sick-to-be
+      c.turnAt=tS+0.15+Math.random()*0.3;
+      let want=c.ang+(Math.random()*2-1)*2.2;
+      if(Math.random()<0.4){ let tg=null, bd=1e9; for(const o of Object.values(players)){ if(!spaceEnemy(ow,o)) continue; const dd=Math.hypot(o.x-c.x,(o.y-30)-c.y); if(dd<bd){ bd=dd; tg=o; } } if(tg) want=Math.atan2((tg.y-30)-c.y, tg.x-c.x)+(Math.random()*2-1)*0.5; }
+      c.want=want;
+    }
+    let da=c.want-c.ang; while(da>Math.PI) da-=2*Math.PI; while(da<-Math.PI) da+=2*Math.PI;
+    c.ang+=clamp(da, -9*dt, 9*dt);
+    c.x+=Math.cos(c.ang)*PL_CROW_SPEED*dt; c.y+=Math.sin(c.ang)*PL_CROW_SPEED*dt;
+    if(c.x<30){ c.x=30; c.ang=Math.PI-c.ang; c.want=c.ang; } else if(c.x>MAP.arenaW-30){ c.x=MAP.arenaW-30; c.ang=Math.PI-c.ang; c.want=c.ang; }
+    if(c.y<30){ c.y=30; c.ang=-c.ang; c.want=c.ang; } else if(c.y>MAP.arenaH-30){ c.y=MAP.arenaH-30; c.ang=-c.ang; c.want=c.ang; }
+    for(const o of Object.values(players)){      // through platforms and through everybody: it only spreads the sickness
+      if(!spaceEnemy(ow,o)) continue;
+      if(Math.hypot(o.x-c.x,(o.y-30)-c.y)<=PL_CROW_R+16 && !(c.seen[o.id]>tS)){ c.seen[o.id]=tS+0.5; if(plagueInfect(o, ow.id, t)) pushFx('spark', o.x, o.y-40, t, {ang:-Math.PI/2, color:'#8fd36a'}); }
+    }
+    keep.push(c);
+  }
+  crows=keep;
+}
+function plagueCrowUlt(p, tSec, tMs){
+  for(let i=0;i<PL_CROW_N;i++) crows.push({id:++crowSeq, owner:p.id, x:p.x+(i-1)*24, y:p.y-50, ang:-Math.PI/2+(i-1)*0.9+(Math.random()-0.5)*0.4, want:0, turnAt:0, until:tSec+PL_CROW_SEC, seen:{}});
+  pushFx('skillring', p.x, p.y-50, tMs, {color:'#2a2a33', r:80});
+}
+function drawCrows(){
+  const now=performance.now();
+  for(const c of crows){
+    const f=(Math.cos(c.ang)>=0)?1:-1, fl=Math.sin(now/55+c.id*2)*0.9;
+    ctx.save(); ctx.translate(c.x,c.y); ctx.scale(f,1); ctx.rotate(Math.atan2(Math.sin(c.ang), Math.abs(Math.cos(c.ang)))*0.5);
+    ctx.globalAlpha=0.28; ctx.fillStyle='#8fd36a'; ctx.beginPath(); ctx.arc(0,0,24,0,7); ctx.fill(); ctx.globalAlpha=1;
+    ctx.fillStyle='#14141b'; ctx.strokeStyle='#9aa0b8'; ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.moveTo(-4,-2); ctx.quadraticCurveTo(-8,-14+fl*8,-22,-22+fl*20); ctx.quadraticCurveTo(-18,-6+fl*6,-30,-2+fl*14); ctx.quadraticCurveTo(-16,2,-2,5); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(0,0,17,8.5,0,0,7); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-14,0); ctx.lineTo(-29,-4); ctx.lineTo(-26,5); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.arc(15,-3,7,0,7); ctx.fill(); ctx.stroke();
+    ctx.fillStyle='#3a3a48'; ctx.beginPath(); ctx.moveTo(20,-6); ctx.lineTo(31,-2); ctx.lineTo(20,1); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillStyle='#ff5a5a'; ctx.beginPath(); ctx.arc(17,-4.5,1.7,0,7); ctx.fill();
+    ctx.restore();
+  }
+}
+function drawInfMark(c, t){
+  const bob=Math.sin(t/220)*3;
+  c.save(); c.translate(0,-120+bob);
+  c.fillStyle='rgba(60,110,40,0.85)'; c.strokeStyle='#d6ff9c'; c.lineWidth=2;
+  c.beginPath(); c.arc(0,0,11,0,7); c.fill(); c.stroke();
+  c.fillStyle='#d6ff9c';
+  for(let k=0;k<3;k++){ const a=k*2.094-1.57; c.beginPath(); c.arc(Math.cos(a)*5,Math.sin(a)*5+1,2.6,0,7); c.fill(); }
+  c.restore();
+}
 function spaceTick(dt, t){
   const tSec=t/1000;
   for(const id of Object.keys(players)){
@@ -13879,6 +13988,7 @@ function spaceTick(dt, t){
     if(q.pelUlt) pelUltTick(q, tSec, t);
   }
   if(droneBombs.length) droneBombTick(dt, t);
+  plagueTick(dt, t);
 }
 function disguiseSeen(p){       // true = the viewer sees a disguised 티오니스 under the copied name / clan / team dot: everybody (his own allies too) except the copied player himself and Tionis; the scoreboard and the chat keep the real name (owner 10-29)
   const me=players[myId]; if(!p.dgn || p.id===myId) return false;
@@ -13998,6 +14108,7 @@ function skillCdOf(p){ return (skW(p)==='cleon'?CLEON_SKILL_CD:SKILL_CD*(skW(p)=
 function ultCdOf(p){ return ULT_CD*pzCdMult(p)*(gameMode==='hyperbr'?0.2:1); }
 const PRACTICE_SKILL_CD=2;
 const SKILLS={
+  plague:{name:'의료 사고', kind:'hit', desc:'지금 감염된 상대 모두에게 즉시 15 피해 (감염된 상대가 없으면 쓰이지 않음)'},
   cleon:{name:'근위병 소환', kind:'buff', desc:'창을 든 근위병 4명을 9초 동안 소환 (체력 45, 쿨타임 10.5초) · 2명은 가장 가까운 상대에게 돌진해 15 피해, 2명은 내 좌우를 지키다 상대가 가까워지면 달려가 공격'},
   pel:{name:'드론 증설', kind:'buff', desc:'드론을 한 대 늘림 (최대 6대)'},
   tionis:{name:'채혈', kind:'hit', desc:'주사기를 던져(중거리) 맞힌 상대에게 20 피해 · 맞히면 다음 스킬이 변신으로 바뀌어 바로 쓸 수 있음 · 변신은 맞힌 상대로 5초 동안 변장 (이름·외형·공격·스킬·궁극기가 상대의 것, 체력바는 초록색)'},
@@ -14037,6 +14148,7 @@ const SKILL_SFX={buff:'skill_buff', hit:'skill_hit', move:'skill_move'};
 /* ================= 2스킬 (E): the old teleport is gone - every character has a second skill on the E key (cooldown 10 s, owner 11-08) =================
    Characters without an entry here still teleport for now. The cooldown clock is p.lastTeleport (TELEPORT_CD), so the HUD / replay / practice plumbing is the same. */
 const SKILLS2={
+  plague:{name:'자기 치유', kind:'buff', desc:'지금 감염된 상대들의 체력을 5씩 빼앗고, 빼앗은 양의 2배만큼 체력을 회복 (듀얼에서는 4배) · 감염된 상대가 없으면 쓰이지 않음'},
   wizard:{name:'마력 압축', kind:'hit', desc:'기존 탄환보다 2배 큰 탄환을 발사 · 무한정 관통 · 관통과 상관없이 피해 20'},
   sword:{name:'강타', kind:'move', desc:'무릎을 굽히고 앞으로 도약해 떨어지며 검을 찍음 · 맞은 상대 0.5초 기절 + 피해 45'},
   tell:{name:'강행돌파', kind:'move', desc:'대쉬의 2배 거리로 도약 · 다음 2초 동안 일반 공격 게이지가 2.5배 빨리 참'},
@@ -14072,8 +14184,14 @@ const SKILLS2={
   cleon:{name:'함대 신호', kind:'hit', desc:'조준한 곳에 소형 포격 3발 (발당 피해 22, 0.3초 간격)'},
   pizarro:{name:'투창', kind:'move', desc:'창을 포물선으로 던짐 · 바닥에 닿거나 상대에 맞으면 그 자리로 이동하고 체력 15 회복'},
 };
-const SKILL2_BOT={wizard:[150,900], sword:[120,520], tell:[250,900], harald:[0,130], bat:[200,900], rifle:[250,800], pistol:[200,900], kan:[0,120], dagger:[220,750], portalgun:[180,800], grenade:[0,360], pizarro:[250,800], magiccard:[250,800], dragonslayer:[0,150], kurus:[150,900], puppeteer:[0,650], gloves:[0,260], lightsaber:[0,220], tionis:[0,500], horemheb:[150,600], bazooka:[250,900], gambler:[0,600], vacuum:[0,300], smg:[250,800], bow:[250,900], boomerang:[0,260], shuriken:[150,700], shotgun:[150,520], dracula:[100,520], flamethrower:[150,700], pirate:[250,800], samurai:[0,200], pel:[150,800], cleon:[250,900]};      // the distance at which a bot uses its second skill
+const SKILL2_BOT={plague:[0,700], wizard:[150,900], sword:[120,520], tell:[250,900], harald:[0,130], bat:[200,900], rifle:[250,800], pistol:[200,900], kan:[0,120], dagger:[220,750], portalgun:[180,800], grenade:[0,360], pizarro:[250,800], magiccard:[250,800], dragonslayer:[0,150], kurus:[150,900], puppeteer:[0,650], gloves:[0,260], lightsaber:[0,220], tionis:[0,500], horemheb:[150,600], bazooka:[250,900], gambler:[0,600], vacuum:[0,300], smg:[250,800], bow:[250,900], boomerang:[0,260], shuriken:[150,700], shotgun:[150,520], dracula:[100,520], flamethrower:[150,700], pirate:[250,800], samurai:[0,200], pel:[150,800], cleon:[250,900]};      // the distance at which a bot uses its second skill
 const SKILL2_IMPL={};
+SKILL2_IMPL.plague=function(p,tSec,tMs){
+  const sick=Object.values(players).filter(o=>spaceEnemy(p,o) && plInfected(o,tSec)); if(!sick.length) return false;
+  let total=0; for(const o of sick){ total+=skillDamage(p, o, PL_LEECH, tMs, {}); pushFx('spark', o.x, o.y-40, tMs, {ang:Math.atan2((p.y-40)-(o.y-40), p.x-o.x), color:'#8fd36a'}); }
+  const got=total*(gameMode==='duel'?4:2)*pvHealMul(p), before=p.hp; p.hp=Math.min(maxHpFor(p), p.hp+got);
+  pushFx('heal', p.x, p.y-70, tMs, {v:Math.round(p.hp-before)});
+};
 const DASH_DIST=Math.round(DASH_FORCE/3.9);      // how far a dash carries (the push dies off by 0.02^t)
 function skill2Free(x,y,maxUp){ for(let k=0;k<=(maxUp||160);k+=16) if(skillSpotFree(x,y-k)) return {x:x,y:y-k}; return null; }
 function trySkill2(p, tMs, aimX, aimY){ const o=curAur; curAur=auraKind(p); try{ return trySkill2b(p, tMs, aimX, aimY); } finally{ curAur=o; } }
@@ -14578,6 +14696,10 @@ function skillHitFront(p, tMs, dirX, o){   // the nearest enemy in a box in fron
 }
 const PZ_CROSS_HALF=[90,100,110,125], PZ_CROSS_DMG=[20,22,25,28], PZ_CROSS_STUN=[1,1,1,1], PZ_CROSS_HEAL=20, PZ_CROSS_DUR=0.7, PZ_MARK_SEC=3, PZ_MARK_DMG=5;   // 피사로's skill: the cross from the sky, bigger / harder / longer stun with every stage of his ultimate; whoever it hits is marked for 3 s and the next thrust on them hurts 5 more
 const SKILL_IMPL={
+  plague(p,tSec,tMs){
+    const sick=Object.values(players).filter(o=>spaceEnemy(p,o) && plInfected(o,tSec)); if(!sick.length) return false;
+    for(const o of sick){ skillDamage(p, o, PL_MEDICAL_DMG, tMs, {}); pushFx('skillring', o.x, o.y-50, tMs, {color:'#8fd36a', r:56}); }
+  },
   dragonslayer(p,tSec,tMs){ p.dsFlameUntil=tSec+DS_FLAME_SEC; pushFx('dsflame', p.x, p.y-40, tMs, {pid:p.id, dur:DS_FLAME_SEC}); pushFx('skillring', p.x, p.y-40, tMs, {color:(conceptOfP(p)==='manga')?'#2c2f6b':'#ff7a2a', r:80}); },
   cleon(p,tSec,tMs){ spawnGuards(p,tSec,tMs); pushFx('skillring', p.x, p.y-40, tMs, {color:'#ff7ac8', r:90}); },
   pel(p,tSec,tMs){ const n=pelN(p); if(n>=PEL_MAX) return false; p.drones=n+1; pushFx('skillring', p.x, p.y-70, tMs, {color:'#7fd8ff', r:60}); },
@@ -15222,6 +15344,7 @@ function meleeAttack(p, angle, w, tMs){
       pushFx('hit', target.x, cy, tMs, {color:p.color, ang:Math.atan2(cy-(p.y-PLAYER_H/2), target.x-p.x), v:dmgT, el:dmgTypeOf(p.weapon)});
       applyHitKnockback(target, target.x-p.x, cy-(p.y-PLAYER_H/2), (w.id==='harald'?w.dmg:dmgT), (homerun?7.5:(w.kbMult? w.kbMult*(lunge?PZ_LUNGE_KB:1) : undefined)) * ((pva && pva.kb>1) ? pva.kb : 1) || undefined);
       if(lunge && target.hp>0) stunPlayer(target, PZ_LUNGE_STUN, tMs);
+      if(w.id==='plague' && target.hp>0) plagueInfect(target, p.id, tMs);
       hitAny=true;
       if(w.lifesteal){
         const heal=(w.lifestealFlat!==undefined)?w.lifestealFlat:dmg*(w.lifestealRatio||1);
@@ -15973,6 +16096,7 @@ function botWantsSkill(p, target, d, tSec){
   const hpFrac=p.hp/maxHpFor(p), hurt=hpFrac<0.55;
   switch(skW(p)){
     case 'pistol': case 'rifle': return d<600;                        // damage buffs: in a gunfight
+    case 'plague': return Object.values(players).some(o=>spaceEnemy(p,o) && plInfected(o,tSec));      // 의료 사고: only when somebody is sick
     case 'smg': return d>150 && d<520 && Math.abs(target.y-p.y)<200;        // the smoke grenade: thrown at the enemy from a medium distance
     case 'bow': return !p.hook && d>=220 && d<=720 && Math.abs(target.y-p.y)<260;       // the hook arrow: shot at an enemy a bit away (a miss only costs 1.5 s)
     case 'sword': return d<900 && Math.abs(target.y-p.y)<110 && !p.swordCharge;   // a 3 second charge: worth it from a long way off (same level), and never while already charging
@@ -17014,6 +17138,7 @@ function tickHook(dt, t){
    that are a state (a condition that stays true) only pop up the moment the condition becomes true and again after it was false in between (pvEdge).
    q = never shows a name (마법사, 차원여행자, 제임스, 보안관). Bots, humans and clones all go through the same code (it is host-side). */
 const PASSIVES={
+  plague:{n:'감염',c:'#8fd36a'},
   pizarro:{n:'정복자의 각성',c:'#ffd34d'}, sword:{n:'숨 고르기',c:'#9ad0ff'}, pistol:{n:'붉은 탄환',q:1}, wizard:{n:'마법진의 파동',q:1},
   magiccard:{n:'카드 폭풍',c:'#ff7ad9'}, kurus:{n:'어둠 속의 질주',c:'#b98cff'}, smg:{n:'제압 사격',c:'#ffb84d'}, lightsaber:{n:'포스 반격',c:'#7fe3ff'},
   kan:{n:'독기',c:'#6be08a'}, boomerang:{n:'귀환 일격',c:'#ffd34d'}, vacuum:{n:'먼지 가속',c:'#8fd3ff'}, pirate:{n:'대포 약탈',c:'#ffb84d'},
@@ -17023,7 +17148,7 @@ const PASSIVES={
   gambler:{n:'승부사의 감',q:1}, flamethrower:{n:'불길 질주',c:'#ff8a3d'}, portalgun:{n:'',q:1}, dagger:{n:'그림자 질주',q:1},
   dragonslayer:{n:'강인한 정신력',c:'#ffb84d'}, samurai:{n:'일섬 연참',c:'#ff5a6a'}, tionis:{n:'피의 연극',c:'#ff4d6a'}, bow:{n:'추격의 화살',c:'#9ad0ff'}, tell:{n:'당겨진 시위',q:1}, harald:{n:'강인한 맷집',q:1}
 };
-const PASSIVE_DESC={tell:"게이지가 찰수록 화살 피해가 1~64로 커지고, 빨라지고, 점점 일직선으로 날아감 (꽉 차면 완전한 일직선)", dragonslayer:"화염, 독, 전기 피해를 30% 덜 받음", bow:"스킬이 상대에게 맞으면 상대에게 끌려가 밀치고 기절시킴", pistol:"6번째 발사마다 탄환이 붉게 변하고 피해와 크기가 1.25배", smg:"연발을 모두 맞히면 주위 상대를 밀치고 3초 동안 이동속도 1.75배", lightsaber:"공격을 튕겨내면 다음 공격 피해 +20%", horemheb:"모래바람에 맞은 상대를 3초 안에 공격하면 피해 1.5배", pizarro:"4단계가 되면 치유 효과 2배, 이동속도 1.25배", puppeteer:"실이 이어진 상대를 조종하면 자폭 피해 +10", kan:"독이 4번 쌓인 상대는 이동속도 20% 감소", sword:"돌진 베기가 아무도 못 맞히고 끝나면 스킬 쿨타임 절반", bat:"상대를 4번 연속 맞히면 다음 공격이 매우 큰 넉백과 피해 1.25배", boomerang:"돌아오는 길에 맞히면 피해 1.5배", shuriken:"대쉬 후 표창을 맞히면 대쉬 쿨타임 0.3초 감소", shotgun:"알갱이를 모두 맞히면 상대 이동속도 20% 감소 (3초)", rifle:"지뢰를 밟은 상대는 3초 동안 이동속도 10% 감소", gloves:"피격마다 받는 피해가 1%씩 줄고, 10%가 되면 초기화되며 2.5초 동안 이동속도 1.5배와 공격 피해 1.25배", grenade:"폭발 점프로 피해를 주면 착지 때 근처 상대를 밀치고 기절", bazooka:"스킬 로켓 3발이 모두 맞으면 그 자리에 3초 동안 화염 (닿으면 초당 3 피해)", dagger:"대쉬 쿨타임이 0.5초 (기본 1.5초)", dracula:"처치하면 체력 25 회복", gambler:"일반 공격 피해가 4~36 중 무작위로 정해짐", magiccard:"스킬 카드 5장이 모두 한 상대에게 맞으면 기절", kurus:"어둠 탈출 후 3초 동안 이동속도 1.5배", wizard:"마법진 안에서는 스킬 밀쳐내는 힘 2배", vacuum:"스택 1개마다 이동속도 +5%", pirate:"대포 비행으로 맞히면 스킬 쿨타임 3초 감소", cleon:"근위병이 살아 있는 동안 받는 피해 15% 감소", pel:"드론 6대가 모두 살아 있으면 드론 공격 속도 1.2배", portalgun:"탄환이 튕길 때마다 피해 증가", flamethrower:"내가 남긴 불길 위에서는 이동속도 1.3배와 초당 체력 3 회복", samurai:"거합으로 2명 이상 베면 거합 쿨타임 절반", tionis:"채혈 주사기가 맞으면 체력 10 회복", harald:"체력이 500 (다른 캐릭터는 300)"};      // the codex lines of the passives (the name comes from PASSIVES)
+const PASSIVE_DESC={plague:"감염된 상대는 머리 위에 표시가 뜸 · 감염된 상대의 팀원과 닿으면 팀원도 5초 동안 감염 · 감염되면 0.5초마다 1 피해, 이동속도 10% 감소",tell:"게이지가 찰수록 화살 피해가 1~64로 커지고, 빨라지고, 점점 일직선으로 날아감 (꽉 차면 완전한 일직선)", dragonslayer:"화염, 독, 전기 피해를 30% 덜 받음", bow:"스킬이 상대에게 맞으면 상대에게 끌려가 밀치고 기절시킴", pistol:"6번째 발사마다 탄환이 붉게 변하고 피해와 크기가 1.25배", smg:"연발을 모두 맞히면 주위 상대를 밀치고 3초 동안 이동속도 1.75배", lightsaber:"공격을 튕겨내면 다음 공격 피해 +20%", horemheb:"모래바람에 맞은 상대를 3초 안에 공격하면 피해 1.5배", pizarro:"4단계가 되면 치유 효과 2배, 이동속도 1.25배", puppeteer:"실이 이어진 상대를 조종하면 자폭 피해 +10", kan:"독이 4번 쌓인 상대는 이동속도 20% 감소", sword:"돌진 베기가 아무도 못 맞히고 끝나면 스킬 쿨타임 절반", bat:"상대를 4번 연속 맞히면 다음 공격이 매우 큰 넉백과 피해 1.25배", boomerang:"돌아오는 길에 맞히면 피해 1.5배", shuriken:"대쉬 후 표창을 맞히면 대쉬 쿨타임 0.3초 감소", shotgun:"알갱이를 모두 맞히면 상대 이동속도 20% 감소 (3초)", rifle:"지뢰를 밟은 상대는 3초 동안 이동속도 10% 감소", gloves:"피격마다 받는 피해가 1%씩 줄고, 10%가 되면 초기화되며 2.5초 동안 이동속도 1.5배와 공격 피해 1.25배", grenade:"폭발 점프로 피해를 주면 착지 때 근처 상대를 밀치고 기절", bazooka:"스킬 로켓 3발이 모두 맞으면 그 자리에 3초 동안 화염 (닿으면 초당 3 피해)", dagger:"대쉬 쿨타임이 0.5초 (기본 1.5초)", dracula:"처치하면 체력 25 회복", gambler:"일반 공격 피해가 4~36 중 무작위로 정해짐", magiccard:"스킬 카드 5장이 모두 한 상대에게 맞으면 기절", kurus:"어둠 탈출 후 3초 동안 이동속도 1.5배", wizard:"마법진 안에서는 스킬 밀쳐내는 힘 2배", vacuum:"스택 1개마다 이동속도 +5%", pirate:"대포 비행으로 맞히면 스킬 쿨타임 3초 감소", cleon:"근위병이 살아 있는 동안 받는 피해 15% 감소", pel:"드론 6대가 모두 살아 있으면 드론 공격 속도 1.2배", portalgun:"탄환이 튕길 때마다 피해 증가", flamethrower:"내가 남긴 불길 위에서는 이동속도 1.3배와 초당 체력 3 회복", samurai:"거합으로 2명 이상 베면 거합 쿨타임 절반", tionis:"채혈 주사기가 맞으면 체력 10 회복", harald:"체력이 500 (다른 캐릭터는 300)"};      // the codex lines of the passives (the name comes from PASSIVES)
 function passiveInfo(wid){ const d=PASSIVE_DESC[wid]; if(!d) return null; const p=PASSIVES[wid]||{}; return {name:p.n||({pistol:'붉은 탄환', wizard:'마법진의 파동', shotgun:'명사수의 위협', portalgun:'튕김 강화'})[wid]||'', desc:d}; }
 function pvPop(p, key, tMs){ const d=PASSIVES[key]; if(!d || d.q || !p || !p.alive || p.isClone) return; const tS=tMs/1000; if(!p.pvAt) p.pvAt={}; if(p.pvAt[key]>tS-1.0) return; p.pvAt[key]=tS; pushFx('passive', p.x, p.y-96, tMs, {name:d.n, color:d.c}); }
 function pvEdge(p, key, on, tMs){ if(!p.pvOn) p.pvOn={}; if(on && !p.pvOn[key]) pvPop(p, key, tMs); p.pvOn[key]=!!on; }
@@ -17034,6 +17159,7 @@ function pvSpeed(p, tS){        // every passive that changes the walking speed,
   if(k==='vacuum') m*=1+0.05*(p.vacuumStacks||0);
   if(k==='flamethrower' && p.pvOnFire) m*=1.3;
   if(p.pvSlowUntil>tS) m*=(p.pvSlowMult||1);
+  if(p.inf && p.inf.until>tS) m*=PL_SLOW;       // 역병 의사: the sick walk 10% slower
   if(p.poison && p.poison.until>tS && p.poison.stacks>=KAN_POISON_MAX){ const ko=players[p.poison.owner]; if(ko && ko.weapon==='kan') m*=0.8; }     // 칸: a victim with 4 poison stacks is slower
   return m;
 }
@@ -17538,7 +17664,7 @@ function hostTickCore(dt,t){
         fireCdRemain: snapR(p.fireCdRemain||0,20),
         ultCdRemain: p.darkSub ? 0 : snapR(Math.max(0, ultCdOf(p) - (t/1000-(p.lastUlt===undefined?-9999:p.lastUlt))),20), darkSub:p.darkSub?1:0, darkArm:(p.darkArmUntil>t/1000)?1:0,
         skillCdRemain: snapR(Math.max(0, skillCdOf(p) - (t/1000-(p.lastSkill===undefined?-9999:p.lastSkill))),20), buff:p.buff||null, skillUses:p.skillUses||0, dsA:(p.dsDragonUntil>t/1000)?Math.round((p.dsDragonUntil-t/1000)*10)/10:0, dsC:(p.dsDragonUntil>t/1000)?Math.round(dsAssistCdLeft(p,t/1000)*10)/10:0, ultUses:p.ultUses||0, ultMulti:p.ultMulti||0,
-        tellG:Math.round((p.tellG||0)*100)/100, s2k:p.s2k||'', s2d:p.s2d||1, blk:p.blk?1:0, spn:p.spn?1:0, gd:p.gd?1:0, fbar:p.fbar?1:0, sand:p.sand?1:0, snr:p.snr?1:0, cnt:p.cnt?1:0, flr:p.flr||0, pz:p.pzStacks||0, pm:(p.pzMarkUntil>t/1000)?1:0, ultOn:!!p.ultOn, invis:!!p.invis, isGuard:p.isGuard?1:0, isVault:p.isVault?1:0, isCrystal:p.isCrystal?1:0, isClone:p.isClone?1:0, ownerId:p.ownerId||'', hk:p.hook?[Math.round(p.hook.x),Math.round(p.hook.y)]:null, pvi:pvIconOf(p,t/1000)||undefined, dgn:(p.disg&&p.tioFor)?p.tioFor.name:'', dgv:(p.disg&&p.tioFor)?(p.tioFor.vid||''):'', dgt:(p.disg&&p.tioFor&&p.tioFor.vteam!==undefined)?p.tioFor.vteam:null, dgc:(p.disg&&p.tioFor)?(p.tioFor.clan||''):'', tioStage:p.tioStage||'', drones:(p.weapon==='pel')?pelN(p):0, hrN:p.hrNoAxe?1:0, hrC:p.hrCharge?1:0, hrG:Math.round((p.hrAng||0)*100)/100, hrA:(WEAPONS[p.weapon] && p.lastShot!==undefined)?Math.round(Math.min(2,Math.max(0,t/1000-p.lastShot))*50)/50:9, pelBoost:pelBoostOn(p,t/1000)?1:0, burning:!!p.burning, poisoned:!!p.poisoned, kw:(p.kanWingsUntil>t/1000)?1:0, gc:p.gc||0, gp:Math.round(Math.min(1,(p.goldStay||0)/GOLD_PICK_STAY)*20)/20, pp:puppetMaster(p,t/1000)?p.puppetTarget:null, sw:p.sw||null, sewSlowed:!!p.sewSlowed, slowed:!!p.slowed, stunned:!!p.stunned, cardSlowed:!!p.cardSlowed, bladeSpin:!!p.bladeSpin, swordCharging:!!p.swordCharge, cannonFlying:!!p.cannonFly, chips:p.chips||0, cannonAng:p.cannonFly?Math.round(Math.atan2(p.vy||0,p.cannonFly.vx)*100)/100:0, totalDamageDealt:p.totalDamageDealt||0, channeling:!!p.teleportChannel, flaming:!!p.flaming, portalPair:p.portalPair||null, batting:!!p.batting, vacuumStacks:p.vacuumStacks||0, isZombie:!!p.isZombie, parkourItem:!!p.parkourItem,
+        tellG:Math.round((p.tellG||0)*100)/100, s2k:p.s2k||'', s2d:p.s2d||1, infd:plInfected(p,t/1000)?1:0, blk:p.blk?1:0, spn:p.spn?1:0, gd:p.gd?1:0, fbar:p.fbar?1:0, sand:p.sand?1:0, snr:p.snr?1:0, cnt:p.cnt?1:0, flr:p.flr||0, pz:p.pzStacks||0, pm:(p.pzMarkUntil>t/1000)?1:0, ultOn:!!p.ultOn, invis:!!p.invis, isGuard:p.isGuard?1:0, isVault:p.isVault?1:0, isCrystal:p.isCrystal?1:0, isClone:p.isClone?1:0, ownerId:p.ownerId||'', hk:p.hook?[Math.round(p.hook.x),Math.round(p.hook.y)]:null, pvi:pvIconOf(p,t/1000)||undefined, dgn:(p.disg&&p.tioFor)?p.tioFor.name:'', dgv:(p.disg&&p.tioFor)?(p.tioFor.vid||''):'', dgt:(p.disg&&p.tioFor&&p.tioFor.vteam!==undefined)?p.tioFor.vteam:null, dgc:(p.disg&&p.tioFor)?(p.tioFor.clan||''):'', tioStage:p.tioStage||'', drones:(p.weapon==='pel')?pelN(p):0, hrN:p.hrNoAxe?1:0, hrC:p.hrCharge?1:0, hrG:Math.round((p.hrAng||0)*100)/100, hrA:(WEAPONS[p.weapon] && p.lastShot!==undefined)?Math.round(Math.min(2,Math.max(0,t/1000-p.lastShot))*50)/50:9, pelBoost:pelBoostOn(p,t/1000)?1:0, burning:!!p.burning, poisoned:!!p.poisoned, kw:(p.kanWingsUntil>t/1000)?1:0, gc:p.gc||0, gp:Math.round(Math.min(1,(p.goldStay||0)/GOLD_PICK_STAY)*20)/20, pp:puppetMaster(p,t/1000)?p.puppetTarget:null, sw:p.sw||null, sewSlowed:!!p.sewSlowed, slowed:!!p.slowed, stunned:!!p.stunned, cardSlowed:!!p.cardSlowed, bladeSpin:!!p.bladeSpin, swordCharging:!!p.swordCharge, cannonFlying:!!p.cannonFly, chips:p.chips||0, cannonAng:p.cannonFly?Math.round(Math.atan2(p.vy||0,p.cannonFly.vx)*100)/100:0, totalDamageDealt:p.totalDamageDealt||0, channeling:!!p.teleportChannel, flaming:!!p.flaming, portalPair:p.portalPair||null, batting:!!p.batting, vacuumStacks:p.vacuumStacks||0, isZombie:!!p.isZombie, parkourItem:!!p.parkourItem,
         isHost:p.isHost,clan:p.clan||'',joinOrder:p.joinOrder,weapon:p.weapon,kit:p.kit||null,team:p.team,spinAngle:p.spinAngle,cos:p.cos,isBoss:p.isBoss?1:0,isMinion:p.isMinion?1:0,bt:p.bt,bossMaxHp:p.bossMaxHp,emIdx:p.emIdx,emRem:(p.emUntil?Math.max(0,Math.round((p.emUntil-t/1000)*20)/20):0)})),
       cq: (gameMode==='conquest' && cq) ? {s:cq.scores, h:cq.holder, c:cq.contested} : undefined,
       xm: (xm && xmV) ? xmV : undefined,
@@ -17563,6 +17689,7 @@ function hostTickCore(dt,t){
       poisonZones:poisonZones.map(z=>({kd:z.kd||'', h:z.h||0, mine:z.mine?1:0,x:z.x,y:z.y,r:z.r,owner:z.owner,team:z.team,rem:z.until-t/1000,rv:(z.revealAt!==undefined)?1:0})),
       hz:hzDraw,
       dbombs:droneBombs.map(b=>({x:Math.round(b.x),y:Math.round(b.y),owner:b.owner})),
+      pcr:crows.map(c=>({id:c.id,x:Math.round(c.x),y:Math.round(c.y),ang:Math.round(c.ang*100)/100,owner:c.owner})),
       turrets:turrets.map(z=>({x:Math.round(z.x),y:Math.round(z.y),a:Math.round(z.ang*100)/100,owner:z.owner,team:z.team,rem:z.until-t/1000})),
       dark:darkSnap(t),
       effects:effects.filter(e=>!e._sent).map(e=>{ e._sent=1; return e; }).map(e=>({x:e.x,y:e.y,type:e.type,born:e.born,id:e.id,color:e.color,ang:e.ang,v:e.v,dir:e.dir,face:e.face,doubled:e.doubled,name:e.name,k:e.k,x2:e.x2,y2:e.y2,r:e.r,w:e.w,ta:e.ta}))
@@ -19385,6 +19512,18 @@ function drawHeldWeapon(c, weaponId, ax, ay, hx, hy, swingProg, concept){
       c.fillStyle=fl?'#fff4d0':'#eef2f8'; c.beginPath(); c.moveTo(50,-2.6); c.lineTo(58,0); c.lineTo(50,2.6); c.closePath(); c.fill();
       break;
     }
+    case 'lanternstaff': { // 역병 의사: the staff always stands square to the arm; the lantern is on the upper side while he faces forward
+      const pu=0.75+0.25*Math.sin(performance.now()/170), sd=-(PERSONA_FACE||1);      // local y: -1 = up for a right-facing figure
+      c.lineCap='round'; c.strokeStyle='#241c16'; c.lineWidth=3.2; c.beginPath(); c.moveTo(0,-sd*24); c.lineTo(0,sd*34); c.stroke();
+      c.strokeStyle='#4a3a2c'; c.lineWidth=1; c.beginPath(); c.moveTo(0,-sd*24); c.lineTo(0,sd*34); c.stroke();
+      c.strokeStyle='#8a8f99'; c.lineWidth=2; c.beginPath(); c.moveTo(0,sd*34); c.lineTo(0,sd*44); c.stroke();
+      c.save(); c.translate(0,sd*44);
+      c.save(); c.globalCompositeOperation='lighter'; const g=c.createRadialGradient(0,0,1,0,0,24*pu); g.addColorStop(0,'rgba(255,224,130,0.85)'); g.addColorStop(1,'rgba(255,190,70,0)'); c.fillStyle=g; c.beginPath(); c.arc(0,0,24*pu,0,7); c.fill(); c.restore();
+      c.fillStyle='#ffe29a'; c.strokeStyle='#6b5a3a'; c.lineWidth=1.4; c.beginPath(); c.roundRect(-6,-5,12,10,2); c.fill(); c.stroke();
+      c.beginPath(); c.moveTo(-6,0); c.lineTo(6,0); c.moveTo(0,-5); c.lineTo(0,5); c.stroke();
+      c.fillStyle='#3a3a44'; c.fillRect(-8.5,-6,3,12); c.fillRect(5,-6,2.4,12);
+      c.restore();
+      break; }
     case 'katana': // 사무라이: 칼집에서 뽑은 카타나
       c.lineCap='round'; c.strokeStyle='#5a3a1e'; c.lineWidth=3.5; c.beginPath(); c.moveTo(-2,0); c.lineTo(6,0); c.stroke();
       c.strokeStyle='#d4af37'; c.lineWidth=3; c.beginPath(); c.moveTo(6,-4); c.lineTo(6,4); c.stroke();
@@ -20870,6 +21009,7 @@ function drawProjectileBase(b){
       break;
     }
     case 'katana':
+    case 'lanternstaff':
     case 'blade': {
       const prog=b.life0 ? clamp(1-(b.life/b.life0),0,1) : 1;
       const a0=-1.7, a1=a0+3.4*prog, r=30; ctx.lineCap='round';
@@ -21253,6 +21393,7 @@ function drawStickman(p){
   if(p.sw && players[p.sw] && p.alive!==false){ const q=players[p.sw], dx=(q.x-p.x), dy=(q.y-p.y); ctx.save(); const cy2=Math.min(-34,dy-60)+Math.sin(performance.now()/160)*6; ctx.lineCap='round'; for(const [lw,col,al] of [[9,'#ffffff',0.25],[3.5,'#ffffff',1]]){ ctx.strokeStyle=col; ctx.lineWidth=lw; ctx.globalAlpha=al; ctx.beginPath(); ctx.moveTo(0,-34); ctx.quadraticCurveTo(dx/2, cy2, dx, dy-60); ctx.stroke(); } ctx.restore(); }   // 바느질: a white thread to the one it holds (it used to sit behind the comment above and was never drawn)
   if(p.hk && p.alive!==false){ const ex=p.hk[0]-p.x, ey=p.hk[1]-p.y; ctx.save(); ctx.strokeStyle='#d9b77a'; ctx.lineWidth=2.4; ctx.beginPath(); ctx.moveTo(0,-40); ctx.lineTo(ex,ey); ctx.stroke();      // 갈고리 화살: the rope and the arrow stuck under the platform
     ctx.translate(ex,ey); ctx.rotate(-Math.PI/2); ctx.strokeStyle='#8a5f2b'; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(-18,0); ctx.lineTo(6,0); ctx.stroke(); ctx.fillStyle='#e6e6e6'; ctx.beginPath(); ctx.moveTo(14,0); ctx.lineTo(4,-5); ctx.lineTo(4,5); ctx.closePath(); ctx.fill(); ctx.restore(); }
+  if((p.infd||p.inf) && p.alive!==false) drawInfMark(ctx, performance.now());      // 역병 의사: the sick have a sign over their head
   if(p.pvi && p.alive!==false){ ctx.save(); ctx.font='bold 15px sans-serif'; ctx.textAlign='left'; ctx.textBaseline='middle'; ctx.lineWidth=3; ctx.strokeStyle='#1b1b26'; ctx.strokeText(p.pvi, 22, -92); ctx.fillStyle='#fff'; ctx.fillText(p.pvi, 22, -92); ctx.restore(); }      // a passive that is running: a small sign next to the head
   if(p.pm && p.alive!==false) drawPizarroMark(ctx, luxNow);
   if(p.weapon==='pizarro' && p.alive!==false) drawPizarroAura(ctx, p, luxNow);      // 기세: a golden glow that grows with every stack, flames at the feet at the 4th, gold marks over the head      // a tier skin: the aura, the sunburst and the rings behind the body
@@ -21327,7 +21468,7 @@ function drawStickman(p){
   ctx.beginPath(); ctx.arc(0,HEADCY,HEADR,0,7); ctx.fill();
   if(shineId) drawShineGlints(ctx, luxNow, luxSeed);
   if(p.weapon==='pizarro' && p.alive!==false) drawPizarroPlume(ctx,0,HEADCY,HEADR,Math.min(PZ_MAX,p.pzStacks||0));
-  if(WEAPON_PERSONA_NAME[lkW(p)] || lkW(p)==='guard'){ drawWeaponPersona(ctx,lkW(p),0,HEADCY,HEADR,SH,skinTint,conceptOfSkin(skinId)); const sfx=(skinId && COSMETICS[skinId]) ? COSMETICS[skinId].fx : null; if(sfx && p.alive!==false) drawSkinFx(ctx,(luxLv>=4?'sparkle':sfx),skinTint,0,HEADCY,luxLv?HEADR*1.3:HEADR,luxNow); if(luxLv && p.alive!==false) drawSkinLux(ctx, luxLv, skinTint, luxNow, luxSeed, 'front'); }
+  if(WEAPON_PERSONA_NAME[lkW(p)] || lkW(p)==='guard'){ PERSONA_FACE=(Math.cos(p.angle||0)>=0)?1:-1; drawWeaponPersona(ctx,lkW(p),0,HEADCY,HEADR,SH,skinTint,conceptOfSkin(skinId)); const sfx=(skinId && COSMETICS[skinId]) ? COSMETICS[skinId].fx : null; if(sfx && p.alive!==false) drawSkinFx(ctx,(luxLv>=4?'sparkle':sfx),skinTint,0,HEADCY,luxLv?HEADR*1.3:HEADR,luxNow); if(luxLv && p.alive!==false) drawSkinLux(ctx, luxLv, skinTint, luxNow, luxSeed, 'front'); }
   else if(p.cos && p.cos.hat) drawHat(ctx,p.cos.hat,0,HEADCY,HEADR);
   if(p.gd && p.alive!==false){ const gd=(Math.cos(p.angle||0)>=0)?1:-1; ctx.save(); ctx.fillStyle='#e33'; ctx.strokeStyle='#fff'; ctx.lineWidth=1.5; for(const q of [[gd*15,-52],[gd*11,-40]]){ ctx.beginPath(); ctx.arc(q[0],q[1],7,0,7); ctx.fill(); ctx.stroke(); } ctx.strokeStyle='rgba(110,198,255,0.8)'; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(gd*8,-42,26,gd>0?-1.2:Math.PI-1.2+1.2,gd>0?1.2:Math.PI+1.2); ctx.stroke(); ctx.restore(); }
   let ang=p.angle||0;
@@ -21340,7 +21481,7 @@ function drawStickman(p){
   const ax=Math.cos(ang), ay=Math.sin(ang);
   if(whirling && conceptOfSkin(skinId)==='gold'){ for(let i=0;i<3;i++){ const a=ang+RND(-1.6,0.1), r=RND(30,SWORD_SPIN_RADIUS); addP({x:p.x+Math.cos(a)*r,y:p.y-34+Math.sin(a)*r,vx:RND(-70,70),vy:RND(-120,-20),life:RND(.4,.8),size:RND(1.8,3.6),color:i%2?'#ffd34d':'#fff3b0',grav:80,drag:1.2}); } }
   if(whirling){ ctx.save(); ctx.strokeStyle=(conceptOfSkin(skinId)==='gold')?'rgba(255,211,77,0.75)':'rgba(223,230,240,0.45)'; ctx.lineWidth=4; ctx.beginPath(); ctx.arc(0,SH+6,SWORD_SPIN_RADIUS-10,ang-2.0,ang); ctx.stroke(); ctx.strokeStyle='rgba(255,255,255,0.18)'; ctx.lineWidth=9; ctx.beginPath(); ctx.arc(0,SH+6,SWORD_SPIN_RADIUS-10,ang-3.4,ang-1.8); ctx.stroke(); ctx.restore(); }
-  const mArm=(p.weapon!=='harald' && MELEE_ANIM[p.weapon]==='slash')?meleeArmPose(p, Math.atan2(ay,ax)):null;      // (a melee swing moves the whole straight arm like 용살자's, no bent elbow)
+  const mArm=(p.weapon!=='harald' && (MELEE_ANIM[p.weapon]==='slash' || MELEE_ANIM[p.weapon]==='staff'))?meleeArmPose(p, Math.atan2(ay,ax)):null;      // (a melee swing moves the whole straight arm like 용살자's, no bent elbow)
   const mpose=(p.weapon!=='harald')?(mArm||meleeArmPose(p, Math.atan2(ay,ax))||throwArmPose(p, Math.atan2(ay,ax))):null;      // the arm of a melee swing / thrust
   if(p.weapon!=='harald' && !mpose){ ctx.beginPath(); ctx.moveTo(0,SH+6); ctx.lineTo(ax*24, SH+6+ay*24); ctx.stroke(); }
   let swingProg=0;
@@ -21726,6 +21867,7 @@ function render(fxDt){
   safeDraw(()=>drawDarkPools(kcScene?[]:(isHost?darkPoolsView(performance.now()):darkView)));
   safeDraw(()=>drawTurrets(kcScene?[]:null));
   safeDraw(()=>drawDroneBombs());
+  safeDraw(()=>drawCrows());
   safeDraw(()=>drawFleet());
   safeDraw(()=>drawMapHazards());
   safeDraw(()=>drawPortals(kcScene?kcScene.portals:null));
