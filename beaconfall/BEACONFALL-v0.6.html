@@ -413,7 +413,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.6<br>build 204</p>
+    <p class="foot">v0.6<br>build 205</p>
   </nav>
 </div>
 
@@ -757,7 +757,7 @@ function ensureTrees(cx,cy){
         case 5:t=r<0.4?8:r<0.8?5:4;break;
         case 6:t=r<0.6?3:4;break;
         case 7:t=r<0.8?7:4;break;
-        case 9:t=r<0.8?10:4;break;
+        case 9:t=10;break;   // Deep Void: 덤불 없이 공허나무만
         default:t=r<0.85?9:4;
       }
       list.push([y,x,t]);
@@ -7239,6 +7239,7 @@ function updateEvents(dt){
   }
 }
 function spawnAnimals(){
+  if(TER&&TER.dv){if(animals.length)animals=[];return;}   // Deep Void에는 동물이 없어요 (공허 몹만)
   const pl=allPlayers();if(!pl.length)return;
   for(const type of ANIM_IDX){
     const T=ANIM_TYPES[type],cap=T.max+(pl.length-1)*2;
@@ -11918,6 +11919,9 @@ let spawnT=2,nextMid=1;
 /* 섬마다 다른 몬스터. 보스는 섬 한가운데로 다가가면 나타나요 (잡으면 이틀 뒤 다시) */
 const MTYPES={
   slime:{hp:8,dmg:2,wander:9,chase:24,aggro:150,rng:10,wind:0.45,cd:1.4,col:'#8a5ac4',drop:[['slime',1,2]]},
+  vwolf:{name:'공허 늑대',hp:16,dmg:3,wander:14,chase:42,aggro:230,rng:11,wind:0.32,cd:1.0,persist:1,col:'#6a2ac0',drop:[['bone',1,2],['void_ore',0,1]]},
+  vspider:{name:'공허 거미',hp:13,dmg:2.5,wander:12,chase:32,aggro:210,rng:10,wind:0.35,cd:1.1,persist:1,fx:'poison',col:'#7a3ad0',drop:[['thread',1,2],['void_ore',0,1]]},
+  vgolem:{name:'공허 골렘',hp:40,dmg:4.5,wander:7,chase:20,aggro:180,rng:12,wind:0.6,cd:1.6,persist:1,col:'#4a1a8a',drop:[['void_ore',1,2]]},
   vslime:{name:'강화 슬라임',hp:30,dmg:4,wander:11,chase:30,aggro:190,rng:12,wind:0.4,cd:1.2,persist:1,scale:1.45,col:'#5a1aa8',drop:[['slime',2,3],['void_ore',0,1]]},
   wolf:{hp:10,dmg:2,wander:12,chase:34,aggro:200,rng:11,wind:0.35,cd:1.1,persist:1,col:'#8a8d9c',drop:[['bone',1,2]]},
   scorpion:{hp:9,dmg:2,wander:9,chase:22,aggro:130,rng:10,wind:0.5,cd:1.5,persist:1,fx:'poison',col:'#d9a050',drop:[['cactus_fiber',0,1]]},
@@ -11951,7 +11955,7 @@ function monsterTypeFor(b,night){
     case 1:return night?(r<0.7?'wolf':'slime'):(r<0.35?'wolf':null);
     case 2:return 'scorpion';case 3:return 'spirit';case 4:return 'spider';
     case 5:return 'snake';case 6:return 'golem';case 7:return 'croc';case 8:return 'yeti';
-    case 9:return 'vslime';
+    case 9:return r<0.45?'vslime':r<0.7?'vwolf':r<0.9?'vspider':'vgolem';
   }
   return null;
 }
@@ -12846,6 +12850,7 @@ const BSPR={
 };
 for(const k in BSPR)MSPR[k]=BSPR[k];
 {const b=MSPR.slime,c=document.createElement('canvas');c.width=b.w;c.height=b.h;const g=c.getContext('2d');g.drawImage(b.c,0,0);g.globalCompositeOperation='source-atop';g.fillStyle='rgba(90,20,190,0.62)';g.fillRect(0,0,b.w,b.h);MSPR.vslime={c,w:b.w,h:b.h,wc:b.wc};}   // 강화 슬라임: 짙은 보라
+for(const [k,bk] of [['vwolf','wolf'],['vspider','spider'],['vgolem','golem']]){const b=MSPR[bk],c=document.createElement('canvas');c.width=b.w;c.height=b.h;const g=c.getContext('2d');g.drawImage(b.c,0,0);g.globalCompositeOperation='source-atop';g.fillStyle='rgba(90,20,190,0.6)';g.fillRect(0,0,b.w,b.h);MSPR[k]={c,w:b.w,h:b.h,wc:b.wc};}   // 공허 몹: 짙은 보라 색
 MODDEF.ready=true;try{modDefsRun();}catch(e){}
 function drawMonster(g,m){
   if(m.ty==='gship'){drawGhostShip(g,m);return;}
