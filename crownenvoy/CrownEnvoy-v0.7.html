@@ -559,7 +559,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 182</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 183</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div><p class="tagline">사절을 보내 동맹을 맺고, 군대를 보내 왕관을 차지하세요.</p></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -1395,12 +1395,13 @@ function simulateBattle(A,D,rt){
   const F=[0.14,0.26,0.22,0.12];let a=A.troops,d=D.troops;const a0=a,d0=d;
   const tA=A.gen?A.gen.trait:null,tD=D.gen?D.gen.trait:null;
   let mA=clamp(Math.max(25,A.morale+(tA==='inspire'?8:0)-(tD==='spy'?8:0)),25,100),mD=clamp(Math.max(25,D.morale+(D.mbonus||0)+(tD==='inspire'?8:0)-(tA==='spy'?8:0)),25,100);const mA0=mA,mD0=mD;const minDead=0.33*(a0+d0);   // 양측 합계의 33%가 전사하기 전에는 결판이 나지 않는다   // 전투에 나설 때 사기는 최소 25
-  const thr=s=>s.gen&&s.gen.trait==='charisma'?12:22;const phases=[];let loser=null;
+  const thr=s=>s.gen&&s.gen.trait==='charisma'?12:22;const phases=[];let loser=null,early=false;
   const dm=(t,i)=>(t==='artillery'&&i<=1?1.35:1)*(t==='cavalry'&&i===2?1.5:1)*(t==='blitz'?1.2:1);
   const tAt=A.pid!=null?techAtk(A.pid)+((A.sea||D.sea)&&techHas(A.pid,'steam')?0.08:0):0,tDf=D.pid!=null?techDef(D.pid)+((A.sea||D.sea)&&techHas(D.pid,'steam')?0.08:0):0;
   const mods=()=>[clamp(tAt+(A.gen?GEN_K*A.gen.atk*genScale(a0):0)+(tA==='maneuver'?0.12:0)+(A.abonus||0)+Math.min(0.3,(A.vet||0)/300)+(mA-60)*0.001+fe[0],-0.4,1.3),clamp(tDf+D.bonus*(tD==='entrench'?1.25:1)+(D.gen?GEN_K*D.gen.def*genScale(d0):0)+Math.min(0.3,(D.vet||0)/300)+(mD-60)*0.001+fe[1],-0.4,3.0)];
   for(let i=0;i<4;i++){
     const [modA,modD]=mods();const Pa=a*(1+modA),Pd=d*(1+modD);
+    if(i>=1&&i<3){const wA=F[i]*Pd*0.9>=a*0.8&&Pa*2<Pd,wD=F[i]*Pa*0.9>=d*0.8&&Pd*2<Pa;if(wA||wD){loser=(wA&&wD)?(mA<mD?'att':'def'):(wA?'att':'def');phases[phases.length-1].rout=loser;early=true;break;}}   /* 다음 교전에서 전멸할 만큼 밀리면(상대가 두 배 넘게 우세) 그 전에 스스로 후퇴한다 */
     let dealtD=F[i]*Pa*rnd(0.9,1.1)*dm(tA,i),dealtA=F[i]*Pd*rnd(0.9,1.1)*dm(tD,i);let note='';
     if(i===0){if(D.amb&&!(tA==='ambush')){dealtA*=1.25;note+='M';}if(tA==='ambush'){dealtD*=1.8;note+='A';}if(tD==='ambush'){dealtA*=1.8;note+='D';}}
     if(tD==='ironwall')dealtD*=0.8;if(A.sea||D.sea){if(tA==='navalwar'){dealtD*=1.5;dealtA/=1.5;}if(tD==='navalwar'){dealtA*=1.5;dealtD/=1.5;}}if(tA==='medic')dealtA*=0.9;if(tD==='medic')dealtD*=0.9;
@@ -1408,11 +1409,11 @@ function simulateBattle(A,D,rt){
     mA-=8*lossA/a0*(tA==='stalwart'?0.6:1)*(docOf(A.pid)==='mass'?0.85:1);mD-=8*lossD/d0*(tD==='stalwart'?0.6:1)*(docOf(D.pid)==='mass'?0.85:1);if(lossA>lossD){mA-=0.5;mD+=0.3;}else if(lossD>lossA){mD-=0.5;mA+=0.3;}mA=clamp(mA,0,100);mD=clamp(mD,0,100);
     phases.push({a,d,mA:Math.round(mA),mD:Math.round(mD),lossA,lossD,note});
     if(rt&&i===rt.k){loser=rt.side;phases[phases.length-1].rout=loser;phases[phases.length-1].retreat=1;break;}
-    const decided=(a0-a)+(d0-d)>=minDead;const bA=a<=0||(mA<=thr(A)&&decided&&a<d*1.2),bD=d<=0||(mD<=thr(D)&&decided&&d<a*1.2);/* 사기가 기준 아래로 떨어지면 병력과 무관하게 그 자리에서 패주 */if(bA||bD){loser=(bA&&bD)?(mA<mD?'att':'def'):(bA?'att':'def');if(i<3&&phases.length)phases[phases.length-1].rout=loser;break;}
+    const decided=(a0-a)+(d0-d)>=minDead;const bA=a<=0||(mA<=thr(A)&&decided&&a<d*1.2)||(a<=a0*0.3&&a<d*0.5),bD=d<=0||(mD<=thr(D)&&decided&&d<a*1.2)||(d<=d0*0.3&&d<a*0.5);if((a>0&&a<=a0*0.3&&a<d*0.5)||(d>0&&d<=d0*0.3&&d<a*0.5))early=true;/* 병력이 30% 이하로 줄고 상대가 두 배 넘게 우세하면 전멸하기 전에 스스로 후퇴한다 *//* 사기가 기준 아래로 떨어지면 병력과 무관하게 그 자리에서 패주 */if(bA||bD){loser=(bA&&bD)?(mA<mD?'att':'def'):(bA?'att':'def');if(i<3&&phases.length)phases[phases.length-1].rout=loser;break;}
   }
   if(!loser){const [modA,modD]=mods();loser=a*(1+modA)>=d*(1+modD)?'def':'att';phases[phases.length-1].rout=loser;}
   const winner=loser==='att'?'def':'att';const wGen=winner==='att'?A.gen:D.gen;
-  let ls=loser==='att'?a:d;const need=Math.max(0,Math.round(minDead-((a0-a)+(d0-d))));const lDoc=loser==='att'?docOf(A.pid):docOf(D.pid);let pl=rt?Math.round(ls*0.05):Math.min(ls,Math.max(Math.round(ls*(0.15+(wGen&&wGen.trait==='pursuer'?0.15:0))),need));if(lDoc==='mob')pl=Math.round(pl/2);ls-=pl;
+  let ls=loser==='att'?a:d;const need=Math.max(0,Math.round(minDead-((a0-a)+(d0-d))));const lDoc=loser==='att'?docOf(A.pid):docOf(D.pid);let pl=rt?Math.round(ls*0.05):early?Math.round(ls*0.1):Math.min(ls,Math.max(Math.round(ls*(0.15+(wGen&&wGen.trait==='pursuer'?0.15:0))),need));if(lDoc==='mob')pl=Math.round(pl/2);ls-=pl;
   let aS=loser==='att'?ls:a,dS=loser==='def'?ls:d;if(winner==='att')aS=Math.max(1,aS);else dS=Math.max(1,dS);
   return {phases,winner,loser,retreat:rt?rt.side:null,aSurv:aS,dSurv:dS,pursuit:pl,aStart:a0,dStart:d0,mStart:[Math.round(mA0),Math.round(mD0)],bonus:D.bonus,fm:A.form&&D.form?{a:A.form,d:D.form,w:fe[2]}:null};
 }
