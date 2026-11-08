@@ -108,6 +108,11 @@ footer{padding:50px 0 40px;color:var(--gold);font-size:13px;text-shadow:2px 2px 
  <div class="row joinrow"><input class="jin" id="joinAddr" maxlength="24" autocomplete="off" spellcheck="false" data-ph="j_ph"><a class="pb" id="joinBtn" href="#play" data-i="j_btn"></a></div>
  <div class="meta" id="heroMeta" data-i="loading"></div>
 </header>
+<section id="modsec">
+ <h2 data-i="md_h"></h2>
+ <div class="vl" id="modBox"><span data-i="loading"></span></div>
+ <div class="row" style="margin-top:12px"><a class="pb" href="mods.html" data-i="md_more"></a></div>
+</section>
 <section id="versions">
  <h2 data-i="v_h"></h2>
  <div class="vl" id="latestBox"></div>
@@ -239,6 +244,23 @@ function applyLang(){
 applyLang();
 fetch('patchnotes.json',{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject()).then(renderNotes).catch(()=>{});
 fetch('versions.json',{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject()).then(render).catch(()=>{});
+window.addEventListener('load',function(){
+/* 모드 목록: 바로 플레이 아래. 적용 많은 순 6개 */
+(async function(){const box=document.getElementById('modBox');if(!box)return;
+ const put=(s)=>{box.innerHTML='<span style="text-shadow:2px 2px 0 #000">'+s+'</span>';};
+ try{
+  if(window.FFAuth&&FFAuth.ready)await FFAuth.ready;
+  const c=window.FFAuth&&FFAuth.client&&FFAuth.client();if(!c){put(t('md_off'));return;}
+  const r=await c.from('beaconfall_mods').select('id,name,descr,kind,author_name').order('created_at',{ascending:false}).limit(200);
+  if(r.error){put(t('md_off'));return;}
+  const list=r.data||[];if(!list.length){put(t('md_none'));return;}
+  const cnt={};try{const q=await c.from('beaconfall_mod_counts').select('mod_id,applies').limit(2000);(q.data||[]).forEach(x=>{cnt[x.mod_id]=x.applies|0;});}catch(e){}
+  list.sort((a,b)=>(cnt[b.id]|0)-(cnt[a.id]|0));
+  const E=x=>String(x==null?'':x).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  box.innerHTML=list.slice(0,6).map(m=>'<a class="pb" href="mods.html" style="display:block;text-align:left"><b>'+E(m.name)+'</b>'+(m.kind==='pack'?' <small>('+t('md_pack')+')</small>':'')+' <small>· '+E(m.author_name)+' · '+t('md_use',{n:cnt[m.id]|0})+'</small>'+(m.descr?'<br><small>'+E(String(m.descr).slice(0,80))+'</small>':'')+'</a>').join('');
+ }catch(e){put(t('md_off'));}
+})();
+});
 </script>
 <script src="https://frenchfries777.com/games/ff-auth.js?v=20261107h"></script>
 <script src="https://frenchfries777.com/games/ff-intro.js?v=1" defer></script>
