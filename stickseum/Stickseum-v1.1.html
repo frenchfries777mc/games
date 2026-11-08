@@ -4073,6 +4073,7 @@ function markHit(target, attackerId, t, dmg){
     const att=players[attackerId], el=att && (att.weapon==='dragonslayer' ? null : DMG_TYPE_OF_WEAPON[att.weapon]);
     if(el==='fire' || el==='poison' || el==='electric'){ target.hp=Math.min(maxHpFor(target), target.hp+dmg*0.3); try{ pvPop(target,'dragonslayer',t); }catch(e){} }
   }
+  { const d2=s2BlockHit(target, attackerId, dmg, t); dmg=d2; }
   dmg=skillMitigate(target, dmg, t);   // armour / barrier skills give part of the damage back (hp is restored right here, before anyone checks for death)
   if(dmg>0 && attackerId && attackerId!==target.id){      // passives: extra damage of the attacker, the hits the target has taken
     const att=players[attackerId]; if(att){ const ex=pvDealtExtra(att, target, dmg, t/1000); if(ex>0) target.hp-=ex; }
@@ -4307,6 +4308,25 @@ function poisonZoneTick(dt,t){       // 칸's poison floors: hidden from the ene
   poisonZones = poisonZones.filter(z=>z.until>tSec);
   for(const z of poisonZones){
     const ow=players[z.owner]; if(!ow) continue;
+    if(z.kd==='snare'){
+      for(const e of enemiesOf(ow)){
+        if(!e.alive || !tnSameMatch(e.id, z.owner) || e.swordCharge) continue;
+        if(Math.abs(e.x-z.x)>z.r || e.y>z.y+14 || e.y<z.y-80) continue;
+        z.until=0; e.s2rootUntil=tSec+1.5; pushFx('snare', z.x, z.y, t, {hit:1}); pushFx('stun', e.x, e.y-PLAYER_H-8, t, {}); break;
+      }
+      continue;
+    }
+    if(z.kd==='pillar'){
+      if(tSec>=(z.tickAt||0)){
+        z.tickAt=tSec+0.25; pushFx('firepillar', z.x, z.y, t, {h:z.h, r:z.r});
+        for(const e of enemiesOf(ow)){
+          if(!e.alive || !tnSameMatch(e.id, z.owner) || e.swordCharge) continue;
+          if(Math.abs(e.x-z.x)>z.r || e.y>z.y+22 || e.y<z.y-z.h) continue;
+          skillDamage(ow, e, 3.75, t, {}); e.burn={until:tSec+1.5, dps:8, owner:ow.id, ownerName:ow.name};
+        }
+      }
+      continue;
+    }
     if(z.mine){
       for(const e of enemiesOf(ow)){
         if(!e.alive || !tnSameMatch(e.id, z.owner)) continue;
@@ -5301,6 +5321,13 @@ function onEnemyDarkView(me){                      // (client) am I standing in 
   return false;
 }
 let blindA=0, blindCv=null;
+let flashVeilUntil=0;
+function drawFlashVeil(){      // 특수요원's flashbang: the screen goes white and slowly clears
+  const me=players[myId], now=performance.now();
+  if(me && me.alive && me.flr>0 && !killcamActive && !rpView){ const u=now+me.flr*1000; if(u>flashVeilUntil+150 || flashVeilUntil<now) flashVeilUntil=u; else flashVeilUntil=Math.max(flashVeilUntil, u); }
+  const rem=(flashVeilUntil-now)/1000; if(rem<=0) return;
+  ctx.save(); ctx.setTransform(1,0,0,1,0,0); ctx.fillStyle='rgba(255,255,255,'+Math.min(1,rem/0.7)*0.97+')'; ctx.fillRect(0,0,canvas.width,canvas.height); ctx.restore();
+}
 function drawBlind(cam, dt){      // standing in the bog or in an opponent's darkness: everything is dark except a circle around me and my team-mates
   const me=players[myId];
   const want=(me && me.alive && me.x!==undefined && !me.darkSub && !killcamActive && !rpView && (inSwamp(me) || onEnemyDarkView(me))) ? 1 : 0;
@@ -5895,7 +5922,7 @@ function snapshotBacklogged(){      // true when a client's data channel holds m
 }
 function broadcastAll(msg){ for(const id in conns) safeSend(conns[id], msg); }
 let effectLocalTimes={}; // client-side only: maps effect id -> this tab's own performance.now() at first sight
-let localInput={left:false,right:false,jump:false,down:false,up:false,angle:0,shoot:false,dash:false};
+let localInput={left:false,right:false,jump:false,down:false,up:false,angle:0,shoot:false,dash:false,guard:false};
 let started=false;
 var netLastFull=null;
 let lastStateReceivedAt=0; // client-side only: when the last 'state' broadcast actually arrived (0 = never)
@@ -11163,7 +11190,7 @@ function handlePlayerDisconnect(pid){
 
 /* ===== loose input guard (host): a guest only ever sends its keys, never positions. This keeps flooding and odd values out, and is meant to be
    generous so lag bursts and small version differences never hurt an honest player (see hostInputOk). ===== */
-const INPUT_KEYS=['left','right','jump','down','up','angle','shoot','dash'];
+const INPUT_KEYS=['left','right','jump','down','up','angle','shoot','dash','guard'];
 function hostInputOk(p, inp){
   if(!inp || typeof inp!=='object') return false;
   const t=Date.now(); let b=p._ib; if(!b){ b=p._ib={n:200, t:t, drop:0, warn:0}; }
@@ -14024,9 +14051,28 @@ const SKILLS2={
   dagger:{name:'도약', kind:'move', desc:'높게 점프 · 바닥이나 발판 위에 닿으면 적 쪽으로 대쉬의 3.5배 거리를 점멸하며 지나간 상대에게 피해 36'},
   portalgun:{name:'시공간 균열', kind:'hit', desc:'2배 큰 탄환 발사 · 맞은 상대와 서로 위치를 바꿈'},
   grenade:{name:'폭격', kind:'hit', desc:'내 앞과 뒤로 폭탄을 2개씩 바로 발사'},
+  magiccard:{name:'비둘기 변신', kind:'move', desc:'1.5초 동안 모자 쓴 비둘기로 변해 발판을 뚫고 상대에게 날아감 · 돌진 중 상대에게 닿으면 바로 변신이 풀리고 상대 0.9초 기절'},
+  dragonslayer:{name:'검 막기', kind:'buff', desc:'1초 동안 공격을 못 하는 대신 검을 세워 바라보는 쪽의 공격을 모두 막음'},
+  kurus:{name:'어둠 응축', kind:'hit', desc:'내 근처의 어둠을 소진시켜 어둠을 발사 · 캐릭터와 발판을 관통해 맵 끝까지 날아가고 피해는 소진한 어둠의 넓이에 비례 (기본 5, 최대 30)'},
+  puppeteer:{name:'꼭두각시', kind:'hit', desc:'가장 가까운 상대에게 실을 연결해 3초 동안 내 WASD 입력대로 움직이게 함 (움직임만)'},
+  gloves:{name:'가드', kind:'buff', desc:'1초 동안 우클릭으로 가드를 올릴 수 있음 (일반 공격과 같은 쿨타임, 동시 불가) · 가드마다 피해 50% 감소 · 정확한 타이밍이면 100% 막고 이동속도 20% 증가'},
+  lightsaber:{name:'검술', kind:'buff', desc:'2초 동안 광선검을 돌려 투사체를 모두 튕겨냄 (공격 불가)'},
+  tionis:{name:'말솜씨', kind:'buff', desc:'2.5초 동안 적에게 내 체력바가 아군 색으로 보임'},
+  horemheb:{name:'모래 은신', kind:'move', desc:'1.5초 동안 모래로 변해 투사체를 통과시키고 이동 속도 30% 증가'},
+  smg:{name:'섬광탄', kind:'hit', desc:'던진 곳에서 0.5초 뒤 터져 범위 안 적을 1.2초 동안 실명 (화면이 하얘짐)'},
+  bow:{name:'화살비', kind:'hit', desc:'조준한 곳에 화살 8발이 쏟아짐 (발당 피해 8)'},
+  boomerang:{name:'올가미 덫', kind:'hit', desc:'바닥에 덫 설치 (20초, 최대 3개) · 밟은 적은 1.5초 동안 속박'},
+  shuriken:{name:'수리검 부채', kind:'hit', desc:'조준 방향으로 수리검 5발을 부채꼴로 발사 (발당 피해 8)'},
+  shotgun:{name:'올가미 줄', kind:'hit', desc:'올가미를 던져 맞은 적을 내 앞으로 끌어당기고 0.4초 기절'},
+  dracula:{name:'박쥐 떼', kind:'move', desc:'박쥐 떼로 흩어져 조준 방향으로 날아감 · 지나간 적에게 피해 25 + 체력 15 회복'},
+  flamethrower:{name:'불기둥', kind:'hit', desc:'조준한 바닥에 3초 동안 불기둥 (초당 피해 15 + 화상)'},
+  pirate:{name:'술통 폭탄', kind:'hit', desc:'술통을 포물선으로 던져 닿으면 폭발 (피해 40, 큰 넉백)'},
+  samurai:{name:'반격 자세', kind:'buff', desc:'1초 동안 자세를 잡고 맞으면 공격을 막은 뒤 즉시 반격 베기 (피해 60)'},
+  pel:{name:'드론 집중', kind:'buff', desc:'2초 동안 드론 전부가 가장 가까운 적 한 명만 집중 사격'},
+  cleon:{name:'함대 신호', kind:'hit', desc:'조준한 곳에 소형 포격 3발 (발당 피해 22, 0.3초 간격)'},
   pizarro:{name:'투창', kind:'move', desc:'창을 포물선으로 던짐 · 바닥에 닿거나 상대에 맞으면 그 자리로 이동하고 체력 15 회복'},
 };
-const SKILL2_BOT={wizard:[150,900], sword:[120,520], tell:[250,900], harald:[0,130], bat:[200,900], rifle:[250,800], pistol:[200,900], kan:[0,120], dagger:[220,750], portalgun:[180,800], grenade:[0,360], pizarro:[250,800]};      // the distance at which a bot uses its second skill
+const SKILL2_BOT={wizard:[150,900], sword:[120,520], tell:[250,900], harald:[0,130], bat:[200,900], rifle:[250,800], pistol:[200,900], kan:[0,120], dagger:[220,750], portalgun:[180,800], grenade:[0,360], pizarro:[250,800], magiccard:[250,800], dragonslayer:[0,150], kurus:[150,900], puppeteer:[0,650], gloves:[0,260], lightsaber:[0,220], tionis:[0,500], horemheb:[150,600], smg:[250,800], bow:[250,900], boomerang:[0,260], shuriken:[150,700], shotgun:[150,520], dracula:[100,520], flamethrower:[150,700], pirate:[250,800], samurai:[0,200], pel:[150,800], cleon:[250,900]};      // the distance at which a bot uses its second skill
 const SKILL2_IMPL={};
 const DASH_DIST=Math.round(DASH_FORCE/3.9);      // how far a dash carries (the push dies off by 0.02^t)
 function skill2Free(x,y,maxUp){ for(let k=0;k<=(maxUp||160);k+=16) if(skillSpotFree(x,y-k)) return {x:x,y:y-k}; return null; }
@@ -14045,9 +14091,48 @@ function trySkill2b(p, tMs, aimX, aimY){
   pushFx('skill', p.x, p.y-40, tMs, {color:p.color, name:sd.name});
   pushFx('sfx', p.x, p.y-40, tMs, {name:SKILL_SFX[sd.kind]});
 }
-function skill2Tick(p, t){      // the skills that last a while: the knight's leap, the assassin's jump
-  const s=p.s2; if(!s) return; const tSec=t/1000;
+function skill2Tick(p, t){      // the skills that last a while: the knight's leap, the assassin's jump, the magician's pigeon ...
+  const tSec=t/1000;
+  if(!p.alive){ p.s2=null; p.s2blk=null; p.s2cnt=null; p.guardUp=null; p.guardWin=0; p.noAtkUntil=0; p.spnUntil=0; p.fbarUntil=0; p.sandUntil=0; p.s2rootUntil=0; p.flashUntil=0; }
+  p.blk=!!(p.s2blk && p.s2blk.until>tSec); p.spn=!!(p.spnUntil>tSec); p.fbar=!!(p.fbarUntil>tSec); p.gd=!!(p.guardUp && p.guardUp.until>tSec);
+  p.sand=!!(p.sandUntil>tSec); p.snr=!!(p.s2rootUntil>tSec); p.cnt=!!(p.s2cnt && p.s2cnt.until>tSec); p.flr=Math.max(0, Math.round(((p.flashUntil||0)-tSec)*10)/10);
+  p.s2k=p.s2?p.s2.k:''; p.s2d=p.s2?(p.s2.dir||1):1;
+  if(p.guardWin>tSec && p.alive){      // 복서 가드: a right-click (or, for a bot, an enemy close by / a shot flying at it) raises the guard
+    const inp=p.input||{}, edge=!!inp.guard && !p._gprev; p._gprev=!!inp.guard;
+    let want=edge;
+    if(p.isBot && !p.gd){ const near=enemiesOf(p).some(o=>Math.hypot(o.x-p.x,o.y-p.y)<150) || bullets.some(b=>!b.dmgless && b.owner!==p.id && Math.hypot(b.x-p.x,b.y-(p.y-40))<200 && ((b.x-p.x)*b.vx<0)); if(near) want=true; }
+    if(want) boxerGuardUp(p, tSec, t);
+  } else p._gprev=!!(p.input && p.input.guard);
+  const s=p.s2; if(!s) return;
   if(!p.alive || isStunned(p, tSec)){ p.s2=null; return; }
+  if(s.k==='swarm'){
+    const dt=Math.min(0.05, Math.max(0.001, tSec-s.last)); s.last=tSec;
+    p.x=clamp(p.x+Math.cos(s.ang)*720*dt, PLAYER_W/2+4, MAP.arenaW-PLAYER_W/2-4); p.y=clamp(p.y+Math.sin(s.ang)*720*dt, PLAYER_H, MAP.arenaH-4);
+    if(Math.random()<0.7) addP({x:p.x+RND(-24,24),y:p.y-30+RND(-22,22),vx:-s.dir*RND(40,160),vy:RND(-40,40),life:RND(.2,.45),size:RND(2,3.6),color:'#2a0a0a'});
+    for(const o of enemiesOf(p)){ if(o.swordCharge || o.isClone || s.hit[o.id]) continue; if(Math.hypot(o.x-p.x, (o.y-30)-(p.y-30))<64){ s.hit[o.id]=1; skillDamage(p, o, 25, t, {kb:200, up:120}); const before=p.hp; p.hp=Math.min(maxHpFor(p), p.hp+15*pvHealMul(p)); if(p.hp>before) pushFx('heal', p.x, p.y-70, t, {v:Math.round(p.hp-before)}); pushFx('spark', o.x, o.y-30, t, {ang:s.ang, color:'#ff2d2d'}); } }
+    if(tSec>=s.until){
+      p.s2=null; p.vx=0; p.vy=0; p.kbX=0;
+      let spot=skill2Free(p.x, p.y, 400) || skill2Free(p.x+60, p.y, 400) || skill2Free(p.x-60, p.y, 400);
+      if(spot){ p.x=spot.x; p.y=spot.y; }
+      pushFx('skillring', p.x, p.y-30, t, {color:'#ff2d2d', r:56});
+    }
+    return;
+  }
+  if(s.k==='pigeon'){
+    const dt=Math.min(0.05, Math.max(0.001, tSec-s.last)); s.last=tSec;
+    const tg=players[s.tid]; if(tg && tg.alive && tg.x!==undefined && !tg.darkSub){ s.ang=Math.atan2((tg.y-30)-(p.y-30), tg.x-p.x); }
+    p.x=clamp(p.x+Math.cos(s.ang)*560*dt, PLAYER_W/2+4, MAP.arenaW-PLAYER_W/2-4); p.y=clamp(p.y+Math.sin(s.ang)*560*dt, PLAYER_H, MAP.arenaH-4);
+    s.dir=(Math.cos(s.ang)>=0)?1:-1;
+    let hitO=null; for(const o of enemiesOf(p)){ if(o.swordCharge || o.isClone) continue; if(Math.hypot(o.x-p.x, o.y-p.y)<46){ hitO=o; break; } }
+    if(hitO){ stunPlayer(hitO, 0.9, t); pushFx('spark', hitO.x, hitO.y-30, t, {ang:s.ang, color:'#ffffff'}); pushFx('skillring', hitO.x, hitO.y-30, t, {color:'#ffd34d', r:60}); }
+    if(hitO || tSec>=s.until){
+      p.s2=null; p.vx=0; p.vy=0; p.kbX=0;
+      let spot=skill2Free(p.x, p.y, 400) || skill2Free(p.x+60, p.y, 400) || skill2Free(p.x-60, p.y, 400) || skill2Free(p.x, p.y+120, 0);
+      if(spot){ p.x=spot.x; p.y=spot.y; }
+      pushFx('skillring', p.x, p.y-30, t, {color:'#ffd34d', r:56});
+    }
+    return;
+  }
   if(s.k==='smash'){
     if(!s.go){ if(tSec>=s.t0+0.16){ s.go=true; s.air=tSec; s.vx=s.dir*(s.speed||330); p.vy=-1000; p.grounded=false; p.kbX=0; pushFx('dash', p.x, p.y-30, t, {dir:s.dir, color:p.color}); } return; }
     if((p.grounded && tSec-s.air>0.22) || tSec>=s.until){
@@ -14127,6 +14212,147 @@ SKILL2_IMPL.pizarro=function(p,tSec,tMs,ax,ay){
   const w2={id:'pizarro_spear', bulletSpeed:KAN_TOAD_SPEED, dmg:25, life:2.2, hitR:12, arcs:true};
   spawnBullet(p, lobAngle(p,ax,ay), w2, {s2spear:true}); return true;
 };
+
+function boxerGuardUp(p, tSec, t){
+  if(p.weapon!=='gloves' || !p.alive || isStunned(p, tSec) || (p.guardUp && p.guardUp.until>tSec)) return;
+  if(tSec<(p.guardReady||0) || tSec-(p.lastShot===undefined?-9999:p.lastShot)<WEAPONS.gloves.cd) return;      // the same cooldown as a normal attack, and never at the same moment as one
+  p.guardUp={from:tSec, until:tSec+0.45, perfect:true}; p.guardReady=tSec+WEAPONS.gloves.cd; p.lastShot=tSec;
+  pushFx('skillring', p.x, p.y-40, t, {color:'#6ec6ff', r:40});
+}
+function s2BlockHit(target, attackerId, dmg, t){      // 2스킬 defences: 용살자's raised sword, the boxer's guard. Returns the damage that gets through.
+  if(!(dmg>0)) return dmg; const tS=t/1000, att=attackerId?players[attackerId]:null;
+  if(target.s2blk && target.s2blk.until>tS && att && att.x!==undefined){
+    const face=(Math.cos(target.angle||0)>=0)?1:-1;
+    if((att.x-target.x)*face>=0){ target.hp=Math.min(maxHpFor(target), target.hp+dmg); pushFx('spark', target.x+face*28, target.y-50, t, {ang:face>0?0:Math.PI, color:'#ffffff'}); return 0; }
+  }
+  if(target.s2cnt && target.s2cnt.until>tS && att && att.alive && att.x!==undefined && att.id!==target.id && !att.swordCharge){      // 사무라이's 반격 자세: the hit is blocked and answered at once
+    target.hp=Math.min(maxHpFor(target), target.hp+dmg); target.s2cnt=null; target.noAtkUntil=0;
+    const d=(att.x>=target.x)?1:-1, spot=(Math.abs(att.x-target.x)<=520) ? (skill2Free(att.x-d*58, att.y-1, 100) || skill2Free(att.x-d*58, att.y, 0)) : null;
+    pushFx('iai', target.x, target.y-34, t, {x2:att.x, y2:att.y-34}); pushFx('spark', att.x, att.y-34, t, {ang:d>0?0:Math.PI, color:'#ffffff'}); pushFx('skillring', att.x, att.y-34, t, {color:'#ffd34d', r:70});
+    if(spot){ target.x=spot.x; target.y=spot.y; target.vx=0; target.vy=0; target.kbX=0; }
+    if(Math.abs(att.x-target.x)<=140) skillDamage(target, att, 60, t, {kb:360, up:200});
+    return 0;
+  }
+  if(target.guardUp && target.guardUp.until>tS){
+    if(tS-target.guardUp.from<=0.2){ target.hp=Math.min(maxHpFor(target), target.hp+dmg); if(target.guardUp.perfect){ target.guardUp.perfect=false; pvBoostSpeed(target, 1.2, 2.5, t); pushFx('skillring', target.x, target.y-40, t, {color:'#ffd34d', r:70}); } return 0; }
+    const back=dmg*0.5; target.hp=Math.min(maxHpFor(target), target.hp+back); return dmg-back;
+  }
+  return dmg;
+}
+SKILL2_IMPL.magiccard=function(p,tSec,tMs,ax,ay){
+  const tg=nearestEnemyOf(p); if(!tg) return false;
+  p.s2={k:'pigeon', t0:tSec, until:tSec+1.5, last:tSec, tid:tg.id, ang:Math.atan2(tg.y-p.y, tg.x-p.x), dir:(tg.x>=p.x)?1:-1}; p.vx=0; p.vy=0; p.kbX=0; p.grounded=false;
+  for(let k=0;k<8;k++) addP({x:p.x+RND(-14,14),y:p.y-30+RND(-20,20),vx:RND(-90,90),vy:RND(-120,-20),life:RND(.3,.6),size:RND(2,3.4),color:'#ffffff'});
+  return true;
+};
+SKILL2_IMPL.dragonslayer=function(p,tSec,tMs,ax){
+  p.s2blk={until:tSec+1}; p.noAtkUntil=tSec+1; pushFx('skillring', p.x, p.y-40, tMs, {color:'#dfe6f0', r:50}); return true;
+};
+SKILL2_IMPL.kurus=function(p,tSec,tMs,ax,ay){
+  let L=0; const R=260, lo=p.x-R, hi=p.x+R;
+  for(const z of darkPools.slice()){
+    if(z.owner!==p.id) continue; const pl=MAP.platforms[z.pi]; if(!pl || Math.abs(pl.y-p.y)>220) continue;
+    const a=pl.x+z.rl, b=pl.x+z.rr, o0=Math.max(a,lo), o1=Math.min(b,hi); if(o1<=o0) continue;
+    L+=o1-o0; darkPools.splice(darkPools.indexOf(z),1);
+    if(a<o0-6) darkPools.push(Object.assign({}, z, {id:++darkPoolSeq, rl:z.rl, rr:o0-pl.x}));
+    if(b>o1+6) darkPools.push(Object.assign({}, z, {id:++darkPoolSeq, rl:o1-pl.x, rr:z.rr}));
+  }
+  const dmg=Math.round(5+25*Math.min(1, L/500));
+  const w2={id:'kurus_dark', bulletSpeed:1500, dmg:dmg, life:4, hitR:15+Math.min(10,L/50), pierce:true, pierceHits:0};
+  spawnBullet(p, aimAngleOf(p,ax,ay), w2, {scale:1+Math.min(1,L/500)});
+  for(let k=0;k<10;k++) addP({x:p.x+RND(-R*0.6,R*0.6),y:p.y-RND(0,10),vx:RND(-20,20),vy:RND(-140,-40),life:RND(.3,.6),size:RND(2,4),color:'#3b1d5a'});
+  pushFx('skillring', p.x, p.y-30, tMs, {color:'#7b3fd1', r:70}); return true;
+};
+SKILL2_IMPL.puppeteer=function(p,tSec,tMs){
+  if(sewActive(p,tSec)) return false;
+  const tg=nearestEnemyOf(p); if(!tg || Math.hypot(tg.x-p.x,tg.y-p.y)>PUP_RANGE+100 || puppetVictim(tg,tSec) || puppetMaster(tg,tSec) || tg.swordCharge) return false;
+  startPuppet(p, tg, tSec, tMs); p.puppetUntil=tSec+3; tg.puppetUntil=tSec+3; p.pupMoveOnly=true; p.pupNoBlast=true; return true;
+};
+SKILL2_IMPL.gloves=function(p,tSec,tMs){
+  p.guardWin=tSec+1; p.guardReady=0; pushFx('skillring', p.x, p.y-40, tMs, {color:'#6ec6ff', r:50}); return true;
+};
+SKILL2_IMPL.lightsaber=function(p,tSec,tMs){
+  p.noAtkUntil=tSec+2; p.spnUntil=tSec+2; p.deflectUntil=tSec+2; p.deflectGot=false; pushFx('skillring', p.x, p.y-40, tMs, {color:'#7fe3ff', r:60}); return true;
+};
+SKILL2_IMPL.tionis=function(p,tSec,tMs){
+  p.fbarUntil=tSec+2.5; pushFx('skillring', p.x, p.y-40, tMs, {color:'#4ddb7a', r:50}); return true;
+};
+
+function s2Spot(p, ax, ay, dist){ if(hasAim(ax,ay)) return {x:clamp(ax,0,MAP.arenaW), y:clamp(ay,0,MAP.arenaH)}; const d=(Math.cos(p.angle||0)>=0)?1:-1; return {x:clamp(p.x+d*dist,0,MAP.arenaW), y:p.y-40}; }
+function s2FlashLand(b, x, y, pl, t){      // 특수요원's flashbang came down: 0.5 s later it goes off
+  const ow=players[b.owner]; if(!ow) return;
+  let lx=clamp(x,0,MAP.arenaW), ly=Math.min(y, MAP.arenaH); if(pl && b.vy>0 && b.y<=pl.y+2){ lx=clamp(x,pl.x,pl.x+pl.w); ly=pl.y; }
+  pushFx('skillring', lx, ly-20, t, {color:'#ffffff', r:40});
+  hostTimers.push({au:curAur, ta:fxActor, at:t/1000+0.5, fn:()=>{
+    const tn=performance.now(); pushFx('flashbang', lx, ly-20, tn, {});
+    for(const o of Object.values(players)){ if(!o.alive || o.x===undefined || o.id===ow.id || isAlly(ow,o) || o.isClone || !tnSameMatch(ow.id,o.id)) continue; if(Math.hypot(o.x-lx,(o.y-40)-(ly-20))<=380){ o.flashUntil=tn/1000+1.2; pushFx('stun', o.x, o.y-PLAYER_H-8, tn, {}); } }
+  }});
+}
+SKILL2_IMPL.horemheb=function(p,tSec,tMs){
+  p.sandUntil=tSec+1.5; pvBoostSpeed(p, 1.3, 1.5, tMs); pushFx('sandpuff', p.x, p.y-30, tMs, {}); return true;
+};
+SKILL2_IMPL.smg=function(p,tSec,tMs,ax,ay){
+  spawnBullet(p, lobAngle(p,ax,ay), {id:'flashbang', bulletSpeed:KAN_TOAD_SPEED, life:3, dmg:0, hitR:10}, {arcs:true, s2flash:true, color:'#ffffff'}); return true;
+};
+SKILL2_IMPL.bow=function(p,tSec,tMs,ax,ay){
+  const sp=s2Spot(p,ax,ay,420), w2=Object.assign({}, WEAPONS.bow, {dmg:8, bulletSpeed:1150, arcs:false, life:1.4});
+  pushFx('skillring', sp.x, sp.y, tMs, {color:'#7dffb0', r:120}); pushFx('arrowwarn', sp.x, sp.y, tMs, {});
+  for(let k=0;k<8;k++){
+    const x=clamp(sp.x+(k-3.5)*30+RND(-8,8),20,MAP.arenaW-20), y0=Math.max(30, sp.y-620);
+    hostTimers.push({au:curAur, ta:fxActor, at:tSec+0.25+k*0.07, fn:()=>{ if(p.alive) spawnBullet(p, Math.PI/2+RND(-0.04,0.04), w2, {x:x, y:y0, spawnX:x, spawnY:y0}); }});
+  }
+  return true;
+};
+SKILL2_IMPL.boomerang=function(p,tSec,tMs){
+  const pl=darkSurfaceAt(p.x, p.y-4); if(!pl || pl.y-p.y>40) return false;
+  const mine=poisonZones.filter(z=>z.owner===p.id && z.kd==='snare'); if(mine.length>=3) poisonZones.splice(poisonZones.indexOf(mine[0]),1);
+  poisonZones.push({id:++wallSeq, owner:p.id, team:p.team, x:p.x, y:pl.y, r:44, until:tSec+20, hitIds:{}, revealAt:undefined, kd:'snare'});
+  pushFx('snare', p.x, p.y, tMs, {}); return true;
+};
+SKILL2_IMPL.shuriken=function(p,tSec,tMs,ax,ay){
+  const a=aimAngleOf(p,ax,ay), w2=Object.assign({}, WEAPONS.shuriken, {dmg:8});
+  for(let k=-2;k<=2;k++) spawnBullet(p, a+k*0.17, w2, {});
+  pushFx('skillring', p.x, p.y-40, tMs, {color:'#cfd8e3', r:46}); return true;
+};
+SKILL2_IMPL.shotgun=function(p,tSec,tMs,ax,ay){
+  spawnBullet(p, aimAngleOf(p,ax,ay), {id:'lasso', bulletSpeed:1500, life:0.4, dmg:6, hitR:16}, {s2pull:true}); return true;
+};
+SKILL2_IMPL.dracula=function(p,tSec,tMs,ax,ay){
+  const a=aimAngleOf(p,ax,ay); p.s2={k:'swarm', t0:tSec, until:tSec+0.6, last:tSec, ang:a, dir:(Math.cos(a)>=0)?1:-1, hit:{}}; p.vx=0; p.vy=0; p.kbX=0; p.grounded=false;
+  pushFx('skillring', p.x, p.y-30, tMs, {color:'#ff2d2d', r:60}); return true;
+};
+SKILL2_IMPL.flamethrower=function(p,tSec,tMs,ax,ay){
+  const sp=s2Spot(p,ax,ay,360), pl=darkSurfaceAt(sp.x, sp.y); if(!pl) return false;
+  const mine=poisonZones.filter(z=>z.owner===p.id && z.kd==='pillar'); if(mine.length>=2) poisonZones.splice(poisonZones.indexOf(mine[0]),1);
+  poisonZones.push({id:++wallSeq, owner:p.id, team:p.team, x:clamp(sp.x,pl.x,pl.x+pl.w), y:pl.y, r:58, h:250, until:tSec+3, hitIds:{}, revealAt:undefined, kd:'pillar'});
+  pushFx('skillring', sp.x, pl.y-4, tMs, {color:'#ff8a2b', r:80}); return true;
+};
+SKILL2_IMPL.pirate=function(p,tSec,tMs,ax,ay){
+  const w2=Object.assign({}, WEAPONS.grenade, {id:'barrel', dmg:40, splash:135, bulletSpeed:KAN_TOAD_SPEED});
+  spawnBullet(p, lobAngle(p,ax,ay), w2, {}); return true;
+};
+SKILL2_IMPL.samurai=function(p,tSec,tMs){
+  p.s2cnt={until:tSec+1}; p.noAtkUntil=tSec+1; pushFx('skillring', p.x, p.y-40, tMs, {color:'#ffd34d', r:56}); return true;
+};
+SKILL2_IMPL.pel=function(p,tSec,tMs){
+  if(pelN(p)<=0) return false;
+  const w2=Object.assign({}, WEAPONS.pel);
+  for(let k=0;k<5;k++) hostTimers.push({au:curAur, ta:fxActor, at:tSec+k*0.4, fn:()=>{
+    if(!p.alive) return; const tg=nearestEnemyOf(p); if(!tg) return; const n=pelN(p), s=performance.now()/1000;
+    pushFx('lockon', tg.x, tg.y-30, performance.now(), {});
+    for(let i=0;i<n;i++){ const o=pelDroneOff(i,n,s), x=p.x+o.dx, y=p.y+o.dy, a=Math.atan2((tg.y-30)-y, tg.x-x); spawnBullet(p, a, w2, {x:x, y:y, spawnX:x, spawnY:y}); pushFx('dronefire', x, y, performance.now(), {ang:a, v:i, k:p.id}); }
+  }});
+  pushFx('skillring', p.x, p.y-70, tMs, {color:'#ff5a5a', r:70}); return true;
+};
+SKILL2_IMPL.cleon=function(p,tSec,tMs,ax,ay){
+  const sp=s2Spot(p,ax,ay,460), w2={id:'pirate_ball', bulletSpeed:1250, dmg:22, splash:95, life:2, hitR:12};
+  pushFx('skillring', sp.x, sp.y, tMs, {color:'#ffd34d', r:110});
+  for(let k=0;k<3;k++){
+    const x=clamp(sp.x+(k-1)*70+RND(-10,10),20,MAP.arenaW-20), y0=Math.max(30, sp.y-640);
+    hostTimers.push({au:curAur, ta:fxActor, at:tSec+0.3+k*0.3, fn:()=>{ if(p.alive){ spawnBullet(p, Math.PI/2, w2, {x:x, y:y0, spawnX:x, spawnY:y0}); pushFx('skillring', x, sp.y, performance.now(), {color:'#ff8a2b', r:60}); } }});
+  }
+  return true;
+};
 function botSkill2Step(p, ai, target, d, tSec, t, dif){
   if(!target || isStunned(p, tSec) || tSec<(ai.s2At||0)) return;
   if(tSec-(p.lastTeleport===undefined?-9999:p.lastTeleport)<TELEPORT_CD) return;
@@ -14196,11 +14422,11 @@ function puppetIn(t){
   for(const id in players){
     const m=players[id]; if(!m.puppetTarget) continue;
     const v=players[m.puppetTarget];
-    if(!v || !v.alive || !m.alive || m.puppetUntil<=tS){ const over=!!(v && v.alive && m.alive); m.puppetTarget=null; if(v){ v.puppetBy=null; } if(over) puppetBlast(m, v, t); continue; }
+    if(!v || !v.alive || !m.alive || m.puppetUntil<=tS){ const over=!!(v && v.alive && m.alive); m.puppetTarget=null; if(v){ v.puppetBy=null; } if(over && !m.pupNoBlast) puppetBlast(m, v, t); m.pupMoveOnly=false; m.pupNoBlast=false; continue; }
     m.pp=v.id;
     const si=m.input||{};
     v._ri=v.input; m._ri=m.input;
-    v.input={left:!!si.left,right:!!si.right,jump:!!si.jump,down:!!si.down,angle:si.angle||0,shoot:!!si.shoot,dash:!!si.dash};
+    v.input={left:!!si.left,right:!!si.right,jump:!!si.jump,down:!!si.down,angle:si.angle||0,shoot:m.pupMoveOnly?false:!!si.shoot,dash:m.pupMoveOnly?false:!!si.dash};
     m.input={left:false,right:false,jump:false,down:false,angle:si.angle||0,shoot:false,dash:false};
   }
   for(const id in players){ const v=players[id]; if(v.puppetBy && (!players[v.puppetBy] || players[v.puppetBy].puppetTarget!==v.id)) v.puppetBy=null; }
@@ -15077,6 +15303,7 @@ function tryFire0(p, angle, tMs){
   if(isStunned(p, tMs/1000)) return;                                     // stunned: no attacks
   if(p.darkSub) return;                                                  // 쿠루스 inside his darkness cannot attack
   if(p.bladeSpinUntil && p.bladeSpinUntil>tMs/1000) return;              // the knight's sword is busy whirling
+  if(p.noAtkUntil>tMs/1000 || (p.guardUp && p.guardUp.until>tMs/1000) || (p.s2 && (p.s2.k==='pigeon' || p.s2.k==='swarm'))) return;      // 2스킬 states that forbid attacking (검 막기, 검술, 가드, 비둘기)
   const w = WEAPONS[p.weapon] || WEAPONS.pistol;
   if(w.kind==='charge') return;                                          // 빌헬름 텔: fired on release (processTell)
   if(w.kind==='flame') return;                                           // the flamethrower fires with a held trigger (processFlamethrower). A single click on the host used to get here and spawn a bullet with no speed (x, y, vx, vy all NaN)
@@ -16835,6 +17062,12 @@ function pvKill(killer, victim, tMs){
 function pvBulletHit(b, target, tMs){
   const ow=players[b.owner]; if(!ow || ow.id===target.id) return;
   const tS=tMs/1000;
+  if(b.s2pull && target.alive && ow.alive && ow.x!==undefined){      // 보안관's 올가미 줄: the one it caught is dragged in front of the sheriff
+    const d=(target.x>=ow.x)?1:-1, spot=skill2Free(ow.x+d*72, ow.y-1, 120) || skill2Free(ow.x+d*72, ow.y, 0);
+    pushFx('blink', target.x, target.y-30, tMs, {color:'#d9a866'});
+    if(spot){ target.x=spot.x; target.y=spot.y; target.vx=0; target.vy=0; target.kbX=0; pushFx('blink', target.x, target.y-30, tMs, {color:'#d9a866'}); }
+    stunPlayer(target, 0.4, tMs);
+  }
   if(b.s2stun && target.alive) stunPlayer(target, b.s2stun, tMs);      // 야구선수's 삼진아웃: every ball stuns a little
   if(b.s2swap && target.alive && ow.alive && ow.x!==undefined){ const ox=ow.x, oy=ow.y; pushFx('blink', ox, oy-30, tMs, {color:ow.color}); pushFx('blink', target.x, target.y-30, tMs, {color:target.color}); ow.x=target.x; ow.y=target.y; target.x=ox; target.y=oy; ow.vx=ow.vy=target.vx=target.vy=0; ow.kbX=target.kbX=0; }      // 차원여행자's 시공간 균열: they trade places
   if(b.cardLine && ow.weapon==='magiccard'){      // 마술사: every card of the skill hit one enemy -> stun
@@ -16956,7 +17189,7 @@ function hostTickCore(dt,t){
   for(const id in players){
     const p=players[id]; fxActor=(gameMode==='tournament')?id:null;
     if(!p.alive){
-      p.ultOn=false; p.invis=false; p.burning=false; p.cannonFly=null; p.s2=null;
+      p.ultOn=false; p.invis=false; p.burning=false; p.cannonFly=null; p.s2=null; p.s2blk=null; p.guardWin=0; p.guardUp=null; p.noAtkUntil=0; p.spnUntil=0; p.fbarUntil=0; p.sandUntil=0; p.s2rootUntil=0; p.flashUntil=0; p.s2cnt=null;
       if(p.respawnAt!==Infinity && t/1000>=p.respawnAt){
         if(gameMode==='zombie' && !p.isZombie && p.diedToZombie){ p.isZombie=true; p.team=1; } // humans killed by a zombie come back as a zombie instead of human (resolved before the HP cap below, so a fresh zombie gets the zombie HP cap)
         p.diedToZombie=false;
@@ -17000,12 +17233,12 @@ function hostTickCore(dt,t){
       darkSubMove(p, p.input||{}, dt, t);                              // 쿠루스 inside his darkness: glides along it, nothing else moves him
     } else {
       const channelInput = p.stunned ? Object.assign({}, p.input, {left:false, right:false, jump:false, down:false, shoot:false, dash:false})
-                         : ((p.teleportChannel || p.rooted) ? Object.assign({}, p.input, {left:false, right:false, jump:false, down:false}, p.rooted?{dash:false}:{}) : p.input);
+                         : ((p.teleportChannel || p.rooted || p.snr) ? Object.assign({}, p.input, {left:false, right:false, jump:false, down:false}, (p.rooted||p.snr)?{dash:false}:{}) : p.input);
       p.kanGlide=!!(p.kanWingsUntil && p.kanWingsUntil>t/1000);
-      stepPhysics(p, channelInput||{}, dt);
+      if(p.s2 && (p.s2.k==='pigeon' || p.s2.k==='swarm')){ p.vx=0; p.vy=0; p.kbX=0; p.grounded=false; } else stepPhysics(p, channelInput||{}, dt);
     }
     if(p.cannonFly) cannonFlyTick(p, t);
-    if(p.s2) skill2Tick(p, t);
+    skill2Tick(p, t);
     if(p.bladeSpinUntil) bladeSpinTick(p, t);                      // the knight's whirling sword
     if(gameMode==='parkour'){ tryPickupParkourItem(p, t); checkParkourGoal(p, t); }
     if(wasBatting && !p.batting){
@@ -17095,7 +17328,7 @@ function hostTickCore(dt,t){
         b.hitOnce = b.hitOnce||{};
         for(const id in players){
           const p=players[id];
-          if(!p.alive || id===b.owner || isAlly(players[b.owner],p) || b.hitOnce[id] || p.swordCharge || p.darkSub || p.isClone) continue;
+          if(!p.alive || id===b.owner || isAlly(players[b.owner],p) || b.hitOnce[id] || p.swordCharge || p.darkSub || p.isClone || p.sand) continue;
           const cy=p.y-PLAYER_H/2;
           if(dist(nx,ny,p.x,cy) <= PLAYER_H/2+BULLET_R){
             const dmg=computeFalloffDamage(b); p.hp-=dmg; markHit(p, b.owner, t, dmg); applyHitKnockback(p,b.vx,b.vy,dmg); pushFx('hit', nx, ny, t, {color:b.color, ang:Math.atan2(b.vy,b.vx), v:Math.round(dmg), el:dmgTypeOf(b.wid)});
@@ -17121,7 +17354,7 @@ function hostTickCore(dt,t){
         }
         for(const id in players){
           const p=players[id];
-          if(!p.alive || id===b.owner || isAlly(players[b.owner],p) || p.swordCharge || p.darkSub || p.isClone) continue;   // (a charging knight is untouchable: bullets fly through it)
+          if(!p.alive || id===b.owner || isAlly(players[b.owner],p) || p.swordCharge || p.darkSub || p.isClone || p.sand) continue;   // (a charging knight is untouchable: bullets fly through it)
           const cy=p.y-PLAYER_H/2;
           if(dist(nx,ny,p.x,cy) <= PLAYER_H/2+BULLET_R){
             if(!b.returnHit) b.returnHit={};
@@ -17205,7 +17438,7 @@ function hostTickCore(dt,t){
     if(!hit){
       for(const id in players){
         const p=players[id];
-        if(!p.alive || id===b.owner || isAlly(players[b.owner],p) || p.swordCharge || p.darkSub || p.isClone) continue;   // (a charging knight is untouchable: bullets fly through it)
+        if(!p.alive || id===b.owner || isAlly(players[b.owner],p) || p.swordCharge || p.darkSub || p.isClone || p.sand) continue;   // (a charging knight is untouchable: bullets fly through it)
         if(b.pierce || b.passPlayers){ b.hitSet=b.hitSet||{}; if(b.hitSet[id]) continue; }
         const cy=p.y-PLAYER_H/2;
         if(dist(nx,ny,p.x,cy) <= PLAYER_H/2+(b.hitR||BULLET_R)){
@@ -17266,6 +17499,7 @@ function hostTickCore(dt,t){
     if(hit && b.toad) kanToadLand(b, nx, ny, hitPl, t);
     if(hit && b.lob) lobLand(b, nx, ny, hitPl, t);
     if(hit && b.s2spear) s2SpearLand(b, nx, ny, hitPl, hitWho, t);
+    if(hit && b.s2flash) s2FlashLand(b, nx, ny, hitPl, t);
     if(hit && b.wid==='kurus') darkPotionLand(b, nx, ny, hitPl, hitWho, hitPlatform, t);
     if(hit && b.splash){ explodeAt(nx, ny, b, t); pushFx('explosion', nx, ny, t, {}); }
     else if(hit && hitPlatform && !b.dmgless){ pushFx('spark', nx, ny, t, {color:b.color, ang:Math.atan2(b.vy,b.vx)}); }
@@ -17289,7 +17523,7 @@ function hostTickCore(dt,t){
         fireCdRemain: snapR(p.fireCdRemain||0,20),
         ultCdRemain: p.darkSub ? 0 : snapR(Math.max(0, ultCdOf(p) - (t/1000-(p.lastUlt===undefined?-9999:p.lastUlt))),20), darkSub:p.darkSub?1:0, darkArm:(p.darkArmUntil>t/1000)?1:0,
         skillCdRemain: snapR(Math.max(0, skillCdOf(p) - (t/1000-(p.lastSkill===undefined?-9999:p.lastSkill))),20), buff:p.buff||null, skillUses:p.skillUses||0, dsA:(p.dsDragonUntil>t/1000)?Math.round((p.dsDragonUntil-t/1000)*10)/10:0, dsC:(p.dsDragonUntil>t/1000)?Math.round(dsAssistCdLeft(p,t/1000)*10)/10:0, ultUses:p.ultUses||0, ultMulti:p.ultMulti||0,
-        tellG:Math.round((p.tellG||0)*100)/100, pz:p.pzStacks||0, pm:(p.pzMarkUntil>t/1000)?1:0, ultOn:!!p.ultOn, invis:!!p.invis, isGuard:p.isGuard?1:0, isVault:p.isVault?1:0, isCrystal:p.isCrystal?1:0, isClone:p.isClone?1:0, ownerId:p.ownerId||'', hk:p.hook?[Math.round(p.hook.x),Math.round(p.hook.y)]:null, pvi:pvIconOf(p,t/1000)||undefined, dgn:(p.disg&&p.tioFor)?p.tioFor.name:'', dgv:(p.disg&&p.tioFor)?(p.tioFor.vid||''):'', dgt:(p.disg&&p.tioFor&&p.tioFor.vteam!==undefined)?p.tioFor.vteam:null, dgc:(p.disg&&p.tioFor)?(p.tioFor.clan||''):'', tioStage:p.tioStage||'', drones:(p.weapon==='pel')?pelN(p):0, hrN:p.hrNoAxe?1:0, hrC:p.hrCharge?1:0, hrG:Math.round((p.hrAng||0)*100)/100, hrA:(WEAPONS[p.weapon] && p.lastShot!==undefined)?Math.round(Math.min(2,Math.max(0,t/1000-p.lastShot))*50)/50:9, pelBoost:pelBoostOn(p,t/1000)?1:0, burning:!!p.burning, poisoned:!!p.poisoned, kw:(p.kanWingsUntil>t/1000)?1:0, gc:p.gc||0, gp:Math.round(Math.min(1,(p.goldStay||0)/GOLD_PICK_STAY)*20)/20, pp:puppetMaster(p,t/1000)?p.puppetTarget:null, sw:p.sw||null, sewSlowed:!!p.sewSlowed, slowed:!!p.slowed, stunned:!!p.stunned, cardSlowed:!!p.cardSlowed, bladeSpin:!!p.bladeSpin, swordCharging:!!p.swordCharge, cannonFlying:!!p.cannonFly, chips:p.chips||0, cannonAng:p.cannonFly?Math.round(Math.atan2(p.vy||0,p.cannonFly.vx)*100)/100:0, totalDamageDealt:p.totalDamageDealt||0, channeling:!!p.teleportChannel, flaming:!!p.flaming, portalPair:p.portalPair||null, batting:!!p.batting, vacuumStacks:p.vacuumStacks||0, isZombie:!!p.isZombie, parkourItem:!!p.parkourItem,
+        tellG:Math.round((p.tellG||0)*100)/100, s2k:p.s2k||'', s2d:p.s2d||1, blk:p.blk?1:0, spn:p.spn?1:0, gd:p.gd?1:0, fbar:p.fbar?1:0, sand:p.sand?1:0, snr:p.snr?1:0, cnt:p.cnt?1:0, flr:p.flr||0, pz:p.pzStacks||0, pm:(p.pzMarkUntil>t/1000)?1:0, ultOn:!!p.ultOn, invis:!!p.invis, isGuard:p.isGuard?1:0, isVault:p.isVault?1:0, isCrystal:p.isCrystal?1:0, isClone:p.isClone?1:0, ownerId:p.ownerId||'', hk:p.hook?[Math.round(p.hook.x),Math.round(p.hook.y)]:null, pvi:pvIconOf(p,t/1000)||undefined, dgn:(p.disg&&p.tioFor)?p.tioFor.name:'', dgv:(p.disg&&p.tioFor)?(p.tioFor.vid||''):'', dgt:(p.disg&&p.tioFor&&p.tioFor.vteam!==undefined)?p.tioFor.vteam:null, dgc:(p.disg&&p.tioFor)?(p.tioFor.clan||''):'', tioStage:p.tioStage||'', drones:(p.weapon==='pel')?pelN(p):0, hrN:p.hrNoAxe?1:0, hrC:p.hrCharge?1:0, hrG:Math.round((p.hrAng||0)*100)/100, hrA:(WEAPONS[p.weapon] && p.lastShot!==undefined)?Math.round(Math.min(2,Math.max(0,t/1000-p.lastShot))*50)/50:9, pelBoost:pelBoostOn(p,t/1000)?1:0, burning:!!p.burning, poisoned:!!p.poisoned, kw:(p.kanWingsUntil>t/1000)?1:0, gc:p.gc||0, gp:Math.round(Math.min(1,(p.goldStay||0)/GOLD_PICK_STAY)*20)/20, pp:puppetMaster(p,t/1000)?p.puppetTarget:null, sw:p.sw||null, sewSlowed:!!p.sewSlowed, slowed:!!p.slowed, stunned:!!p.stunned, cardSlowed:!!p.cardSlowed, bladeSpin:!!p.bladeSpin, swordCharging:!!p.swordCharge, cannonFlying:!!p.cannonFly, chips:p.chips||0, cannonAng:p.cannonFly?Math.round(Math.atan2(p.vy||0,p.cannonFly.vx)*100)/100:0, totalDamageDealt:p.totalDamageDealt||0, channeling:!!p.teleportChannel, flaming:!!p.flaming, portalPair:p.portalPair||null, batting:!!p.batting, vacuumStacks:p.vacuumStacks||0, isZombie:!!p.isZombie, parkourItem:!!p.parkourItem,
         isHost:p.isHost,clan:p.clan||'',joinOrder:p.joinOrder,weapon:p.weapon,kit:p.kit||null,team:p.team,spinAngle:p.spinAngle,cos:p.cos,isBoss:p.isBoss?1:0,isMinion:p.isMinion?1:0,bt:p.bt,bossMaxHp:p.bossMaxHp,emIdx:p.emIdx,emRem:(p.emUntil?Math.max(0,Math.round((p.emUntil-t/1000)*20)/20):0)})),
       cq: (gameMode==='conquest' && cq) ? {s:cq.scores, h:cq.holder, c:cq.contested} : undefined,
       xm: (xm && xmV) ? xmV : undefined,
@@ -17311,7 +17545,7 @@ function hostTickCore(dt,t){
       fieldZones:fieldZones.map(z=>({kind:z.kind,x:Math.round(z.x),y:Math.round(z.y),r:z.r,owner:z.owner,dur:z.dur,rem:z.until-t/1000})),
       tlA:tellApples.map(a=>({id:a.id,o:a.owner,x:Math.round(a.x),y:Math.round(a.y),vx:Math.round(a.vx),vy:Math.round(a.vy)})),
       hrAx:hrAxes.map(a=>({id:a.id,o:a.owner,x:Math.round(a.x),y:Math.round(a.y),vx:Math.round(a.vx),vy:Math.round(a.vy),st:a.st,sa:Math.round((a.sa||0)*100)/100})),
-      poisonZones:poisonZones.map(z=>({mine:z.mine?1:0,x:z.x,y:z.y,r:z.r,owner:z.owner,team:z.team,rem:z.until-t/1000,rv:(z.revealAt!==undefined)?1:0})),
+      poisonZones:poisonZones.map(z=>({kd:z.kd||'', h:z.h||0, mine:z.mine?1:0,x:z.x,y:z.y,r:z.r,owner:z.owner,team:z.team,rem:z.until-t/1000,rv:(z.revealAt!==undefined)?1:0})),
       hz:hzDraw,
       dbombs:droneBombs.map(b=>({x:Math.round(b.x),y:Math.round(b.y),owner:b.owner})),
       turrets:turrets.map(z=>({x:Math.round(z.x),y:Math.round(z.y),a:Math.round(z.ang*100)/100,owner:z.owner,team:z.team,rem:z.until-t/1000})),
@@ -18761,24 +18995,24 @@ function abilityCancel(){ if(abilityHold){ abilityHold.consumed=true; if(ability
 canvas.addEventListener('mousedown', e=>{
   e.preventDefault();
   if(touchModeOn()) return;
-  if(e.button===2){ abilityCancel(); return; }
+  if(e.button===2){ abilityCancel(); localInput.guard=true; return; }
   if(abilityClickAt(e.clientX, e.clientY)) return;      // an ability key is held: this click is the ability's aim, not a shot
   localInput.shoot=true;
   const me=players[myId];
   if(!me || me.weapon!=='bat') fireInstant(); // bat has no click-to-hit - only the swing motion triggers damage
 });
-window.addEventListener('mouseup', ()=>{ localInput.shoot=false; batSwingY=null; });
+window.addEventListener('mouseup', ()=>{ localInput.shoot=false; localInput.guard=false; batSwingY=null; });
 canvas.addEventListener('pointerdown', e=>{
   e.preventDefault();
   if(touchModeOn()) return;
-  if(e.button===2){ abilityCancel(); return; }
+  if(e.button===2){ abilityCancel(); localInput.guard=true; return; }
   if(abilityClickAt(e.clientX, e.clientY)){ try{ canvas.setPointerCapture(e.pointerId); }catch(err){} return; }
   localInput.shoot=true;
   const me=players[myId];
   if(!me || me.weapon!=='bat') fireInstant();
   try{ canvas.setPointerCapture(e.pointerId); }catch(err){}
 });
-window.addEventListener('pointerup', ()=>{ localInput.shoot=false; batSwingY=null; });
+window.addEventListener('pointerup', ()=>{ localInput.shoot=false; localInput.guard=false; batSwingY=null; });
 canvas.addEventListener('contextmenu', e=>{ e.preventDefault(); abilityCancel(); });
 window.addEventListener('blur', ()=>{ abilityHold=null; });
 canvas.addEventListener('mousemove', e=>{
@@ -19687,6 +19921,20 @@ function spawnFx0(e){
       for(let i=0;i<30;i++){ const aa=Math.random()*6.283, r=R*(0.4+0.6*Math.random()), px=x+Math.cos(aa)*r, py=y+Math.sin(aa)*r, life=0.35+Math.random()*0.2;
         addP({x:px,y:py,vx:-Math.cos(aa)*r/life,vy:-Math.sin(aa)*r/life,life:life,size:3+Math.random()*3,color:i%2?'#8fd3ff':'#d9c4ff',shape:'streak'}); }
       break; }
+    case 'flashbang': {
+      playSfx('explosion', x, y);
+      addP({x:x,y:y,life:.5,color:'#ffffff',shape:'flash',size:420}); addP({x:x,y:y,life:.6,color:'#ffffff',shape:'ring',r0:10,r1:380,lw:10}); addP({x:x,y:y,life:.9,color:'#fff6c8',shape:'ring',r0:5,r1:260,lw:4});
+      burst(x,y,26,{a0:0,a1:6.28,s0:200,s1:700,l0:.3,l1:.7,z0:2,z1:4,colors:['#ffffff','#fff6c8'],drag:2,shape:'streak'}); shakeFrom(x,y,8,500); break; }
+    case 'sandpuff': {
+      burst(x,y,26,{a0:0,a1:6.28,s0:40,s1:260,l0:.4,l1:.9,z0:4,z1:9,colors:['#d8b36a','#c9a05a','#f0d9a0'],grav:-30,drag:2.2,shape:'smoke',add:false}); addP({x:x,y:y,life:.5,color:'#d8b36a',shape:'ring',r0:8,r1:90,lw:5}); break; }
+    case 'arrowwarn': {
+      for(let i=0;i<3;i++) addP({x:x,y:y,life:.5+i*.15,color:'#7dffb0',shape:'ring',r0:130,r1:30,lw:3}); break; }
+    case 'snare': {
+      burst(x,y-4,e.hit?22:10,{a0:-3.0,a1:-0.1,s0:60,s1:e.hit?340:160,l0:.3,l1:.7,z0:2,z1:4,colors:['#a8793c','#d9b27a','#6e4b22'],grav:600,drag:1,shape:'streak'}); addP({x:x,y:y-4,life:.4,color:'#d9b27a',shape:'ring',r0:6,r1:e.hit?70:44,lw:4}); break; }
+    case 'firepillar': {
+      burst(x,y-6,10,{a0:-2.0,a1:-1.1,s0:150,s1:420,l0:.4,l1:.9,z0:6,z1:13,colors:['#ff5a1f','#ff9b2e','#ffd34d'],grav:-200,drag:1.4,shape:'fire'}); addP({x:x,y:y-2,life:.3,color:'#ffb347',shape:'ring',r0:10,r1:(e.r||58)*1.4,lw:5}); break; }
+    case 'lockon': {
+      addP({x:x,y:y,life:.25,color:'#ff5a5a',shape:'ring',r0:46,r1:14,lw:3}); addP({x:x,y:y,life:.18,color:'#ffffff',shape:'flash',size:30}); break; }
     case 'heal': {
       burst(x,y+10,14,{a0:-2.3,a1:-0.85,s0:50,s1:200,l0:.6,l1:1.0,z0:2,z1:4,colors:['#5fff8a','#ffffff'],grav:-60,drag:1.4});
       addP({x:x,y:y-6,vx:0,vy:-70,drag:1.2,life:1.0,size:16,color:'#7dffa3',outline:'#1c7a3a',shape:'text',add:false,text:'+'+(e.v||0)});
@@ -19990,6 +20238,21 @@ function drawPoisonZones(){
   for(const z of poisonZones){
     if(!tnOwnerShown(z.owner)) continue;
     AURA=gmOwner(z.owner);
+    if(z.kd==='snare'){
+      const mineish=(z.owner===myId) || (players[myId] && players[z.owner] && isAlly(players[myId], players[z.owner]));
+      ctx.save(); ctx.globalAlpha=mineish?1:0.55; ctx.strokeStyle='#a8793c'; ctx.lineWidth=3; ctx.beginPath(); ctx.ellipse(z.x,z.y-2,z.r*0.8,z.r*0.2,0,0,7); ctx.stroke();
+      ctx.strokeStyle='#6e4b22'; ctx.lineWidth=2; ctx.beginPath(); ctx.ellipse(z.x,z.y-3,z.r*0.5,z.r*0.12,0,0,7); ctx.stroke();
+      ctx.fillStyle='#8a5a2a'; for(let i=0;i<6;i++){ const a=i*1.047; ctx.beginPath(); ctx.arc(z.x+Math.cos(a)*z.r*0.8, z.y-2+Math.sin(a)*z.r*0.2, 2.4, 0, 7); ctx.fill(); }
+      ctx.restore(); continue;
+    }
+    if(z.kd==='pillar'){
+      let rem=z.rem; if(rem===undefined) rem=z.until-performance.now()/1000; const fade=Math.min(1,rem/0.4), H=z.h||250, fl=0.5+0.5*Math.sin(now/70+z.x);
+      ctx.save(); ctx.globalAlpha=0.9*fade; ctx.globalCompositeOperation='lighter';
+      const g=ctx.createLinearGradient(0,z.y,0,z.y-H); g.addColorStop(0,'rgba(255,200,80,0.85)'); g.addColorStop(0.5,'rgba(255,110,30,0.55)'); g.addColorStop(1,'rgba(255,60,10,0)');
+      ctx.fillStyle=g; ctx.beginPath(); ctx.moveTo(z.x-z.r,z.y); ctx.quadraticCurveTo(z.x-z.r*(0.7+0.2*fl),z.y-H*0.5,z.x,z.y-H); ctx.quadraticCurveTo(z.x+z.r*(0.7+0.2*(1-fl)),z.y-H*0.5,z.x+z.r,z.y); ctx.closePath(); ctx.fill();
+      ctx.fillStyle='rgba(255,240,170,0.8)'; ctx.beginPath(); ctx.moveTo(z.x-z.r*0.4,z.y); ctx.quadraticCurveTo(z.x-z.r*0.25,z.y-H*0.35,z.x,z.y-H*0.7); ctx.quadraticCurveTo(z.x+z.r*0.25,z.y-H*0.35,z.x+z.r*0.4,z.y); ctx.closePath(); ctx.fill();
+      ctx.restore(); continue;
+    }
     if(z.mine){       // 지뢰: only the soldier and the soldier's team see it
       const blink=0.5+0.5*Math.sin(now/180+z.x);
       ctx.save(); ctx.fillStyle='#2e3a2a'; ctx.beginPath(); ctx.ellipse(z.x,z.y-3,12,5,0,0,7); ctx.fill(); ctx.strokeStyle='#59704a'; ctx.lineWidth=1.5; ctx.stroke();
@@ -20471,6 +20734,10 @@ function drawProjectileBase(b){
   ctx.rotate(ang);
   if(rs!==1) ctx.scale(rs, rs);
   if(b.scale) ctx.scale(b.scale, b.scale);
+  if(b.wid==='flashbang'){ ctx.fillStyle='#e8ecf2'; ctx.strokeStyle='#8b93a3'; ctx.lineWidth=1.4; ctx.beginPath(); ctx.roundRect(-8,-5,16,10,3); ctx.fill(); ctx.stroke(); ctx.fillStyle='#ffd34d'; ctx.fillRect(-2,-7,4,3); }
+  if(b.wid==='barrel'){ ctx.fillStyle='#8a5a2a'; ctx.strokeStyle='#3b2410'; ctx.lineWidth=1.6; ctx.beginPath(); ctx.ellipse(0,0,12,10,0,0,7); ctx.fill(); ctx.stroke(); ctx.strokeStyle='#d9b27a'; ctx.beginPath(); ctx.moveTo(-5,-9); ctx.lineTo(-5,9); ctx.moveTo(5,-9); ctx.lineTo(5,9); ctx.stroke(); ctx.fillStyle='#ff5a1f'; ctx.fillRect(-1.5,-15,3,6); }
+  if(b.wid==='lasso'){ const ow=players[b.owner]; if(ow && ow.x!==undefined){ const dx=ow.x-b.x, dy=(ow.y-40)-b.y, ca=Math.cos(ang), sa=Math.sin(ang); ctx.strokeStyle='#a8793c'; ctx.lineWidth=2.4; ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(dx*ca+dy*sa, -dx*sa+dy*ca); ctx.stroke(); } ctx.strokeStyle='#d9b27a'; ctx.lineWidth=3; ctx.beginPath(); ctx.ellipse(4,0,12,9,0,0,7); ctx.stroke(); }
+  if(b.wid==='kurus_dark'){ const g=ctx.createLinearGradient(-60,0,16,0); g.addColorStop(0,'rgba(20,8,36,0)'); g.addColorStop(1,'rgba(48,18,84,0.95)'); ctx.fillStyle=g; ctx.beginPath(); ctx.ellipse(-22,0,44,11,0,0,7); ctx.fill(); ctx.fillStyle='#120820'; ctx.shadowColor='#7b3fd1'; ctx.shadowBlur=14; ctx.beginPath(); ctx.arc(0,0,11,0,7); ctx.fill(); ctx.shadowBlur=0; }
   if(b.wid==='baseball'){ ctx.fillStyle='#f4f4f4'; ctx.beginPath(); ctx.arc(0,0,8,0,7); ctx.fill(); ctx.strokeStyle='#d33'; ctx.lineWidth=1.2; ctx.beginPath(); ctx.arc(-6,0,6,-1,1); ctx.stroke(); ctx.beginPath(); ctx.arc(6,0,6,Math.PI-1,Math.PI+1); ctx.stroke(); ctx.restore(); return; }
   if(b.wid==='pizarro_spear'){ ctx.strokeStyle='#8a5a2a'; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(-24,0); ctx.lineTo(14,0); ctx.stroke(); ctx.fillStyle='#e8ecf2'; ctx.beginPath(); ctx.moveTo(26,0); ctx.lineTo(13,-5); ctx.lineTo(13,5); ctx.closePath(); ctx.fill(); ctx.restore(); return; }
   if(b.lob){      // thrown smoke grenade / molotov: a spinning can or bottle
@@ -20952,6 +21219,9 @@ function drawStickman(p){
   ctx.translate(p.x, p.y);
   if(p.spinAngle){ ctx.translate(0,-30); ctx.rotate(p.spinAngle); ctx.translate(0,30); }
   if(!p.alive) ctx.globalAlpha=0.25;
+  if(p.sand && p.alive!==false){ ctx.globalAlpha=0.38; if(Math.random()<0.8) addP({x:p.x+RND(-16,16),y:p.y-RND(0,60),vx:RND(-60,60),vy:RND(-70,10),life:RND(.3,.7),size:RND(2,4.4),color:Math.random()<.5?'#d8b36a':'#f0d9a0'}); }
+  if(p.snr && p.alive!==false){ ctx.save(); ctx.strokeStyle='#a8793c'; ctx.lineWidth=3; for(let i=0;i<3;i++){ ctx.beginPath(); ctx.ellipse(0,-10-i*18,17,4,0,0,7); ctx.stroke(); } ctx.restore(); }
+  if(p.cnt && p.alive!==false){ const pu=0.5+0.5*Math.sin(performance.now()/70); ctx.save(); ctx.globalCompositeOperation='lighter'; ctx.strokeStyle='rgba(255,211,77,'+(0.5+0.4*pu)+')'; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(0,-30,40+pu*4,0,7); ctx.stroke(); ctx.fillStyle='rgba(255,211,77,'+(0.08+0.08*pu)+')'; ctx.beginPath(); ctx.arc(0,-30,40,0,7); ctx.fill(); ctx.restore(); }
   const HEADCY=-52;
   if(p.weapon==='gambler' && p.alive && (p.chips||0)>0){ const n=p.chips; for(let i=0;i<n;i++){ ctx.fillStyle='#d62839'; ctx.strokeStyle='#fff'; ctx.lineWidth=1; ctx.beginPath(); ctx.arc((i-(n-1)/2)*9,-88,3.6,0,7); ctx.fill(); ctx.stroke(); } }
   const skinId = p.cos && p.cos.skin && p.cos.skin[p.weapon];
@@ -20993,6 +21263,17 @@ function drawStickman(p){
     ctx.beginPath(); ctx.arc(0,-26,34,0,7); ctx.fill();
     ctx.restore();
   }
+  if(p.s2k==='pigeon' || p.s2k==='swarm'){
+    if(p.s2k==='pigeon') drawPigeonForm(ctx, p);
+    else { const d=p.s2d||1, nw=performance.now(); for(let i=0;i<6;i++){ ctx.save(); ctx.translate(Math.sin(nw/90+i*2.1)*20-d*i*12, -30+Math.cos(nw/110+i*1.7)*16); ctx.scale(0.6*d,0.6); drawBatForm(ctx, p, '#2a0a0a'); ctx.restore(); } }
+    ctx.globalAlpha=1;
+    if(p.stunned && p.alive) drawStunStars(ctx, HEADCY);
+    ctx.restore();
+    ctx.font='600 13px Rajdhani'; ctx.textAlign='center'; ctx.fillStyle=nameColorFor(p.cos&&p.cos.name);
+    AURA=false; ctx.fillText(clanNameFor(p), p.x, p.y+HEADCY-38); drawTitleTag(ctx, p, HEADCY); drawEmote(ctx, p, HEADCY);
+    drawOverheadExtras(p, HEADCY);
+    return;
+  }
   if(p.weapon==='dracula' && p.batting){
     drawBatForm(ctx, p, skinTint);
     ctx.globalAlpha=1;
@@ -21033,9 +21314,12 @@ function drawStickman(p){
   if(p.weapon==='pizarro' && p.alive!==false) drawPizarroPlume(ctx,0,HEADCY,HEADR,Math.min(PZ_MAX,p.pzStacks||0));
   if(WEAPON_PERSONA_NAME[lkW(p)] || lkW(p)==='guard'){ drawWeaponPersona(ctx,lkW(p),0,HEADCY,HEADR,SH,skinTint,conceptOfSkin(skinId)); const sfx=(skinId && COSMETICS[skinId]) ? COSMETICS[skinId].fx : null; if(sfx && p.alive!==false) drawSkinFx(ctx,(luxLv>=4?'sparkle':sfx),skinTint,0,HEADCY,luxLv?HEADR*1.3:HEADR,luxNow); if(luxLv && p.alive!==false) drawSkinLux(ctx, luxLv, skinTint, luxNow, luxSeed, 'front'); }
   else if(p.cos && p.cos.hat) drawHat(ctx,p.cos.hat,0,HEADCY,HEADR);
+  if(p.gd && p.alive!==false){ const gd=(Math.cos(p.angle||0)>=0)?1:-1; ctx.save(); ctx.fillStyle='#e33'; ctx.strokeStyle='#fff'; ctx.lineWidth=1.5; for(const q of [[gd*15,-52],[gd*11,-40]]){ ctx.beginPath(); ctx.arc(q[0],q[1],7,0,7); ctx.fill(); ctx.stroke(); } ctx.strokeStyle='rgba(110,198,255,0.8)'; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(gd*8,-42,26,gd>0?-1.2:Math.PI-1.2+1.2,gd>0?1.2:Math.PI+1.2); ctx.stroke(); ctx.restore(); }
   let ang=p.angle||0;
   const whirling = !!(p.bladeSpin && p.weapon==='sword');
   if(whirling) ang=((performance.now()/1000)*SWORD_SPIN_RATE)%(Math.PI*2);          // the knight's lunge: the sword turns on its own, whatever the cursor does
+  if(p.blk) ang=-Math.PI/2;           // 용살자's 검 막기: the sword stands upright
+  if(p.spn) ang=((performance.now()/1000)*14)%(Math.PI*2);      // 자다이's 검술: the saber whirls
   const aim0=ang;
   if(p.weapon==='dragonslayer' && p.alive!==false){ const so=dsSwingOffset(p, ang); if(so!==0) ang+=so; }          // the arm really swings: raised back, cut down, and brought home
   const ax=Math.cos(ang), ay=Math.sin(ang);
@@ -21119,11 +21403,24 @@ function drawOverheadExtras(p, HEADCY){
   const kcMe=(typeof p.id==='string' && p.id.indexOf('killcam_')===0 && !!players[meId] && !!p.name && p.name===players[meId].name);      // (a killcam figure has a made-up id, so it is recognised as me by name)
   if(p.id===meId || kcMe){ hpColor=cb?'#F0E442':'#4da6ff'; hpMark=0; } // me = blue
   else if(isAlly(players[meId], p)){ hpColor=cb?'#56B4E9':'#4ddb7a'; hpMark=cb?1:0; } // ally = green
-  if(p.dgn && p.alive && p.id!==meId){ hpColor=cb?'#56B4E9':'#4ddb7a'; hpMark=cb?1:0; }       // a disguised 티오니스: a green bar for everybody
+  if((p.dgn || p.fbar) && p.alive && p.id!==meId){ hpColor=cb?'#56B4E9':'#4ddb7a'; hpMark=cb?1:0; }       // a disguised 티오니스: a green bar for everybody
   ctx.fillStyle = p.alive ? hpColor : '#555';
   ctx.fillRect(p.x-20, p.y+HEADCY-16, 40*clamp((p.hp||0)/maxHpFor(p),0,1), 5);
   if(p.weapon==='tell' && p.alive && (p.tellG||0)>0.005){ const g=Math.min(1,p.tellG); ctx.save(); ctx.fillStyle='#262b38'; ctx.fillRect(p.x-20, p.y+HEADCY-36, 40, 5); ctx.fillStyle=g>=1?'#ffe14a':'#9ae26a'; ctx.fillRect(p.x-20, p.y+HEADCY-36, 40*g, 5); ctx.strokeStyle='rgba(0,0,0,.55)'; ctx.lineWidth=1; ctx.strokeRect(p.x-20.5, p.y+HEADCY-36.5, 41, 6); ctx.restore(); }      // 빌헬름 텔: the gauge above the health bar
   if(hpMark && p.alive){ const mx=p.x-26, my=p.y+HEADCY-13.5; ctx.fillStyle=hpColor; ctx.beginPath(); if(hpMark===1) ctx.arc(mx,my,3,0,7); else { ctx.moveTo(mx,my-4); ctx.lineTo(mx+4,my); ctx.lineTo(mx,my+4); ctx.lineTo(mx-4,my); ctx.closePath(); } ctx.fill(); }
+}
+function drawPigeonForm(c, p){      // 마술사's 비둘기 변신: a grey pigeon in the magician's top hat
+  const d=p.s2d||1, flap=Math.sin(performance.now()/45);
+  c.save(); c.translate(0,-30); c.scale(d,1);
+  c.fillStyle='#7d8590'; c.beginPath(); c.moveTo(-4,-2); c.quadraticCurveTo(-18,-20-flap*10,-30,-8-flap*8); c.quadraticCurveTo(-16,-4,-4,4); c.closePath(); c.fill();
+  c.fillStyle='#aab2bd'; c.beginPath(); c.ellipse(0,2,15,9,0,0,7); c.fill();
+  c.fillStyle='#5f6772'; c.beginPath(); c.moveTo(-12,0); c.lineTo(-26,6); c.lineTo(-12,6); c.closePath(); c.fill();
+  c.fillStyle='#aab2bd'; c.beginPath(); c.arc(13,-6,6.5,0,7); c.fill();
+  c.fillStyle='#3fae7b'; c.beginPath(); c.ellipse(9,-1,4,2.4,0.4,0,7); c.fill();
+  c.fillStyle='#f2a53a'; c.beginPath(); c.moveTo(18,-7); c.lineTo(26,-5); c.lineTo(18,-3); c.closePath(); c.fill();
+  c.fillStyle='#111'; c.beginPath(); c.arc(15,-8,1.3,0,7); c.fill();
+  c.fillStyle='#14141c'; c.fillRect(7,-22,13,14); c.fillRect(4,-10,19,3.4); c.fillStyle='#c0392b'; c.fillRect(7,-13,13,3);
+  c.restore();
 }
 function drawBatForm(c, p, tint){
   const flap=Math.sin(performance.now()/55);
@@ -21456,6 +21753,7 @@ function render(fxDt){
   ctx.restore();
   if(hzDraw && hzDraw.dark>0 && !kcScene) safeDraw(()=>drawMineDark(getCamera()));
   if(!kcScene) safeDraw(()=>drawBlind(getCamera(), dtN));
+  if(!kcScene) safeDraw(()=>drawFlashVeil());
   if(!kcScene) safeDraw(()=>drawSmokeVeil(getCamera(), dtN));
   safeDraw(drawSamScreen);
   const me=players[myId];
