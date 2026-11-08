@@ -560,7 +560,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 185</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 186</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div><p class="tagline">사절을 보내 동맹을 맺고, 군대를 보내 왕관을 차지하세요.</p></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -6329,7 +6329,7 @@ const UI={
     if(rep.attacks.length)UI.toast('모든 명령이 동시에 공개됩니다!');UI.renderAll();await sleep(rep.attacks.length?(FX==='off'?900:1800):500);
     let skipped=0;
     for(const b of rep.battles){const td=TDEF[b.tid];const A=players[b.att];
-      if(b.walkover){MapView.flash(b.tid,A.color);UI.toast(`${A.kingdom}이(가) 무방비의 ${td.name}에 무혈 입성했습니다.`);await sleep(FX==='off'?250:800);continue;}
+      if(b.walkover){MapView.flash(b.tid,A.color);if(FX==='mine'&&b.att!==v.me&&b.def!==v.me){skipped++;await sleep(120);continue;}UI.toast(`${A.kingdom}이(가) 무방비의 ${td.name}에 무혈 입성했습니다.`);await sleep(FX==='off'?250:800);continue;}
       try{window.BHpush&&BHpush(b,pv,rep.round);}catch(_){}
       const capBattle=b.def!=null&&players[b.def].cap===b.tid;
       const involvesMe=b.att===v.me||b.def===v.me||(b.gp&&b.gp.includes(v.me));if(involvesMe)C.lastBattleMe=rep.round;
