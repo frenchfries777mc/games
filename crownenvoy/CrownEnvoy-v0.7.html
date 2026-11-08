@@ -560,7 +560,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 188</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 189</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div><p class="tagline">사절을 보내 동맹을 맺고, 군대를 보내 왕관을 차지하세요.</p></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -3268,15 +3268,26 @@ function rlApply(p,kind){const r=rlEnsure(p),old=r.n,K=snm(p.id);
   else if(kind==='repub'){apply();setGov(p,'rep',true);head=`${K}, 왕정을 끝내다`;body=`${old}왕의 죽음을 계기로 왕위를 없애고 공화정을 세웠다. 새 대통령 ${nn}이(가) 취임했다.`;fx=`공화정으로 바뀌었어요. ${o.txt}.`;}
   else if(kind==='kin'){const q=o.q;apply();if(q!=null){opnAdd(q,p.id,'succ_kin','왕실의 혈통을 이었다',20,30);body=`${old}왕이 후사 없이 죽자 혼인으로 맺어진 ${snm(q)} 왕실의 먼 친척 ${nn}이(가) 왕위를 이었다. ${snm(q)}과(와)의 사이가 한결 가까워졌다.`;fx=`${snm(q)} 왕실의 ${nn}이(가) 즉위했어요. ${o.txt}.`;}else{body=`${old}왕이 후사 없이 죽자 먼 친척 ${nn}이(가) 왕위를 이었다. 정통성을 문제 삼는 목소리가 나온다.`;fx=`먼 친척 ${nn}이(가) 즉위했어요. ${o.txt}.`;}}
   else{p.stab=clamp(p.stab-25,0,100);addMAdj(p,-12,10,'계승 전쟁');let n=0;if(owned(p.id).length>=3){while(n<2&&revoltOne(p))n++;}head=`${K}에 계승 전쟁이 일어나다`;body=`${old}왕이 후계자를 정하지 못한 채 숨을 거뒀다. 왕위를 노린 귀족들이 갈라져 ${nn}이(가) 간신히 즉위했지만 나라가 크게 흔들렸다.`;fx=`후계자를 정하지 않아 계승 전쟁이 났어요. 안정도 −25, 사기 하락${n?`, 영토 ${n}곳 이탈`:''}.`;}
+  if(p.rlCause&&RL_CAUSE[p.rlCause]&&kind!=='repub'&&kind!=='war'){const c=RL_CAUSE[p.rlCause];head=`${K}의 왕이 ${c.h}`;body=rlCT(old)(c)+' '+body.replace(new RegExp('^'+old+'왕[이은] (눈을 감고 |숨을 거두자 |죽자 |세상을 떠나자 |후사 없이 죽자 )?'),'');fx=`${c.h.replace('다','')}. `+fx;}
+  else if(p.rlCause&&RL_CAUSE[p.rlCause]){body=rlCT(old)(RL_CAUSE[p.rlCause])+' '+body;}
+  p.rlCause=null;
   rlFin(p,old,nn,age,head,body,fx,kind==='war'?'후계자가 없어 계승 전쟁이 일어났다.':`${RLW[kind].n}(으)로 계승했다.`);}
-function rlDie(p){if(p.rlPend)return;const r=rlEnsure(p),old=r.n;
+function rlDie(p,cause){if(p.rlPend)return;p.rlCause=cause||null;const r=rlEnsure(p),old=r.n;
   const av=RL_ALL.filter(k=>!rlWhy(p,k));let kind=p.will&&RLW[p.will]&&!rlWhy(p,p.will)?p.will:null;
   if(!kind&&p.isBot&&av.length)kind=pick(av);
   if(kind||p.isBot||G.noChoice||!av.length){rlApply(p,kind||'war');return;}
   p.rlPend=1;const war=hasWar(p.id);
   choiceP(p,{head:`${old}왕이 세상을 떠났어요`,body:`유언이 없어요. 지금 상황(${war?'전쟁 중':'평화'} · 안정도 ${Math.round(p.stab)} · 여론 ${Math.round(p.pub==null?60:p.pub)})에 맞는 후계를 골라야 해요. 고르지 않으면 계승 전쟁이 나요.`,def:av.length,
     opts:av.map(k=>({t:`${RLW[k].ic} ${RLW[k].n} — ${rlPlan(p,k).txt||'큰 변화 없음'}`,fn:()=>{rlApply(p,k);}})).concat([{t:'정하지 못한다 (계승 전쟁: 안정도 −25, 사기 하락)',fn:()=>{rlApply(p,'war');}}])});}
-function rlTick(p){if(!rlOn(p))return;const a=rlAge(p);
+const RL_CAUSE={ass:{h:'암살당하다',v:'궁정에서 암살자의 칼에 쓰러졌다.'},acc:{h:'사고로 숨지다',v:'사냥 중 말에서 떨어져 숨을 거뒀다.'},bat:{h:'전사하다',v:'직접 군대를 이끌고 나섰다가 전장에서 쓰러졌다.'},dis:{h:'급병으로 숨지다',v:'갑작스러운 병으로 숨을 거뒀다.'}};
+const rlCT=(o)=>c=>`${o}왕이 ${c.v}`;
+/* 나이와 상관없이 낮은 확률로 닥치는 급사: 전쟁 중이면 전사, 불안하면 암살이 늘어요 */
+function rlSudden(p){if(p.rlPend||G.round<12)return;const war=hasWar(p.id),st=p.stab,pub=p.pub==null?60:p.pub;
+  const k=rlSuddenKind(war,st<40||pub<30);if(k)rlDie(p,k);}
+/* 급사는 턴당 2%: 전쟁 중이면 전사가, 나라가 불안하면 암살이 더 큰 몫을 차지해요 */
+const RL_SUDDEN=0.02;
+function rlSuddenKind(war,unstable){if(Math.random()>=RL_SUDDEN)return null;const w={bat:war?4:0,ass:unstable?6:3,acc:3.5,dis:3.5};let t=0;Object.keys(w).forEach(k=>t+=w[k]);let x=Math.random()*t;for(const k of Object.keys(w)){if(x<w[k])return k;x-=w[k];}return 'dis';}
+function rlTick(p){if(!rlOn(p))return;const a=rlAge(p);rlSudden(p);
   if(p.isBot&&!p.will&&a>=50&&Math.random()<0.15){const av=RL_ALL.filter(k=>!rlWhy(p,k)&&k!=='repub');if(av.length)p.will=pick(av);}
   if(!p.isBot&&!p.will&&a>=55&&G.round-(p.rlWarn==null?-99:p.rlWarn)>=10){p.rlWarn=G.round;hooks.toast(p.id,`군주 ${rlEnsure(p).n}(${a}세)이(가) 늙었어요. 정치 탭에서 유언장을 써 두세요.`);}
   if(!p.rlPend&&a>52&&Math.random()<Math.min(0.05,0.0015*(a-52)))rlDie(p);}
@@ -3305,12 +3316,14 @@ const RP_GOV=['rep','com','par'],RP_LEN=[12,16],RP_WORD={rep:'대통령 선거',
 const prOn=p=>!!p&&p.alive&&!p.neu&&!p.landless&&RP_GOV.includes(p.gov);
 function prEnsure(p){if(!p.pr)p.pr={n:pick(RL_NAMES),tr:pick(Object.keys(TR)),r0:G.round,len:pick(RP_LEN)};if(!p.pr.tr)p.pr.tr=pick(Object.keys(TR));return p.pr;}
 function trFx(p){const r=RP_GOV.includes(p.gov)?p.pr:(RL_GOV.includes(p.gov)?p.rl:null);return r&&TR[r.tr]?TR[r.tr].fx:{};}
-function prTick(p){if(!prOn(p))return;const r=prEnsure(p);if(G.round-r.r0<r.len)return;
+function prTick(p){if(!prOn(p))return;const r=prEnsure(p);
+  if(G.round-r.r0<r.len&&G.round>=12&&!r.cs){const k=rlSuddenKind(false,p.stab<40||(p.pub!=null&&p.pub<30));if(k&&k!=='bat'){r.cs=k;r.r0=G.round-r.len;}}
+  if(G.round-r.r0<r.len)return;
   const old=r.n,role=GOV[p.gov].r,nn=pick(RL_NAMES.filter(x=>x!==old)),tk=pick(Object.keys(TR).filter(x=>x!==r.tr)),len=pick(RP_LEN);
-  p.pr={n:nn,tr:tk,r0:G.round,len};p.pub=clamp((p.pub==null?60:p.pub)+4,0,100);
+  const cs=r.cs&&RL_CAUSE[r.cs]?RL_CAUSE[r.cs]:null;p.pr={n:nn,tr:tk,r0:G.round,len};p.pub=clamp((p.pub==null?60:p.pub)+4,0,100);
   const T=TR[tk],w=RP_WORD[p.gov];
   log(`${p.kingdom}의 ${role}이(가) ${old}에서 ${nn}(으)로 바뀌었다. (${T.n})`,'event');wlog('event',p.id,null,`${snm(p.id)}의 ${role}이(가) 바뀌었다`);
-  if(!G.turnEvents)G.turnEvents=[];G.turnEvents.push({r:G.round,date:ymOf(G.round),head:`${snm(p.id)}, 새 ${role}을(를) 뽑다`,body:`${w} 끝에 ${nn}이(가) ${role}에 올랐다. ${old}의 임기는 막을 내렸고, 새 지도자는 ${T.n} 성향으로 알려졌다.`,scene:'meeting',ca:p.color,cb:p.color});
+  if(!G.turnEvents)G.turnEvents=[];G.turnEvents.push({r:G.round,date:ymOf(G.round),head:cs?`${snm(p.id)}의 ${role}이(가) ${cs.h}`:`${snm(p.id)}, 새 ${role}을(를) 뽑다`,body:`${cs?`${role} ${old}이(가) ${cs.v} 급히 치러진 `:''}${w} 끝에 ${nn}이(가) ${role}에 올랐다. ${old}의 임기는 막을 내렸고, 새 지도자는 ${T.n} 성향으로 알려졌다.`,scene:'meeting',ca:p.color,cb:p.color});
   hooks.toast(p.id,`새 ${role} ${nn}이(가) 취임했어요. 성향: ${T.ic} ${T.n} (${T.d}) · 여론 +4`);}
 function prView(p){if(!prOn(p))return null;const r=prEnsure(p);return {role:GOV[p.gov].r,n:r.n,tr:trView(r.tr),len:r.len,left:Math.max(0,r.r0+r.len-G.round),word:RP_WORD[p.gov]};}
 /* ===== 외교·첩보 3종: 선교사 파견, 군주 친서, 전신망 ===== */
