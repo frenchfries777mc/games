@@ -500,7 +500,7 @@ const TUT=[
  [P('다 자라면 ▼ 표시의 밭을 눌러 수확해요','When it is grown, tap the field with the ▼ to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=90;
+const OUTMAX=12,BUILD=91;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const CASTLE_T=[
  {n:P('망루','Watchtower'),d:P('돌로 쌓은 망루를 세워요. 세금이 걷히기 시작해요','A stone watchtower. Taxes start to come in'),cost:6000,rank:1},
@@ -645,6 +645,7 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-11-08',build:'v0.2 build 91',title:P('모든 섬이 시작섬만큼 커졌어요','Every island is now as big as the home island'),items:[P('비밀 섬과 내륙 섬이 작았던 것을 시작섬과 같은 크기로 키웠어요','Secret and inland islands were smaller, so they are now the same size as the home island'),P('모든 섬에 저택, 탑, 분수, 집, 가판이 훨씬 많아졌어요','Every island has many more manors, towers, fountains, houses and stalls')]},
  {date:'2026-11-07',build:'v0.2 build 90',title:P('기증한 장부 되찾기','Take the ledger back'),items:[P('박물관에 기증한 장부를 이야기 창에서 다시 내 것으로 되찾을 수 있어요','You can take the donated ledger back from the museum in the story window'),P('되찾으면 박물관 입장료 1.5배는 사라지고 모든 판매가가 3% 올라요','Taking it back removes the 1.5x museum fee and raises all sell prices by 3%')]},
  {date:'2026-11-07',build:'v0.2 build 89',title:P('공동 건설 두 가지 더','Two more shared projects'),items:[P('공공 공사에 마을 광장 분수와 섬을 잇는 다리가 생겼어요','Shared projects now include the plaza fountain and the island bridge'),P('마을 광장 분수를 지으면 모두의 활동 보너스가 25% 늘어요','Building the plaza fountain adds 25% to everyone\'s activity bonus'),P('섬을 잇는 다리를 지으면 모두의 주민 심부름 보상이 20% 늘어요','Building the island bridge adds 20% to everyone\'s errand rewards')]},
  {date:'2026-11-07',build:'v0.2 build 88',title:P('항해 일지','Voyage log'),items:[P('메뉴에 항해 일지가 생겼어요. 배가 항구에 닿을 때마다 항구, 배, 판 돈, 사 온 짐이 한 줄씩 적혀요','The menu has a new voyage log. Each time a ship reaches port, the port, ship, gold earned and goods bought are written down'),P('최근 30번이 남고, 가장 많이 번 항해도 보여요','The latest 30 voyages are kept, along with your best one')]},
@@ -3527,28 +3528,28 @@ const ISLES=[
  /* 5 향신항: 먼 바다 시장 */{seed:67,sea:'#2a8ab0',grass:['#b8a45a','#aa9650'],beach:'#f0d89a',amp:[.07,.08,.09],ph:[.2,1.1,2.4],ax:1,ay:.86,
   mk:[P('향신료 시장','Spice market'),'#e07a2a'],lm:[P('비단 천막','Silk tents'),P('먼 나라 상인들이 비단과 향신료를 펼쳐 놓았어요.','Merchants from faraway lands lay out silk and spices.')],
   feat:[['stall',6],['palm',9],['sack',8],['dome',2],['flag',6]],fg:['spice','silk','coffee','vanilla'],ground:'#c8aa62'},
- /* 6 산호섬 */{seed:79,sea:'#1f9ab8',grass:['#8cc070','#7cb262'],beach:'#f4eac4',amp:[.04,.05,.04],ph:[.8,1.5,2.0],ax:.62,ay:.62,reef:1,
+ /* 6 산호섬 */{seed:79,sea:'#1f9ab8',grass:['#8cc070','#7cb262'],beach:'#f4eac4',amp:[.04,.05,.04],ph:[.8,1.5,2.0],ax:1,ay:.84,reef:1,
   mk:[P('산호 바위','Coral rock'),'#f08aa0'],lm:[P('산호 웅덩이','Coral pool'),P('맑은 물속에 색색의 산호가 자라요.','Colorful corals grow in the clear water.')],
   feat:[['palm',5],['shell',10],['coral',8]],fg:[],ground:'#e8dca8',secret:'coral'},
- /* 7 호박섬 */{seed:83,sea:'#2a6a8c',grass:['#4a7a3a','#3f6e33'],beach:'#cdb682',amp:[.07,.08,.05],ph:[2.4,.4,1.2],ax:.72,ay:.7,
+ /* 7 호박섬 */{seed:83,sea:'#2a6a8c',grass:['#4a7a3a','#3f6e33'],beach:'#cdb682',amp:[.07,.08,.05],ph:[2.4,.4,1.2],ax:1,ay:.82,
   mk:[P('호박 채집터','Amber dig'),'#e8a22a'],lm:[P('송진 숲','Resin forest'),P('오래된 소나무에서 흘러내린 송진이 굳어 호박이 돼요.','Resin from old pines hardens into amber.')],
   feat:[['pine',22],['amber',8],['stump',4]],fg:[],ground:'#6a7a42',secret:'amber'},
- /* 8 유적 환초 */{seed:97,sea:'#1f7aa0',grass:['#7aa66a','#6c985c'],beach:'#e0d2a8',amp:[.05,.07,.06],ph:[1.0,2.0,.3],ax:.78,ay:.72,ruin:1,
+ /* 8 유적 환초 */{seed:97,sea:'#1f7aa0',grass:['#7aa66a','#6c985c'],beach:'#e0d2a8',amp:[.05,.07,.06],ph:[1.0,2.0,.3],ax:1,ay:.84,ruin:1,
   mk:[P('유적 제단','Ruined altar'),'#b8b8a8'],lm:[P('가라앉은 마을','Sunken village'),P('물 아래로 옛 집터와 길이 비쳐 보여요.','Old house foundations and paths shimmer under the water.')],
   feat:[['pillar',8],['wall',5],['palm',4],['rune',3]],fg:[],ground:'#a8a890',secret:'relic'},
- /* 9 광산섬 */{seed:131,sea:'#1f6a92',grass:['#7a8a5a','#6e7e50'],beach:'#cfc6a4',amp:[.08,.06,.09],ph:[.9,2.3,1.6],ax:.84,ay:.8,
+ /* 9 광산섬 */{seed:131,sea:'#1f6a92',grass:['#7a8a5a','#6e7e50'],beach:'#cfc6a4',amp:[.08,.06,.09],ph:[.9,2.3,1.6],ax:1,ay:.84,
   mk:[P('광부 상점','Miners store'),'#8a8a96'],lm:[P('제련소','Smelter'),P('붉은 불꽃이 밤낮없이 광석을 녹여요.','A red fire melts ore day and night.')],
   feat:[['pine',9],['stump',5],['wall',3],['hut',2]],fg:[],ground:'#7a7a72',secret:'mine',mine:1},
- /* 10 블루힐스 고원 */{seed:151,sea:'#3f6a4a',grass:['#7ab868','#6aa85c'],beach:'#9ab870',amp:[.07,.09,.05],ph:[1.3,.6,2.4],ax:.88,ay:.82,inland:1,prov:0,
+ /* 10 블루힐스 고원 */{seed:151,sea:'#3f6a4a',grass:['#7ab868','#6aa85c'],beach:'#9ab870',amp:[.07,.09,.05],ph:[1.3,.6,2.4],ax:1,ay:.84,inland:1,prov:0,
   mk:[P('고원 시장','Highland market'),'#7ab0e0'],lm:[P('양치기 오두막','Shepherd hut'),P('고원의 바람 속에서 양치기가 양떼를 지켜봐요.','A shepherd watches the flock in the highland wind.')],
   feat:[['sheep',10],['hay',8],['fence',6],['tree',5],['cart',2]],fg:['wool','milk'],ground:'#9ab870'},
- /* 11 파인우드 마을 */{seed:163,sea:'#2e4a30',grass:['#5a8a46','#4e7c3e'],beach:'#7a8a52',amp:[.06,.1,.07],ph:[.5,1.9,1.1],ax:.86,ay:.8,inland:1,prov:1,
+ /* 11 파인우드 마을 */{seed:163,sea:'#2e4a30',grass:['#5a8a46','#4e7c3e'],beach:'#7a8a52',amp:[.06,.1,.07],ph:[.5,1.9,1.1],ax:1,ay:.84,inland:1,prov:1,
   mk:[P('목재 시장','Timber market'),'#8a6a3a'],lm:[P('나무꾼 오두막','Woodcutter hut'),P('도끼 소리가 숲 속에 울려 퍼져요.','The sound of axes rings through the pines.')],
   feat:[['pine',24],['stump',8],['hut',3],['barrel',5],['hive',4]],fg:['honey'],ground:'#4e6a3a'},
- /* 12 레드리지 역참 */{seed:177,sea:'#5a4a40',grass:['#8a8a5a','#7c7c50'],beach:'#a89878',amp:[.09,.06,.08],ph:[2.1,.8,1.5],ax:.84,ay:.8,inland:1,prov:2,
+ /* 12 레드리지 역참 */{seed:177,sea:'#5a4a40',grass:['#8a8a5a','#7c7c50'],beach:'#a89878',amp:[.09,.06,.08],ph:[2.1,.8,1.5],ax:1,ay:.82,inland:1,prov:2,
   mk:[P('산악 시장','Ridge market'),'#b0603a'],lm:[P('역장 사무소','Stationmaster office'),P('붉은 바위 아래에서 열차가 쉬어 가요.','Trains rest below the red rocks.')],
   feat:[['wall',4],['pine',8],['stump',4],['crate',6],['cart',3]],fg:['amber','salt'],ground:'#8a7a68'},
- /* 13 화산섬 */{seed:191,sea:'#2a3046',grass:['#4a3a36','#3e302e'],beach:'#2e2a2e',amp:[.1,.08,.1],ph:[1.7,.4,2.8],ax:.82,ay:.78,
+ /* 13 화산섬 */{seed:191,sea:'#2a3046',grass:['#4a3a36','#3e302e'],beach:'#2e2a2e',amp:[.1,.08,.1],ph:[1.7,.4,2.8],ax:1,ay:.84,
   mk:[P('화산 광부 상점','Volcano store'),'#c0452f'],lm:[P('용암 관측소','Lava watch'),P('붉은 용암이 솟구치는 걸 지켜보는 초소예요. 바닥에 붉은 원이 번쩍이면 피하세요.','A watch post for the lava. Step away when a red circle flashes on the ground.')],
   feat:[['stump',6],['wall',4],['hut',2]],fg:[],ground:'#4a3e3c',secret:'volcano',volc:1}];
 const ISLHB=[['항구 일꾼 집','곡식 포대를 배에 싣는 일꾼들이 쉬어 가는 집이에요.','#a8784a'],['과일 상자 창고','갓 딴 사과가 상자째 배를 기다려요.','#c0452f'],['와인 통 창고','부두 옆에서 와인 통을 굴려 배에 실어요.','#7a3e9d'],['솜 창고','솜 포대가 구름처럼 쌓여 있어요.','#8ab0e0'],['어부의 집','새벽마다 어부들이 그물을 챙겨 나가요.','#3a6fb8'],['세관 초소','먼 바다에서 온 배의 짐을 확인하는 곳이에요.','#e07a2a'],['조개 오두막','주운 조개를 말려 두는 오두막이에요.','#f08aa0'],['채집꾼 오두막','호박을 캐는 사람들이 쉬어 가는 오두막이에요.','#8a6a32'],['탐사대 천막','유적을 조사하는 사람들이 머무는 천막이에요.','#b8b8a8'],['짐꾼 오두막','광석 수레가 부두로 줄지어 내려와요.','#8a8a96'],['역무원 숙소','역무원이 시간표를 확인하고 있어요.','#7ab0e0'],['역무원 숙소','역무원이 시간표를 확인하고 있어요.','#8a6a3a'],['역무원 숙소','역무원이 시간표를 확인하고 있어요.','#b0603a'],['채굴꾼 막사','뜨거운 땅 위에서 광부들이 잠깐 쉬어 가요.','#8a3a2a']];
@@ -3669,7 +3670,7 @@ function buildIsl(k){const th=ISLES[k],rnd=islRng(th.seed),c=document.createElem
       if(['villa','hut','dome','stall','boat','rack','cart','wall'].includes(type)){w=14;h=12;}
       if(type==='rune'){w=10;h=10;}
       if(type==='manor'){w=30;h=26;}if(type==='villa'){w=18;h=18;}if(type==='hut'){w=14;h=14;}if(type==='dome'){w=16;h=22;}if(type==='tower'){w=14;h=24;}if(type==='fountain'){w=18;h=14;}if(type==='lantern'||type==='flower'){w=6;h=8;}
-      const p=spot(w,h,fieldw?.55:.66,60);if(!p)continue;const x=p[0],y=p[1];
+      const p=spot(w,h,fieldw?.55:.66,120);if(!p)continue;const x=p[0],y=p[1];
       if(type==='wheat'){IR(x,y,w,h,'#c9a43a');for(let r=0;r<h;r+=3)IR(x,y+r,w,1,'#e8c458');for(let r=0;r<w;r+=6)IR(x+r,y,1,h,'#a88a2a');IR(x,y+h,w,1,'rgba(0,0,0,.25)');}
       else if(type==='cotton'){IR(x,y,w,h,'#7aa04a');for(let r=0;r<h;r+=4)for(let c=0;c<w;c+=4)if(h2(c+x,r+y,5)>.25){IR(x+c,y+r,3,3,'#fafafa');IR(x+c+1,y+r+1,1,1,'#dcdcdc');}}
       else if(type==='berry'){IR(x,y,w,h,'#4a7a2e');for(let r=0;r<h;r+=4)IR(x,y+r+1,w,2,'#3a6a22');for(let c=0;c<w;c+=3)for(let r=0;r<h;r+=4)IR(x+c,y+r,2,2,'#e0304a');}
@@ -3712,7 +3713,7 @@ function buildIsl(k){const th=ISLES[k],rnd=islRng(th.seed),c=document.createElem
     }};
   th.feat.forEach(([type,n])=>place(type,n*ICNT));
   /* 화려한 마을 꾸밈: 모든 섬에 저택, 탑, 분수, 집, 가판, 등불, 꽃밭 */
-  (k===9||k===13?[['tower',2],['lantern',14],['flag',8]]:[['manor',10],['tower',4],['fountain',3],['villa',12],['hut',8],['stall',8],['flag',10],['lantern',26],['flower',30]]).forEach(([type,n])=>place(type,n));
+  (k===9||k===13?[['manor',6],['tower',4],['villa',12],['hut',14],['stall',8],['lantern',24],['flag',10]]:[['manor',20],['tower',8],['fountain',5],['villa',24],['hut',16],['stall',14],['flag',14],['lantern',40],['flower',40]]).forEach(([type,n])=>place(type,Math.round(n*(perf().low?.6:1)*(k>=6?1.6:1))));
   opTmp.forEach(t=>obs.splice(obs.indexOf(t),1));objs.filter(o=>o.k==='opb').forEach(o=>obs.push({x:o.x,y:o.y+4,w:o.w,h:o.h-4}));
   /* 바닷가 장식 */
   for(let i=0;i<480;i++){const x=Math.floor(rnd()*IW),y=Math.floor(rnd()*IH),q=islQ(th,x,y);if(q>.76&&q<.88){IR(x,y,2,1,'rgba(255,255,255,.35)');}}
