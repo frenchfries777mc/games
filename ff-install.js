@@ -11,15 +11,19 @@
   var ko=!/^(en|es|fr|de|ja)/.test((document.documentElement.lang||'ko'));
   var T=({ko:'설치',en:'Install',es:'Instalar',fr:'Installer',de:'Installieren',ja:'インストール'});
   var lg=(document.documentElement.lang||'ko').slice(0,2); var label=T[lg]||T.ko;
-  function show(){
-    if(btn||!ev) return;
-    var host=document.querySelector('header .right')||document.querySelector('.ffhb-r,.ffhb');
-    if(!host) return;
-    btn=document.createElement('button'); btn.type='button'; btn.setAttribute('data-notr',''); btn.textContent='⬇ '+label; btn.title='Frenchfries777';
-    btn.style.cssText='font:inherit;font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid var(--fry,#d9b45f);background:transparent;color:var(--fry,#d9b45f);cursor:pointer;margin-right:8px;white-space:nowrap';
-    btn.onclick=function(){ var e=ev; ev=null; e.prompt(); e.userChoice.then(function(){ if(btn){ btn.remove(); btn=null; } }); };
-    host.insertBefore(btn,host.firstChild);
+  /* 설치 버튼은 허브 첫 화면의 로그인/회원가입 자리(#heroAuth)에서, 로그인한 사람에게만 보여요 */
+  function loggedIn(){ try{ return !!(window.FFAuth&&FFAuth.user()); }catch(e){ return false; } }
+  function paint(){
+    var ha=document.getElementById('heroAuth'); if(!ha) return;
+    if(!ev||!loggedIn()){ if(btn){ btn.remove(); btn=null; } return; }
+    if(btn) return;
+    btn=document.createElement('div'); btn.className='auth'; btn.id='heroInstall';
+    var b=document.createElement('button'); b.type='button'; b.setAttribute('data-notr',''); b.textContent='⬇ '+label;
+    b.onclick=function(){ var e=ev; ev=null; e.prompt(); e.userChoice.then(function(){ paint(); }); };
+    btn.appendChild(b); ha.parentNode.insertBefore(btn,ha.nextSibling);
   }
+  function wire(){ if(!window.FFAuth) return setTimeout(wire,300); FFAuth.ready.then(function(){ paint(); FFAuth.onChange(paint); },paint); }
+  function show(){ paint(); wire(); }
   addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); ev=e; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',show); else show(); });
-  addEventListener('appinstalled',function(){ if(btn){ btn.remove(); btn=null; } });
+  addEventListener('appinstalled',function(){ ev=null; paint(); });
 })();
