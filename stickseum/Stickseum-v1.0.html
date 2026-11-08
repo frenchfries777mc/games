@@ -6026,7 +6026,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-08-v751';
+const GAME_BUILD='build 2026-11-08-v752';
 const GAME_VERSION='1.0', GAME_VERSION_NAME='신화의 전설';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -20945,7 +20945,8 @@ function drawStickman(p){
   const ax=Math.cos(ang), ay=Math.sin(ang);
   if(whirling && conceptOfSkin(skinId)==='gold'){ for(let i=0;i<3;i++){ const a=ang+RND(-1.6,0.1), r=RND(30,SWORD_SPIN_RADIUS); addP({x:p.x+Math.cos(a)*r,y:p.y-34+Math.sin(a)*r,vx:RND(-70,70),vy:RND(-120,-20),life:RND(.4,.8),size:RND(1.8,3.6),color:i%2?'#ffd34d':'#fff3b0',grav:80,drag:1.2}); } }
   if(whirling){ ctx.save(); ctx.strokeStyle=(conceptOfSkin(skinId)==='gold')?'rgba(255,211,77,0.75)':'rgba(223,230,240,0.45)'; ctx.lineWidth=4; ctx.beginPath(); ctx.arc(0,SH+6,SWORD_SPIN_RADIUS-10,ang-2.0,ang); ctx.stroke(); ctx.strokeStyle='rgba(255,255,255,0.18)'; ctx.lineWidth=9; ctx.beginPath(); ctx.arc(0,SH+6,SWORD_SPIN_RADIUS-10,ang-3.4,ang-1.8); ctx.stroke(); ctx.restore(); }
-  const mpose=(p.weapon!=='harald')?(meleeArmPose(p, Math.atan2(ay,ax))||throwArmPose(p, Math.atan2(ay,ax))):null;      // the arm of a melee swing / thrust
+  const mArm=(p.weapon!=='harald')?meleeArmPose(p, Math.atan2(ay,ax)):null;      // (a melee swing moves the whole straight arm like 용살자's, no bent elbow)
+  const mpose=(p.weapon!=='harald')?(mArm||throwArmPose(p, Math.atan2(ay,ax))):null;      // the arm of a melee swing / thrust
   if(p.weapon!=='harald' && !mpose){ ctx.beginPath(); ctx.moveTo(0,SH+6); ctx.lineTo(ax*24, SH+6+ay*24); ctx.stroke(); }
   let swingProg=0;
   if(p.weapon==='bat'){
@@ -20953,7 +20954,7 @@ function drawStickman(p){
   }
   DS_FLAME_NOW = (p.weapon==='dragonslayer' && p.alive!==false && dsFlameOn(p));
   BOW_P=(p.weapon==='bow')?p:null; TELL_P=(p.weapon==='tell')?p:null;
-  if(p.weapon==='harald') drawHaraldBody(ctx, p, ax, ay, SH, bodyCol); else if(mpose){ hrArm(ctx, 0, SH+6, mpose.x, mpose.y); drawHeldWeapon(ctx, p.weapon, Math.cos(mpose.th), Math.sin(mpose.th), mpose.x, mpose.y, 0, conceptOfSkin(skinId)); } else drawHeldWeapon(ctx, p.weapon, ax, ay, ax*24, SH+6+ay*24, swingProg, conceptOfSkin(skinId));
+  if(p.weapon==='harald') drawHaraldBody(ctx, p, ax, ay, SH, bodyCol); else if(mpose){ if(mArm){ ctx.beginPath(); ctx.moveTo(0,SH+6); ctx.lineTo(mpose.x,mpose.y); ctx.stroke(); } else hrArm(ctx, 0, SH+6, mpose.x, mpose.y); drawHeldWeapon(ctx, p.weapon, Math.cos(mpose.th), Math.sin(mpose.th), mpose.x, mpose.y, 0, conceptOfSkin(skinId)); } else drawHeldWeapon(ctx, p.weapon, ax, ay, ax*24, SH+6+ay*24, swingProg, conceptOfSkin(skinId));
   if(p.weapon==='bow' && p.alive!==false){ BOW_P=null; { const T=WEAPONS.bow.cd, age=hrAge(p); let pull=1; if(age>=0 && age<T){ if(age<0.3) pull=0; else { const k=Math.min(1,(age-0.3)/Math.max(0.3,T*0.8-0.3)); pull=k*k*(3-2*k); } } const fc=ax>=0?1:-1, hx0=ax*24, hy0=SH+6+ay*24, ul=Math.hypot(ax,ay)||1, tx=hx0-ax/ul*pull*15*1, ty=hy0-ay/ul*pull*15; ctx.lineWidth=5; hrArm(ctx,0,SH+6,tx*1,ty); ctx.fillStyle=bodyCol; ctx.beginPath(); ctx.arc(tx,ty,2.6,0,7); ctx.fill(); } }
   if(DS_FLAME_NOW){ for(let k=0;k<2;k++){ const L=RND(14,58); if(conceptOfSkin(skinId)==='manga') addP({x:p.x+ax*(24+L),y:p.y+SH+6+ay*(24+L),vx:RND(-50,50),vy:RND(-70,-10),life:RND(.35,.7),size:RND(2.4,5.4),color:Math.random()<.6?'#16162e':'#2c2f6b',add:false,grav:300,drag:1.2}); else addP({x:p.x+ax*(24+L),y:p.y+SH+6+ay*(24+L),vx:RND(-30,30),vy:RND(-90,-30),life:RND(.25,.5),size:RND(2.2,4.4),color:Math.random()<.5?'#ff7a2a':'#ffd34d',grav:-120,drag:2}); } }
   if(BABYH){ ctx.globalAlpha=1; drawBabyHarald(ctx, p, ax, ay, moving, phase, bodyCol); }
