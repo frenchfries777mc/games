@@ -15,15 +15,23 @@
   function loggedIn(){ try{ return !!(window.FFAuth&&FFAuth.user()); }catch(e){ return false; } }
   function paint(){
     var ha=document.getElementById('heroAuth'); if(!ha) return;
-    if(!ev||!loggedIn()){ if(btn){ btn.remove(); btn=null; } return; }
+    if(!loggedIn()){ if(btn){ btn.remove(); btn=null; } return; }
     if(btn) return;
     btn=document.createElement('div'); btn.className='auth'; btn.id='heroInstall';
     var b=document.createElement('button'); b.type='button'; b.setAttribute('data-notr',''); b.textContent='⬇ '+label;
-    b.onclick=function(){ var e=ev; ev=null; e.prompt(); e.userChoice.then(function(){ paint(); }); };
+    b.onclick=function(){
+      var e=ev;
+      if(e){ ev=null; e.prompt(); e.userChoice.then(function(){ paint(); }); return; }
+      var m=document.getElementById('heroInstallMsg');
+      if(!m){ m=document.createElement('div'); m.id='heroInstallMsg'; m.setAttribute('data-notr',''); m.style.cssText='margin-top:10px;font-size:14px;opacity:.85'; btn.appendChild(m); }
+      var ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
+      m.textContent=ios?'공유 버튼 → 홈 화면에 추가를 눌러 주세요.':'브라우저 메뉴(⋮) → 앱 설치(또는 홈 화면에 추가)를 눌러 주세요. 이미 설치했다면 앱으로 열어 보세요.';
+    };
     btn.appendChild(b); ha.parentNode.insertBefore(btn,ha.nextSibling);
   }
   function wire(){ if(!window.FFAuth) return setTimeout(wire,300); FFAuth.ready.then(function(){ paint(); FFAuth.onChange(paint); },paint); }
   function show(){ paint(); wire(); }
-  addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); ev=e; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',show); else show(); });
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',show); else show();
+  addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); ev=e; });
   addEventListener('appinstalled',function(){ ev=null; paint(); });
 })();
