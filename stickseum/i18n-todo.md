@@ -83,3 +83,4 @@ patchnotes.json | v751 items[5] | 암살자 패시브를 대쉬 쿨타임 0.5초
 patchnotes.json | v751 items[6] | 드라큘라 데미지 12에서 15로 상향 | build 751 | 2026-11-08
 patchnotes.json | v751 items[7] | 야구선수 쿨타임 0.65초에서 0.4초로 단축 | build 751 | 2026-11-08
 patchnotes.json | v751 items[8] | 도박사 패시브를 일반 공격 데미지 4~36 무작위로 변경·칩 크기 축소 | build 751 | 2026-11-08
+patchnotes.json | v752 title+items | 근접 휘두르기 팔 모션 수정 | build 752 | 2026-11-08
