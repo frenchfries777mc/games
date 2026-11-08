@@ -124,7 +124,8 @@ function tapply(){ var st=tget(), h=document.documentElement; h.setAttribute('da
 function skinCss(){ if(document.getElementById('ff-skin')) return; if(/\/(stickseum|crownenvoy|beaconfall|isleport|vowkeep|tumblecrown|dummyparty|gatecrash)\//i.test(location.pathname||'')) return;
   var D='html[data-ff-theme=dark]:root', W='html[data-ff-theme=light]:root';
   var css=D+'{--bg:#0e0e0e;--panel:#171717;--panel2:#121212;--line:#2e2b25;--text:#ece6d8;--dim:#a39c8c;--fry:#d9b45f;--fry2:#b8923a;color-scheme:dark}'+
-    W+'{--bg:#ffffff;--panel:#f7f5ef;--panel2:#fbfaf6;--line:#e4dfd2;--text:#111111;--dim:#4b4b4b;--fry:#c8a02a;--fry2:#d4a62a;color-scheme:light}';
+    W+'{--bg:#ffffff;--panel:#f7f5ef;--panel2:#fbfaf6;--line:#e4dfd2;--text:#111111;--dim:#4b4b4b;--fry:#c8a02a;--fry2:#d4a62a;color-scheme:light}'+
+    'html[data-ff-theme] .logo .fry,html[data-ff-theme] .ffhb-logo i{background:linear-gradient(135deg,#ffc93c,#ff8a3d)!important;box-shadow:0 6px 18px rgba(255,160,60,.25)!important}';   // 왼쪽 위 로고 칸은 예전 주황 색
   var st=document.createElement('style'); st.id='ff-skin'; st.textContent=css; (document.head||document.documentElement).appendChild(st); }
 tapply(); try{ skinCss(); }catch(e){} try{ lightCss(); }catch(e){} try{ barCss(); }catch(e){}
 window.addEventListener('storage',function(e){ if(e.key===TK||e.key===SK){ tapply(); try{ window.dispatchEvent(new Event('fftheme')); }catch(x){} } });
