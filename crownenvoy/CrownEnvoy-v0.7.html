@@ -560,7 +560,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 184</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 185</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div><p class="tagline">사절을 보내 동맹을 맺고, 군대를 보내 왕관을 차지하세요.</p></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -3310,7 +3310,7 @@ function minTick(){G.players.forEach(p=>{if(!p.alive||p.landless)return;owned(p.
     const gar=KIND[TDEF[T.id].kind].gar||300;
     const d=1+(p.stab<50?1:0)+(T.unrest>0?1:0)+(p.morale<40?1:0)-((T.troops>=gar*5)?1:0)-(asmOn(T)?2:0)-(p.stab>=75?1:0);
     T.mn=clamp((T.mn||0)+d*0.5,0,MN_MAX+2);
-    if(T.mn>=MN_MAX&&G.round-(T.mnR||-99)>=8){T.mnR=G.round;minDemand(p,T);}});});}
+    /* 독립·자치 요구 선택 창은 없앴다(b185): 소수 민족은 저항·소요로만 드러난다 */});});}
 function resTick(){G.terr.forEach(T=>{if(T.sea||T.owner==null||T.st==null||T.home===T.owner)return;const p=G.players[T.owner];if(!p||!p.alive)return;const gar=KIND[TDEF[T.id].kind].gar||300;
     if(T.troops<gar*3){T.res=(T.res||0)+1;}else T.res=Math.max(0,(T.res||0)-2);
     if(T.res>=RES_MAX){T.res=0;const lost=Math.round(T.troops*0.1/10)*10,loot=Math.min(Math.max(0,Math.floor(p.gold)),25);T.troops=Math.max(0,T.troops-lost);p.gold-=loot;T.st=Math.max(0,T.st-5);T.unrest=Math.max(T.unrest||0,1);
