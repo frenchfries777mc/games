@@ -87,3 +87,8 @@ patchnotes.json | v752 title+items | 근접 휘두르기 팔 모션 수정 | bui
 patchnotes.json | v753 title+items | 찌르기 캐릭터 팔 모션 복구 | build 753 | 2026-11-08
 patchnotes.json | v754 title | 암살자 데미지 상향 | build 754 | 2026-11-08
 patchnotes.json | v754 items[0] | 암살자 단검 데미지 41에서 43으로 상향 | build 754 | 2026-11-08
+patchnotes.json | v755 title | 복서 봇·마법사·포탈 조정 | build 755 | 2026-11-08
+patchnotes.json | v755 items[0] | 복서 봇이 쉬지 않고 계속 연타하도록 수정 | build 755 | 2026-11-08
+patchnotes.json | v755 items[1] | 마법사 데미지 12에서 14로 상향 (한 번 관통하면 7) | build 755 | 2026-11-08
+patchnotes.json | v755 items[2] | 차원여행자 포탈은 만든 사람만 이용 가능 | build 755 | 2026-11-08
+patchnotes.json | v756 title+items | E키 2스킬 추가, 기본 체력 450 | build 756 | 2026-11-08
