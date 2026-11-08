@@ -70,3 +70,5 @@ patchnotes.json | v748 items[2] | 소형 맵 시작 위치 최대 4개, 중형 �
 patchnotes.json | v749 title | 마법사 데미지 조정 | build 749 | 2026-11-07
 patchnotes.json | v749 items[0] | 마법사 화염구 데미지 14에서 16으로 상향 | build 749 | 2026-11-07
 patchnotes.json | v749 items[1] | 발판·벽·플레이어를 한 번 통과하면 데미지가 8로 감소 | build 749 | 2026-11-07
+patchnotes.json | v750 title | 복서 봇 연타 개선 | build 750 | 2026-11-08
+patchnotes.json | v750 items[0] | 복서 봇이 적이 닿는 거리에 있으면 쉬지 않고 연타하도록 수정 | build 750 | 2026-11-08
