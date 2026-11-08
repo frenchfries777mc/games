@@ -73,3 +73,13 @@ patchnotes.json | v749 items[1] | 발판·벽·플레이어를 한 번 통과하
 patchnotes.json | v750 title | 복서 봇 연타 개선 | build 750 | 2026-11-08
 patchnotes.json | v750 items[0] | 복서 봇이 적이 닿는 거리에 있으면 쉬지 않고 연타하도록 수정 | build 750 | 2026-11-08
 balance.html | how li 1 | 같은 실력(어려움)의 봇 둘을 1대1로 붙여서, 34명의 모든 조합(561쌍)을 겨뤘어요. | b750 | 2026-11-08
+patchnotes.json | v751 title | 캐릭터 밸런스 조정 | build 751 | 2026-11-08
+patchnotes.json | v751 items[0] | 복서 쿨타임 0.3초에서 0.25초로 단축·궁극기 중 이동속도 1.4배 | build 751 | 2026-11-08
+patchnotes.json | v751 items[1] | 마법사 데미지 12로 하향 (한 번 거치면 8) | build 751 | 2026-11-08
+patchnotes.json | v751 items[2] | 군인 스킬 쿨타임 2배 | build 751 | 2026-11-08
+patchnotes.json | v751 items[3] | 크레온 근위병 체력 90에서 45로 하향 | build 751 | 2026-11-08
+patchnotes.json | v751 items[4] | 학살자 화염방사 과열까지 6초에서 9초로 연장 | build 751 | 2026-11-08
+patchnotes.json | v751 items[5] | 암살자 패시브를 대쉬 쿨타임 0.5초로 변경 | build 751 | 2026-11-08
+patchnotes.json | v751 items[6] | 드라큘라 데미지 12에서 15로 상향 | build 751 | 2026-11-08
+patchnotes.json | v751 items[7] | 야구선수 쿨타임 0.65초에서 0.4초로 단축 | build 751 | 2026-11-08
+patchnotes.json | v751 items[8] | 도박사 패시브를 일반 공격 데미지 4~36 무작위로 변경·칩 크기 축소 | build 751 | 2026-11-08
