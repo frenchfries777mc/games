@@ -413,7 +413,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.6<br>build 205</p>
+    <p class="foot">v0.6<br>build 206</p>
   </nav>
 </div>
 
@@ -8077,7 +8077,7 @@ const SFX=(()=>{
     const r=0.92+Math.random()*0.16;
     try{fn(ctx.currentTime+0.001,v,r);}catch(e){window.__sfxErr=(window.__sfxErr||'')+key+':'+e+'|';}
   };
-  const BASEOF={bwolf:'wolf',bscorp:'scorpion',bmagma:'golem',bspider:'spider',bsnake:'snake',bgolem:'golem',bcroc:'croc',byeti:'yeti'};
+  const BASEOF={vwolf:'wolf',vspider:'spider',vgolem:'golem',vknight:'golem',vstalker:'spider',vreaper:'wolf',bwolf:'wolf',bscorp:'scorpion',bmagma:'golem',bspider:'spider',bsnake:'snake',bgolem:'golem',bcroc:'croc',byeti:'yeti'};
   const MP={log:0.8,rwood:0.85,stone:0.95,copper:1.05,iron:1.15,riron:1.15,gold:1.0,rcopper:1.08,rgold:1.0};   // 도구 재료마다 높낮이
   const TOOL_G=(ti)=>ti?ti.mat:'';
   // ---- 재료별 두드리는 소리 ----
@@ -9889,35 +9889,93 @@ function dvMaze(w,h,rnd,gate){   // 공허 던전: 미로 벽(W) · 막다른 �
   while(st.length){
     const [cx,cy]=st[st.length-1],nb=[];
     for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=cx+dx,ny=cy+dy;if(nx>=0&&ny>=0&&nx<cw&&ny<ch&&!seen.has(ny*cw+nx))nb.push([nx,ny,dx,dy]);}
-    if(!nb.length){const n2=(cx>0?1:0)+0;if(st.length>1)dead.push([cx,cy]);st.pop();continue;}
+    if(!nb.length){if(st.length>1)dead.push([cx,cy]);st.pop();continue;}
     const [nx,ny,dx,dy]=nb[(rnd()*nb.length)|0];
     r[cy*2+1+dy][cx*2+1+dx]='.';r[ny*2+1][nx*2+1]='.';seen.add(ny*cw+nx);st.push([nx,ny]);
   }
-  for(let i=0,n=0;i<dead.length&&n<6;i++){const [dx,dy]=dead[(i*7+3)%dead.length];if(r[dy*2+1][dx*2+1]==='.'&&(dx||dy)){r[dy*2+1][dx*2+1]='e';n++;}}
-  r[h>>1][w>>1]='B';
-  r[h-1][gate]='.';r[h-2][gate]='.';   // 입구
+  const nChest=Math.max(6,(w*h/110)|0);
+  for(let i=0,n=0;i<dead.length&&n<nChest;i++){const [dx,dy]=dead[(i*7+3)%dead.length];if(r[dy*2+1][dx*2+1]==='.'&&(dx||dy)){r[dy*2+1][dx*2+1]='e';n++;}}
+  // 복판은 열린 큰 방: 화로 네 개와 기둥, 한가운데 보스 조각상
+  const mx=w>>1,my=h>>1;
+  for(let y=my-4;y<=my+4;y++)for(let x=mx-4;x<=mx+4;x++)if(x>0&&y>0&&x<w-1&&y<h-1)r[y][x]='.';
+  for(const [x,y] of [[mx-3,my-3],[mx+3,my-3],[mx-3,my+3],[mx+3,my+3]])r[y][x]='B';
+  for(const [x,y] of [[mx-3,my],[mx+3,my],[mx,my-3],[mx,my+3]])r[y][x]='P';
+  r[my][mx]='o';r[my-1][mx-1]='e';r[my+1][mx+1]='e';
+  // 입구: 양옆에 거대한 기둥
+  r[h-1][gate]='.';r[h-2][gate]='.';
+  if(gate>1)r[h-1][gate-1]='g';if(gate<w-2)r[h-1][gate+1]='g';
   return r.map(a=>a.join(''));
 }
-function dvCastle(){   // 공허성: 성벽 · 네 모서리 탑 · 안뜰 기둥 · 옥좌와 상자
-  const w=33,h=23,r=Array.from({length:h},()=>Array(w).fill('.'));
+function dvCastle(rnd){   // 공허성: 겹겹의 성벽 · 모서리 탑 · 대로 · 알현실과 옥좌
+  const w=65,h=49,r=Array.from({length:h},()=>Array(w).fill('.'));
   const put=(x,y,c)=>{if(x>=0&&y>=0&&x<w&&y<h)r[y][x]=c;};
-  for(let x=0;x<w;x++){put(x,0,'W');put(x,h-1,'W');}for(let y=0;y<h;y++){put(0,y,'W');put(w-1,y,'W');}
-  for(const [x,y] of [[0,0],[w-1,0],[0,h-1],[w-1,h-1]])put(x,y,'g');
-  for(let x=14;x<=18;x++)put(x,h-1,'.');   // 정문
-  for(let y=3;y<h-3;y+=3)for(const x of [6,10,22,26])put(x,y,'P');
-  for(const x of [12,20])for(const y of [3,7])put(x,y,'B');
-  put(16,2,'Z');put(15,2,'S');put(17,2,'S');
-  for(const [x,y] of [[3,3],[29,3],[3,19],[29,19],[16,10]])put(x,y,'e');
-  for(const x of [13,19])put(x,h-3,'S');
+  const box=(x0,y0,x1,y1,c)=>{for(let x=x0;x<=x1;x++){put(x,y0,c);put(x,y1,c);}for(let y=y0;y<=y1;y++){put(x0,y,c);put(x1,y,c);}};
+  const cx=w>>1;
+  box(0,0,w-1,h-1,'W');
+  for(let x=6;x<w-1;x+=8){put(x,0,'g');put(x,h-1,'g');}
+  for(let y=6;y<h-1;y+=8){put(0,y,'g');put(w-1,y,'g');}
+  for(const [x,y] of [[0,0],[w-1,0],[0,h-1],[w-1,h-1]]){for(let j=-1;j<=1;j++)for(let i=-1;i<=1;i++)put(x+i,y+j,'g');}
+  for(let x=cx-4;x<=cx+4;x++)put(x,h-1,'.');                       // 정문
+  put(cx-5,h-1,'g');put(cx+5,h-1,'g');put(cx-5,h-2,'g');put(cx+5,h-2,'g');
+  // 네 모서리 탑 (작은 방, 안쪽으로 문)
+  for(const [tx,ty,dx,dy] of [[3,3,1,1],[w-12,3,-1,1],[3,h-12,1,-1],[w-12,h-12,-1,-1]]){
+    box(tx,ty,tx+8,ty+8,'W');
+    put(dx>0?tx+8:tx,ty+4,'.');
+    put(tx+4,ty+4,'B');put(tx+2,ty+2,'e');put(tx+6,ty+6,'e');
+  }
+  // 대로: 정문에서 본관까지 조각상과 화로가 줄지어 서요
+  for(let y=h-3;y>=30;y-=3){put(cx-3,y,'S');put(cx+3,y,'S');}
+  for(let y=h-5;y>=32;y-=6){put(cx-5,y,'B');put(cx+5,y,'B');}
+  // 안뜰 양옆: 기둥 격자와 폐허
+  for(const x0 of [12,w-19])for(let y=32;y<=h-6;y+=4)for(let x=x0;x<x0+8;x+=4)put(x,y,'P');
+  for(let i=0;i<46;i++){const x=2+((rnd()*(w-4))|0),y=24+((rnd()*(h-26))|0);if(r[y][x]==='.')put(x,y,i%5===0?'z':'r');}
+  // 본관: 이중 성벽, 정면에 큰 문
+  box(13,4,w-14,28,'W');box(16,7,w-17,25,'W');
+  for(let x=cx-3;x<=cx+3;x++){put(x,28,'.');put(x,25,'.');}
+  for(const x of [13,w-14])for(const y of [4,28])for(let j=-1;j<=1;j++)for(let i=-1;i<=1;i++)put(x+i,y+j,'g');
+  put(cx-4,28,'g');put(cx+4,28,'g');put(cx-4,25,'S');put(cx+4,25,'S');
+  // 알현실: 기둥 두 줄, 화로, 옥좌
+  for(let y=11;y<=23;y+=3)for(const x of [cx-9,cx-5,cx+5,cx+9])put(x,y,'P');
+  for(const x of [cx-7,cx+7])for(const y of [10,16,22])put(x,y,'B');
+  for(let y=7;y<=10;y++){put(cx-3,y,'W');put(cx+3,y,'W');}
+  put(cx,8,'Z');put(cx-1,8,'S');put(cx+1,8,'S');
+  for(const [x,y] of [[cx-12,9],[cx+12,9],[cx-12,23],[cx+12,23],[cx-2,10],[cx+2,10],[cx,13]])put(x,y,'e');
+  // 본관 둘레 복도(안쪽 성벽과 바깥 성벽 사이): 조각상과 상자
+  for(const [x,y] of [[14,16],[w-15,16],[cx,5],[cx-8,5],[cx+8,5]])put(x,y,x===14||x===w-15||y===5?'e':'.');
+  for(let y=9;y<=23;y+=4){put(14,y,'S');put(w-15,y,'S');}
   return r.map(a=>a.join(''));
 }
 function buildDeepVoid(){
-  world.lm=[null];world.pir=-1;
+  world.lm=[null];world.pir=-1;world.dvSt=[];
   const rnd=mulberry32(hashStr((world.seedStr||shown.seed)+'dv')),c=TER.camp,cx=(c.x/GRID)|0,cy=(c.y/GRID)|0;
-  const place=(lay,ref,rad)=>{const s0=lmFind(ref,lay[0].length,lay.length,rad,null);if(!s0)return null;lmClear(s0.ox,s0.oy,lay[0].length,lay.length);lmPlace(lay,s0.ox,s0.oy,9);return s0;};
-  place(dvCastle(),[cx,cy-34],70);
-  place(dvMaze(27,27,rnd,13),[cx+46,cy+26],70);
-  place(dvMaze(21,21,rnd,9),[cx-52,cy+22],70);
+  const place=(lay,ref,rad,kind,cap,mix)=>{const lw=lay[0].length,lh=lay.length,s0=lmFind(ref,lw,lh,rad,null);if(!s0)return null;lmClear(s0.ox,s0.oy,lw,lh);lmPlace(lay,s0.ox,s0.oy,9);
+    const cells=[];for(let y=1;y<lh-1;y++)for(let x=1;x<lw-1;x++)if(lay[y][x]==='.')cells.push([s0.ox+x,s0.oy+y]);
+    world.dvSt.push({kind,ox:s0.ox,oy:s0.oy,w:lw,h:lh,cap,mix,cells,next:0});return s0;};
+  place(dvCastle(rnd),[cx,cy-60],120,'castle',10,['vknight','vknight','vreaper','vstalker']);
+  place(dvMaze(61,61,rnd,31),[cx+80,cy+50],120,'maze',7,['vstalker','vstalker','vreaper','vknight']);
+  place(dvMaze(45,45,rnd,23),[cx-90,cy+44],120,'maze',5,['vstalker','vreaper','vstalker','vknight']);
+}
+function dvEliteTick(dt,pl){   // 구조물 안에서만 정예 몹이 나와요 (들판에서는 안 나와요)
+  const S=world.dvSt;if(!S||!S.length)return;
+  S.forEach((st,i)=>{
+    st.next-=dt;
+    const x0=st.ox*GRID-260,y0=st.oy*GRID-260,x1=(st.ox+st.w)*GRID+260,y1=(st.oy+st.h)*GRID+260;
+    if(!pl.some(q=>q.x>=x0&&q.x<=x1&&q.y>=y0&&q.y<=y1))return;
+    const alive=monsters.filter(m=>m.dvs===i&&!m.burn).length;
+    if(alive>=st.cap)return;
+    if(st.first===undefined){st.first=1;st.next=0;}
+    if(st.next>0&&alive>=(st.cap>>1))return;   // 처음에는 절반을 한꺼번에, 나머지는 천천히 채워요
+    st.next=alive<(st.cap>>1)?0:25;
+    for(let a=0;a<30;a++){
+      const [gx,gy]=st.cells[(Math.random()*st.cells.length)|0],x=gx*GRID+8,y=gy*GRID+8;
+      if(sgAt(gx,gy)||!walkable(x,y)||pl.some(q=>Math.hypot(q.x-x,q.y-y)<130))continue;
+      const ty=st.mix[(Math.random()*st.mix.length)|0],T=MTYPES[ty];
+      const m={id:nextMid++,ty,x,y,tx:x,ty2:y,f:1,born:0,burn:0,wt:0,wa:0,ws:0,spd:T.wander,hp:Math.round(T.hp*2.5),mhp:Math.round(T.hp*2.5),st:0,wind:0,cd:1,stun:0,hurt:0,kx:0,ky:0,elite:1,dvs:i};
+      monsters.push(m);
+      for(let j=0;j<10;j++)parts.push({x,y:y-3,vx:(Math.random()-0.5)*40,vy:-10-Math.random()*25,life:0.5,c:j%2?'#8a4aff':'#241638'});
+      break;
+    }
+  });
 }
 async function dvTravel(back){   // 공허의 포탈: Deep Void 차원 ↔ 원래 월드
   if(modTravelBusy||mode!=='play'||P.dead||isGuest()||net.role){if(net.role)toast('포탈은 혼자 할 때만 쓸 수 있어요.');return;}
@@ -11922,6 +11980,9 @@ const MTYPES={
   vwolf:{name:'공허 늑대',hp:16,dmg:3,wander:14,chase:42,aggro:230,rng:11,wind:0.32,cd:1.0,persist:1,col:'#6a2ac0',drop:[['bone',1,2],['void_ore',0,1]]},
   vspider:{name:'공허 거미',hp:13,dmg:2.5,wander:12,chase:32,aggro:210,rng:10,wind:0.35,cd:1.1,persist:1,fx:'poison',col:'#7a3ad0',drop:[['thread',1,2],['void_ore',0,1]]},
   vgolem:{name:'공허 골렘',hp:40,dmg:4.5,wander:7,chase:20,aggro:180,rng:12,wind:0.6,cd:1.6,persist:1,col:'#4a1a8a',drop:[['void_ore',1,2]]},
+  vknight:{name:'공허 기사',hp:70,dmg:6,wander:8,chase:26,aggro:260,rng:14,wind:0.55,cd:1.5,persist:1,scale:1.5,col:'#3a1278',drop:[['void_ore',2,4]]},
+  vstalker:{name:'공허 추적자',hp:44,dmg:5,wander:14,chase:50,aggro:300,rng:12,wind:0.3,cd:0.9,persist:1,fx:'poison',scale:1.45,col:'#8a3ae8',drop:[['thread',2,3],['void_ore',2,3]]},
+  vreaper:{name:'공허 수확자',hp:56,dmg:5.5,wander:14,chase:46,aggro:300,rng:13,wind:0.32,cd:1.0,persist:1,scale:1.6,col:'#5a22b0',drop:[['bone',2,3],['void_ore',2,4]]},
   vslime:{name:'강화 슬라임',hp:30,dmg:4,wander:11,chase:30,aggro:190,rng:12,wind:0.4,cd:1.2,persist:1,scale:1.45,col:'#5a1aa8',drop:[['slime',2,3],['void_ore',0,1]]},
   wolf:{hp:10,dmg:2,wander:12,chase:34,aggro:200,rng:11,wind:0.35,cd:1.1,persist:1,col:'#8a8d9c',drop:[['bone',1,2]]},
   scorpion:{hp:9,dmg:2,wander:9,chase:22,aggro:130,rng:10,wind:0.5,cd:1.5,persist:1,fx:'poison',col:'#d9a050',drop:[['cactus_fiber',0,1]]},
@@ -11977,7 +12038,7 @@ function spawnMonster(pl,ty,p,b){
     const T=MTYPES[ty];
     monsters.push({id:nextMid++,ty,x,y,tx:x,ty2:y,f:1,born:0,burn:0,wt:0,wa:0,ws:0,spd:T.wander,hp:T.hp,st:0,wind:0,cd:1,stun:0,hurt:0,kx:0,ky:0});
     monsters[monsters.length-1].ty=ty;
-    if(!T.boss&&Math.random()<(evRaid>0?0.3:0.12)){const mm=monsters[monsters.length-1];mm.elite=1;mm.hp=mm.mhp=Math.round(T.hp*2.5);}
+    if(!T.boss&&!(TER&&TER.dv)&&Math.random()<(evRaid>0?0.3:0.12)){const mm=monsters[monsters.length-1];mm.elite=1;mm.hp=mm.mhp=Math.round(T.hp*2.5);}
     for(let j=0;j<10;j++)parts.push({x,y:y-3,vx:(Math.random()-0.5)*40,vy:-10-Math.random()*25,life:0.5,c:j%2?T.col:'#241638'});
     return;
   }
@@ -12438,6 +12499,7 @@ function updateMonsters(dt){
     return;
   }
   const night=isNightNow(),pl=allPlayers();
+  if(pl.length&&TER&&TER.dv)dvEliteTick(dt,pl);
   if(pl.length){
     spawnT-=dt;
     if(spawnT<=0){
@@ -12445,7 +12507,7 @@ function updateMonsters(dt){
       const p=pl[(Math.random()*pl.length)|0],b=bioAt(p.x,p.y),onPir=world.pir>=0&&isleNear(p.x,p.y)===world.pir,ty=(DUN&&dunFloorAt(p.x,p.y))?null:onPir?'pirate':(cbHasMobs(p.x,p.y)?null:monsterTypeFor(b,night));
       if(ty){
         const cap=b>=2?Math.min(5,2+pl.length):Math.min(6,2+pl.length);
-        if(monsters.filter(m=>!m.burn&&!m.boss&&!m.dun).length<cap)spawnMonster(pl,ty,p,b);
+        if(monsters.filter(m=>!m.burn&&!m.boss&&!m.dun&&m.dvs===undefined).length<cap)spawnMonster(pl,ty,p,b);
       }
     }
     if(MODBIO.n){MODBIO.t=(MODBIO.t||0)-dt;if(MODBIO.t<=0){MODBIO.t=5;const p=pl[(Math.random()*pl.length)|0],cu=cbOf(p.x,p.y);
@@ -12850,7 +12912,7 @@ const BSPR={
 };
 for(const k in BSPR)MSPR[k]=BSPR[k];
 {const b=MSPR.slime,c=document.createElement('canvas');c.width=b.w;c.height=b.h;const g=c.getContext('2d');g.drawImage(b.c,0,0);g.globalCompositeOperation='source-atop';g.fillStyle='rgba(90,20,190,0.62)';g.fillRect(0,0,b.w,b.h);MSPR.vslime={c,w:b.w,h:b.h,wc:b.wc};}   // 강화 슬라임: 짙은 보라
-for(const [k,bk] of [['vwolf','wolf'],['vspider','spider'],['vgolem','golem']]){const b=MSPR[bk],c=document.createElement('canvas');c.width=b.w;c.height=b.h;const g=c.getContext('2d');g.drawImage(b.c,0,0);g.globalCompositeOperation='source-atop';g.fillStyle='rgba(90,20,190,0.6)';g.fillRect(0,0,b.w,b.h);MSPR[k]={c,w:b.w,h:b.h,wc:b.wc};}   // 공허 몹: 짙은 보라 색
+for(const [k,bk] of [['vwolf','wolf'],['vspider','spider'],['vgolem','golem'],['vknight','golem'],['vstalker','spider'],['vreaper','wolf']]){const b=MSPR[bk],c=document.createElement('canvas');c.width=b.w;c.height=b.h;const g=c.getContext('2d');g.drawImage(b.c,0,0);g.globalCompositeOperation='source-atop';g.fillStyle='rgba(90,20,190,0.6)';g.fillRect(0,0,b.w,b.h);MSPR[k]={c,w:b.w,h:b.h,wc:b.wc};}   // 공허 몹: 짙은 보라 색
 MODDEF.ready=true;try{modDefsRun();}catch(e){}
 function drawMonster(g,m){
   if(m.ty==='gship'){drawGhostShip(g,m);return;}
