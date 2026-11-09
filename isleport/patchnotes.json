@@ -2,6 +2,88 @@
  "notes": [
   {
    "date": "2026-11-09",
+   "build": "v0.2 build 94",
+   "title": "게스트 이름",
+   "items": [
+    "로그인하지 않으면 이름이 게스트와 숫자 6개로 나와요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Guest names",
+     "items": [
+      "Without logging in, your name shows as Guest followed by 6 digits"
+     ]
+    },
+    "ja": {
+     "title": "Guest names",
+     "items": [
+      "Without logging in, your name shows as Guest followed by 6 digits"
+     ]
+    },
+    "es": {
+     "title": "Guest names",
+     "items": [
+      "Without logging in, your name shows as Guest followed by 6 digits"
+     ]
+    },
+    "fr": {
+     "title": "Guest names",
+     "items": [
+      "Without logging in, your name shows as Guest followed by 6 digits"
+     ]
+    },
+    "de": {
+     "title": "Guest names",
+     "items": [
+      "Without logging in, your name shows as Guest followed by 6 digits"
+     ]
+    },
+    "zh": {
+     "title": "Guest names",
+     "items": [
+      "Without logging in, your name shows as Guest followed by 6 digits"
+     ]
+    },
+    "pt": {
+     "title": "Guest names",
+     "items": [
+      "Without logging in, your name shows as Guest followed by 6 digits"
+     ]
+    },
+    "ru": {
+     "title": "Guest names",
+     "items": [
+      "Without logging in, your name shows as Guest followed by 6 digits"
+     ]
+    },
+    "tr": {
+     "title": "Guest names",
+     "items": [
+      "Without logging in, your name shows as Guest followed by 6 digits"
+     ]
+    },
+    "it": {
+     "title": "Guest names",
+     "items": [
+      "Without logging in, your name shows as Guest followed by 6 digits"
+     ]
+    },
+    "pl": {
+     "title": "Guest names",
+     "items": [
+      "Without logging in, your name shows as Guest followed by 6 digits"
+     ]
+    },
+    "ar": {
+     "title": "Guest names",
+     "items": [
+      "Without logging in, your name shows as Guest followed by 6 digits"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-11-09",
    "build": "v0.2 build 93",
    "title": "게스트 모드",
    "items": [
