@@ -3,6 +3,8 @@
    필요한 SQL: supabase-ff-hub.sql, supabase-ff-images.sql, supabase-ff-social.sql, supabase-ff-extra.sql, supabase-ff-more.sql, supabase-ff-react.sql, supabase-ff-coin.sql, supabase-ff-wiki.sql, supabase-ff-follow.sql (+ crownenvoy/supabase-ff-rank.sql) */
 (function(){
 'use strict';
+/* 목록(드롭다운) 항목 글자가 흰 배경에서 안 보이던 것: 항목 배경을 어둡게 */
+try{ if(!document.getElementById('ffOptCss')){ var oc=document.createElement('style'); oc.id='ffOptCss'; oc.textContent='.cm-w select option,.cm-w select optgroup,.cm-p select option{background:#171717;color:#ece6d8}'; (document.head||document.documentElement).appendChild(oc); } }catch(e){}
 /* 사이트(허브·첫 화면)는 이모지를 그림으로 바꾸지 않고 원래 이모티콘 그대로 보여요 (오너 11-02). 되돌리려면 ff-logo.js 를 다시 불러요: try{ var em=document.createElement('script'); em.src='https://frenchfries777.com/games/ff-logo.js?v=20261102d'; (document.head||document.documentElement).appendChild(em); }catch(e){}    이모지를 그림으로 (사람이 쓴 글과 반응 이모트는 그대로)  */
 var SI=window.SI18N||{lang:'ko',F:function(t){ var a=arguments; return String(t).replace(/\{(\d)\}/g,function(_,n){ return a[+n+1]; }); }};
 var LANG=SI.lang||'ko', F=SI.F;
