@@ -485,6 +485,29 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   #weaponPortraitWrap{ flex:1; min-width:0; text-align:center; background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:14px; }
   #weaponPortraitName{ font-size:19px; font-weight:800; margin-bottom:8px; min-height:24px; }
   #weaponPortraitCanvas{ background:#0e1622; border-radius:8px; display:block; margin:0 auto 10px; }
+  /* 스킬 구성 (캐릭터 화면): 왼쪽 캐릭터, 오른쪽 스킬 카드와 1스킬·2스킬 칸 */
+  #weaponScreen.browse.wDetail{ width:min(1040px,97vw) !important; }
+  #weaponScreen.browse #weaponPortraitWrap{ display:grid; grid-template-columns:250px minmax(0,1fr); column-gap:18px; align-items:start; width:100%; }
+  #weaponScreen.browse #weaponPortraitWrap>*{ grid-column:1; }
+  #weaponScreen.browse #weaponPortraitWrap>#weaponLoadout{ grid-column:2; grid-row:1 / span 7; }
+  #weaponScreen.browse #weaponPortraitWrap>#weaponDetail{ grid-column:1 / -1; }
+  #weaponScreen.browse #weaponPortraitCanvas{ background:radial-gradient(circle at 50% 35%,#3a3354 0%,#1d1a2b 70%); border:1px solid #4a4266; }
+  #weaponLoadout{ text-align:left; display:flex; flex-direction:column; gap:10px; }
+  #weaponLoadout .lhd{ font-weight:900; font-size:16px; color:#fff; } #weaponLoadout .lsub{ font-size:12px; color:#9fb0c8; }
+  .lcard{ position:relative; display:flex; gap:10px; align-items:center; border:2px solid #3a4150; background:#171b24; border-radius:12px; padding:9px 12px; cursor:pointer; color:#e6ebf5; font:inherit; text-align:left; width:100%; }
+  .lcard:hover{ border-color:#7a86a0; } .lcard.pick{ box-shadow:0 0 0 3px #e0b05055; border-color:#e0b050; }
+  .lcard.s1{ border-color:#4fd1a1; box-shadow:0 0 14px #4fd1a144; } .lcard.s2{ border-color:#ee8274; box-shadow:0 0 14px #ee827444; }
+  .lcard.soon{ opacity:.45; cursor:default; border-style:dashed; }
+  .lcard .li{ flex:none; width:40px; height:40px; border-radius:10px; background:#0e1622; border:1px solid #3a4150; display:grid; place-items:center; font-weight:900; font-size:18px; }
+  .lcard .ln{ font-size:14px; font-weight:800; color:#f4f7fc; } .lcard .ld{ font-size:12px; color:#9fb0c8; margin-top:2px; }
+  .lcard .lb{ position:absolute; top:-9px; right:10px; font-size:11px; font-weight:900; border-radius:99px; padding:1px 10px; color:#08140f; }
+  .lchip{ font-size:10.5px; font-weight:800; padding:0 7px; border-radius:99px; margin-left:6px; border:1px solid currentColor; }
+  .lslots{ display:flex; gap:10px; margin-top:4px; }
+  .lslot{ flex:1; border:2px dashed #3a4150; border-radius:12px; padding:9px 12px; background:#12161e; display:flex; align-items:center; gap:12px; cursor:pointer; color:#fff; font:inherit; text-align:left; min-width:0; }
+  .lslot .lk{ flex:none; min-width:40px; height:40px; padding:0 6px; border-radius:9px; font-weight:900; font-size:17px; display:grid; place-items:center; color:#08140f; box-shadow:0 3px 0 #0006; }
+  .lslot .lt{ font-size:11px; font-weight:800; } .lslot .lv{ font-size:15px; font-weight:900; }
+  .lmsg{ font-size:12px; color:#e0b050; min-height:16px; }
+  @media (max-width:760px){ #weaponScreen.browse #weaponPortraitWrap{ grid-template-columns:1fr; } #weaponScreen.browse #weaponPortraitWrap>#weaponLoadout{ grid-column:1; grid-row:auto; } .lslots{ flex-direction:column; } }
   #weaponDetail{ text-align:left; min-height:64px; background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:10px 12px; font-size:13px; line-height:1.6; color:var(--text-dim); white-space:pre-line; }
   #weaponCharStats{ text-align:center; font-weight:800; margin-bottom:8px; font-size:14px; }
   #weaponDetail b{ color:var(--text); }
@@ -1005,6 +1028,7 @@ sting();})();</script>
     <button class="menu-float-btn" id="goOnlineBtn">온라인 플레이</button>
     <button class="menu-float-btn" id="goPrivateBtn">친선과 연습</button>
     <button class="menu-float-btn" id="goShopBtn">치장품 상점</button>
+    <button class="menu-float-btn" id="goCharBtn">캐릭터</button>
   </div>
 
   <div class="card" id="profileScreen" style="width:min(480px,94vw); max-height:86vh; overflow-y:auto;">
@@ -1305,6 +1329,7 @@ sting();})();</script>
         <canvas id="weaponPortraitCanvas" width="200" height="230"></canvas>
         <div id="weaponCharStats" style="display:none;"></div>
         <button id="weaponFavBtn" type="button" style="display:none;">☆ 즐겨찾기</button>
+        <div id="weaponLoadout" style="display:none;"></div>
         <div id="weaponDetail"></div>
         <button class="btn-primary btn-full" id="weaponLockBtn" style="margin-top:12px;" disabled>선택 확정</button>
         <button class="btn-full" id="weaponBackListBtn" type="button">&larr; 캐릭터 목록으로 돌아가기</button>
@@ -8286,6 +8311,8 @@ document.getElementById('clanBackBtn').onclick=()=>{ showScreen('menuScreen'); }
 document.getElementById('rankedBackBtn').onclick=()=>{ enterOnlineTypeScreen(); };
 document.getElementById('goMstatBtn').onclick=()=>{ showScreen('mstatScreen'); renderMatchStats(); };
 document.getElementById('mstatBackBtn').onclick=()=>{ showScreen('profileScreen'); renderProfile(); };
+let browseFrom='profile';
+document.getElementById('goCharBtn').onclick=()=>{ browseFrom='menu'; enterCharacterBrowse(); };
 document.getElementById('goCodexBtn').onclick=()=>{ showScreen('codexScreen'); renderCodex(); };
 document.getElementById('codexBackBtn').onclick=()=>{ showScreen('profileScreen'); renderProfile(); };
 document.getElementById('goRecordBtn').onclick=()=>{ recTab='hl'; showScreen('recordScreen'); renderRecord(); };
@@ -8795,6 +8822,7 @@ function applyCloudSave(s){
   saveData.dailyLast=(typeof s.dailyLast==='string' && /^\d{4}-\d{2}-\d{2}$/.test(s.dailyLast)) ? s.dailyLast : '';
   saveData.missions=(s.missions&&typeof s.missions==='object')?s.missions:null; saveData.season=(s.season&&typeof s.season==='object')?s.season:null; saveData.trailerSeen=s.trailerSeen?1:0; saveData.newsClaimed=Array.isArray(s.newsClaimed)?s.newsClaimed.filter(w=>typeof w==='string').slice(-30):[]; saveData.seenNews=(typeof s.seenNews==='string')?s.seenNews.slice(0,60):'';
   if(Array.isArray(s.favChars)) saveData.favChars=s.favChars.filter(w=>typeof w==='string').slice(0,60);
+  if(s.loadout && typeof s.loadout==='object'){ const lo={}; for(const k of Object.keys(s.loadout).slice(0,80)){ const v=s.loadout[k]; if(Array.isArray(v) && typeof v[0]==='string' && typeof v[1]==='string') lo[k]=[v[0].slice(0,40), v[1].slice(0,40)]; } saveData.loadout=lo; }
   persistSave(); updateGoldUI();
 }
 // ---- the save is gzip-compressed and written as text (the user data travels inside the login token, so it must stay small) ----
@@ -11270,7 +11298,7 @@ function onHostData(conn, data){
   if(data.t==='ping'){ const p=players[peerId]; if(p) p.lastSeen=Date.now(); return; }
   if(data.t==='mapVoteCast'){ if(players[peerId]){ players[peerId].lastSeen=Date.now(); hostMapVoteCast(peerId, data.idx); } return; }
   if(data.t==='mvpCast'){ if(players[peerId]){ players[peerId].lastSeen=Date.now(); hostMvpCast(peerId, data.id); } return; }
-  if(data.t==='weaponPick'){ const p=players[peerId]; if(p){ p.lastSeen=Date.now(); hostWeaponPick(peerId, data.id, data.ck, data.ml); } return; }
+  if(data.t==='weaponPick'){ const p=players[peerId]; if(p){ p.lastSeen=Date.now(); hostWeaponPick(peerId, data.id, data.ck, data.ml, data.sl); } return; }
   if(data.t==='weaponBan'){ const p=players[peerId]; if(p){ p.lastSeen=Date.now(); hostWeaponBan(peerId, data.id); } return; }
   if(data.t==='weaponLock'){ const p=players[peerId]; if(p){ p.lastSeen=Date.now(); hostWeaponLock(peerId); } return; }
 }
@@ -12546,10 +12574,11 @@ function broadcastWeaponState(){
     if(pid===myId) applyWeaponState(st); else if(conns[pid]) safeSend(conns[pid], st);
   }
 }
-function hostWeaponPick(pid, wid, ck, ml){
+function hostWeaponPick(pid, wid, ck, ml, sl){
   const p=players[pid];
   if(!p || !weaponPhase || weaponPhase.revealing || p.weaponChosen || banActive()) return;
   if(!WEAPONS[wid] || takenByTeam(p,wid) || (weaponMode==='random' && !(p.offer||[]).includes(wid))){ broadcastWeaponState(); return; } // rejected: resend truth so the UI reverts
+  p.sel=(Array.isArray(sl) && typeof sl[0]==='string' && typeof sl[1]==='string') ? (()=>{ const v=loadoutValid(wid, sl[0].slice(0,40), sl[1].slice(0,40)); return {1:v[0], 2:v[1]}; })() : null;
   p.pick=wid; p.pickKills=cleanStat(ck, 1e7); p.pickLv=Math.max(1, cleanStat(ml, 100000)); broadcastWeaponState();      // (the tier and level of that character, for the reveal; whatever a guest sends is kept within sane numbers)
 }
 function hostWeaponLock(pid){
@@ -12714,10 +12743,42 @@ function addWeaponFavStar(el, wid){
   const st=document.createElement('div'); st.className='wfav'; st.title='즐겨찾기'; el.appendChild(st);
   st.onclick=e=>{ e.stopPropagation(); toggleFavChar(wid); };
 }
+let loadoutPick=null, loadoutMsg='';
+function renderLoadoutPanel(wid){
+  const box=document.getElementById('weaponLoadout'); if(!box) return;
+  if(!characterBrowseMode || !wid || !WEAPONS[wid] || !SKILLS[wid] && !SKILLS2[wid]){ box.style.display='none'; return; }
+  box.style.display='flex';
+  const pool=skillPoolOf(wid), cur=loadoutOf(wid), kindName={hit:'공격', buff:'강화', move:'이동'}, kindCol={hit:'#ff7a7a', buff:'#4fd1a1', move:'#6ec6ff'};
+  const k1=codeToLabel(keyBindings.skill), k2=codeToLabel(keyBindings.teleport);
+  let h='<div><div class="lhd">스킬 구성</div><div class="lsub">스킬 중 1스킬·2스킬로 쓸 스킬을 골라요 · 경기가 시작되면 바꿀 수 없어요</div></div>';
+  for(const e of pool){
+    const slot=(cur[0]===e.id)?1:(cur[1]===e.id)?2:0, col=slot===1?'#4fd1a1':slot===2?'#ee8274':'';
+    const kd=e.def.kind||'hit';
+    h+='<button type="button" class="lcard'+(slot?(' s'+slot):'')+(loadoutPick===e.id?' pick':'')+'" data-id="'+escapeHtmlText(e.id)+'">'
+      +'<span class="li" style="color:'+(kindCol[kd]||'#fff')+'">'+escapeHtmlText(e.def.name.slice(0,1))+'</span>'
+      +'<span style="min-width:0"><span class="ln">'+escapeHtmlText(e.def.name)+'</span><span class="lchip" style="color:'+(kindCol[kd]||'#fff')+'">'+(kindName[kd]||'스킬')+'</span><div class="ld">'+escapeHtmlText(e.def.desc.split(' · ')[0])+'</div></span>'
+      +(slot?'<span class="lb" style="background:'+col+'">'+slot+'스킬 장착</span>':'')+'</button>';
+  }
+  for(let i=pool.length;i<5;i++) h+='<div class="lcard soon"><span class="li">?</span><span><span class="ln">새 스킬 준비 중</span></span></div>';
+  const nm=id=>{ const e=skillEntry(wid,id); return e?e.def.name:'-'; };
+  h+='<div class="lslots"><button type="button" class="lslot" data-slot="1" style="border-color:#4fd1a1"><span class="lk" style="background:#4fd1a1">'+escapeHtmlText(k1)+'</span><span style="min-width:0"><div class="lt" style="color:#4fd1a1">1스킬 · 쿨타임 '+SKILL_CD+'초</div><div class="lv">'+escapeHtmlText(nm(cur[0]))+'</div></span></button>'
+    +'<button type="button" class="lslot" data-slot="2" style="border-color:#ee8274"><span class="lk" style="background:#ee8274">'+escapeHtmlText(k2)+'</span><span style="min-width:0"><div class="lt" style="color:#ee8274">2스킬 · 쿨타임 '+TELEPORT_CD+'초</div><div class="lv">'+escapeHtmlText(nm(cur[1]))+'</div></span></button></div>'
+    +'<div class="lmsg">'+escapeHtmlText(loadoutMsg||(loadoutPick?'“'+nm(loadoutPick)+'”을(를) 넣을 칸을 누르세요':'카드를 누르고 1스킬·2스킬 칸을 누르세요'))+'</div>';
+  box.innerHTML=h;
+  box.querySelectorAll('.lcard[data-id]').forEach(el=>{ el.onclick=()=>{ loadoutMsg=''; loadoutPick=(loadoutPick===el.dataset.id)?null:el.dataset.id; renderLoadoutPanel(wid); }; });
+  box.querySelectorAll('.lslot').forEach(el=>{ el.onclick=()=>{
+    const slot=+el.dataset.slot; if(!loadoutPick){ loadoutMsg='먼저 위에서 스킬 카드를 눌러 주세요'; renderLoadoutPanel(wid); return; }
+    const e=skillEntry(wid, loadoutPick); let a=cur[0], b=cur[1];
+    if(slot===2 && e.only1){ loadoutMsg='이 스킬은 1스킬 칸에서만 쓸 수 있어요'; renderLoadoutPanel(wid); return; }
+    if(slot===1){ if(b===e.id) b=a; a=e.id; } else { if(a===e.id) a=b; b=e.id; }
+    const v=loadoutValid(wid, a, b); saveData.loadout=saveData.loadout||{}; saveData.loadout[wid]=v; persistSave();
+    loadoutPick=null; loadoutMsg=''; renderLoadoutPanel(wid);
+  }; });
+}
 let characterBrowseMode=false;
 function enterCharacterBrowse(){
-  characterBrowseMode=true;
-  showScreen('weaponScreen');
+  characterBrowseMode=true; loadoutPick=null; loadoutMsg='';
+  showScreen('weaponScreen'); document.getElementById('weaponScreen').classList.add('browse');
   weaponUI={state:null, deadline:0, revealEnd:0, locked:false, selected:null, mode:'pick', offer:null, hiddenUntil:0};
   document.getElementById('weaponTitle').textContent='캐릭터 도감';
   document.getElementById('weaponTimerText').textContent='캐릭터를 눌러 누적 킬, 계급, 숙련도를 확인해보세요.';
@@ -12748,12 +12809,13 @@ function enterCharacterBrowse(){
 document.getElementById('weaponBackListBtn').onclick=()=>weaponShowDetail(false);
 document.getElementById('weaponBrowseBackBtn').onclick=()=>{
   characterBrowseMode=false;
+  document.getElementById('weaponScreen').classList.remove('browse'); { const lb=document.getElementById('weaponLoadout'); if(lb) lb.style.display='none'; }
   document.getElementById('weaponBrowseBackBtn').style.display='none';
   document.getElementById('weaponTeamBox').style.display='';
   document.getElementById('weaponLockBtn').style.display='';
   document.getElementById('weaponChosenCount').style.display='';
   document.getElementById('weaponCharStats').style.display='none';
-  showScreen('profileScreen'); renderProfile();
+  if(browseFrom==='menu'){ browseFrom='profile'; showScreen('menuScreen'); } else { showScreen('profileScreen'); renderProfile(); }
 };
 function clanVsIntro(){
   if(gameMode!=='duel') return;
@@ -12770,7 +12832,7 @@ function clanVsIntro(){
 }
 function enterWeaponPhase(deadline, wmode, offer, banEnds){
   try{ clanVsIntro(); }catch(e){}
-  characterBrowseMode=false;
+  characterBrowseMode=false; document.getElementById('weaponScreen').classList.remove('browse'); { const lb=document.getElementById('weaponLoadout'); if(lb) lb.style.display='none'; }
   document.getElementById('weaponBrowseBackBtn').style.display='none';
   document.getElementById('weaponCharStats').style.display='none';
   showScreen('weaponScreen');
@@ -12825,8 +12887,8 @@ function pickWeapon(wid){
   if(st && st.ob && st.ob.includes(wid)) return;                                // banned by the other side
   weaponUI.selected=wid; weaponShowDetail(true);
   renderWeaponUI();
-  if(isHost) hostWeaponPick(myId, wid);
-  else if(hostConn && hostConn.open){ const ws=myWeaponStats(wid); hostConn.send({t:'weaponPick', id:wid, ck:ws.ck, ml:ws.ml}); }
+  if(isHost) hostWeaponPick(myId, wid, undefined, undefined, loadoutOf(wid));
+  else if(hostConn && hostConn.open){ const ws=myWeaponStats(wid); hostConn.send({t:'weaponPick', id:wid, ck:ws.ck, ml:ws.ml, sl:loadoutOf(wid)}); }
 }
 function lockWeapon(){
   if(weaponBanMode()){
@@ -12972,6 +13034,7 @@ function renderWeaponUI(){
     const skd=SKILLS[sel];
     det.appendChild(document.createTextNode(w.desc+'\n궁극기 [R] '+u.name+' - '+u.desc+(skd?('\n스킬 ['+codeToLabel(keyBindings.skill)+'] '+skd.name+' - '+skd.desc+' (쿨타임 '+SKILL_CD+'초)'):'')+(SKILLS2[sel]?('\n2스킬 ['+codeToLabel(keyBindings.teleport)+'] '+SKILLS2[sel].name+' - '+SKILLS2[sel].desc+' (쿨타임 '+TELEPORT_CD+'초)'):'')));
     const statsEl=document.getElementById('weaponCharStats');
+    renderLoadoutPanel(sel);
     if(characterBrowseMode){
       const kc=charKillsFor(sel);
       const rank=charRankFor(kc);
@@ -14095,7 +14158,7 @@ function drawSpacePersona(c, wid, hx, hy, r, shy, tint){       // the looks foll
       c.fillStyle='#ffd34d'; for(const q of [[-2.0,-2.0],[2.0,-2.0],[0,-1.0]]){ c.beginPath(); c.arc(hx+q[0]*r,hy+q[1]*r,1.9,0,7); c.fill(); } break; }
   }
 }
-function skillCdOf(p){ return (skW(p)==='cleon'?CLEON_SKILL_CD:SKILL_CD*(skW(p)==='rifle'?2:1))*pzCdMult(p); }
+function skillCdOf(p){ if(p && (p.sel || p.id===myId) && slotSkill(p,1).n!==1) return SKILL_CD*pzCdMult(p); return (skW(p)==='cleon'?CLEON_SKILL_CD:SKILL_CD*(skW(p)==='rifle'?2:1))*pzCdMult(p); }
 function ultCdOf(p){ return ULT_CD*pzCdMult(p)*(gameMode==='hyperbr'?0.2:1); }
 const PRACTICE_SKILL_CD=2;
 const SKILLS={
@@ -14185,6 +14248,48 @@ SKILL2_IMPL.plague=function(p,tSec,tMs){
 };
 const DASH_DIST=Math.round(DASH_FORCE/3.9);      // how far a dash carries (the push dies off by 0.02^t)
 function skill2Free(x,y,maxUp){ for(let k=0;k<=(maxUp||160);k+=16) if(skillSpotFree(x,y-k)) return {x:x,y:y-k}; return null; }
+/* ---- 스킬 구성: 캐릭터마다 스킬 풀(지금은 1스킬·2스킬 기본 2개, 나중에 5개까지) 중 1스킬 칸(5초)·2스킬 칸(10초)에 넣을 스킬을 미리 고름 ----
+   id = 캐릭터id:번호 ('plague:1' = 원래 1스킬, 'plague:2' = 원래 2스킬). 스킬 풀에 새 스킬을 넣으려면 SKILL_EXTRA[캐릭터]에 {n:3, def:{name,kind,desc}, impl} 를 추가. */
+const SKILL_EXTRA={};
+const SKILL_STATEFUL1={dragonslayer:1, sword:1, puppeteer:1, tionis:1};      // these first skills have a follow-up tied to the 1스킬 칸 (assist shot / stop charge / needle pull / morph): they stay there
+function skillPoolOf(w){
+  const a=[]; if(SKILLS[w]) a.push({id:w+':1', n:1, w:w, def:SKILLS[w], only1:!!SKILL_STATEFUL1[w]});
+  if(SKILLS2[w]) a.push({id:w+':2', n:2, w:w, def:SKILLS2[w]});
+  for(const e of (SKILL_EXTRA[w]||[])) a.push({id:w+':'+e.n, n:e.n, w:w, def:e.def, only1:!!e.only1, impl:e.impl});
+  return a;
+}
+function skillEntry(w, id){ return skillPoolOf(w).find(e=>e.id===id)||null; }
+function loadoutValid(w, a, b){      // a / b: ids for the 1스킬 / 2스킬 칸; anything wrong falls back to the default pair
+  const ea=skillEntry(w,a), eb=skillEntry(w,b);
+  if(!ea || !eb || a===b || eb.only1) return [w+':1', w+':2'];
+  return [a,b];
+}
+function loadoutOf(w){ const l=(typeof saveData!=='undefined' && saveData.loadout && saveData.loadout[w]) || null; return l ? loadoutValid(w, l[0], l[1]) : [w+':1', w+':2']; }
+function slotSkill(p, slot){
+  const w=skW(p); let sel=p && p.sel;
+  if(!sel && p && isHost && p.id===myId && !p.isBot && !p.afkBot) { const l=loadoutOf(w); sel={1:l[0], 2:l[1]}; }
+  let id=sel && sel[slot];
+  if(sel) { const v=loadoutValid(w, sel[1], sel[2]); id=v[slot-1]; } else id=w+':'+slot;
+  const e=skillEntry(w,id)||skillEntry(w,w+':'+slot);
+  return e ? {id:e.id, n:e.n, def:e.def, entry:e} : {id:w+':'+slot, n:slot, def:(slot===1?SKILLS:SKILLS2)[w]||null, entry:null};
+}
+function trySkillAlt(p, tMs, ax, ay, slot){      // a skill that was made for the OTHER slot (or a new skill) runs from this slot, with this slot's cooldown
+  const tSec=tMs/1000, w=skW(p);
+  if(!p || !p.alive || !MAP || matchEnded || duelPick) return;
+  if(puppetVictim(p, tSec) || isStunned(p, tSec)) return;
+  if(slot===2 && puppetMaster(p, tSec)) return;
+  const mode=MODES[gameMode]||{}; if(mode.noWeapon || mode.noAbility || (slot===2 && mode.noTeleport)) return;
+  if(p.darkSub || p.isClone || p.s2 || p.teleportChannel) return;
+  const last=(slot===1)?p.lastSkill:p.lastTeleport, cd=(slot===1)?skillCdOf(p):TELEPORT_CD;
+  if(tSec-(last===undefined?-9999:last) < cd) return;
+  const ss=slotSkill(p, slot), impl=ss.entry && ss.entry.impl ? ss.entry.impl : (ss.n===1?SKILL_IMPL[w]:SKILL2_IMPL[w]); if(!impl) return;
+  if(ss.def && ss.def.kind==='move' && (p.ctfCarrying || p.gc>0)) return;
+  if(impl(p, tSec, tMs, ax, ay)===false) return;
+  if(slot===1){ p.lastSkill=tSec; if(p._skillReset){ p.lastSkill=-9999; p._skillReset=false; } p.skillUses=(p.skillUses||0)+1; }
+  else { p.lastTeleport=tSec; p.skill2Uses=(p.skill2Uses||0)+1; }
+  pushFx('skill', p.x, p.y-40, tMs, {color:p.color, name:ss.def.name});
+  pushFx('sfx', p.x, p.y-40, tMs, {name:SKILL_SFX[ss.def.kind]});
+}
 function trySkill2(p, tMs, aimX, aimY){ const o=curAur; curAur=auraKind(p); try{ return trySkill2b(p, tMs, aimX, aimY); } finally{ curAur=o; } }
 function trySkill2b(p, tMs, aimX, aimY){
   const tSec=tMs/1000;
@@ -14193,6 +14298,7 @@ function trySkill2b(p, tMs, aimX, aimY){
   const mode=MODES[gameMode]||{}; if(mode.noWeapon || mode.noAbility || mode.noTeleport) return;
   if(p.darkSub || p.isClone || p.s2) return;
   if(tSec-(p.lastTeleport===undefined?-9999:p.lastTeleport) < TELEPORT_CD) return;
+  if(slotSkill(p,2).n!==2) return trySkillAlt(p, tMs, aimX, aimY, 2);      // 스킬 구성: another skill sits in the 2스킬 칸
   const w=skW(p), sd=SKILLS2[w], impl=SKILL2_IMPL[w]; if(!sd || !impl) return;
   if(sd.kind==='move' && (p.ctfCarrying || p.gc>0)) return;                        // (a flag / gold carrier cannot jump or dash across the field with it)
   if(impl(p, tSec, tMs, aimX, aimY)===false) return;
@@ -14929,6 +15035,7 @@ function trySkill0(p, tMs, aimX, aimY){
   if(p.teleportChannel) return;                                                     // busy teleporting
   if(p.darkSub) return;                                                             // inside the darkness: no skill
   const tSec=tMs/1000;
+  if(slotSkill(p,1).n!==1) return trySkillAlt(p, tMs, aimX, aimY, 1);      // 스킬 구성: another skill sits in the 1스킬 칸
   if(skW(p)==='dragonslayer' && p.dsDragonUntil>tSec){ dsAssistFire(p, tSec, tMs, aimX, aimY); return; }                           // the dragon is out: the skill is 지원 발사 (its own cooldown, the flame sword's one is untouched)
   if(skW(p)==='sword' && p.swordCharge){ swordEnd(p); return; }                                      // the knight's skill key again = stop charging
   if(tSec-(p.lastSkill===undefined?-9999:p.lastSkill) < skillCdOf(p)) return;
@@ -17655,7 +17762,7 @@ function hostTickCore(dt,t){
         fireCdRemain: snapR(p.fireCdRemain||0,20),
         ultCdRemain: p.darkSub ? 0 : snapR(Math.max(0, ultCdOf(p) - (t/1000-(p.lastUlt===undefined?-9999:p.lastUlt))),20), darkSub:p.darkSub?1:0, darkArm:(p.darkArmUntil>t/1000)?1:0,
         skillCdRemain: snapR(Math.max(0, skillCdOf(p) - (t/1000-(p.lastSkill===undefined?-9999:p.lastSkill))),20), buff:p.buff||null, skillUses:p.skillUses||0, dsA:(p.dsDragonUntil>t/1000)?Math.round((p.dsDragonUntil-t/1000)*10)/10:0, dsC:(p.dsDragonUntil>t/1000)?Math.round(dsAssistCdLeft(p,t/1000)*10)/10:0, ultUses:p.ultUses||0, ultMulti:p.ultMulti||0,
-        tellG:Math.round((p.tellG||0)*100)/100, s2k:p.s2k||'', s2d:p.s2d||1, infd:plInfected(p,t/1000)?1:0, blk:p.blk?1:0, spn:p.spn?1:0, gd:p.gd?1:0, fbar:p.fbar?1:0, sand:p.sand?1:0, snr:p.snr?1:0, cnt:p.cnt?1:0, flr:p.flr||0, pz:p.pzStacks||0, pm:(p.pzMarkUntil>t/1000)?1:0, ultOn:!!p.ultOn, invis:!!p.invis, isGuard:p.isGuard?1:0, isVault:p.isVault?1:0, isCrystal:p.isCrystal?1:0, isClone:p.isClone?1:0, ownerId:p.ownerId||'', hk:p.hook?[Math.round(p.hook.x),Math.round(p.hook.y)]:null, pvi:pvIconOf(p,t/1000)||undefined, dgn:(p.disg&&p.tioFor)?p.tioFor.name:'', dgv:(p.disg&&p.tioFor)?(p.tioFor.vid||''):'', dgt:(p.disg&&p.tioFor&&p.tioFor.vteam!==undefined)?p.tioFor.vteam:null, dgc:(p.disg&&p.tioFor)?(p.tioFor.clan||''):'', tioStage:p.tioStage||'', drones:(p.weapon==='pel')?pelN(p):0, hrN:p.hrNoAxe?1:0, hrC:p.hrCharge?1:0, hrG:Math.round((p.hrAng||0)*100)/100, hrA:(WEAPONS[p.weapon] && p.lastShot!==undefined)?Math.round(Math.min(2,Math.max(0,t/1000-p.lastShot))*50)/50:9, pelBoost:pelBoostOn(p,t/1000)?1:0, burning:!!p.burning, poisoned:!!p.poisoned, kw:(p.kanWingsUntil>t/1000)?1:0, gc:p.gc||0, gp:Math.round(Math.min(1,(p.goldStay||0)/GOLD_PICK_STAY)*20)/20, pp:puppetMaster(p,t/1000)?p.puppetTarget:null, sw:p.sw||null, sewSlowed:!!p.sewSlowed, slowed:!!p.slowed, stunned:!!p.stunned, cardSlowed:!!p.cardSlowed, bladeSpin:!!p.bladeSpin, swordCharging:!!p.swordCharge, cannonFlying:!!p.cannonFly, chips:p.chips||0, cannonAng:p.cannonFly?Math.round(Math.atan2(p.vy||0,p.cannonFly.vx)*100)/100:0, totalDamageDealt:p.totalDamageDealt||0, channeling:!!p.teleportChannel, flaming:!!p.flaming, portalPair:p.portalPair||null, batting:!!p.batting, vacuumStacks:p.vacuumStacks||0, isZombie:!!p.isZombie, parkourItem:!!p.parkourItem,
+        tellG:Math.round((p.tellG||0)*100)/100, s2k:p.s2k||'', s2d:p.s2d||1, sel:p.sel||null, infd:plInfected(p,t/1000)?1:0, blk:p.blk?1:0, spn:p.spn?1:0, gd:p.gd?1:0, fbar:p.fbar?1:0, sand:p.sand?1:0, snr:p.snr?1:0, cnt:p.cnt?1:0, flr:p.flr||0, pz:p.pzStacks||0, pm:(p.pzMarkUntil>t/1000)?1:0, ultOn:!!p.ultOn, invis:!!p.invis, isGuard:p.isGuard?1:0, isVault:p.isVault?1:0, isCrystal:p.isCrystal?1:0, isClone:p.isClone?1:0, ownerId:p.ownerId||'', hk:p.hook?[Math.round(p.hook.x),Math.round(p.hook.y)]:null, pvi:pvIconOf(p,t/1000)||undefined, dgn:(p.disg&&p.tioFor)?p.tioFor.name:'', dgv:(p.disg&&p.tioFor)?(p.tioFor.vid||''):'', dgt:(p.disg&&p.tioFor&&p.tioFor.vteam!==undefined)?p.tioFor.vteam:null, dgc:(p.disg&&p.tioFor)?(p.tioFor.clan||''):'', tioStage:p.tioStage||'', drones:(p.weapon==='pel')?pelN(p):0, hrN:p.hrNoAxe?1:0, hrC:p.hrCharge?1:0, hrG:Math.round((p.hrAng||0)*100)/100, hrA:(WEAPONS[p.weapon] && p.lastShot!==undefined)?Math.round(Math.min(2,Math.max(0,t/1000-p.lastShot))*50)/50:9, pelBoost:pelBoostOn(p,t/1000)?1:0, burning:!!p.burning, poisoned:!!p.poisoned, kw:(p.kanWingsUntil>t/1000)?1:0, gc:p.gc||0, gp:Math.round(Math.min(1,(p.goldStay||0)/GOLD_PICK_STAY)*20)/20, pp:puppetMaster(p,t/1000)?p.puppetTarget:null, sw:p.sw||null, sewSlowed:!!p.sewSlowed, slowed:!!p.slowed, stunned:!!p.stunned, cardSlowed:!!p.cardSlowed, bladeSpin:!!p.bladeSpin, swordCharging:!!p.swordCharge, cannonFlying:!!p.cannonFly, chips:p.chips||0, cannonAng:p.cannonFly?Math.round(Math.atan2(p.vy||0,p.cannonFly.vx)*100)/100:0, totalDamageDealt:p.totalDamageDealt||0, channeling:!!p.teleportChannel, flaming:!!p.flaming, portalPair:p.portalPair||null, batting:!!p.batting, vacuumStacks:p.vacuumStacks||0, isZombie:!!p.isZombie, parkourItem:!!p.parkourItem,
         isHost:p.isHost,clan:p.clan||'',joinOrder:p.joinOrder,weapon:p.weapon,kit:p.kit||null,team:p.team,spinAngle:p.spinAngle,cos:p.cos,isBoss:p.isBoss?1:0,isMinion:p.isMinion?1:0,bt:p.bt,bossMaxHp:p.bossMaxHp,emIdx:p.emIdx,emRem:(p.emUntil?Math.max(0,Math.round((p.emUntil-t/1000)*20)/20):0)})),
       cq: (gameMode==='conquest' && cq) ? {s:cq.scores, h:cq.holder, c:cq.contested} : undefined,
       xm: (xm && xmV) ? xmV : undefined,
@@ -21941,7 +22048,7 @@ function render(fxDt){
     const tpRemain = isHost ? Math.max(0, TELEPORT_CD-(performance.now()/1000-(me.lastTeleport===undefined?-9999:me.lastTeleport))) : (me.teleportCdRemain||0);
     const tpFrac = clamp(1-tpRemain/TELEPORT_CD, 0, 1);
     document.getElementById('teleportFill').style.width=(tpFrac*100)+'%';
-    { const s2d=SKILLS2[skW(me)], s2n=s2d?s2d.name:'순간이동'; document.getElementById('teleportLabel').textContent = tpRemain>0.05 ? (s2n+' ('+codeToLabel(keyBindings.teleport)+') '+tpRemain.toFixed(1)+'초') : s2n+' ('+codeToLabel(keyBindings.teleport)+') 준비됨'; }
+    { const s2d=(SKILL2_IMPL[skW(me)]?slotSkill(me,2).def:null), s2n=s2d?s2d.name:'순간이동'; document.getElementById('teleportLabel').textContent = tpRemain>0.05 ? (s2n+' ('+codeToLabel(keyBindings.teleport)+') '+tpRemain.toFixed(1)+'초') : s2n+' ('+codeToLabel(keyBindings.teleport)+') 준비됨'; }
     { // unlike teleport (a whole-match mode setting), whether THIS player has an ultimate depends on their
       // current weapon, which can change mid-match even within a noWeapon mode (hide and seek's seeker
       // goes bare-handed -> pistol) - so this has to be re-checked every frame, not set once at match start
@@ -21957,10 +22064,10 @@ function render(fxDt){
       }
     }
     { // the character skill (F): every character with a weapon has one; modes without characters / abilities hide the bar
-      const sd=SKILLS[skW(me)], hasSkill=!!sd && !(MODES[gameMode]||{}).noWeapon && !(MODES[gameMode]||{}).noAbility;
+      const sd=slotSkill(me,1).def, hasSkill=!!sd && !(MODES[gameMode]||{}).noWeapon && !(MODES[gameMode]||{}).noAbility;
       const sw=document.getElementById('skillWrap'); sw.style.display = hasSkill ? '' : 'none';
       if(hasSkill){
-        const dsAs=(skW(me)==='dragonslayer' && dsAssistOn(me));
+        const dsAs=(skW(me)==='dragonslayer' && dsAssistOn(me) && slotSkill(me,1).n===1);
         const sRemain = dsAs ? (isHost ? dsAssistCdLeft(me, performance.now()/1000) : (me.dsC||0)) : (isHost ? Math.max(0, skillCdOf(me)-(performance.now()/1000-(me.lastSkill===undefined?-9999:me.lastSkill))) : (me.skillCdRemain||0));
         document.getElementById('skillFill').style.width=(clamp(1-sRemain/(dsAs?DS_ASSIST_CD:skillCdOf(me)),0,1)*100)+'%';
         const sdName=dsAs ? '지원 발사' : (skW(me)==='puppeteer' && me.sw) ? SEW_PULL_NAME : ((skW(me)==='tionis' && me.tioStage==='morph') ? '변신' : sd.name);
