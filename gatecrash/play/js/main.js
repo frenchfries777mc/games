@@ -57,7 +57,7 @@ async function ffSync() {
 }
 if (window.FFAuth) { FFAuth.ready.then(() => { paintWho(); ffSync(); }); FFAuth.onChange(() => { paintWho(); ffSync(); }); }
 paintWho();
-function needLogin() { if (!window.FFAuth || loggedIn()) return false; homeMsg('온라인 대전은 Frenchfries777 계정으로 로그인해야 해요.'); try { FFAuth.openLogin(); } catch (e) { } return true; }
+function needLogin() { return false; }      // 로그인 없이도 온라인 대전을 할 수 있어요 (손님은 기록과 보상이 저장되지 않아요)
 function homeMsg(t) { $('homeMsg').textContent = t || ''; }
 
 /* ---------- 화면 ---------- */
@@ -476,7 +476,7 @@ function showResult() {
   BGM.duck(.35); if (me === 0) SFX.win();
   $('resT').textContent = me === 0 ? '1등!' : (me + 1) + '등'; $('resL').innerHTML = list.map(r => '<li style="color:' + r.col + '">' + esc(r.name) + '</li>').join('');
   let prize = 0;
-  if (me >= 0 && !G.paid) { G.paid = true; if (N.mode !== 'solo') { prize = GC_PRIZE[Math.min(me, GC_PRIZE.length - 1)]; SAVE.gc += prize; save(); } }
+  if (me >= 0 && !G.paid) { G.paid = true; if (N.mode !== 'solo' && loggedIn()) { prize = GC_PRIZE[Math.min(me, GC_PRIZE.length - 1)]; SAVE.gc += prize; save(); } }
   if (prize) $('resL').insertAdjacentHTML('afterend', '<div class="note" id="resGc">+' + prize + ' gC (지금 ' + SAVE.gc + ' gC)</div>');
   if (PHOTO.url) $('resL').insertAdjacentHTML('beforebegin', '<div id="resPh"><img alt="결승선 사진" src="' + PHOTO.url + '" style="max-width:100%;border-radius:6px;display:block;margin-bottom:8px"><a class="btn" download="gatecrash-finish.jpg" href="' + PHOTO.url + '" style="display:inline-block;margin-bottom:10px">사진 저장</a></div>');
   $('res').classList.add('on');
