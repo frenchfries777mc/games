@@ -29,6 +29,7 @@ const SFX = {
   rocket() { noise(.35, .2, 1500, 300); tone(160, 60, .3, 'sawtooth', .1); },
   boom() { noise(.7, .32, 1200, 60); tone(120, 30, .6, 'sawtooth', .18); },
   pick() { tone(520, 780, .08, 'square', .09); tone(780, 1040, .1, 'square', .09, .07); },
+  spring() { tone(220, 880, .22, 'square', .1); tone(440, 1320, .18, 'triangle', .08, .05); },
   boost() { noise(.5, .16, 3000, 400); tone(200, 700, .5, 'sawtooth', .1); },
   brk() { noise(.15, .15, 2500, 300); tone(300, 80, .15, 'square', .1); },
   ko() { tone(440, 90, .45, 'sawtooth', .16); noise(.3, .15, 2000, 200); },
@@ -46,6 +47,7 @@ function GCSfx(e) {
   else if (e.t === 'pick') SFX.pick();
   else if (e.t === 'break') SFX.brk();
   else if (e.t === 'boost') SFX.boost();
+  else if (e.t === 'spring') SFX.spring();
   else if (e.t === 'go') SFX.go();
   else if (e.t === 'fin') SFX.fin();
   else if (e.t === 'fire') { if (e.k === 'bazooka' || e.k === 'firework') SFX.rocket(); else if (e.k === 'pistol' || e.k === 'sling') SFX.pistol(); }
