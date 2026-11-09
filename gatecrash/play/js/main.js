@@ -35,13 +35,14 @@ function say(t) { $('modalT').textContent = t; $('modal').classList.add('on'); }
 $('modalOk').onclick = () => $('modal').classList.remove('on');
 
 /* ---------- 계정 / 프로필 ---------- */
+let GUEST = false;   // 게스트 모드: 온라인 대전은 되지만 Supabase는 쓰지 않아요
 function loggedIn() { try { return !!(window.FFAuth && FFAuth.user()); } catch (e) { return false; } }
 function myAid() { try { const u = window.FFAuth && FFAuth.user(); return u && u.id ? String(u.id) : ''; } catch (e) { return ''; } }
 function openProf(aid) { try { if (aid && window.FFAuth && FFAuth.openProfile) FFAuth.openProfile(aid, { game: 'gatecrash' }); } catch (e) { } }
 function myName() { try { const n = window.FFAuth && FFAuth.user() && FFAuth.nickname(); if (n) return String(n).slice(0, 15); } catch (e) { } return '손님'; }
 function paintWho() {
   const w = $('who'); w.innerHTML = '';
-  const s = document.createElement('span'); s.textContent = loggedIn() ? myName() : '로그인 안 함'; w.appendChild(s);
+  const s = document.createElement('span'); s.textContent = loggedIn() ? myName() : (GUEST ? '게스트 모드' : '로그인 안 함'); w.appendChild(s);
   if (!loggedIn() && window.FFAuth) { const b = document.createElement('button'); b.textContent = '로그인'; b.onclick = () => { try { FFAuth.openLogin(); } catch (e) { } }; w.appendChild(b); }
 }
 let ffMarked = '';
@@ -57,7 +58,18 @@ async function ffSync() {
 }
 if (window.FFAuth) { FFAuth.ready.then(() => { paintWho(); ffSync(); }); FFAuth.onChange(() => { paintWho(); ffSync(); }); }
 paintWho();
-function needLogin() { return false; }      // 로그인 없이도 온라인 대전을 할 수 있어요 (손님은 기록과 보상이 저장되지 않아요)
+function needLogin(act) {                  // 로그인도 게스트도 아니면 로그인 창을 띄우고, 창 아래 '게스트 모드로 하기' 버튼을 둬요
+  if (loggedIn() || GUEST) return false;
+  let w = document.getElementById('gstWin'); if (w) w.remove();
+  w = document.createElement('div'); w.id = 'gstWin';
+  w.style.cssText = 'position:fixed;inset:0;z-index:99;background:rgba(5,6,10,.72);display:flex;align-items:center;justify-content:center;padding:16px';
+  w.innerHTML = '<div style="width:100%;max-width:340px;background:#14203d;border:2px solid #ffd9a0;border-radius:12px;padding:20px;text-align:center"><h2 style="margin:0 0 6px">로그인</h2><div class="note" style="margin-bottom:14px">로그인하면 기록과 보상이 저장돼요</div><button class="btn go" id="gstLogin" style="width:100%;text-align:center">로그인</button><button class="btn" id="gstGuest" style="width:100%;text-align:center;margin-top:10px">게스트 모드로 하기</button><div class="note" style="margin-top:8px;font-size:12px">게스트는 온라인 대전은 되지만 기록·보상은 저장되지 않아요</div><button class="btn" id="gstX" style="margin-top:10px;padding:5px 14px;font-size:13px">닫기</button></div>';
+  document.body.appendChild(w);
+  w.querySelector('#gstLogin').onclick = () => { w.remove(); try { FFAuth.openLogin(); } catch (e) { } };
+  w.querySelector('#gstGuest').onclick = () => { GUEST = true; w.remove(); paintWho(); if (act) act(); };
+  w.querySelector('#gstX').onclick = () => w.remove();
+  return true;
+}
 function homeMsg(t) { $('homeMsg').textContent = t || ''; }
 
 /* ---------- 화면 ---------- */
@@ -76,10 +88,10 @@ function menu(go) {
   if (go === 'more') { const on = $('moreBox').classList.toggle('on'); $('moreBtn').textContent = on ? '더보기 ▴' : '더보기 ▾'; return; }
   homeMsg('');
   if (go === 'solo') { leaveNet(); N.mode = 'solo'; N.players = [{ id: UID, name: myName(), col: COLORS[SAVE.col % COLORS.length], skin: skinOf() }]; pickMap(id => { N.pick = id; beginGame(); }); }
-  else if (go === 'match') { if (needLogin()) return; startMatch(); }
+  else if (go === 'match') { if (needLogin(startMatch)) return; startMatch(); }
   else if (go === 'shop') { paintShop(); show('sShop'); }
-  else if (go === 'host') { if (needLogin()) return; startHost(); }
-  else if (go === 'join') { if (needLogin()) return; $('joinMsg').textContent = ''; $('joinCode').value = ''; show('sJoin'); setTimeout(() => $('joinCode').focus(), 50); }
+  else if (go === 'host') { if (needLogin(startHost)) return; startHost(); }
+  else if (go === 'join') { const j = () => { $('joinMsg').textContent = ''; $('joinCode').value = ''; show('sJoin'); setTimeout(() => $('joinCode').focus(), 50); }; if (needLogin(j)) return; j(); }
   else if (go === 'help') { $('wl').innerHTML = WEP_IDS.concat('boots').map(k => { const w = WEAPONS[k]; return '<div><b>' + w.name + '</b><small>' + ({ melee: '가까이 휘둘러요', shot: '멀리 쏴요', spray: '뿌리는 동안 뒤로 밀려요', rocket: '터지면 주변이 다 날아가요', boost: '꼴찌일 때만 나와요, 3초 동안 빨라져요', trap: '바닥에 놓으면 밟은 사람이 걸려요' })[w.kind] + ' · ' + w.uses + '번</small></div>'; }).join(''); show('sHelp'); }
   else if (go === 'notes') { loadNotes(); show('sNotes'); }
   else if (go === 'opt') {
@@ -132,7 +144,7 @@ function peerOpts() {
 }
 function leaveNet() {
   N.gen++; N.mg++; try { N.peer && N.peer.destroy(); } catch (e) { } N.peer = null; N.conns = []; N.host = null; N.mode = ''; N.pub = false; N.G = null; N.code = ''; clearTimeout(N.autoT);
-  try { if (window.FFAuth && FFAuth.setRoom) FFAuth.setRoom(null); } catch (e) { }
+  try { if (loggedIn() && FFAuth.setRoom) FFAuth.setRoom(null); } catch (e) { }
 }
 function send(c, m) { try { c.open && c.send(m); } catch (e) { } }
 function bcast(m) { N.conns.forEach(c => send(c, m)); }
@@ -178,7 +190,7 @@ N.inputs = {};
 function startHost() {
   leaveNet(); const gen = N.gen; N.mode = 'host'; N.pub = false; N.code = rcode(); N.players = [{ id: UID, aid: myAid(), name: myName(), col: COLORS[SAVE.col % COLORS.length], skin: skinOf() }];
   homeMsg('방을 만드는 중이에요'); const p = new Peer(PREFIX + N.code, peerOpts()); N.peer = p; hostHandlers(p);
-  p.on('open', () => { if (N.gen !== gen) return; homeMsg(''); try { FFAuth.setRoom && FFAuth.setRoom({ game: 'gatecrash', code: N.code, path: 'prototypes/gatecrash/index.html' }); } catch (e) { } openRoom(); });
+  p.on('open', () => { if (N.gen !== gen) return; homeMsg(''); try { loggedIn() && FFAuth.setRoom && FFAuth.setRoom({ game: 'gatecrash', code: N.code, path: 'prototypes/gatecrash/index.html' }); } catch (e) { } openRoom(); });
   p.on('error', e => { if (N.gen !== gen) return; if (e.type === 'unavailable-id') startHost(); else { leaveNet(); show('sLobby'); homeMsg('연결하지 못했어요. 잠시 뒤에 다시 해 봐요.'); } });
 }
 function startGuest(code) {
@@ -500,7 +512,7 @@ function showResult() {
 FFAuthJoin();
 function FFAuthJoin() {
   const c = (qs.get('join') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 5); if (c.length !== 5) return;
-  const go = () => { if (needLogin()) return; startGuest(c); };
+  const go = () => { if (needLogin(() => startGuest(c))) return; startGuest(c); };
   if (window.FFAuth) FFAuth.ready.then(go); else go();
 }
 if (qs.get('test')) { if (qs.get('auto') === 'solo') { setTimeout(() => { menu('solo'); setTimeout(beginGame, 200); }, 300); } }
