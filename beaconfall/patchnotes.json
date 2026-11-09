@@ -6,7 +6,63 @@
    "title": "업데이트 0.6 · b209",
    "items": [
     "게스트 이름이 '게스트' + 무작위 숫자 6개로 바뀌었어요 (예: 게스트048213). 예전 손님 이름도 새 이름으로 바뀌어요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.6 · b209",
+     "items": [
+      "Guest names are now 'Guest' plus 6 random digits (e.g. Guest048213). Old guest names change to the new names too"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.6 · b209",
+     "items": [
+      "Los nombres de invitado ahora son «Invitado» más 6 cifras al azar (por ejemplo, Invitado048213). Los nombres de invitado anteriores también cambian al nuevo"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.6 · b209",
+     "items": [
+      "Les noms d'invité sont maintenant « Invité » suivi de 6 chiffres aléatoires (ex. : Invité048213). Les anciens noms d'invité changent aussi"
+     ]
+    },
+    "de": {
+     "title": "Update 0.6 · b209",
+     "items": [
+      "Gastnamen sind jetzt „Gast“ plus 6 zufällige Ziffern (z. B. Gast048213). Alte Gastnamen werden ebenfalls umbenannt"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.6 · b209",
+     "items": [
+      "ゲスト名が「ゲスト」＋ランダムな数字6桁になりました（例: ゲスト048213）。以前のゲスト名も新しい名前に変わります"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.6 · b209",
+     "items": [
+      "访客名称改为“访客”加 6 位随机数字（例如 访客048213）。以前的访客名称也会换成新名称"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.6 · b209",
+     "items": [
+      "O nome de convidado agora é 'Convidado' mais 6 números aleatórios (ex.: Convidado048213). Os nomes de convidado antigos também mudam para o novo"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.6 · b209",
+     "items": [
+      "Имя гостя теперь «Гость» и 6 случайных цифр (например, Гость048213). Прежние имена гостей тоже заменяются на новые"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.6 · b209",
+     "items": [
+      "Misafir isimleri artık 'Misafir' ve 6 rastgele rakamdan oluşuyor (ör. Misafir048213). Eski misafir isimleri de yeni isimle değişir"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-09",
@@ -14,7 +70,63 @@
    "title": "업데이트 0.6 · b208",
    "items": [
     "로그인 창 아래 버튼이 '게스트 모드로 하기'로 바뀌었어요. 게스트 모드에서도 온라인 게임은 그대로 되고, 서버(계정·클라우드 저장·친구·랭킹·공유 변수)는 쓰지 않아요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.6 · b208",
+     "items": [
+      "The button under the login window is now 'Play as guest'. Online play still works in guest mode, but the server (accounts, cloud saves, friends, rankings, shared variables) is not used"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.6 · b208",
+     "items": [
+      "El botón debajo de la ventana de inicio de sesión ahora es «Jugar como invitado». En el modo invitado el juego en línea sigue funcionando, pero no se usa el servidor (cuentas, guardado en la nube, amigos, clasificaciones, variables compartidas)"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.6 · b208",
+     "items": [
+      "Le bouton sous la fenêtre de connexion est devenu « Jouer en invité ». En mode invité, le jeu en ligne fonctionne toujours, mais le serveur (comptes, sauvegardes cloud, amis, classements, variables partagées) n'est pas utilisé"
+     ]
+    },
+    "de": {
+     "title": "Update 0.6 · b208",
+     "items": [
+      "Der Button unter dem Anmeldefenster heißt jetzt „Als Gast spielen“. Im Gastmodus funktioniert das Online-Spiel weiterhin, aber der Server (Konten, Cloud-Speicherung, Freunde, Ranglisten, gemeinsame Variablen) wird nicht genutzt"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.6 · b208",
+     "items": [
+      "ログイン画面の下のボタンが「ゲストモードで遊ぶ」に変わりました。ゲストモードでもオンラインプレイはできますが、サーバー（アカウント、クラウド保存、フレンド、ランキング、共有変数）は使いません"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.6 · b208",
+     "items": [
+      "登录窗口下方的按钮改为“以访客模式游玩”。访客模式下仍可联机，但不使用服务器（账号、云存档、好友、排行榜、共享变量）"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.6 · b208",
+     "items": [
+      "O botão abaixo da janela de login agora é 'Jogar como convidado'. No modo convidado o jogo online continua funcionando, mas o servidor não é usado (contas, salvamento na nuvem, amigos, rankings, variáveis compartilhadas)"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.6 · b208",
+     "items": [
+      "Кнопка под окном входа теперь называется «Играть в гостевом режиме». В гостевом режиме онлайн-игра работает, но сервер не используется (аккаунты, облачные сохранения, друзья, рейтинги, общие переменные)"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.6 · b208",
+     "items": [
+      "Giriş penceresinin altındaki düğme artık 'Misafir modunda oyna'. Misafir modunda çevrimiçi oyun yine çalışır, ama sunucu kullanılmaz (hesaplar, bulut kaydı, arkadaşlar, sıralamalar, ortak değişkenler)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-09",
@@ -23,7 +135,72 @@
    "items": [
     "Deep Void 구조물의 정예 몹을 충분히 처치하면 구조물이 무너져요: 벽과 기둥 일부가 허물어지고 중앙에 보물 상자가 나타나요. 한 번 무너지면 정예는 더 나오지 않아요",
     "업적 창에서 달성한 업적을 눌러 칭호로 고를 수 있어요. 멀티플레이 채팅에서 이름 앞에 칭호가 붙어요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.6 · b207",
+     "items": [
+      "When you defeat enough elite mobs in a Deep Void structure, the structure collapses: part of the walls and pillars crumble and a treasure chest appears in the center. Once it has collapsed, no more elites appear",
+      "In the achievements window, tap an achievement you have earned to pick it as your title. In multiplayer chat, your title appears in front of your name"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.6 · b207",
+     "items": [
+      "Si derrotas a suficientes monstruos élite de una estructura de Deep Void, la estructura se derrumba: parte de los muros y pilares se caen y aparece un cofre del tesoro en el centro. Una vez derrumbada, ya no aparecen más élites",
+      "En la ventana de logros, pulsa un logro conseguido para elegirlo como título. En el chat multijugador, el título aparece delante de tu nombre"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.6 · b207",
+     "items": [
+      "Si vous vainquez assez de monstres d'élite dans une structure du Deep Void, la structure s'effondre : une partie des murs et des piliers tombe et un coffre au trésor apparaît au centre. Une fois effondrée, il n'y a plus d'élites",
+      "Dans la fenêtre des succès, appuyez sur un succès obtenu pour le choisir comme titre. Dans le chat multijoueur, le titre apparaît devant votre nom"
+     ]
+    },
+    "de": {
+     "title": "Update 0.6 · b207",
+     "items": [
+      "Besiegst du genug Elitemonster in einem Deep-Void-Bauwerk, stürzt es ein: Teile der Mauern und Säulen brechen weg und in der Mitte erscheint eine Schatztruhe. Danach tauchen keine Eliten mehr auf",
+      "Im Erfolgsfenster kannst du einen erreichten Erfolg antippen, um ihn als Titel zu wählen. Im Mehrspieler-Chat steht der Titel vor deinem Namen"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.6 · b207",
+     "items": [
+      "Deep Voidの構造物でエリート敵を十分に倒すと、構造物が崩れます。壁と柱の一部が崩れ、中央に宝箱が現れます。一度崩れると、エリートはもう出ません",
+      "実績の画面で達成した実績を押すと、称号に選べます。マルチプレイのチャットでは、名前の前に称号が付きます"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.6 · b207",
+     "items": [
+      "在 Deep Void 建筑中击败足够多的精英怪后，建筑会倒塌：部分墙壁和柱子坍塌，中央出现宝箱。倒塌后不再出现精英怪",
+      "在成就窗口中点击已达成的成就，即可将其设为称号。多人聊天中，称号会显示在名字前面"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.6 · b207",
+     "items": [
+      "Se você derrotar elites suficientes numa estrutura do Deep Void, ela desaba: parte das paredes e dos pilares cai e um baú do tesouro aparece no centro. Depois de desabar, não aparecem mais elites",
+      "Na janela de conquistas, toque numa conquista já obtida para escolhê-la como título. No chat multijogador, o título aparece antes do seu nome"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.6 · b207",
+     "items": [
+      "Если победить достаточно элитных мобов в постройке Deep Void, она рушится: часть стен и колонн обваливается, а в центре появляется сундук с сокровищами. После этого элитные мобы больше не появляются",
+      "В окне достижений нажмите на полученное достижение, чтобы выбрать его как титул. В чате мультиплеера титул показывается перед именем"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.6 · b207",
+     "items": [
+      "Bir Deep Void yapısındaki elit canavarları yeterince yenersen yapı çöker: duvarların ve sütunların bir kısmı yıkılır ve ortada bir hazine sandığı belirir. Çöktükten sonra başka elit çıkmaz",
+      "Başarılar penceresinde kazandığın bir başarıya dokunarak onu unvan olarak seçebilirsin. Çok oyunculu sohbette unvan adından önce görünür"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-08",
@@ -33,7 +210,81 @@
     "Deep Void의 공허성이 훨씬 커졌어요: 겹겹의 성벽, 모서리 탑 네 개, 정문에서 이어지는 조각상 대로, 기둥이 늘어선 알현실과 옥좌",
     "공허 던전 두 곳도 크게 넓어졌어요 (큰 쪽은 61×61칸). 복판에 큰 방과 보스 조각상, 상자가 늘었어요",
     "구조물 안에서만 정예 몹이 나와요: 공허 기사, 공허 추적자, 공허 수확자. 들판에서는 정예가 나오지 않아요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.6 · b206",
+     "items": [
+      "The Void Castle in Deep Void is much bigger: layered walls, four corner towers, a statue avenue from the main gate, and a throne hall lined with pillars and a throne",
+      "The two void dungeons are much bigger too (the larger one is 61×61 tiles). The middle has a large room, a boss statue and more chests",
+      "Elite mobs appear only inside structures: Void Knight, Void Stalker and Void Reaper. No elites appear in the open fields"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.6 · b206",
+     "items": [
+      "La fortaleza del Vacío en Deep Void es mucho más grande: murallas en capas, cuatro torres en las esquinas, una avenida de estatuas desde la puerta principal y una sala del trono con columnas y un trono",
+      "Las dos mazmorras del Vacío también son mucho más grandes (la mayor mide 61×61 casillas). En el centro hay una sala grande, una estatua de jefe y más cofres",
+      "Los monstruos élite aparecen solo dentro de las estructuras: Caballero del Vacío, Acechador del Vacío y Segador del Vacío. En los campos abiertos no aparecen élites"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.6 · b206",
+     "items": [
+      "La forteresse du Vide dans le Deep Void est bien plus grande : remparts superposés, quatre tours d'angle, allée de statues partant de la porte principale, et salle du trône bordée de piliers avec son trône",
+      "Les deux donjons du Vide sont aussi bien plus grands (le plus grand fait 61×61 cases). Au centre, une grande salle, une statue de boss et davantage de coffres",
+      "Les monstres d'élite n'apparaissent qu'à l'intérieur des structures : chevalier du Vide, traqueur du Vide et faucheur du Vide. Il n'y a pas d'élites dans les plaines"
+     ]
+    },
+    "de": {
+     "title": "Update 0.6 · b206",
+     "items": [
+      "Die Leerenfestung im Deep Void ist viel größer: mehrere Mauerringe, vier Ecktürme, eine Statuenallee vom Haupttor aus und ein Thronsaal mit Säulen und Thron",
+      "Auch die beiden Leere-Verliese sind viel größer (das große misst 61×61 Felder). In der Mitte gibt es einen großen Raum, eine Bossstatue und mehr Truhen",
+      "Elitemonster erscheinen nur in Bauwerken: Leere-Ritter, Leere-Jäger und Leere-Schnitter. Auf offenem Land gibt es keine Eliten"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.6 · b206",
+     "items": [
+      "Deep Voidのヴォイド城がずっと大きくなりました。幾重もの城壁、四隅の塔、正門からの彫像の大通り、柱が並ぶ謁見の間と玉座があります",
+      "2つの虚空ダンジョンも大きく広がりました（大きいほうは61×61マス）。中央には大部屋、ボスの彫像、宝箱が増えました",
+      "エリート敵は構造物の中だけに出ます：虚空の騎士、虚空の追跡者、虚空の刈り取り手。野原にはエリートは出ません"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.6 · b206",
+     "items": [
+      "Deep Void 中的虚空城大幅扩建：层层城墙、四座角塔、从正门延伸的雕像大道，以及排列着石柱的谒见厅和王座",
+      "两座虚空地下城也大幅扩大（较大的一座为 61×61 格）。中央新增了大房间、首领雕像和更多宝箱",
+      "精英怪只会在建筑内出现：虚空骑士、虚空追踪者、虚空收割者。野外不会出现精英怪"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.6 · b206",
+     "items": [
+      "A fortaleza do Vazio no Deep Void ficou muito maior: muralhas em camadas, quatro torres nos cantos, uma avenida de estátuas a partir do portão principal e um salão do trono com colunas e um trono",
+      "As duas masmorras do Vazio também ficaram bem maiores (a maior tem 61×61 blocos). No centro há uma sala grande, uma estátua de chefe e mais baús",
+      "Elites aparecem só dentro das estruturas: Cavaleiro do Vazio, Espreitador do Vazio e Ceifador do Vazio. Nos campos não aparecem elites"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.6 · b206",
+     "items": [
+      "Крепость Пустоты в Deep Void стала намного больше: несколько рядов стен, четыре угловые башни, аллея статуй от главных ворот и тронный зал с колоннами и троном",
+      "Два подземелья Пустоты тоже стали намного больше (большое — 61×61 клеток). В центре появились большой зал, статуя босса и больше сундуков",
+      "Элитные мобы появляются только внутри построек: Рыцарь Пустоты, Преследователь Пустоты и Жнец Пустоты. На открытых полях элит нет"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.6 · b206",
+     "items": [
+      "Deep Void'deki Boşluk kalesi çok daha büyük: katmanlı surlar, dört köşe kule, ana kapıdan uzanan heykel caddesi ve sütunlu bir taht salonu ile tahtı var",
+      "İki Boşluk zindanı da çok daha geniş oldu (büyük olan 61×61 kare). Ortada büyük bir oda, bir boss heykeli ve daha fazla sandık var",
+      "Elit canavarlar yalnızca yapıların içinde çıkar: Boşluk Şövalyesi, Boşluk Takipçisi ve Boşluk Biçicisi. Açık alanlarda elit çıkmaz"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-08",
@@ -42,7 +293,72 @@
    "items": [
     "Deep Void에는 이제 동물과 덤불이 없어요",
     "Deep Void에 공허 몹이 늘었어요: 공허 늑대, 공허 거미, 공허 골렘 (강화 슬라임과 함께 나와요)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.6 · b205",
+     "items": [
+      "Deep Void no longer has animals or bushes",
+      "More void mobs in Deep Void: Void Wolf, Void Spider and Void Golem (they appear alongside reinforced slimes)"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.6 · b205",
+     "items": [
+      "Deep Void ya no tiene animales ni arbustos",
+      "Más monstruos del Vacío en Deep Void: Lobo del Vacío, Araña del Vacío y Gólem del Vacío (aparecen junto a los limos reforzados)"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.6 · b205",
+     "items": [
+      "Le Deep Void n'a plus d'animaux ni de buissons",
+      "Plus de monstres du Vide dans le Deep Void : loup du Vide, araignée du Vide et golem du Vide (ils apparaissent avec les gelées renforcées)"
+     ]
+    },
+    "de": {
+     "title": "Update 0.6 · b205",
+     "items": [
+      "Im Deep Void gibt es jetzt keine Tiere und Büsche mehr",
+      "Mehr Leere-Monster im Deep Void: Leere-Wolf, Leere-Spinne und Leere-Golem (sie erscheinen zusammen mit den verstärkten Schleimen)"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.6 · b205",
+     "items": [
+      "Deep Voidには動物と茂みがなくなりました",
+      "Deep Voidの虚空系の敵が増えました：虚空オオカミ、虚空クモ、虚空ゴーレム（強化スライムと一緒に出ます）"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.6 · b205",
+     "items": [
+      "Deep Void 中已没有动物和灌木丛",
+      "Deep Void 中的虚空怪物增加了：虚空狼、虚空蜘蛛、虚空魔像（与强化史莱姆一同出现）"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.6 · b205",
+     "items": [
+      "O Deep Void não tem mais animais nem arbustos",
+      "Mais monstros do Vazio no Deep Void: Lobo do Vazio, Aranha do Vazio e Golem do Vazio (aparecem junto com os slimes reforçados)"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.6 · b205",
+     "items": [
+      "В Deep Void больше нет животных и кустов",
+      "В Deep Void появилось больше мобов Пустоты: волк Пустоты, паук Пустоты и голем Пустоты (появляются вместе с усиленными слаймами)"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.6 · b205",
+     "items": [
+      "Deep Void'de artık hayvan ve çalılık yok",
+      "Deep Void'de daha fazla Boşluk canavarı var: Boşluk Kurdu, Boşluk Örümceği ve Boşluk Golemi (güçlendirilmiş slaytlarla birlikte çıkarlar)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-07",
@@ -51,7 +367,72 @@
    "items": [
     "나무 사이를 지날 때 이동 속도 감소가 50%로 늘었어요",
     "동물 도감과 업적 「섬 동물 도감」이 없어졌어요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.6 · b204",
+     "items": [
+      "The movement slowdown when passing between trees is now 50%",
+      "The animal encyclopedia and the 'Island Animal Encyclopedia' achievement have been removed"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.6 · b204",
+     "items": [
+      "La reducción de velocidad al pasar entre árboles ahora es del 50%",
+      "Se han quitado la enciclopedia de animales y el logro «Enciclopedia de animales de la isla»"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.6 · b204",
+     "items": [
+      "Le ralentissement en traversant les arbres passe à 50 %",
+      "L'encyclopédie des animaux et le succès « Encyclopédie des animaux de l'île » ont été supprimés"
+     ]
+    },
+    "de": {
+     "title": "Update 0.6 · b204",
+     "items": [
+      "Das Bremsen beim Durchgehen zwischen Bäumen beträgt jetzt 50 %",
+      "Das Tierlexikon und der Erfolg „Insel-Tierlexikon“ wurden entfernt"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.6 · b204",
+     "items": [
+      "木の間を通るときの移動速度低下が50%に増えました",
+      "動物図鑑と実績「島の動物図鑑」がなくなりました"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.6 · b204",
+     "items": [
+      "穿过树木之间时的移动减速增加到 50%",
+      "动物图鉴和成就「岛屿动物图鉴」已移除"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.6 · b204",
+     "items": [
+      "A redução de velocidade ao passar entre árvores agora é de 50%",
+      "A enciclopédia de animais e a conquista 'Enciclopédia de animais da ilha' foram removidas"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.6 · b204",
+     "items": [
+      "Замедление при проходе между деревьями теперь 50%",
+      "Энциклопедия животных и достижение «Энциклопедия животных острова» удалены"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.6 · b204",
+     "items": [
+      "Ağaçların arasından geçerken hız düşüşü artık %50",
+      "Hayvan ansiklopedisi ve 'Ada Hayvan Ansiklopedisi' başarısı kaldırıldı"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-07",
@@ -59,7 +440,63 @@
    "title": "업데이트 0.6 · b203",
    "items": [
     "나무는 이제 막히지 않고 지나갈 수 있어요. 대신 나무 사이를 지나는 동안 이동 속도가 20% 느려져요 (돌과 광물은 그대로 막혀요)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.6 · b203",
+     "items": [
+      "Trees no longer block movement and can be walked through. While passing between trees your movement speed drops by 20% (rocks and ores still block)"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.6 · b203",
+     "items": [
+      "Los árboles ya no bloquean el paso y se pueden atravesar. Al pasar entre árboles tu velocidad baja un 20% (las rocas y los minerales siguen bloqueando)"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.6 · b203",
+     "items": [
+      "Les arbres ne bloquent plus le passage et l'on peut les traverser. En passant entre les arbres, votre vitesse baisse de 20 % (les pierres et les minerais bloquent toujours)"
+     ]
+    },
+    "de": {
+     "title": "Update 0.6 · b203",
+     "items": [
+      "Bäume blockieren nicht mehr und können durchquert werden. Beim Durchgehen zwischen Bäumen wirst du um 20 % langsamer (Steine und Erze blockieren weiterhin)"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.6 · b203",
+     "items": [
+      "木はもう通れなくなりません。その代わり、木の間を通る間は移動速度が20%下がります（石と鉱石は引き続き通れません）"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.6 · b203",
+     "items": [
+      "树木不再阻挡通行，可以穿过。穿过树木期间移动速度降低 20%（石头和矿物仍然阻挡）"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.6 · b203",
+     "items": [
+      "As árvores não bloqueiam mais e dá para passar por elas. Enquanto você passa entre árvores, sua velocidade cai 20% (pedras e minérios continuam bloqueando)"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.6 · b203",
+     "items": [
+      "Деревья больше не блокируют проход, через них можно пройти. Пока вы идёте между деревьями, скорость снижается на 20% (камни и руды по-прежнему преграждают путь)"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.6 · b203",
+     "items": [
+      "Ağaçlar artık geçişi engellemiyor, aralarından geçilebiliyor. Ağaçların arasından geçerken hızın %20 düşer (taşlar ve madenler hâlâ engeller)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-07",
@@ -67,7 +504,63 @@
    "title": "업데이트 0.6 · b202",
    "items": [
     "Fry Code 「바로 적용」용 테스트 모드가 생겼어요 (주소 뒤에 ?bstest=1): 로그인·로비 없이 바로 새 월드로 들어가고, 저장하지 않아요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.6 · b202",
+     "items": [
+      "A test mode for Fry Code 'Apply now' was added (add ?bstest=1 to the address): it goes straight into a new world without login or lobby, and does not save"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.6 · b202",
+     "items": [
+      "Se ha añadido un modo de prueba para «Aplicar ahora» de Fry Code (añade ?bstest=1 a la dirección): entra directamente en un mundo nuevo sin iniciar sesión ni pasar por el lobby, y no guarda nada"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.6 · b202",
+     "items": [
+      "Un mode test pour « Appliquer maintenant » de Fry Code a été ajouté (ajoutez ?bstest=1 à l'adresse) : il ouvre directement un nouveau monde sans connexion ni salon, et ne sauvegarde rien"
+     ]
+    },
+    "de": {
+     "title": "Update 0.6 · b202",
+     "items": [
+      "Für „Jetzt anwenden“ im Fry Code gibt es einen Testmodus (an die Adresse ?bstest=1 anhängen): Er öffnet direkt eine neue Welt ohne Anmeldung und Lobby und speichert nichts"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.6 · b202",
+     "items": [
+      "Fry Codeの「すぐ適用」用テストモードが追加されました（アドレスの後ろに ?bstest=1）。ログインやロビーを通さず新しいワールドに直接入り、保存はしません"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.6 · b202",
+     "items": [
+      "为 Fry Code「立即应用」新增了测试模式（在网址后加 ?bstest=1）：无需登录和大厅，直接进入新世界，且不保存"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.6 · b202",
+     "items": [
+      "Foi criado um modo de teste para o 'Aplicar agora' do Fry Code (acrescente ?bstest=1 ao endereço): entra direto num mundo novo, sem login nem lobby, e não salva nada"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.6 · b202",
+     "items": [
+      "Для «Применить сразу» в Fry Code добавлен тестовый режим (добавьте ?bstest=1 к адресу): он сразу открывает новый мир без входа и лобби и ничего не сохраняет"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.6 · b202",
+     "items": [
+      "Fry Code 'Hemen uygula' için bir test modu eklendi (adresin sonuna ?bstest=1 ekle): giriş ve lobi olmadan doğrudan yeni bir dünyaya girer ve hiçbir şey kaydetmez"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-07",
@@ -76,7 +569,72 @@
    "items": [
     "레시피를 누르면 제작칸을 가방으로 비우고 그 레시피대로 재료가 하나씩 놓여요 (가방이 가득하거나 재료가 모자라면 아무것도 바뀌지 않아요)",
     "이미 그 레시피대로 놓여 있으면 누를 때마다 한 번 분량씩 더 얹어요 (10번 누르면 10개분)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.6 · b201",
+     "items": [
+      "Tapping a recipe empties the crafting slots into your bag and places the recipe's ingredients one by one (if the bag is full or ingredients are missing, nothing changes)",
+      "If the recipe is already laid out, each tap adds one more batch (10 taps = 10 batches)"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.6 · b201",
+     "items": [
+      "Al pulsar una receta, las casillas de fabricación se vacían en la mochila y los ingredientes de esa receta se colocan uno a uno (si la mochila está llena o faltan ingredientes, no cambia nada)",
+      "Si la receta ya está colocada, cada pulsación añade una tanda más (10 pulsaciones = 10 tandas)"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.6 · b201",
+     "items": [
+      "Appuyer sur une recette vide les cases de fabrication dans le sac et place les ingrédients de cette recette un par un (si le sac est plein ou s'il manque des ingrédients, rien ne change)",
+      "Si la recette est déjà disposée, chaque appui ajoute un lot de plus (10 appuis = 10 lots)"
+     ]
+    },
+    "de": {
+     "title": "Update 0.6 · b201",
+     "items": [
+      "Tippst du ein Rezept an, werden die Herstellungsplätze in den Beutel geleert und die Zutaten des Rezepts nacheinander eingelegt (ist der Beutel voll oder fehlen Zutaten, ändert sich nichts)",
+      "Liegt das Rezept schon bereit, fügt jeder Tipp eine weitere Portion hinzu (10 Tipps = 10 Portionen)"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.6 · b201",
+     "items": [
+      "レシピを押すと、製作欄の中身をカバンに戻し、そのレシピの材料が一つずつ置かれます（カバンがいっぱい、または材料が足りないときは何も変わりません）",
+      "すでにそのレシピで並んでいる場合は、押すたびに分量を一回分ずつ追加します（10回押すと10回分）"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.6 · b201",
+     "items": [
+      "点击配方会先把制作栏清空放回背包，然后按该配方逐个放入材料（背包满了或材料不足时什么都不会改变）",
+      "如果已经按该配方摆好，每点一次就再加一份（点 10 次 = 10 份）"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.6 · b201",
+     "items": [
+      "Ao tocar numa receita, os espaços de criação vão para a mochila e os ingredientes dessa receita são colocados um a um (se a mochila estiver cheia ou faltarem ingredientes, nada muda)",
+      "Se a receita já estiver montada, cada toque acrescenta mais uma quantidade (10 toques = 10 quantidades)"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.6 · b201",
+     "items": [
+      "Нажатие на рецепт очищает ячейки крафта в сумку и раскладывает ингредиенты рецепта по одному (если сумка полна или ингредиентов не хватает, ничего не меняется)",
+      "Если рецепт уже разложен, каждое нажатие добавляет ещё одну порцию (10 нажатий = 10 порций)"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.6 · b201",
+     "items": [
+      "Bir tarife dokunmak üretim kutularını çantaya boşaltır ve o tarifin malzemelerini tek tek yerleştirir (çanta doluysa ya da malzeme eksikse hiçbir şey değişmez)",
+      "Tarif zaten yerleştirilmişse her dokunuş bir parti daha ekler (10 dokunuş = 10 parti)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-07",
@@ -86,7 +644,81 @@
     "Space·우클릭 한꺼번에 만들기: 제작칸에 올려 둔 재료도 함께 쓰고, 결과물이 먼저 가방(늘어난 칸 포함)에 들어가요",
     "남는 재료는 자리가 있는 만큼 제작칸 앞 순서부터 가방으로 돌아가고, 나머지는 제작칸에 그대로 남아요",
     "결과물이 들어갈 자리가 없으면 만들어지지 않아요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.6 · b200",
+     "items": [
+      "Space and right-click batch crafting: ingredients placed in the crafting slots are used too, and the result goes into the bag (including extra slots) first",
+      "Leftover ingredients go back into the bag, in crafting-slot order, as far as there is room; the rest stays in the crafting slots",
+      "If there is no room for the result, nothing is crafted"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.6 · b200",
+     "items": [
+      "Fabricación en lote con Espacio y clic derecho: también se usan los ingredientes puestos en las casillas de fabricación, y el resultado entra primero en la mochila (incluidas las casillas adicionales)",
+      "Los ingredientes sobrantes vuelven a la mochila por orden de casilla mientras haya sitio; el resto se queda en las casillas de fabricación",
+      "Si no hay sitio para el resultado, no se fabrica nada"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.6 · b200",
+     "items": [
+      "Fabrication par lots avec Espace et clic droit : les ingrédients posés dans les cases de fabrication sont aussi utilisés, et le résultat va d'abord dans le sac (cases supplémentaires comprises)",
+      "Les ingrédients restants retournent dans le sac, dans l'ordre des cases de fabrication, tant qu'il y a de la place ; le reste reste dans les cases de fabrication",
+      "S'il n'y a pas de place pour le résultat, rien n'est fabriqué"
+     ]
+    },
+    "de": {
+     "title": "Update 0.6 · b200",
+     "items": [
+      "Stapelherstellung mit Leertaste und Rechtsklick: Zutaten in den Herstellungsplätzen werden ebenfalls verwendet, und das Ergebnis kommt zuerst in den Beutel (einschließlich der zusätzlichen Plätze)",
+      "Übrige Zutaten gehen in der Reihenfolge der Herstellungsplätze zurück in den Beutel, solange Platz ist; der Rest bleibt in den Herstellungsplätzen",
+      "Ist im Beutel kein Platz für das Ergebnis, wird nichts hergestellt"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.6 · b200",
+     "items": [
+      "スペースキーと右クリックでまとめて作成：製作欄に置いた材料も使われ、結果物は先にカバン（増えた枠を含む）に入ります",
+      "余った材料は空きがある分だけ製作欄の前の順からカバンに戻り、残りは製作欄に残ります",
+      "結果物を入れる空きがなければ作られません"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.6 · b200",
+     "items": [
+      "空格键和右键一次性制作：制作栏里放好的材料也会被使用，成品先放入背包（包括增加的格子）",
+      "剩余材料在背包有空位时按制作栏顺序放回背包，其余的留在制作栏",
+      "背包没有空位放成品时不会制作"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.6 · b200",
+     "items": [
+      "Criação em lote com Espaço e clique direito: os ingredientes deixados nos espaços de criação também são usados, e o resultado vai primeiro para a mochila (incluindo os espaços extras)",
+      "Os ingredientes que sobrarem voltam para a mochila, na ordem dos espaços de criação, enquanto houver lugar; o resto fica nos espaços de criação",
+      "Se não houver espaço para o resultado, nada é criado"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.6 · b200",
+     "items": [
+      "Пакетный крафт пробелом и правой кнопкой мыши: ингредиенты, лежащие в ячейках крафта, тоже используются, а результат сначала попадает в сумку (включая дополнительные ячейки)",
+      "Оставшиеся ингредиенты возвращаются в сумку в порядке ячеек крафта, пока есть место; остальные остаются в ячейках крафта",
+      "Если для результата нет места, ничего не создаётся"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.6 · b200",
+     "items": [
+      "Boşluk ve sağ tık ile toplu üretim: üretim kutularına konan malzemeler de kullanılır ve sonuç önce çantaya girer (eklenen kutular dahil)",
+      "Artan malzemeler yer olduğu sürece üretim kutusu sırasıyla çantaya döner, kalanı üretim kutularında kalır",
+      "Sonuç için yer yoksa hiçbir şey üretilmez"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-07",
@@ -95,7 +727,72 @@
    "items": [
     "작업대 레시피 목록 맨 위에 지금 만들 수 있는 것이 모여요",
     "자동제작장치에서 아이콘이 보이고, 재료 이름으로도 찾을 수 있고, 지금 가방 재료로 만들 수 있는 것이 위에 나와요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.6 · b199",
+     "items": [
+      "The top of the workbench recipe list now collects what you can craft right now",
+      "In the auto crafter the icon is visible and you can search by ingredient name; what you can craft from the bag's ingredients appears at the top"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.6 · b199",
+     "items": [
+      "Arriba de la lista de recetas de la mesa de trabajo aparece lo que puedes fabricar ahora mismo",
+      "En el fabricante automático se ve el icono y se puede buscar por nombre de ingrediente; lo que puedes fabricar con los ingredientes de la mochila aparece arriba"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.6 · b199",
+     "items": [
+      "En haut de la liste des recettes de l'établi se trouve ce que vous pouvez fabriquer maintenant",
+      "Dans l'auto-fabricant, l'icône est visible et l'on peut chercher par nom d'ingrédient ; ce qui peut être fabriqué avec les ingrédients du sac apparaît en haut"
+     ]
+    },
+    "de": {
+     "title": "Update 0.6 · b199",
+     "items": [
+      "Oben in der Rezeptliste der Werkbank steht, was du gerade herstellen kannst",
+      "Im automatischen Hersteller ist das Symbol sichtbar und man kann nach Zutatennamen suchen; was mit den Zutaten im Beutel herstellbar ist, steht oben"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.6 · b199",
+     "items": [
+      "作業台のレシピ一覧の一番上に、今作れるものが集まります",
+      "自動製作装置ではアイコンが見え、材料の名前で探せます。カバンの材料で作れるものが上に出ます"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.6 · b199",
+     "items": [
+      "工作台配方列表顶部会集中显示当前可以制作的物品",
+      "自动制作器中可以看到图标，也能按材料名称搜索，背包材料能做的物品会显示在最上面"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.6 · b199",
+     "items": [
+      "No topo da lista de receitas da bancada aparece o que você pode criar agora",
+      "No criador automático o ícone aparece e dá para procurar pelo nome do ingrediente; o que pode ser criado com os ingredientes da mochila aparece no topo"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.6 · b199",
+     "items": [
+      "Вверху списка рецептов верстака собираются предметы, которые можно создать прямо сейчас",
+      "В автоматическом крафтере виден значок и можно искать по названию ингредиента; предметы, которые можно сделать из ингредиентов в сумке, показываются вверху"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.6 · b199",
+     "items": [
+      "Tezgâh tarif listesinin en üstünde şu an üretebileceklerin toplanır",
+      "Otomatik üreticide simge görünür ve malzeme adına göre aranabilir; çantadaki malzemelerle yapılabilecekler en üstte çıkar"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-07",
@@ -103,7 +800,63 @@
    "title": "업데이트 0.6 · b198",
    "items": [
     "새로 만드는 월드는 25565×25565 크기예요 (Deep Void도 같아요). 이미 있는 월드는 크기가 그대로예요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.6 · b198",
+     "items": [
+      "New worlds are 25565×25565 in size (Deep Void too). Existing worlds keep their size"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.6 · b198",
+     "items": [
+      "Los mundos nuevos miden 25565×25565 (también Deep Void). Los mundos que ya existen mantienen su tamaño"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.6 · b198",
+     "items": [
+      "Les nouveaux mondes font 25565×25565 (le Deep Void aussi). Les mondes existants gardent leur taille"
+     ]
+    },
+    "de": {
+     "title": "Update 0.6 · b198",
+     "items": [
+      "Neue Welten sind 25565×25565 groß (auch der Deep Void). Bestehende Welten behalten ihre Größe"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.6 · b198",
+     "items": [
+      "新しく作るワールドは25565×25565の大きさです（Deep Voidも同じ）。既存のワールドは大きさがそのままです"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.6 · b198",
+     "items": [
+      "新建的世界为 25565×25565（Deep Void 也一样）。已有的世界大小不变"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.6 · b198",
+     "items": [
+      "Os mundos novos têm 25565×25565 (o Deep Void também). Os mundos já existentes mantêm o tamanho"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.6 · b198",
+     "items": [
+      "Новые миры имеют размер 25565×25565 (Deep Void тоже). Уже существующие миры сохраняют свой размер"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.6 · b198",
+     "items": [
+      "Yeni oluşturulan dünyalar 25565×25565 boyutundadır (Deep Void da öyle). Mevcut dünyalar boyutlarını korur"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-06",
@@ -1114,7 +1867,72 @@
    "items": [
     "모드 줄 오른쪽 아래에 ⋯ 메뉴가 생겼어요: 다른 사람의 모드는 '모드 신고하기', 내 모드는 '버전 추가하기'(새 폴더로 덮어쓰기), '모드 내리기', '모드 수정하기'(이름·설명)",
     "Potato API 설명을 '여러 모드를 구동하고 만들기 위한 API모드'로 바꾸고 %player_z% 값을 추가했어요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.5 · b187",
+     "items": [
+      "A ⋯ menu appeared at the bottom right of each mod row: for other people's mods, 'Report mod'; for your own mods, 'Add version' (overwrites with a new folder), 'Remove mod' and 'Edit mod' (name and description)",
+      "Changed the Potato API description to 'an API mod for running and making several mods', and added the %player_z% value"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.5 · b187",
+     "items": [
+      "Ha aparecido un menú ⋯ en la parte inferior derecha de cada fila de mod: en los mods de otros, «Denunciar mod»; en los tuyos, «Añadir versión» (sobrescribe con una carpeta nueva), «Quitar mod» y «Editar mod» (nombre y descripción)",
+      "Se cambió la descripción de Potato API a «mod de API para ejecutar y crear varios mods», y se añadió el valor %player_z%"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.5 · b187",
+     "items": [
+      "Un menu ⋯ est apparu en bas à droite de chaque ligne de mod : pour les mods des autres, « Signaler le mod » ; pour vos mods, « Ajouter une version » (remplace par un nouveau dossier), « Retirer le mod » et « Modifier le mod » (nom et description)",
+      "La description de Potato API est devenue « mod d'API pour faire tourner et créer plusieurs mods », et la valeur %player_z% a été ajoutée"
+     ]
+    },
+    "de": {
+     "title": "Update 0.5 · b187",
+     "items": [
+      "Unten rechts in jeder Mod-Zeile gibt es jetzt ein ⋯-Menü: bei fremden Mods „Mod melden“; bei deinen Mods „Version hinzufügen“ (überschreibt mit einem neuen Ordner), „Mod entfernen“ und „Mod bearbeiten“ (Name und Beschreibung)",
+      "Die Beschreibung der Potato API lautet jetzt „API-Mod zum Ausführen und Erstellen mehrerer Mods“, und der Wert %player_z% wurde hinzugefügt"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.5 · b187",
+     "items": [
+      "modの行の右下に⋯メニューができました。他の人のmodには「modを通報」、自分のmodには「バージョンを追加」（新しいフォルダーで上書き）、「modを削除」、「modを編集」（名前・説明）があります",
+      "Potato APIの説明を「複数のmodを動かし作るためのAPI mod」に変え、%player_z% の値を追加しました"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.5 · b187",
+     "items": [
+      "每个模组行的右下角出现了 ⋯ 菜单：别人的模组可“举报模组”；自己的模组可“添加版本”（用新文件夹覆盖）、“下架模组”和“编辑模组”（名称和描述）",
+      "Potato API 的描述改为“用于运行和制作多个模组的 API 模组”，并新增了 %player_z% 值"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.5 · b187",
+     "items": [
+      "Apareceu um menu ⋯ no canto inferior direito de cada linha de mod: nos mods de outras pessoas, 'Denunciar mod'; nos seus, 'Adicionar versão' (sobrescreve com uma nova pasta), 'Remover mod' e 'Editar mod' (nome e descrição)",
+      "A descrição do Potato API foi trocada por 'mod de API para rodar e criar vários mods', e o valor %player_z% foi adicionado"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.5 · b187",
+     "items": [
+      "В правом нижнем углу строки каждого мода появилось меню ⋯: для чужих модов — «Пожаловаться на мод»; для своих — «Добавить версию» (перезапись новой папкой), «Снять мод» и «Изменить мод» (название и описание)",
+      "Описание Potato API изменено на «API-мод для запуска и создания нескольких модов», добавлено значение %player_z%"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.5 · b187",
+     "items": [
+      "Her mod satırının sağ altında ⋯ menüsü belirdi: başkasının modunda 'Modu bildir', kendi modunda 'Sürüm ekle' (yeni klasörle üzerine yazar), 'Modu kaldır' ve 'Modu düzenle' (ad ve açıklama)",
+      "Potato API açıklaması 'birden çok modu çalıştırmak ve yapmak için bir API modu' olarak değiştirildi ve %player_z% değeri eklendi"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-05",
@@ -1124,7 +1942,81 @@
     "모드/리소스팩 페이지에서 보기(전체·모드·리소스팩·적용 중)와 정렬을 아래로 펼쳐지는 선택창으로 바꿨어요",
     "정렬에 '적용 많은 순'을 넣고 기본으로 했어요. 같은 사람이 처음 적용할 때만 적용 수가 +1이고 해제·재적용은 안 바뀌어요",
     "Potato API가 맨 위에 고정되지 않고 다른 모드처럼 정렬돼요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.5 · b186",
+     "items": [
+      "On the mods/resource packs page, the view (All·Mods·Resource packs·Applied) and the sort options are now drop-down selectors",
+      "Added 'Most applied' to the sort options and made it the default. The applied count goes up by 1 only when the same person applies it for the first time; unapplying and reapplying do not change it",
+      "Potato API is no longer pinned to the top and is sorted like other mods"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.5 · b186",
+     "items": [
+      "En la página de mods/paquetes de recursos, la vista (Todos·Mods·Paquetes de recursos·Aplicados) y el orden ahora son listas desplegables",
+      "Se añadió «Más aplicados» a las opciones de orden y se puso por defecto. El número de aplicaciones sube en 1 solo cuando la misma persona lo aplica por primera vez; quitarlo y volver a aplicarlo no lo cambia",
+      "Potato API ya no se fija arriba y se ordena como los demás mods"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.5 · b186",
+     "items": [
+      "Sur la page des mods/packs de ressources, l'affichage (Tous·Mods·Packs de ressources·Appliqués) et le tri sont maintenant des listes déroulantes",
+      "« Les plus appliqués » a été ajouté au tri et est devenu le tri par défaut. Le nombre d'applications n'augmente de 1 que lorsque la même personne l'applique pour la première fois ; le retirer et le réappliquer ne le change pas",
+      "Potato API n'est plus épinglé en haut et est trié comme les autres mods"
+     ]
+    },
+    "de": {
+     "title": "Update 0.5 · b186",
+     "items": [
+      "Auf der Seite Mods/Ressourcenpakete sind Ansicht (Alle·Mods·Ressourcenpakete·Aktiv) und Sortierung jetzt Auswahlfelder, die sich nach unten öffnen",
+      "Die Sortierung „Am häufigsten angewendet“ ist neu und Standard. Die Anwendungszahl steigt nur um 1, wenn dieselbe Person es zum ersten Mal anwendet; Deaktivieren und erneutes Anwenden ändern sie nicht",
+      "Die Potato API ist nicht mehr oben angeheftet, sondern wird wie andere Mods sortiert"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.5 · b186",
+     "items": [
+      "modとリソースパックのページで、表示（すべて・mod・リソースパック・適用中）と並べ替えを、下に開く選択欄に変えました",
+      "並べ替えに「適用が多い順」を追加し、初期設定にしました。同じ人が初めて適用したときだけ適用数が+1され、解除して再適用しても変わりません",
+      "Potato APIは一番上に固定されず、ほかのmodと同じように並びます"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.5 · b186",
+     "items": [
+      "在模组/资源包页面中，视图（全部·模组·资源包·已应用）和排序改为向下展开的选择框",
+      "排序中新增“应用最多”并设为默认。同一个人第一次应用时应用数才 +1，取消后再次应用不会改变",
+      "Potato API 不再固定在顶部，和其他模组一样排序"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.5 · b186",
+     "items": [
+      "Na página de mods/pacotes de recursos, a exibição (Todos·Mods·Pacotes de recursos·Aplicados) e a ordenação agora são caixas de seleção que abrem para baixo",
+      "Foi adicionado 'Mais aplicados' às opções de ordenação, e ele virou o padrão. A contagem de aplicações sobe 1 só quando a mesma pessoa aplica pela primeira vez; desativar e reaplicar não muda o número",
+      "O Potato API não fica mais fixado no topo e é ordenado como os outros mods"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.5 · b186",
+     "items": [
+      "На странице модов/ресурс-паков режим показа (Все·Моды·Ресурс-паки·Применённые) и сортировка теперь выбираются в раскрывающемся списке",
+      "В сортировку добавлен пункт «Чаще всего применяемые», и он стал основным. Счётчик применений увеличивается на 1, только когда тот же игрок применяет мод впервые; отключение и повторное применение его не меняют",
+      "Potato API больше не закреплён вверху и сортируется, как другие моды"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.5 · b186",
+     "items": [
+      "Mod/kaynak paketi sayfasında görünüm (Tümü·Modlar·Kaynak paketleri·Uygulananlar) ve sıralama artık aşağı açılan seçim kutuları",
+      "Sıralamaya 'En çok uygulananlar' eklendi ve varsayılan yapıldı. Uygulama sayısı yalnızca aynı kişi ilk kez uyguladığında 1 artar; kaldırma ve yeniden uygulama sayıyı değiştirmez",
+      "Potato API artık en üste sabitlenmez, diğer modlar gibi sıralanır"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-05",
@@ -1134,7 +2026,81 @@
     "모드 명령 추가: disable/enable collision of tree·rock·ore·water·block·아이템 — 나무, 바위, 광물, 바다, 블록의 충돌을 없애거나 되살려요",
     "Potato API 추가: 이 모드를 적용하면 모드 글에 %player_name%, %player_location%, %world_player_count%, %online_player% 값을 넣을 수 있어요",
     "모드 폴더에 logo.png를 넣으면 목록에 모드 로고로 보여요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.5 · b185",
+     "items": [
+      "Mod commands added: disable/enable collision of tree·rock·ore·water·block·item — removes or restores collision for trees, rocks, ores, water and blocks",
+      "Potato API added: once this mod is applied, you can put the values %player_name%, %player_location%, %world_player_count% and %online_player% in mod posts",
+      "Put a logo.png in a mod folder and it shows in the list as the mod's logo"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.5 · b185",
+     "items": [
+      "Nuevos comandos de mod: disable/enable collision of tree·rock·ore·water·block·item — quita o devuelve la colisión de árboles, rocas, minerales, agua y bloques",
+      "Potato API añadido: al aplicar este mod, puedes poner los valores %player_name%, %player_location%, %world_player_count% y %online_player% en las publicaciones de mods",
+      "Si pones un logo.png en la carpeta del mod, aparece en la lista como logo del mod"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.5 · b185",
+     "items": [
+      "Commandes de mod ajoutées : disable/enable collision of tree·rock·ore·water·block·item — supprime ou rétablit la collision des arbres, rochers, minerais, eau et blocs",
+      "Potato API ajouté : une fois ce mod appliqué, vous pouvez mettre les valeurs %player_name%, %player_location%, %world_player_count% et %online_player% dans les textes de mods",
+      "Mettez un logo.png dans le dossier du mod et il s'affiche dans la liste comme logo du mod"
+     ]
+    },
+    "de": {
+     "title": "Update 0.5 · b185",
+     "items": [
+      "Neue Mod-Befehle: disable/enable collision of tree·rock·ore·water·block·item — entfernt oder stellt die Kollision von Bäumen, Felsen, Erzen, Wasser und Blöcken wieder her",
+      "Potato API hinzugefügt: Wenn dieser Mod angewendet ist, kannst du die Werte %player_name%, %player_location%, %world_player_count% und %online_player% in Mod-Beiträge schreiben",
+      "Legst du eine logo.png in den Mod-Ordner, wird sie in der Liste als Mod-Logo angezeigt"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.5 · b185",
+     "items": [
+      "modコマンドを追加：disable/enable collision of tree·rock·ore·water·block·item — 木・岩・鉱石・水・ブロックの当たり判定を消したり戻したりします",
+      "Potato API追加：このmodを適用すると、modの説明文に %player_name%、%player_location%、%world_player_count%、%online_player% の値を入れられます",
+      "modフォルダーに logo.png を入れると、一覧にそのmodのロゴとして表示されます"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.5 · b185",
+     "items": [
+      "新增模组命令：disable/enable collision of tree·rock·ore·water·block·item —— 取消或恢复树木、岩石、矿石、水和方块的碰撞",
+      "新增 Potato API：应用此模组后，可在模组帖子中使用 %player_name%、%player_location%、%world_player_count%、%online_player% 等值",
+      "把 logo.png 放入模组文件夹，列表中会将其显示为模组标志"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.5 · b185",
+     "items": [
+      "Comandos de mod adicionados: disable/enable collision of tree·rock·ore·water·block·item — remove ou restaura a colisão de árvores, pedras, minérios, água e blocos",
+      "Potato API adicionado: ao aplicar este mod, você pode colocar os valores %player_name%, %player_location%, %world_player_count% e %online_player% no texto do mod",
+      "Coloque um logo.png na pasta do mod e ele aparece na lista como o logo do mod"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.5 · b185",
+     "items": [
+      "Новые команды модов: disable/enable collision of tree·rock·ore·water·block·item — убирает или возвращает столкновение деревьев, камней, руд, воды и блоков",
+      "Добавлен Potato API: после применения этого мода в описании мода можно использовать значения %player_name%, %player_location%, %world_player_count% и %online_player%",
+      "Если положить logo.png в папку мода, в списке он будет показан как логотип мода"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.5 · b185",
+     "items": [
+      "Yeni mod komutları: disable/enable collision of tree·rock·ore·water·block·item — ağaçların, kayaların, madenlerin, suyun ve blokların çarpışmasını kaldırır ya da geri getirir",
+      "Potato API eklendi: bu mod uygulandığında mod yazısına %player_name%, %player_location%, %world_player_count% ve %online_player% değerlerini koyabilirsin",
+      "Mod klasörüne bir logo.png koyarsan listede modun logosu olarak görünür"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-05",
@@ -1143,7 +2109,72 @@
    "items": [
     "fill 명령에 mountain(산)을 추가했어요: fill ~x ~z ~x2 ~z2 to mountain [biome]",
     "모드/리소스팩 페이지 위쪽에도 플레이·버전·패치노트·공략·섬·아이템·도감·도움말 메뉴가 보여요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.5 · b184",
+     "items": [
+      "Added mountain to the fill command: fill ~x ~z ~x2 ~z2 to mountain [biome]",
+      "The top of the mods/resource packs page now also shows the menus Play, Version, Patch notes, Guide, Island, Items, Encyclopedia and Help"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.5 · b184",
+     "items": [
+      "Se añadió mountain (montaña) al comando fill: fill ~x ~z ~x2 ~z2 to mountain [biome]",
+      "La parte superior de la página de mods/paquetes de recursos también muestra los menús Jugar, Versión, Notas de parche, Guía, Isla, Objetos, Enciclopedia y Ayuda"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.5 · b184",
+     "items": [
+      "Ajout de mountain (montagne) à la commande fill : fill ~x ~z ~x2 ~z2 to mountain [biome]",
+      "Le haut de la page des mods/packs de ressources affiche aussi les menus Jouer, Version, Notes de mise à jour, Guide, Île, Objets, Encyclopédie et Aide"
+     ]
+    },
+    "de": {
+     "title": "Update 0.5 · b184",
+     "items": [
+      "Dem Befehl fill wurde mountain (Berg) hinzugefügt: fill ~x ~z ~x2 ~z2 to mountain [biome]",
+      "Oben auf der Seite Mods/Ressourcenpakete werden jetzt auch die Menüs Spielen, Version, Patchnotes, Anleitung, Insel, Gegenstände, Lexikon und Hilfe angezeigt"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.5 · b184",
+     "items": [
+      "fillコマンドに mountain（山）を追加：fill ~x ~z ~x2 ~z2 to mountain [biome]",
+      "modとリソースパックのページ上部にも、プレイ・バージョン・パッチノート・攻略・島・アイテム・図鑑・ヘルプのメニューが出ます"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.5 · b184",
+     "items": [
+      "fill 命令新增 mountain（山）：fill ~x ~z ~x2 ~z2 to mountain [biome]",
+      "模组/资源包页面顶部也显示 玩、版本、更新日志、攻略、岛屿、物品、图鉴、帮助 菜单"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.5 · b184",
+     "items": [
+      "Adicionado mountain (montanha) ao comando fill: fill ~x ~z ~x2 ~z2 to mountain [biome]",
+      "A parte de cima da página de mods/pacotes de recursos também mostra os menus Jogar, Versão, Notas de atualização, Guia, Ilha, Itens, Enciclopédia e Ajuda"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.5 · b184",
+     "items": [
+      "В команду fill добавлено mountain (гора): fill ~x ~z ~x2 ~z2 to mountain [biome]",
+      "Вверху страницы модов/ресурс-паков теперь тоже показаны меню: Играть, Версия, Патчноуты, Гайд, Остров, Предметы, Энциклопедия и Помощь"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.5 · b184",
+     "items": [
+      "fill komutuna mountain (dağ) eklendi: fill ~x ~z ~x2 ~z2 to mountain [biome]",
+      "Mod/kaynak paketi sayfasının üstünde de Oyna, Sürüm, Yama notları, Rehber, Ada, Eşyalar, Ansiklopedi ve Yardım menüleri görünür"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-05",
@@ -1151,7 +2182,63 @@
    "title": "업데이트 0.5 · b183",
    "items": [
     "모드/리소스팩 구분이 폴더 이름이 아니라 mode.bs 파일로 바뀌었어요: 폴더에 mode.bs가 있으면 모드, 없으면 리소스팩"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.5 · b183",
+     "items": [
+      "Mods and resource packs are now told apart by a mode.bs file instead of the folder name: a folder with mode.bs is a mod, without it a resource pack"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.5 · b183",
+     "items": [
+      "Los mods y los paquetes de recursos ahora se distinguen por un archivo mode.bs y no por el nombre de la carpeta: una carpeta con mode.bs es un mod; sin él, es un paquete de recursos"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.5 · b183",
+     "items": [
+      "La distinction entre mods et packs de ressources se fait maintenant par un fichier mode.bs et non par le nom du dossier : un dossier contenant mode.bs est un mod, sinon c'est un pack de ressources"
+     ]
+    },
+    "de": {
+     "title": "Update 0.5 · b183",
+     "items": [
+      "Mods und Ressourcenpakete werden jetzt über eine Datei mode.bs unterschieden und nicht mehr über den Ordnernamen: Ein Ordner mit mode.bs ist ein Mod, ohne sie ein Ressourcenpaket"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.5 · b183",
+     "items": [
+      "modとリソースパックの区別はフォルダー名ではなく mode.bs ファイルで行うようになりました。mode.bs があるフォルダーはmod、なければリソースパックです"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.5 · b183",
+     "items": [
+      "模组与资源包的区分方式改为 mode.bs 文件而非文件夹名：文件夹里有 mode.bs 就是模组，没有就是资源包"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.5 · b183",
+     "items": [
+      "Mods e pacotes de recursos agora se diferenciam pelo arquivo mode.bs, e não pelo nome da pasta: uma pasta com mode.bs é um mod; sem ele, é um pacote de recursos"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.5 · b183",
+     "items": [
+      "Моды и ресурс-паки теперь различаются по файлу mode.bs, а не по имени папки: папка с mode.bs — это мод, без него — ресурс-пак"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.5 · b183",
+     "items": [
+      "Mod ve kaynak paketleri artık klasör adıyla değil mode.bs dosyasıyla ayrılıyor: içinde mode.bs olan klasör mod, olmayan kaynak paketi"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-05",
@@ -1159,7 +2246,63 @@
    "title": "업데이트 0.5 · b182",
    "items": [
     "모드/리소스팩 올리기가 폴더 방식으로 바뀌었어요: mod 또는 resourcepack 폴더 안에 .bs 파일(여러 개)과 PNG 그림을 넣고 폴더째 올려요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.5 · b182",
+     "items": [
+      "Uploading mods and resource packs now works by folder: put several .bs files and PNG pictures in a mod or resourcepack folder, then upload the whole folder"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.5 · b182",
+     "items": [
+      "Subir mods y paquetes de recursos ahora funciona por carpetas: pon varios archivos .bs y dibujos PNG en una carpeta mod o resourcepack, y sube la carpeta entera"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.5 · b182",
+     "items": [
+      "L'envoi de mods et de packs de ressources se fait maintenant par dossier : mettez plusieurs fichiers .bs et des images PNG dans un dossier mod ou resourcepack, puis envoyez le dossier entier"
+     ]
+    },
+    "de": {
+     "title": "Update 0.5 · b182",
+     "items": [
+      "Mods und Ressourcenpakete werden jetzt per Ordner hochgeladen: Lege mehrere .bs-Dateien und PNG-Bilder in einen Ordner mod oder resourcepack und lade den ganzen Ordner hoch"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.5 · b182",
+     "items": [
+      "modとリソースパックのアップロードはフォルダー単位になりました。mod または resourcepack フォルダーに .bs ファイル（複数可）と PNG 画像を入れて、フォルダーごとアップロードします"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.5 · b182",
+     "items": [
+      "上传模组和资源包改为按文件夹进行：把多个 .bs 文件和 PNG 图片放进 mod 或 resourcepack 文件夹，然后整体上传"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.5 · b182",
+     "items": [
+      "Enviar mods e pacotes de recursos agora é por pasta: coloque vários arquivos .bs e imagens PNG numa pasta mod ou resourcepack e envie a pasta inteira"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.5 · b182",
+     "items": [
+      "Загрузка модов и ресурс-паков теперь делается папкой: положите в папку mod или resourcepack несколько файлов .bs и PNG-картинки и загрузите всю папку"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.5 · b182",
+     "items": [
+      "Mod ve kaynak paketi yükleme artık klasör bazlı: bir mod ya da resourcepack klasörüne birden çok .bs dosyası ve PNG resmi koy, sonra klasörün tamamını yükle"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-05",
@@ -1167,7 +2310,63 @@
    "title": "업데이트 0.5 · b181",
    "items": [
     "모드 명령 추가: fill ~x ~z ~x2 ~z2 to land/beach/ocean (바이옴 선택), remove all trees/rocks/ores/structures — on world generate에서 지형을 통째로 바꿀 수 있어요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.5 · b181",
+     "items": [
+      "Mod commands added: fill ~x ~z ~x2 ~z2 to land/beach/ocean (choose the biome) and remove all trees/rocks/ores/structures — inside on world generate you can reshape the whole terrain"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.5 · b181",
+     "items": [
+      "Nuevos comandos de mod: fill ~x ~z ~x2 ~z2 to land/beach/ocean (elige el bioma) y remove all trees/rocks/ores/structures. Dentro de on world generate puedes cambiar todo el terreno"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.5 · b181",
+     "items": [
+      "Commandes de mod ajoutées : fill ~x ~z ~x2 ~z2 to land/beach/ocean (choix du biome) et remove all trees/rocks/ores/structures. Dans on world generate, vous pouvez remodeler tout le terrain"
+     ]
+    },
+    "de": {
+     "title": "Update 0.5 · b181",
+     "items": [
+      "Neue Mod-Befehle: fill ~x ~z ~x2 ~z2 to land/beach/ocean (Biom wählen) und remove all trees/rocks/ores/structures. Mit on world generate lässt sich das ganze Gelände umgestalten"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.5 · b181",
+     "items": [
+      "modコマンドを追加：fill ~x ~z ~x2 ~z2 to land/beach/ocean（バイオーム選択）、remove all trees/rocks/ores/structures。on world generate の中で地形をまるごと作り変えられます"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.5 · b181",
+     "items": [
+      "新增模组命令：fill ~x ~z ~x2 ~z2 to land/beach/ocean（选择生物群系）、remove all trees/rocks/ores/structures。在 on world generate 中可以整体改造地形"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.5 · b181",
+     "items": [
+      "Comandos de mod adicionados: fill ~x ~z ~x2 ~z2 to land/beach/ocean (escolha o bioma) e remove all trees/rocks/ores/structures. Dentro de on world generate dá para mudar o terreno inteiro"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.5 · b181",
+     "items": [
+      "Новые команды модов: fill ~x ~z ~x2 ~z2 to land/beach/ocean (выбор биома) и remove all trees/rocks/ores/structures. В on world generate можно переделать весь рельеф"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.5 · b181",
+     "items": [
+      "Yeni mod komutları: fill ~x ~z ~x2 ~z2 to land/beach/ocean (biyom seçimi) ve remove all trees/rocks/ores/structures. on world generate içinde tüm arazi yeniden şekillendirilebilir"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-05",
@@ -1175,7 +2374,63 @@
    "title": "업데이트 0.5 · b180",
    "items": [
     "모드/리소스팩 페이지의 BeaconScript 설명 상자를 지웠어요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.5 · b180",
+     "items": [
+      "The BeaconScript description box was removed from the mods/resource packs page"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.5 · b180",
+     "items": [
+      "Se ha quitado el cuadro de descripción de BeaconScript de la página de mods/paquetes de recursos"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.5 · b180",
+     "items": [
+      "La boîte de description de BeaconScript a été retirée de la page des mods/packs de ressources"
+     ]
+    },
+    "de": {
+     "title": "Update 0.5 · b180",
+     "items": [
+      "Das BeaconScript-Beschreibungsfeld auf der Seite Mods/Ressourcenpakete wurde entfernt"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.5 · b180",
+     "items": [
+      "modとリソースパックのページのBeaconScript説明欄を削除しました"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.5 · b180",
+     "items": [
+      "删除了模组/资源包页面中的 BeaconScript 说明框"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.5 · b180",
+     "items": [
+      "A caixa de descrição do BeaconScript foi removida da página de mods/pacotes de recursos"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.5 · b180",
+     "items": [
+      "Убрано окно описания BeaconScript на странице модов/ресурс-паков"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.5 · b180",
+     "items": [
+      "Mod/kaynak paketi sayfasındaki BeaconScript açıklama kutusu kaldırıldı"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-05",
@@ -1183,7 +2438,63 @@
    "title": "업데이트 0.5 · b179",
    "items": [
     "패치노트 제목과 버전 목록에서 \"빌드 177\"을 \"b177\"처럼 b로 표시해요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.5 · b179",
+     "items": [
+      "The build in the patch note titles and the version list is now shown as 'b177' instead of 'build 177'"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.5 · b179",
+     "items": [
+      "En los títulos de las notas de parche y en la lista de versiones, la compilación se muestra como «b177» en lugar de «build 177»"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.5 · b179",
+     "items": [
+      "Dans les titres des notes de mise à jour et la liste des versions, le build s'affiche « b177 » au lieu de « build 177 »"
+     ]
+    },
+    "de": {
+     "title": "Update 0.5 · b179",
+     "items": [
+      "In den Titeln der Patchnotes und in der Versionsliste wird der Build jetzt als „b177“ statt „Build 177“ angezeigt"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.5 · b179",
+     "items": [
+      "パッチノートの見出しとバージョン一覧で、ビルドを「build 177」ではなく「b177」と表示するようにしました"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.5 · b179",
+     "items": [
+      "更新日志标题和版本列表中，构建号改为显示为“b177”，而不是“build 177”"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.5 · b179",
+     "items": [
+      "No título das notas de atualização e na lista de versões, a build aparece como 'b177' em vez de 'build 177'"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.5 · b179",
+     "items": [
+      "В заголовках патчноутов и списке версий сборка теперь показывается как «b177» вместо «build 177»"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.5 · b179",
+     "items": [
+      "Yama notu başlıklarında ve sürüm listesinde build artık 'build 177' yerine 'b177' olarak gösteriliyor"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-05",
@@ -1191,7 +2502,63 @@
    "title": "업데이트 0.5 · b178",
    "items": [
     "위쪽 메뉴를 사이트 페이지 안에서 직접 줄바꿈하게 해서, 언어 선택창이 모드/리소스팩 버튼을 가리던 문제를 다시 고쳤어요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.5 · b178",
+     "items": [
+      "The top menu now wraps lines inside the site page itself, which fixes again the language selector covering the mods/resource packs button"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.5 · b178",
+     "items": [
+      "El menú superior ahora hace saltos de línea dentro de la propia página, y se corrige de nuevo el problema de que el selector de idioma tapaba el botón de mods/paquetes de recursos"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.5 · b178",
+     "items": [
+      "Le menu du haut passe maintenant à la ligne dans la page elle-même : le sélecteur de langue ne cache plus le bouton mods/packs de ressources, et ce problème est corrigé à nouveau"
+     ]
+    },
+    "de": {
+     "title": "Update 0.5 · b178",
+     "items": [
+      "Das obere Menü bricht jetzt innerhalb der Seite selbst um, sodass die Sprachauswahl den Button Mods/Ressourcenpakete nicht mehr verdeckt – dieses Problem ist erneut behoben"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.5 · b178",
+     "items": [
+      "上のメニューをページ内で直接折り返すようにし、言語選択が「モード/リソースパック」ボタンを隠す問題をもう一度直しました"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.5 · b178",
+     "items": [
+      "顶部菜单改为在页面内直接换行，再次修复了语言选择框遮住“模组/资源包”按钮的问题"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.5 · b178",
+     "items": [
+      "O menu de cima agora quebra linha dentro da própria página, e o problema de o seletor de idioma cobrir o botão de mods/pacotes de recursos foi corrigido de novo"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.5 · b178",
+     "items": [
+      "Верхнее меню теперь переносит строки прямо на странице, и снова исправлено: выбор языка больше не закрывает кнопку модов/ресурс-паков"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.5 · b178",
+     "items": [
+      "Üst menü artık sayfanın içinde doğrudan satır atlıyor; dil seçiminin mod/kaynak paketi düğmesini kapatma sorunu yeniden düzeltildi"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-05",
@@ -1199,7 +2566,63 @@
    "title": "업데이트 0.5 · b177",
    "items": [
     "사이트 위쪽 메뉴가 옆으로 잘려서 도감, 모드/리소스팩, 도움말 버튼이 안 보이던 문제를 고쳤어요. 이제 줄이 모자라면 아래 줄로 내려가요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.5 · b177",
+     "items": [
+      "Fixed the site's top menu being cut off sideways, which hid the Encyclopedia, Mods/Resource packs and Help buttons. When there is not enough room, the menu now moves to the next line"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.5 · b177",
+     "items": [
+      "Se corrigió que el menú superior del sitio se cortara por un lado y ocultara los botones Enciclopedia, Mods/Paquetes de recursos y Ayuda. Si no hay espacio, el menú pasa a la línea siguiente"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.5 · b177",
+     "items": [
+      "Correction du menu du haut du site, coupé sur le côté, qui cachait les boutons Encyclopédie, Mods/Packs de ressources et Aide. S'il manque de place, le menu passe à la ligne suivante"
+     ]
+    },
+    "de": {
+     "title": "Update 0.5 · b177",
+     "items": [
+      "Behoben: Das obere Menü der Seite wurde seitlich abgeschnitten, sodass die Buttons Lexikon, Mods/Ressourcenpakete und Hilfe nicht zu sehen waren. Wenn der Platz nicht reicht, rutscht das Menü jetzt in die nächste Zeile"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.5 · b177",
+     "items": [
+      "サイト上部のメニューが横に切れて、図鑑・モード/リソースパック・ヘルプのボタンが見えなかった問題を直しました。幅が足りないときは下の行に折り返します"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.5 · b177",
+     "items": [
+      "修复了网站顶部菜单横向被截断、图鉴、模组/资源包和帮助按钮看不到的问题。空间不够时菜单会换到下一行"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.5 · b177",
+     "items": [
+      "Corrigido o menu de cima do site, que era cortado para o lado e escondia os botões Enciclopédia, Mods/Pacotes de recursos e Ajuda. Se não houver espaço, o menu passa para a linha de baixo"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.5 · b177",
+     "items": [
+      "Исправлено: верхнее меню сайта обрезалось по ширине и скрывало кнопки Энциклопедия, Моды/Ресурс-паки и Помощь. Если места не хватает, меню переходит на следующую строку"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.5 · b177",
+     "items": [
+      "Sitenin üst menüsünün yandan kesilip Ansiklopedi, Mod/Kaynak paketleri ve Yardım düğmelerini gizlemesi düzeltildi. Yer yetmezse menü alt satıra geçer"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-05",
@@ -1209,7 +2632,81 @@
     "위쪽 메뉴 버튼 이름을 \"모드/리소스팩\"으로 바꿨어요",
     "리소스팩에 PNG 그림을 넣을 수 있어요: 올리기 창에서 PNG를 여러 장 고르면 파일 이름(예: iron.png)이 아이템 이름이 되고, 12×12로 줄여서 게임 속 아이템 그림이 바뀌어요",
     "리소스팩 목록 줄에 들어 있는 그림 미리보기가 보여요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.5 · b176",
+     "items": [
+      "The top menu button is renamed to 'Mods/Resource packs'",
+      "You can put PNG pictures in resource packs: in the upload window, select several PNGs and each file name (e.g. iron.png) becomes the item name, shrunk to 12×12 to change the item picture in the game",
+      "The resource pack list row shows a preview of the pictures it contains"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.5 · b176",
+     "items": [
+      "El botón del menú superior ahora se llama «Mods/Paquetes de recursos»",
+      "Puedes poner dibujos PNG en los paquetes de recursos: en la ventana de subida, elige varios PNG; el nombre de cada archivo (por ejemplo, iron.png) pasa a ser el nombre del objeto y se reduce a 12×12 para cambiar su dibujo en el juego",
+      "La fila de la lista de paquetes de recursos muestra una vista previa de los dibujos que contiene"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.5 · b176",
+     "items": [
+      "Le bouton du menu du haut s'appelle maintenant « Mods/Packs de ressources »",
+      "Vous pouvez mettre des images PNG dans les packs de ressources : dans la fenêtre d'envoi, choisissez plusieurs PNG ; le nom de chaque fichier (ex. : iron.png) devient le nom de l'objet et l'image est réduite en 12×12 pour changer l'image de l'objet dans le jeu",
+      "La ligne de la liste des packs de ressources montre un aperçu des images qu'il contient"
+     ]
+    },
+    "de": {
+     "title": "Update 0.5 · b176",
+     "items": [
+      "Der Button im oberen Menü heißt jetzt „Mods/Ressourcenpakete“",
+      "In Ressourcenpaketen können PNG-Bilder liegen: Im Hochladefenster wählst du mehrere PNGs aus; der Dateiname (z. B. iron.png) wird zum Gegenstandsnamen, und die Bilder werden auf 12×12 verkleinert, sodass die Gegenstandsbilder im Spiel wechseln",
+      "Die Zeile in der Liste der Ressourcenpakete zeigt eine Vorschau der enthaltenen Bilder"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.5 · b176",
+     "items": [
+      "上のメニューのボタン名を「モード/リソースパック」に変えました",
+      "リソースパックにPNG画像を入れられます。アップロード画面でPNGを複数選ぶと、ファイル名（例: iron.png）がアイテム名になり、12×12に縮小されてゲーム内のアイテム画像が変わります",
+      "リソースパックの一覧の行に、中に入っている画像のプレビューが表示されます"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.5 · b176",
+     "items": [
+      "顶部菜单按钮改名为“模组/资源包”",
+      "资源包可以放入 PNG 图片：在上传窗口中选择多张 PNG，文件名（例如 iron.png）即为物品名，图片会缩小到 12×12，并替换游戏中的物品图片",
+      "资源包列表行中会显示其包含图片的预览"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.5 · b176",
+     "items": [
+      "O botão do menu de cima foi renomeado para 'Mods/Pacotes de recursos'",
+      "Dá para colocar imagens PNG nos pacotes de recursos: na janela de envio, escolha vários PNGs; o nome do arquivo (ex.: iron.png) vira o nome do item, e a imagem é reduzida para 12×12 para trocar a imagem do item no jogo",
+      "A linha da lista de pacotes de recursos mostra uma prévia das imagens que ele contém"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.5 · b176",
+     "items": [
+      "Кнопка в верхнем меню переименована в «Моды/Ресурс-паки»",
+      "В ресурс-паки можно добавить PNG-картинки: в окне загрузки выберите несколько PNG; имя файла (например, iron.png) становится названием предмета, картинка уменьшается до 12×12 и заменяет изображение предмета в игре",
+      "В строке списка ресурс-паков показывается предпросмотр картинок, которые в нём есть"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.5 · b176",
+     "items": [
+      "Üst menü düğmesinin adı 'Mod/Kaynak paketleri' olarak değiştirildi",
+      "Kaynak paketlerine PNG resimleri koyabilirsin: yükleme penceresinde birden çok PNG seç; dosya adı (ör. iron.png) eşya adı olur, resim 12×12'ye küçülür ve oyundaki eşya resmini değiştirir",
+      "Kaynak paketi listesi satırında içindeki resimlerin önizlemesi görünür"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-04",
@@ -1225,7 +2722,135 @@
     "조건 if has N 아이템 과, 월드에 들어갈 때 실행되는 on join이 생겼어요",
     "모드 페이지에 BeaconScript 문법 도움말이 생겼어요",
     "방장 모드에 키 변경이 있으면 입장 허용창에서 미리 알려줘요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.5 · b175",
+     "items": [
+      "The mod language is called BeaconScript and the file extension is .bs (.beaconfall is accepted too)",
+      "New command that runs once when a world is created: on world generate (remove for trees and rocks, spawn for monsters, place for structures)",
+      "New screen commands: title (center text), chat, button (screen button), ui (small window)",
+      "New key commands: on key \"G\" press (a new key), remap \"E\" to \"R\" (change a key)",
+      "New position command: teleport (move yourself and monsters)",
+      "New item commands: set item damage / speed / name (damage, attack interval, name)",
+      "New condition if has N item, and on join, which runs when you enter a world",
+      "A BeaconScript syntax help was added to the mods page",
+      "If the host has key changes in a mod, the join permission window warns you beforehand"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.5 · b175",
+     "items": [
+      "El lenguaje de mods se llama BeaconScript y la extensión de archivo es .bs (también se acepta .beaconfall)",
+      "Nuevo comando que se ejecuta una vez al crear un mundo: on world generate (remove para quitar árboles y rocas, spawn para invocar monstruos, place para colocar estructuras)",
+      "Nuevos comandos de pantalla: title (texto centrado), chat, button (botón en pantalla) y ui (ventana pequeña)",
+      "Nuevos comandos de teclas: on key \"G\" press (una tecla nueva) y remap \"E\" to \"R\" (cambiar una tecla)",
+      "Nuevo comando de posición: teleport (mueve a ti y a los monstruos)",
+      "Nuevos comandos de objeto: set item damage / speed / name (daño, intervalo de ataque, nombre)",
+      "Nueva condición if has N objeto, y on join, que se ejecuta al entrar en un mundo",
+      "Se añadió a la página de mods una ayuda de sintaxis de BeaconScript",
+      "Si el anfitrión tiene cambios de teclas en un mod, la ventana de permiso para entrar lo avisa antes"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.5 · b175",
+     "items": [
+      "Le langage des mods s'appelle BeaconScript et l'extension de fichier est .bs (.beaconfall est accepté aussi)",
+      "Nouvelle commande exécutée une fois à la création d'un monde : on world generate (remove pour arbres et rochers, spawn pour faire apparaître des monstres, place pour poser des structures)",
+      "Nouvelles commandes d'écran : title (texte au centre), chat, button (bouton à l'écran) et ui (petite fenêtre)",
+      "Nouvelles commandes de touches : on key \"G\" press (une nouvelle touche) et remap \"E\" to \"R\" (changer une touche)",
+      "Nouvelle commande de position : teleport (déplace vous et les monstres)",
+      "Nouvelles commandes d'objet : set item damage / speed / name (dégâts, intervalle d'attaque, nom)",
+      "Nouvelle condition if has N objet, et on join, qui s'exécute quand on entre dans un monde",
+      "Une aide sur la syntaxe de BeaconScript a été ajoutée à la page des mods",
+      "Si l'hôte a des changements de touches dans un mod, la fenêtre d'autorisation d'entrée vous en prévient à l'avance"
+     ]
+    },
+    "de": {
+     "title": "Update 0.5 · b175",
+     "items": [
+      "Die Mod-Sprache heißt BeaconScript, die Dateiendung ist .bs (.beaconfall wird auch angenommen)",
+      "Neuer Befehl, der einmal beim Erstellen einer Welt läuft: on world generate (remove für Bäume und Felsen, spawn für Monster, place für Bauwerke)",
+      "Neue Bildschirmbefehle: title (Text in der Mitte), chat, button (Bildschirmknopf) und ui (kleines Fenster)",
+      "Neue Tastenbefehle: on key \"G\" press (eine neue Taste) und remap \"E\" to \"R\" (Taste ändern)",
+      "Neuer Positionsbefehl: teleport (dich und Monster versetzen)",
+      "Neue Gegenstandsbefehle: set item damage / speed / name (Schaden, Angriffsabstand, Name)",
+      "Neue Bedingung if has N Gegenstand und on join, das beim Betreten einer Welt läuft",
+      "Auf der Modseite gibt es jetzt eine Hilfe zur BeaconScript-Syntax",
+      "Wenn der Host im Mod Tastenänderungen hat, warnt dich das Beitrittsfenster vorher"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.5 · b175",
+     "items": [
+      "modの言語名は BeaconScript、拡張子は .bs です（.beaconfall も受け付けます）",
+      "ワールド作成時に一度だけ実行される命令が追加されました：on world generate（remove で木や岩を消す、spawn でモンスターを出す、place で構造物を置く）",
+      "画面の命令が追加されました：title（中央の文字）、chat、button（画面ボタン）、ui（小さな窓）",
+      "キーの命令が追加されました：on key \"G\" press（新しいキー）、remap \"E\" to \"R\"（キーの変更）",
+      "位置の命令が追加されました：teleport（自分とモンスターを動かす）",
+      "アイテムの命令が追加されました：set アイテム damage / speed / name（ダメージ・攻撃間隔・名前）",
+      "条件 if has N アイテム と、ワールドに入ったときに実行される on join が追加されました",
+      "modのページにBeaconScriptの文法ヘルプが追加されました",
+      "ホストのmodにキーの変更がある場合、入室許可の画面で事前に知らせます"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.5 · b175",
+     "items": [
+      "模组语言名为 BeaconScript，文件扩展名为 .bs（.beaconfall 也可以）",
+      "新增创建世界时执行一次的命令：on world generate（remove 清除树木和岩石，spawn 召唤怪物，place 放置建筑）",
+      "新增画面命令：title（中间文字）、chat、button（屏幕按钮）、ui（小窗口）",
+      "新增按键命令：on key \"G\" press（新按键）、remap \"E\" to \"R\"（改键）",
+      "新增位置命令：teleport（移动自己和怪物）",
+      "新增物品命令：set 物品 damage / speed / name（伤害、攻击间隔、名称）",
+      "新增条件 if has N 物品，以及进入世界时执行的 on join",
+      "模组页面新增了 BeaconScript 语法帮助",
+      "如果主持人的模组有按键改动，入场许可窗口会提前提示"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.5 · b175",
+     "items": [
+      "A linguagem dos mods é BeaconScript e a extensão do arquivo é .bs (.beaconfall também é aceito)",
+      "Novo comando executado uma vez ao criar um mundo: on world generate (remove para tirar árvores e pedras, spawn para invocar monstros, place para colocar estruturas)",
+      "Novos comandos de tela: title (texto no centro), chat, button (botão na tela) e ui (janela pequena)",
+      "Novos comandos de tecla: on key \"G\" press (uma nova tecla) e remap \"E\" to \"R\" (trocar uma tecla)",
+      "Novo comando de posição: teleport (move você e os monstros)",
+      "Novos comandos de item: set item damage / speed / name (dano, intervalo de ataque, nome)",
+      "Nova condição if has N item, e on join, que roda ao entrar num mundo",
+      "Foi adicionada à página de mods uma ajuda de sintaxe do BeaconScript",
+      "Se o anfitrião tiver mudanças de tecla num mod, a janela de permissão para entrar avisa antes"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.5 · b175",
+     "items": [
+      "Язык модов называется BeaconScript, расширение файла — .bs (.beaconfall тоже принимается)",
+      "Появилась команда, которая выполняется один раз при создании мира: on world generate (remove — убрать деревья и камни, spawn — призвать мобов, place — поставить постройку)",
+      "Появились команды экрана: title (текст по центру), chat, button (кнопка на экране), ui (маленькое окно)",
+      "Появились команды клавиш: on key \"G\" press (новая клавиша) и remap \"E\" to \"R\" (переназначение клавиши)",
+      "Появилась команда положения: teleport (перемещает вас и мобов)",
+      "Появились команды предметов: set предмет damage / speed / name (урон, интервал атаки, название)",
+      "Появились условие if has N предмет и on join, которое выполняется при входе в мир",
+      "На странице модов появилась справка по синтаксису BeaconScript",
+      "Если в моде хоста есть изменения клавиш, окно разрешения на вход предупредит заранее"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.5 · b175",
+     "items": [
+      "Mod dilinin adı BeaconScript, dosya uzantısı .bs (.beaconfall de kabul edilir)",
+      "Dünya oluşturulurken bir kez çalışan komut eklendi: on world generate (remove ağaç ve kayaları kaldırır, spawn canavar çağırır, place yapı yerleştirir)",
+      "Ekran komutları eklendi: title (ortadaki yazı), chat, button (ekran düğmesi), ui (küçük pencere)",
+      "Yeni tuş komutları: on key \"G\" press (yeni bir tuş) ve remap \"E\" to \"R\" (tuş değiştirme)",
+      "Yeni konum komutu: teleport (kendini ve canavarları taşır)",
+      "Yeni eşya komutları: set eşya damage / speed / name (hasar, saldırı aralığı, ad)",
+      "Yeni koşul if has N eşya ve bir dünyaya girildiğinde çalışan on join eklendi",
+      "Mod sayfasına BeaconScript sözdizimi yardımı eklendi",
+      "Sunucu modunda tuş değişikliği varsa, katılma izni penceresi bunu önceden bildirir"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-04",
@@ -1237,7 +2862,99 @@
     "적용한 모드와 리소스팩이 게임에 반영돼요 (돌 캘 때, 나무 벨 때, 몬스터 잡을 때, 만들 때, 낚시, 설치, 죽을 때)",
     "모드·리소스팩 목록에 설명, 제작자 닉네임, 올린 날짜가 보여요",
     "방장이 모드를 켠 방에 들어갈 때 먼저 목록을 보여주고, 허용해야 들어가요 (방에 있는 동안만 적용)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.5 · b174",
+     "items": [
+      "You can make mods with an English script on the mods/resource packs page (on mine stone:, give 1 iron, chance 30%:, say \"...\"). Wrong lines show the line number and where to fix",
+      "One mod can include both rules and a resource pack (renaming)",
+      "Applied mods and resource packs take effect in the game (mining stone, chopping trees, killing monsters, crafting, fishing, placing and dying)",
+      "The mods/resource packs list shows the description, the creator's nickname and the upload date",
+      "When joining a room where the host has turned on mods, the list is shown first and you must allow it to enter (applied only while you are in the room)"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.5 · b174",
+     "items": [
+      "Puedes crear mods con un guion en inglés en la página de mods/paquetes de recursos (on mine stone:, give 1 iron, chance 30%:, say \"...\"). Las líneas incorrectas indican el número de línea y dónde corregir",
+      "Un mod puede incluir reglas y un paquete de recursos (cambio de nombres) a la vez",
+      "Los mods y paquetes de recursos aplicados se reflejan en el juego (al picar piedra, talar árboles, matar monstruos, fabricar, pescar, colocar y morir)",
+      "La lista de mods/paquetes de recursos muestra la descripción, el apodo del creador y la fecha de subida",
+      "Al entrar en una sala donde el anfitrión ha activado mods, primero se muestra la lista y hay que permitirla para entrar (solo se aplica mientras estás en la sala)"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.5 · b174",
+     "items": [
+      "Vous pouvez créer des mods avec un script en anglais sur la page des mods/packs de ressources (on mine stone:, give 1 iron, chance 30%:, say \"...\"). Les lignes incorrectes indiquent leur numéro et où corriger",
+      "Un mod peut contenir à la fois des règles et un pack de ressources (renommage)",
+      "Les mods et packs de ressources appliqués prennent effet dans le jeu (miner la pierre, couper un arbre, tuer un monstre, fabriquer, pêcher, poser et mourir)",
+      "La liste des mods/packs de ressources affiche la description, le pseudo du créateur et la date d'envoi",
+      "En entrant dans un salon où l'hôte a activé des mods, la liste s'affiche d'abord et il faut l'accepter pour entrer (appliqué uniquement pendant que vous êtes dans le salon)"
+     ]
+    },
+    "de": {
+     "title": "Update 0.5 · b174",
+     "items": [
+      "Auf der Seite Mods/Ressourcenpakete kannst du Mods mit einem englischen Skript erstellen (on mine stone:, give 1 iron, chance 30%:, say \"...\"). Fehlerhafte Zeilen zeigen die Zeilennummer und die Stelle zum Korrigieren",
+      "Ein Mod kann Regeln und ein Ressourcenpaket (Umbenennen) gemeinsam enthalten",
+      "Angewendete Mods und Ressourcenpakete wirken im Spiel (Stein abbauen, Bäume fällen, Monster besiegen, herstellen, angeln, platzieren und sterben)",
+      "Die Liste der Mods/Ressourcenpakete zeigt Beschreibung, Spitzname des Erstellers und Hochladedatum",
+      "Beim Betreten eines Raums, in dem der Host Mods eingeschaltet hat, wird zuerst die Liste gezeigt, und du musst zustimmen, um hineinzukommen (gilt nur, solange du im Raum bist)"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.5 · b174",
+     "items": [
+      "modとリソースパックのページで、英語のスクリプトでmodを作れます（on mine stone:、give 1 iron、chance 30%:、say \"...\"）。間違った行は行番号と直す場所を教えます",
+      "1つのmodにルールとリソースパック（名前変更）を一緒に入れられます",
+      "適用したmodとリソースパックがゲームに反映されます（石を掘るとき、木を切るとき、モンスターを倒すとき、作るとき、釣り、設置、死ぬとき）",
+      "modとリソースパックの一覧に、説明・作成者のニックネーム・投稿日が表示されます",
+      "ホストがmodをオンにしている部屋に入るときは、先に一覧が表示され、許可すると入れます（部屋にいる間だけ適用）"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.5 · b174",
+     "items": [
+      "可以在模组/资源包页面用英文脚本制作模组（on mine stone:、give 1 iron、chance 30%:、say \"...\"）。出错的行会提示行号和需要修改的地方",
+      "一个模组可以同时包含规则和资源包（改名）",
+      "已应用的模组和资源包会在游戏中生效（挖石头、砍树、击杀怪物、制作、钓鱼、放置、死亡时）",
+      "模组/资源包列表显示说明、作者昵称和上传日期",
+      "进入主持人开启了模组的房间时，会先显示列表，同意后才能进入（仅在房间内生效）"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.5 · b174",
+     "items": [
+      "Dá para criar mods com script em inglês na página de mods/pacotes de recursos (on mine stone:, give 1 iron, chance 30%:, say \"...\"). Linhas erradas mostram o número da linha e onde corrigir",
+      "Um mod pode conter regras e um pacote de recursos (renomear) ao mesmo tempo",
+      "Os mods e pacotes de recursos aplicados valem no jogo (ao quebrar pedra, cortar árvore, matar monstro, criar, pescar, colocar e morrer)",
+      "A lista de mods/pacotes de recursos mostra a descrição, o apelido do criador e a data de envio",
+      "Ao entrar numa sala em que o anfitrião ativou mods, a lista aparece primeiro e você precisa permitir para entrar (aplicado só enquanto estiver na sala)"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.5 · b174",
+     "items": [
+      "На странице модов/ресурс-паков можно создавать моды на английском скрипте (on mine stone:, give 1 iron, chance 30%:, say \"...\"). В неправильной строке показывается её номер и что исправить",
+      "Один мод может содержать и правила, и ресурс-пак (переименование)",
+      "Применённые моды и ресурс-паки работают в игре (при добыче камня, рубке деревьев, убийстве монстров, крафте, рыбалке, установке и смерти)",
+      "В списке модов/ресурс-паков показаны описание, никнейм автора и дата загрузки",
+      "При входе в комнату, где хост включил моды, сначала показывается список, и нужно разрешить его, чтобы войти (действует только пока вы в комнате)"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.5 · b174",
+     "items": [
+      "Mod/kaynak paketi sayfasında İngilizce betikle mod yapabilirsin (on mine stone:, give 1 iron, chance 30%:, say \"...\"). Hatalı satırlar satır numarasını ve neyin düzeltileceğini gösterir",
+      "Tek bir mod hem kuralları hem de kaynak paketini (ad değiştirme) içerebilir",
+      "Uygulanan modlar ve kaynak paketleri oyunda etkili olur (taş kırarken, ağaç keserken, canavar öldürürken, üretirken, balık tutarken, yerleştirirken ve öldüğünde)",
+      "Mod/kaynak paketi listesinde açıklama, yapımcının takma adı ve yükleme tarihi görünür",
+      "Modları açık olan bir odaya girerken önce liste gösterilir ve girmek için izin vermelisin (yalnızca odadayken uygulanır)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-04",
@@ -1245,7 +2962,63 @@
    "title": "업데이트 0.5 · b173",
    "items": [
     "사이트 위쪽에 모드 버튼이 생겼어요. 모드와 리소스팩을 올리고, 찾고, 분류하고, 적용 / 적용 해제할 수 있어요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.5 · b173",
+     "items": [
+      "A Mods button appeared at the top of the site. You can upload, find, sort, and apply / unapply mods and resource packs"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.5 · b173",
+     "items": [
+      "Ha aparecido un botón de Mods en la parte superior del sitio. Puedes subir, buscar, clasificar y aplicar / quitar mods y paquetes de recursos"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.5 · b173",
+     "items": [
+      "Un bouton Mods est apparu en haut du site. Vous pouvez envoyer, chercher, trier, appliquer / retirer des mods et des packs de ressources"
+     ]
+    },
+    "de": {
+     "title": "Update 0.5 · b173",
+     "items": [
+      "Oben auf der Seite gibt es jetzt einen Mods-Button. Du kannst Mods und Ressourcenpakete hochladen, suchen, sortieren sowie anwenden / deaktivieren"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.5 · b173",
+     "items": [
+      "サイトの上部にmodボタンができました。modとリソースパックのアップロード、検索、分類、適用・適用解除ができます"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.5 · b173",
+     "items": [
+      "网站顶部新增了模组按钮。可以上传、查找、分类模组和资源包，并应用或取消应用"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.5 · b173",
+     "items": [
+      "Um botão de Mods apareceu no topo do site. Você pode enviar, procurar, classificar e aplicar / desaplicar mods e pacotes de recursos"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.5 · b173",
+     "items": [
+      "Вверху сайта появилась кнопка «Моды». Можно загружать, искать и сортировать моды и ресурс-паки, а также применять их и отключать"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.5 · b173",
+     "items": [
+      "Sitenin üstünde Mod düğmesi belirdi. Mod ve kaynak paketlerini yükleyebilir, bulabilir, sınıflandırabilir ve uygulayabilir / uygulamayı kaldırabilirsin"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-04",
@@ -1253,7 +3026,63 @@
    "title": "업데이트 0.5 · b172",
    "items": [
     "허브 랭킹 오른쪽 칸 제목에서 '(적을수록 위)' 문구를 지웠어요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.5 · b172",
+     "items": [
+      "Removed the '(lower is higher)' text from the title of the right column in the hub ranking"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.5 · b172",
+     "items": [
+      "Se quitó el texto «(cuanto menos, más arriba)» del título de la columna derecha del ranking del hub"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.5 · b172",
+     "items": [
+      "Le texte « (plus c'est bas, plus c'est haut) » a été retiré du titre de la colonne de droite du classement du hub"
+     ]
+    },
+    "de": {
+     "title": "Update 0.5 · b172",
+     "items": [
+      "Der Hinweis „(je kleiner, desto höher)“ wurde aus dem Titel der rechten Spalte der Hub-Rangliste entfernt"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.5 · b172",
+     "items": [
+      "ハブのランキング右側の欄の見出しから「（少ないほど上）」を削除しました"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.5 · b172",
+     "items": [
+      "删除了中心排行榜右侧栏标题中的“（越少越靠前）”"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.5 · b172",
+     "items": [
+      "O texto '(quanto menor, mais acima)' foi removido do título da coluna da direita no ranking do hub"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.5 · b172",
+     "items": [
+      "Из заголовка правой колонки рейтинга хаба удалён текст «(чем меньше, тем выше)»"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.5 · b172",
+     "items": [
+      "Hub sıralamasının sağ sütun başlığındaki '(az olan üstte)' yazısı kaldırıldı"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-04",
@@ -1262,7 +3091,72 @@
    "items": [
     "사이트 버전 목록에서 이전 버전도 바로 플레이할 수 있어요 (이전 버전에서는 기록이 서버에 올라가지 않아요)",
     "허브 랭킹을 두 칸으로 나눴어요: 왼쪽은 최장 생존 일수, 오른쪽은 신호기 엔딩까지 걸린 플레이 시간(짧을수록 위)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.5 · b171",
+     "items": [
+      "In the site's version list you can now play older versions directly (records from older versions are not uploaded to the server)",
+      "The hub ranking is split into two columns: on the left, the longest survival days; on the right, the play time until the signal beacon ending (shorter is higher)"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.5 · b171",
+     "items": [
+      "En la lista de versiones del sitio también puedes jugar directamente las versiones anteriores (en versiones anteriores los registros no se suben al servidor)",
+      "El ranking del hub se divide en dos columnas: a la izquierda, los días de supervivencia más largos; a la derecha, el tiempo de juego hasta el final del faro de señales (cuanto menos, más arriba)"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.5 · b171",
+     "items": [
+      "Dans la liste des versions du site, vous pouvez aussi jouer directement aux versions précédentes (les enregistrements des anciennes versions ne sont pas envoyés au serveur)",
+      "Le classement du hub est divisé en deux colonnes : à gauche, le plus grand nombre de jours survécus ; à droite, le temps de jeu jusqu'à la fin du signal (plus c'est court, plus c'est haut)"
+     ]
+    },
+    "de": {
+     "title": "Update 0.5 · b171",
+     "items": [
+      "In der Versionsliste der Seite kannst du jetzt auch ältere Versionen direkt spielen (Fortschritte aus älteren Versionen werden nicht auf den Server hochgeladen)",
+      "Die Hub-Rangliste ist in zwei Spalten geteilt: links die längste Überlebenszeit in Tagen, rechts die Spielzeit bis zum Signalenden (je kürzer, desto höher)"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.5 · b171",
+     "items": [
+      "サイトのバージョン一覧で、以前のバージョンもすぐ遊べます（以前のバージョンでは記録がサーバーに上がりません）",
+      "ハブのランキングを2列に分けました。左は最長生存日数、右は信号機エンディングまでのプレイ時間（短いほど上）"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.5 · b171",
+     "items": [
+      "网站版本列表中可以直接游玩以前的版本（以前版本的记录不会上传到服务器）",
+      "中心排行榜分为两栏：左边是最长生存天数，右边是通关信号机结局所用的游戏时间（越短越靠前）"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.5 · b171",
+     "items": [
+      "Na lista de versões do site, você também pode jogar versões anteriores diretamente (os registros das versões antigas não são enviados ao servidor)",
+      "O ranking do hub foi dividido em duas colunas: à esquerda, os dias de sobrevivência mais longos; à direita, o tempo de jogo até o final do sinalizador (quanto menor, mais acima)"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.5 · b171",
+     "items": [
+      "В списке версий на сайте теперь можно сразу играть в прошлые версии (записи прошлых версий на сервер не отправляются)",
+      "Рейтинг хаба разделён на два столбца: слева — самое долгое выживание в днях, справа — время игры до концовки с сигнальной башней (чем меньше, тем выше)"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.5 · b171",
+     "items": [
+      "Sitedeki sürüm listesinde eski sürümleri de doğrudan oynayabilirsin (eski sürümlerdeki kayıtlar sunucuya yüklenmez)",
+      "Hub sıralaması iki sütuna ayrıldı: solda en uzun hayatta kalma günü, sağda sinyal kulesi sonuna kadar geçen oyun süresi (kısa olan üstte)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-03",
@@ -1270,7 +3164,63 @@
    "title": "업데이트 0.5 · b170",
    "items": [
     "인벤토리가 가득 찼을 때 상인·교역소에서 사기를 누르면 동전만 빠지던 문제를 고쳤어요 (자리가 없으면 동전을 돌려주고 알려줘요)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.5 · b170",
+     "items": [
+      "Fixed the problem where, with a full inventory, pressing Buy at a merchant or trading post took only the coins (if there is no room, the coins are returned and you are told)"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.5 · b170",
+     "items": [
+      "Se corrigió que, con el inventario lleno, al pulsar Comprar en el mercader o el puesto de intercambio solo se gastaran las monedas (si no hay sitio, se devuelven las monedas y se avisa)"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.5 · b170",
+     "items": [
+      "Correction : quand l'inventaire était plein, appuyer sur Acheter chez le marchand ou au comptoir ne prenait que les pièces (s'il n'y a pas de place, les pièces sont rendues et on vous prévient)"
+     ]
+    },
+    "de": {
+     "title": "Update 0.5 · b170",
+     "items": [
+      "Behoben: War das Inventar voll, nahm das Kaufen beim Händler oder Handelsposten nur die Münzen weg (ist kein Platz frei, bekommst du die Münzen zurück und wirst informiert)"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.5 · b170",
+     "items": [
+      "インベントリがいっぱいのとき、商人・交易所で買うを押すとコインだけ減る問題を直しました（空きがなければコインを返して知らせます）"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.5 · b170",
+     "items": [
+      "修复了背包满时在商人或交易所点击购买只扣除金币的问题（没有空位时会退还金币并提示）"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.5 · b170",
+     "items": [
+      "Corrigido o problema em que, com o inventário cheio, o botão Comprar no comerciante ou posto de troca gastava só as moedas (se não houver espaço, as moedas são devolvidas e você é avisado)"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.5 · b170",
+     "items": [
+      "Исправлено: при полном инвентаре нажатие «Купить» у торговца или на бирже списывало только монеты (если нет места, монеты возвращаются и вам сообщают)"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.5 · b170",
+     "items": [
+      "Envanter doluyken tüccar ya da takas merkezinde Satın al'a basınca yalnızca paraların düşmesi sorunu düzeltildi (yer yoksa paralar iade edilir ve bilgi verilir)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-03",
@@ -1278,7 +3228,63 @@
    "title": "업데이트 0.5 · b169",
    "items": [
     "컨베이어 벨트 위에 서 있는 플레이어와 몬스터·동물이 아이템과 같은 속도로 벨트 방향으로 밀려가요 (제어장치로 멈춘 벨트에서는 안 밀려요)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.5 · b169",
+     "items": [
+      "Players, monsters and animals standing on a conveyor belt are carried in the belt's direction at the same speed as items (not on a belt stopped by a controller)"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.5 · b169",
+     "items": [
+      "Los jugadores, monstruos y animales que están sobre una cinta transportadora se desplazan en su dirección a la misma velocidad que los objetos (no en una cinta detenida por un controlador)"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.5 · b169",
+     "items": [
+      "Les joueurs, monstres et animaux debout sur un convoyeur sont emportés dans son sens à la même vitesse que les objets (pas sur un convoyeur arrêté par un contrôleur)"
+     ]
+    },
+    "de": {
+     "title": "Update 0.5 · b169",
+     "items": [
+      "Spieler, Monster und Tiere, die auf einem Förderband stehen, werden wie Gegenstände in Bandrichtung mitgetragen (auf einem durch ein Steuergerät gestoppten Band nicht)"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.5 · b169",
+     "items": [
+      "コンベアの上に立つプレイヤーやモンスター・動物は、アイテムと同じ速さで進行方向に流されます（制御装置で止めたベルトでは流されません）"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.5 · b169",
+     "items": [
+      "站在传送带上的玩家、怪物和动物会和物品一样以相同速度沿传送带方向移动（被控制装置停止的传送带上不会移动）"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.5 · b169",
+     "items": [
+      "Jogadores, monstros e animais em pé numa esteira são levados na direção dela, na mesma velocidade dos itens (não são levados numa esteira parada por um controlador)"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.5 · b169",
+     "items": [
+      "Игроки, монстры и животные, стоящие на конвейере, сносятся по его направлению с той же скоростью, что и предметы (на конвейере, остановленном контроллером, не сносятся)"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.5 · b169",
+     "items": [
+      "Konveyör bandının üstünde duran oyuncular, canavarlar ve hayvanlar eşyalarla aynı hızda bandın yönünde taşınır (kontrol cihazıyla durdurulan bantta taşınmaz)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-03",
@@ -1287,7 +3293,72 @@
    "items": [
     "작업대·손 제작칸 위에서 마우스 휠을 위로 굴리면 아이템이 하나씩 늘고, 아래로 굴리면 하나씩 줄어요",
     "인벤토리가 가득 찼을 때 주운 아이템이 사라지던 문제를 고쳤어요 (자리가 모자라면 발밑에 놓여요, 멀티플레이에서 한꺼번에 주울 때도 넘치지 않게 요청해요)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.5 · b168",
+     "items": [
+      "On a workbench or hand crafting slot, scrolling the mouse wheel up adds one item at a time, and scrolling down removes one",
+      "Fixed items you picked up disappearing when the inventory was full (if there isn't enough room they drop at your feet; in multiplayer, requests don't overflow even when picking up many at once)"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.5 · b168",
+     "items": [
+      "Sobre la mesa de trabajo o las casillas de fabricación de la mano, girar la rueda del ratón hacia arriba añade un objeto cada vez y hacia abajo quita uno",
+      "Se corrigió que los objetos recogidos desaparecieran con el inventario lleno (si falta sitio, caen a tus pies; en multijugador, al recoger varios a la vez no se desbordan)"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.5 · b168",
+     "items": [
+      "Sur l'établi ou les cases de fabrication à la main, la molette vers le haut ajoute un objet à la fois, vers le bas elle en retire un",
+      "Correction : les objets ramassés disparaissaient quand l'inventaire était plein (s'il manque de place, ils tombent à vos pieds ; en multijoueur, même en ramassant plusieurs objets d'un coup, rien ne déborde)"
+     ]
+    },
+    "de": {
+     "title": "Update 0.5 · b168",
+     "items": [
+      "Am Werktisch oder den Handherstellungsplätzen fügt das Scrollen nach oben jeweils ein Item hinzu, nach unten entfernt es eines",
+      "Behoben: Aufgehobene Gegenstände verschwanden, wenn das Inventar voll war (fehlt Platz, liegen sie vor deinen Füßen; im Mehrspielermodus läuft auch beim gleichzeitigen Aufheben vieler nichts über)"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.5 · b168",
+     "items": [
+      "作業台や手持ち製作欄の上でマウスホイールを上に回すとアイテムが1つずつ増え、下に回すと1つずつ減ります",
+      "インベントリがいっぱいのとき拾ったアイテムが消える問題を直しました（空きが足りなければ足元に置かれ、マルチプレイでまとめて拾ってもあふれないよう調整しています）"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.5 · b168",
+     "items": [
+      "在工作台或手持制作栏上向上滚动鼠标滚轮会一个一个增加物品，向下滚动则一个一个减少",
+      "修复了背包满时捡到的物品消失的问题（空间不足时物品会掉在脚下；多人游戏中一次捡多件时也不会溢出）"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.5 · b168",
+     "items": [
+      "Sobre a bancada ou os espaços de criação na mão, girar a roda do mouse para cima acrescenta um item por vez, e para baixo tira um",
+      "Corrigido o problema de itens coletados sumirem com o inventário cheio (se faltar espaço, eles caem aos seus pés; no multijogador, mesmo pegando vários de uma vez, nada transborda)"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.5 · b168",
+     "items": [
+      "На верстаке или ячейках крафта в руке прокрутка колёсика вверх добавляет по одному предмету, вниз — убирает по одному",
+      "Исправлено: подобранные предметы пропадали при полном инвентаре (если места не хватает, они падают у ног; в мультиплеере при подборе сразу многих ничего не теряется)"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.5 · b168",
+     "items": [
+      "Tezgâh ya da el üretim kutusunda fare tekerleğini yukarı çevirmek eşyayı birer birer artırır, aşağı çevirmek birer birer azaltır",
+      "Envanter doluyken alınan eşyaların kaybolması sorunu düzeltildi (yer yetmezse eşyalar ayağının dibine düşer; çok oyunculuda birden çok eşya alınırken de taşma olmaz)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-03",
@@ -1295,7 +3366,63 @@
    "title": "업데이트 0.5 · b167",
    "items": [
     "멀티플레이에서 서로 입은 갑옷이 상대 화면에도 보이게 고쳤어요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.5 · b167",
+     "items": [
+      "Fixed armor worn by players in multiplayer not showing on other players' screens"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.5 · b167",
+     "items": [
+      "Se corrigió que la armadura que se llevaba en multijugador no se veía en la pantalla de los demás"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.5 · b167",
+     "items": [
+      "Correction : en multijoueur, l'armure portée n'apparaissait pas sur l'écran des autres"
+     ]
+    },
+    "de": {
+     "title": "Update 0.5 · b167",
+     "items": [
+      "Behoben: Im Mehrspielermodus wurde getragene Rüstung auf den Bildschirmen der anderen nicht angezeigt"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.5 · b167",
+     "items": [
+      "マルチプレイで着ている鎧が相手の画面にも見えるように直しました"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.5 · b167",
+     "items": [
+      "修复了多人游戏中穿戴的盔甲在其他玩家画面中不显示的问题"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.5 · b167",
+     "items": [
+      "Corrigido: no multijogador, a armadura vestida não aparecia na tela dos outros"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.5 · b167",
+     "items": [
+      "Исправлено: в мультиплеере надетая броня не была видна на экранах других игроков"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.5 · b167",
+     "items": [
+      "Çok oyunculuda giyilen zırhın diğer oyuncuların ekranında görünmemesi düzeltildi"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-03",
@@ -1303,7 +3430,63 @@
    "title": "업데이트 0.5 · b166",
    "items": [
     "멀티플레이에서 다른 사람이 탄 열기구가 땅에 붙어 보이고 탄 사람이 안 보이던 것을 고쳤어요 (높이를 함께 전달해요)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.5 · b166",
+     "items": [
+      "Fixed a hot air balloon ridden by another player in multiplayer sticking to the ground and its rider being invisible (its height is now shared too)"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.5 · b166",
+     "items": [
+      "Se corrigió que el globo de aire caliente de otro jugador en multijugador pareciera pegado al suelo y que su pasajero no se viera (ahora también se comparte la altura)"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.5 · b166",
+     "items": [
+      "Correction : en multijoueur, la montgolfière d'un autre joueur paraissait collée au sol et son passager invisible (la hauteur est maintenant transmise aussi)"
+     ]
+    },
+    "de": {
+     "title": "Update 0.5 · b166",
+     "items": [
+      "Behoben: Der Heißluftballon eines anderen Spielers wirkte im Mehrspielermodus am Boden klebend, und sein Passagier war unsichtbar (die Höhe wird jetzt ebenfalls übertragen)"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.5 · b166",
+     "items": [
+      "マルチプレイで他の人が乗った熱気球が地面に張り付いて見え、乗っている人が見えない問題を直しました（高さも一緒に送るようにしました）"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.5 · b166",
+     "items": [
+      "修复了多人游戏中其他玩家的热气球贴在地面上、乘坐者看不见的问题（现在也会同步高度）"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.5 · b166",
+     "items": [
+      "Corrigido: no multijogador, o balão de outro jogador parecia grudado no chão e quem estava nele não aparecia (a altura também é enviada agora)"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.5 · b166",
+     "items": [
+      "Исправлено: в мультиплеере воздушный шар другого игрока выглядел прилипшим к земле, а пассажир был невидим (теперь передаётся и высота)"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.5 · b166",
+     "items": [
+      "Çok oyunculuda başka bir oyuncunun sıcak hava balonu yere yapışık görünüyor ve içindeki kişi görünmüyordu; düzeltildi (yükseklik de artık paylaşılır)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-03",
@@ -1311,7 +3494,63 @@
    "title": "업데이트 0.5 · b165",
    "items": [
     "선로에 기차를 새로 올릴 때 기차 아이템이 하나 줄고, '기차 치우기'를 누르면 기차 아이템을 돌려받아요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.5 · b165",
+     "items": [
+      "A train placed on a rail uses up one train item, and 'Remove train' gives the train item back"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.5 · b165",
+     "items": [
+      "Al colocar un tren en una vía se gasta un objeto de tren, y «Quitar tren» devuelve el objeto"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.5 · b165",
+     "items": [
+      "Poser un train sur des rails consomme un objet train, et « Retirer le train » rend l'objet train"
+     ]
+    },
+    "de": {
+     "title": "Update 0.5 · b165",
+     "items": [
+      "Einen Zug auf die Schiene zu setzen verbraucht einen Zug-Gegenstand, und „Zug entfernen“ gibt ihn zurück"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.5 · b165",
+     "items": [
+      "線路に列車を載せると列車アイテムが1つ減り、「列車を片付ける」で列車アイテムが戻ります"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.5 · b165",
+     "items": [
+      "在铁轨上放置火车会消耗一个火车物品，点击“收起火车”会退还该物品"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.5 · b165",
+     "items": [
+      "Colocar um trem nos trilhos gasta um item de trem, e 'Remover trem' devolve o item"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.5 · b165",
+     "items": [
+      "Постановка поезда на рельсы тратит один предмет «поезд», а «Убрать поезд» возвращает предмет"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.5 · b165",
+     "items": [
+      "Rayın üstüne bir tren koymak bir tren eşyasını harcar, 'Treni kaldır' ise eşyayı geri verir"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-03",
@@ -1319,7 +3558,63 @@
    "title": "업데이트 0.5 · b164",
    "items": [
     "내려서 세워 둔 기차를 F로 열어 '기차 치우기' 버튼으로 없앨 수 있어요 (화물칸 물건은 가방으로 돌아와요)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.5 · b164",
+     "items": [
+      "A train left standing can be opened with F and removed with the 'Remove train' button (cargo items return to your bag)"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.5 · b164",
+     "items": [
+      "Un tren dejado parado se abre con F y se quita con el botón «Quitar tren» (lo que lleva en la carga vuelve a la mochila)"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.5 · b164",
+     "items": [
+      "Un train laissé à l'arrêt s'ouvre avec F et se retire avec le bouton « Retirer le train » (les marchandises reviennent dans le sac)"
+     ]
+    },
+    "de": {
+     "title": "Update 0.5 · b164",
+     "items": [
+      "Ein abgestellter Zug lässt sich mit F öffnen und mit dem Button „Zug entfernen“ entfernen (Frachtgegenstände kommen in den Beutel zurück)"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.5 · b164",
+     "items": [
+      "降りて止めた列車はFで開き、「列車を片付ける」ボタンで消せます（貨物の品はカバンに戻ります）"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.5 · b164",
+     "items": [
+      "停下放置的火车可以按 F 打开，并用“收起火车”按钮移除（货舱中的物品会回到背包）"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.5 · b164",
+     "items": [
+      "Um trem parado pode ser aberto com F e removido com o botão 'Remover trem' (os itens da carga voltam para a mochila)"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.5 · b164",
+     "items": [
+      "Оставленный поезд можно открыть клавишей F и убрать кнопкой «Убрать поезд» (грузы вернутся в сумку)"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.5 · b164",
+     "items": [
+      "Park edilmiş bir treni F ile açıp 'Treni kaldır' düğmesiyle kaldırabilirsin (yük bölmesindeki eşyalar çantaya döner)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-03",
@@ -1327,7 +3622,63 @@
    "title": "업데이트 0.5 · b163",
    "items": [
     "기차역 이름이 흐리게 보이던 것을 또렷하게 고치고, 참가자와 연결이 끊어지면 방장에게도 알림이 떠요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.5 · b163",
+     "items": [
+      "The station name, which looked blurry, is now sharp, and the host is also alerted when a participant's connection drops"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.5 · b163",
+     "items": [
+      "El nombre de la estación, que se veía borroso, ahora se ve nítido, y el anfitrión también recibe aviso cuando se corta la conexión de un participante"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.5 · b163",
+     "items": [
+      "Le nom de la gare, flou auparavant, est maintenant net, et l'hôte reçoit aussi une alerte quand la connexion d'un participant se coupe"
+     ]
+    },
+    "de": {
+     "title": "Update 0.5 · b163",
+     "items": [
+      "Der Name des Bahnhofs war unscharf und ist jetzt klar; wird die Verbindung eines Teilnehmers unterbrochen, bekommt auch der Host eine Meldung"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.5 · b163",
+     "items": [
+      "駅の名前がぼやけて見えていたのをはっきり表示するよう直し、参加者との接続が切れたときは部屋の主にも通知が出るようになりました"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.5 · b163",
+     "items": [
+      "修复了车站名称模糊的问题，参与者断开连接时房主也会收到提示"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.5 · b163",
+     "items": [
+      "O nome da estação, que aparecia borrado, agora está nítido, e o anfitrião também recebe um aviso quando a conexão de um participante cai"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.5 · b163",
+     "items": [
+      "Название станции, которое было размытым, теперь чёткое, а хозяин получает уведомление, когда связь с участником обрывается"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.5 · b163",
+     "items": [
+      "Bulanık görünen istasyon adı netleşti; bir katılımcının bağlantısı koptuğunda sunucu sahibine de bildirim çıkar"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-03",
@@ -1335,7 +3686,63 @@
    "title": "업데이트 0.5 · b162",
    "items": [
     "멀티플레이에서 방장과 연결이 끊어지면(10초 이상 소식이 없을 때) 월드에 남아 있지 않고 알림과 함께 로비로 돌아가요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.5 · b162",
+     "items": [
+      "In multiplayer, when the connection to the host is lost (no news for 10 seconds or more), you no longer stay in the world: a notice appears and you return to the lobby"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.5 · b162",
+     "items": [
+      "En multijugador, si se pierde la conexión con el anfitrión (sin noticias durante 10 segundos o más), ya no te quedas en el mundo: aparece un aviso y vuelves al lobby"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.5 · b162",
+     "items": [
+      "En multijoueur, si la connexion avec l'hôte se coupe (plus de nouvelles pendant 10 secondes ou plus), vous ne restez plus dans le monde : un avis s'affiche et vous revenez au salon"
+     ]
+    },
+    "de": {
+     "title": "Update 0.5 · b162",
+     "items": [
+      "Im Mehrspielermodus fällst du bei Verbindungsverlust zum Host (10 Sekunden oder länger keine Antwort) nicht mehr in der Welt hängen: eine Meldung erscheint und du kehrst in die Lobby zurück"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.5 · b162",
+     "items": [
+      "マルチプレイで部屋の主との接続が切れたとき（10秒以上応答がないとき）、ワールドに残らず、お知らせを出してロビーに戻ります"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.5 · b162",
+     "items": [
+      "多人游戏中与房主失去连接（10 秒以上没有回应）时，不会停留在世界中，会弹出提示并返回大厅"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.5 · b162",
+     "items": [
+      "No multijogador, se a conexão com o anfitrião cair (sem notícias por 10 segundos ou mais), você não fica mais no mundo: aparece um aviso e você volta ao lobby"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.5 · b162",
+     "items": [
+      "В мультиплеере при потере связи с хостом (нет ответа 10 секунд и больше) вы больше не остаётесь в мире: появляется уведомление и вы возвращаетесь в лобби"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.5 · b162",
+     "items": [
+      "Çok oyunculuda sunucu sahibiyle bağlantı kesilirse (10 saniye ya da daha uzun süre haber yoksa) dünyada kalmazsın: bir uyarı çıkar ve lobiye dönersin"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-03",
@@ -1343,7 +3750,63 @@
    "title": "업데이트 0.5 · b161",
    "items": [
     "새 시설 '자동 용광로': 컨베이어로 광석을 받아 기존 용광로의 두 배 속도로 녹이고, 옆에 상자가 있으면 주괴를 상자로, 없으면 나가는 컨베이어로 내보내요 (직접 넣고 빼기는 불가)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.5 · b161",
+     "items": [
+      "New facility 'Auto Furnace': it receives ore on a conveyor and smelts twice as fast as the regular furnace; if a chest is beside it, ingots go into the chest, otherwise out onto an outgoing conveyor (you cannot insert or take items directly)"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.5 · b161",
+     "items": [
+      "Nueva instalación «Horno automático»: recibe mineral por cinta transportadora y lo funde al doble de velocidad que el horno normal; si hay un cofre al lado, los lingotes van al cofre; si no, salen por una cinta de salida (no se puede meter ni sacar nada a mano)"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.5 · b161",
+     "items": [
+      "Nouvelle installation « Four automatique » : il reçoit le minerai par convoyeur et le fond deux fois plus vite que le four normal ; s'il y a un coffre à côté, les lingots y vont, sinon ils sortent par un convoyeur de sortie (on ne peut pas ajouter ni retirer à la main)"
+     ]
+    },
+    "de": {
+     "title": "Update 0.5 · b161",
+     "items": [
+      "Neue Anlage „Automatischer Ofen“: Erz kommt über ein Förderband und wird doppelt so schnell geschmolzen wie im normalen Ofen; steht daneben eine Truhe, landen die Barren darin, sonst kommen sie über ein Ausgangsband heraus (direktes Einlegen und Entnehmen ist nicht möglich)"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.5 · b161",
+     "items": [
+      "新しい設備「自動溶鉱炉」：コンベアで鉱石を受け取り、通常の溶鉱炉の2倍の速さで溶かします。横に箱があればインゴットは箱へ、なければ出ていくコンベアへ出します（直接入れたり取ったりはできません）"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.5 · b161",
+     "items": [
+      "新设施“自动熔炉”：通过传送带接收矿石，熔炼速度是普通熔炉的两倍；旁边有箱子时锭进入箱子，否则由输出传送带送出（不能直接放入或取出）"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.5 · b161",
+     "items": [
+      "Nova instalação 'Forno automático': recebe minério por esteira e funde duas vezes mais rápido que o forno normal; se houver um baú ao lado, os lingotes vão para o baú; senão, saem por uma esteira de saída (não dá para colocar ou tirar à mão)"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.5 · b161",
+     "items": [
+      "Новое устройство «Автоматическая печь»: получает руду по конвейеру и плавит вдвое быстрее обычной печи; если рядом есть сундук, слитки идут в сундук, иначе выходят по выходному конвейеру (вручную положить или взять нельзя)"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.5 · b161",
+     "items": [
+      "Yeni tesis 'Otomatik fırın': cevheri konveyörle alır ve normal fırından iki kat hızlı eritir; yanında sandık varsa külçeler sandığa girer, yoksa çıkış konveyörüyle dışarı verilir (elle koyup almak mümkün değil)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-03",
@@ -1351,7 +3814,63 @@
    "title": "업데이트 0.5 · b160",
    "items": [
     "선로를 연달아 놓으면 옆 칸으로 새지 않고 바라보는 방향으로 곧게 이어 놓여요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.5 · b160",
+     "items": [
+      "When rails are laid in a row, they now run straight in the direction you face, without leaking into the next tile"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.5 · b160",
+     "items": [
+      "Al colocar vías seguidas, ahora quedan rectas en la dirección en la que miras, sin desviarse a la casilla de al lado"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.5 · b160",
+     "items": [
+      "Quand on pose des rails à la suite, ils s'alignent droit dans la direction où l'on regarde, sans fuir sur la case voisine"
+     ]
+    },
+    "de": {
+     "title": "Update 0.5 · b160",
+     "items": [
+      "Werden Schienen hintereinander gelegt, verlaufen sie jetzt gerade in Blickrichtung und laufen nicht in das Nachbarfeld aus"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.5 · b160",
+     "items": [
+      "線路を続けて置くと、隣のマスにはみ出さず、向いている方向にまっすぐ並びます"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.5 · b160",
+     "items": [
+      "连续铺设铁轨时，会沿着面对的方向笔直铺设，不再偏到旁边的格子"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.5 · b160",
+     "items": [
+      "Quando trilhos são colocados em sequência, eles seguem retos na direção para onde você olha, sem vazar para a casa ao lado"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.5 · b160",
+     "items": [
+      "При укладке рельсов подряд они теперь идут прямо в направлении взгляда и не уходят в соседнюю клетку"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.5 · b160",
+     "items": [
+      "Raylar arka arkaya konulduğunda artık baktığın yöne düz gider, yan kareye sapmaz"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-03",
@@ -1359,7 +3878,63 @@
    "title": "업데이트 0.5 · b159",
    "items": [
     "채팅과 방에서 '탐험가4225' 같은 손님 이름 대신 프로필 닉네임이 나와요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.5 · b159",
+     "items": [
+      "In chat and rooms, the profile nickname is shown instead of guest names like 'Explorer4225'"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.5 · b159",
+     "items": [
+      "En el chat y en las salas se muestra el apodo del perfil en lugar de nombres de invitado como «Explorador4225»"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.5 · b159",
+     "items": [
+      "Dans le chat et les salons, le pseudo du profil s'affiche à la place des noms d'invités comme « Explorateur4225 »"
+     ]
+    },
+    "de": {
+     "title": "Update 0.5 · b159",
+     "items": [
+      "Im Chat und in Räumen wird statt Gastnamen wie „Entdecker4225“ der Profil-Spitzname angezeigt"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.5 · b159",
+     "items": [
+      "チャットや部屋では「探検家4225」のような客の名前ではなく、プロフィールのニックネームが表示されます"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.5 · b159",
+     "items": [
+      "聊天和房间中会显示个人资料昵称，而不是“探险家4225”这样的访客名"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.5 · b159",
+     "items": [
+      "No chat e nas salas aparece o apelido do perfil, no lugar de nomes de convidado como 'Explorador4225'"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.5 · b159",
+     "items": [
+      "В чате и комнатах показывается никнейм профиля вместо гостевых имён вроде «Исследователь4225»"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.5 · b159",
+     "items": [
+      "Sohbette ve odalarda 'Kaşif4225' gibi misafir adları yerine profil takma adı görünür"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-03",
@@ -1367,7 +3942,63 @@
    "title": "업데이트 0.5 · b158",
    "items": [
     "샌드박스와 기차 문구의 번역 빈칸을 채워 다른 나라 말에서도 undefined 없이 보여요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Update 0.5 · b158",
+     "items": [
+      "Filled the blank translations for sandbox and train text, so other languages show no 'undefined'"
+     ]
+    },
+    "es": {
+     "title": "Actualización 0.5 · b158",
+     "items": [
+      "Se rellenaron las traducciones vacías de los textos del modo sandbox y del tren, para que en otros idiomas no aparezca «undefined»"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour 0.5 · b158",
+     "items": [
+      "Les traductions vides des textes du bac à sable et des trains ont été complétées, pour qu'aucun « undefined » n'apparaisse dans les autres langues"
+     ]
+    },
+    "de": {
+     "title": "Update 0.5 · b158",
+     "items": [
+      "Die leeren Übersetzungen für Sandbox- und Zug-Texte wurden ergänzt, damit in anderen Sprachen kein „undefined“ mehr erscheint"
+     ]
+    },
+    "ja": {
+     "title": "アップデート 0.5 · b158",
+     "items": [
+      "サンドボックスと列車の文言の空欄の翻訳を埋め、他の言語でも undefined と出ないようにしました"
+     ]
+    },
+    "zh": {
+     "title": "更新 0.5 · b158",
+     "items": [
+      "补全了沙盒和火车文字的空白翻译，其他语言中不再显示 undefined"
+     ]
+    },
+    "pt": {
+     "title": "Atualização 0.5 · b158",
+     "items": [
+      "Preenchidas as traduções vazias dos textos do sandbox e do trem, para não aparecer 'undefined' em outros idiomas"
+     ]
+    },
+    "ru": {
+     "title": "Обновление 0.5 · b158",
+     "items": [
+      "Заполнены пустые переводы текстов песочницы и поездов, чтобы в других языках не появлялось «undefined»"
+     ]
+    },
+    "tr": {
+     "title": "Güncelleme 0.5 · b158",
+     "items": [
+      "Sandbox ve tren metinlerindeki boş çeviriler dolduruldu, böylece diğer dillerde 'undefined' görünmez"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-02",
