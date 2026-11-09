@@ -180,7 +180,7 @@ function myAid() { try { const u = window.FFAuth && FFAuth.user(); return u && u
 function openProf(aid) { try { if (aid && window.FFAuth && FFAuth.openProfile) FFAuth.openProfile(aid, { game: 'tumblecrown' }); } catch (e) { } }
 // 게스트 모드: 로그인 없이 온라인 대전에 들어가요. 계정(Supabase)이 필요한 일(친구·프로필·허브 기록)만 못 해요
 function isGuest() { if (loggedIn()) return false; try { return sessionStorage.getItem('tc.guest') === '1'; } catch (e) { return !!S.guestMem; } }
-function guestName() { let h = 0; for (const c of String(UID)) h = (h * 31 + c.charCodeAt(0)) % 10000; return T('손님') + String(h).padStart(4, '0'); }
+function guestName() { if (S.gname) return S.gname; let n = ''; try { n = sessionStorage.getItem('tc.gname') || ''; } catch (e) { } if (!/^게스트\d{6}$/.test(n)) { n = '게스트' + String(Math.floor(Math.random() * 1e6)).padStart(6, '0'); try { sessionStorage.setItem('tc.gname', n); } catch (e) { } } return S.gname = n; }   // 게스트(무작위 숫자 6개)
 function myName() { try { const n = window.FFAuth && FFAuth.user() && FFAuth.nickname(); if (n) return String(n).slice(0, 15); } catch (e) { } return isGuest() ? guestName() : T('기사'); }
 // 로그인 안 한 채 온라인으로 가면 로그인 창을 보여 주고, 그 아래에 게스트 모드 단추를 둬요
 function askGuest(then) {
@@ -191,7 +191,7 @@ function askGuest(then) {
 }
 function paintWho() {
   $('who').innerHTML = '';
-  const s = document.createElement('span'); s.className = 'tx'; s.textContent = loggedIn() ? myName() : isGuest() ? myName() + ' (' + T('게스트') + ')' : T('로그인 안 함'); $('who').appendChild(s);
+  const s = document.createElement('span'); s.className = 'tx'; s.textContent = loggedIn() ? myName() : isGuest() ? myName() : T('로그인 안 함'); $('who').appendChild(s);
   { const t = myTitle(); if (t) { const e = document.createElement('small'); e.className = 'tx'; e.style.cssText = 'margin-left:8px;color:#ffd36b'; e.textContent = seasonTitle(t.id, t.tk); $('who').appendChild(e); } }
   if (!loggedIn() && window.FFAuth) { const b = document.createElement('button'); b.textContent = T('로그인'); b.onclick = () => { try { FFAuth.openLogin(); } catch (e) { } }; $('who').appendChild(b); }
 }
