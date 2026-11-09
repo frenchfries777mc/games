@@ -102,3 +102,5 @@ patchnotes.json | v757 items[1] | 새 캐릭터 카다스 추가 (암흑총, 암
 patchnotes.json | v757 items[2] | 네온·카다스 스킨 6종 추가 (200·1200·3600 sC) | build 757 | 2026-11-09
 patchnotes.json | v757 items[3] | 네온 도시 인트로·로비·방 매칭 배경과 새 로고 | build 757 | 2026-11-09
 patchnotes.json | v757 items[4] | 폐허도시에서 점프로 갈 수 없던 발판 조정 | build 757 | 2026-11-09
+patchnotes.json | v758 title | 카다스 암흑 덩어리 조정 | build 758 | 2026-11-09
+patchnotes.json | v758 items[0] | 카다스 암흑 덩어리 최대 반지름 170에서 540으로 변경 | build 758 | 2026-11-09
