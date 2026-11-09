@@ -70,3 +70,35 @@ patchnotes.json | v748 items[2] | 소형 맵 시작 위치 최대 4개, 중형 �
 patchnotes.json | v749 title | 마법사 데미지 조정 | build 749 | 2026-11-07
 patchnotes.json | v749 items[0] | 마법사 화염구 데미지 14에서 16으로 상향 | build 749 | 2026-11-07
 patchnotes.json | v749 items[1] | 발판·벽·플레이어를 한 번 통과하면 데미지가 8로 감소 | build 749 | 2026-11-07
+patchnotes.json | v750 title | 복서 봇 연타 개선 | build 750 | 2026-11-08
+patchnotes.json | v750 items[0] | 복서 봇이 적이 닿는 거리에 있으면 쉬지 않고 연타하도록 수정 | build 750 | 2026-11-08
+balance.html | how li 1 | 같은 실력(어려움)의 봇 둘을 1대1로 붙여서, 34명의 모든 조합(561쌍)을 겨뤘어요. | b750 | 2026-11-08
+patchnotes.json | v751 title | 캐릭터 밸런스 조정 | build 751 | 2026-11-08
+patchnotes.json | v751 items[0] | 복서 쿨타임 0.3초에서 0.25초로 단축·궁극기 중 이동속도 1.4배 | build 751 | 2026-11-08
+patchnotes.json | v751 items[1] | 마법사 데미지 12로 하향 (한 번 거치면 8) | build 751 | 2026-11-08
+patchnotes.json | v751 items[2] | 군인 스킬 쿨타임 2배 | build 751 | 2026-11-08
+patchnotes.json | v751 items[3] | 크레온 근위병 체력 90에서 45로 하향 | build 751 | 2026-11-08
+patchnotes.json | v751 items[4] | 학살자 화염방사 과열까지 6초에서 9초로 연장 | build 751 | 2026-11-08
+patchnotes.json | v751 items[5] | 암살자 패시브를 대쉬 쿨타임 0.5초로 변경 | build 751 | 2026-11-08
+patchnotes.json | v751 items[6] | 드라큘라 데미지 12에서 15로 상향 | build 751 | 2026-11-08
+patchnotes.json | v751 items[7] | 야구선수 쿨타임 0.65초에서 0.4초로 단축 | build 751 | 2026-11-08
+patchnotes.json | v751 items[8] | 도박사 패시브를 일반 공격 데미지 4~36 무작위로 변경·칩 크기 축소 | build 751 | 2026-11-08
+patchnotes.json | v752 title+items | 근접 휘두르기 팔 모션 수정 | build 752 | 2026-11-08
+patchnotes.json | v753 title+items | 찌르기 캐릭터 팔 모션 복구 | build 753 | 2026-11-08
+patchnotes.json | v754 title | 암살자 데미지 상향 | build 754 | 2026-11-08
+patchnotes.json | v754 items[0] | 암살자 단검 데미지 41에서 43으로 상향 | build 754 | 2026-11-08
+patchnotes.json | v755 title | 복서 봇·마법사·포탈 조정 | build 755 | 2026-11-08
+patchnotes.json | v755 items[0] | 복서 봇이 쉬지 않고 계속 연타하도록 수정 | build 755 | 2026-11-08
+patchnotes.json | v755 items[1] | 마법사 데미지 12에서 14로 상향 (한 번 관통하면 7) | build 755 | 2026-11-08
+patchnotes.json | v755 items[2] | 차원여행자 포탈은 만든 사람만 이용 가능 | build 755 | 2026-11-08
+patchnotes.json | v756 title | 게스트 모드 추가 | build 756 | 2026-11-09
+patchnotes.json | v756 items[0] | 로그인 화면 아래에 게스트 모드 버튼 추가 (계정 없이 시작, 이름은 게스트+숫자 6개로 자동 지정) | build 756 | 2026-11-09
+patchnotes.json | v756 items[1] | 게스트 모드에서는 온라인 게임을 할 수 있고, 랭크·친구·클랜·파티처럼 계정이 필요한 기능은 쓸 수 없어요 | build 756 | 2026-11-09
+Stickseum-v1.0.html | 로그인 화면 | 게스트 모드로 하기 | build 756 | 2026-11-09
+Stickseum-v1.0.html | 로그인 화면 | 계정 없이 온라인 게임은 할 수 있어요. 랭크·친구·클랜·파티 같은 계정 기능은 쓸 수 없어요. | build 756 | 2026-11-09
+patchnotes.json | v757 title | 1.0.1 네온 시티 | build 757 | 2026-11-09
+patchnotes.json | v757 items[0] | 새 캐릭터 네온 추가 (대검과 사슬, 점멸로 상대를 끌어와 기절) | build 757 | 2026-11-09
+patchnotes.json | v757 items[1] | 새 캐릭터 카다스 추가 (암흑총, 암흑 덩어리) | build 757 | 2026-11-09
+patchnotes.json | v757 items[2] | 네온·카다스 스킨 6종 추가 (200·1200·3600 sC) | build 757 | 2026-11-09
+patchnotes.json | v757 items[3] | 네온 도시 인트로·로비·방 매칭 배경과 새 로고 | build 757 | 2026-11-09
+patchnotes.json | v757 items[4] | 폐허도시에서 점프로 갈 수 없던 발판 조정 | build 757 | 2026-11-09

@@ -6,11 +6,12 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { RenderPixelatedPass } from 'three/addons/postprocessing/RenderPixelatedPass.js';
 import { ROLES, MAP, CH, FOES, COSMETICS, TEAMS, FLAG_R, FLAG_T } from './data.js';
-import { DSTATE, CS, MW, MH, GRID, WATER, PILLARS, cw, chapterIndex, SEC, SOPEN, GATE, CUT, HGT, LEDGE_H, hAt, pillarAt } from './map.js';
+import { DSTATE, BR, HOLE, CS, MW, MH, GRID, WATER, PILLARS, cw, chapterIndex, SEC, SOPEN, GATE, CUT, HGT, LEDGE_H, hAt, pillarAt } from './map.js';
 // 화면에서 '바닥'은 비밀 방(SEC)을 뺀 곳이에요. 비밀 방은 따로 그려 두고 벽이 무너질 때 보여요. 창살문(GATE) 자리는 닫혀 있어도 바닥으로 그려요
 const inDoor = (i, j) => (MAP.doors || []).some(([x, y, w, h]) => i >= x && i < x + w && j >= y && j < y + h);   // 사막 신전 문 자리는 닫혀 있어도 바닥으로 그려요 (닫힌 모습은 돌문이 맡아요)
 const floorCell = (i, j) => i >= 0 && j >= 0 && i < MW && j < MH && (GRID[j * MW + i] === 1 || GATE[j * MW + i] > 0 || inDoor(i, j)) && !SEC[j * MW + i] && CUT[j * MW + i] !== 4 && CUT[j * MW + i] !== 1;
 // 낭떠러지·절벽·승강기 칸 (벽을 세우지 않아요)
+const holeCell = (i, j) => i >= 0 && j >= 0 && i < MW && j < MH && HOLE[j * MW + i] === 1;   // 협곡·다리 칸
 const cutCell = (i, j) => i >= 0 && j >= 0 && i < MW && j < MH && CUT[j * MW + i] > 0 && CUT[j * MW + i] !== 3 && CUT[j * MW + i] !== 5;
 const cellH = (i, j) => i >= 0 && j >= 0 && i < MW && j < MH ? HGT[j * MW + i] * LEDGE_H : 0;
 // 어둠의 방 안쪽 칸인지 (횃불·빛줄기를 달지 않아요)
@@ -750,7 +751,7 @@ export class View {
     instBoxes(s, (add) => {
       for (let j = 0; j < MH; j++) for (let i = 0; i < MW; i++) {
         if (floorCell(i, j) || SEC[j * MW + i] || cutCell(i, j) || colSet.has(j * MW + i)) continue;
-        let nb = false, nh = 0; for (let dj = -1; dj <= 1; dj++) for (let di = -1; di <= 1; di++) if (floorCell(i + di, j + dj)) { nb = true; nh = Math.max(nh, cellH(i + di, j + dj)); }
+        let nb = false, nh = 0; for (let dj = -1; dj <= 1; dj++) for (let di = -1; di <= 1; di++) if (floorCell(i + di, j + dj)) { nb = true; nh = Math.max(nh, cellH(i + di, j + dj)); } else if (holeCell(i + di, j + dj)) nb = true;
         if (!nb) continue;
         const x = cw(i), z = cw(j), bc = inBoss(i, j + 1) || inBoss(i, j - 1) ? bbrick : brick;
         const back = floorCell(i, j + 1) && !floorCell(i, j - 1);
@@ -778,7 +779,7 @@ export class View {
       for (let k = 0; k < 4; k++) cyl(r * 0.88, r * 0.88, 0.1, 14, bm, x, 1.3 + k * 1.1, z, s);   // 기둥 마디
       cyl(r * 1.12, r * 0.9, 0.5, 14, bm, x, 0.5 + h + 0.25, z, s); box(r * 2.3, 0.3, r * 2.3, bm, x, 0.5 + h + 0.65, z, s);
     }
-    this.buildSecrets(s, T, brick); this.buildPuzzles(s, T); this.buildDarks(s); this.buildExit(s); this.buildCuts(s, T, brick); this.escOn = false;
+    this.buildSecrets(s, T, brick); this.buildPuzzles(s, T); this.buildDarks(s); this.buildExit(s); this.buildCuts(s, T, brick); this.buildChasm(s, T, brick); this.escOn = false;
     for (const [x, z] of torches) { box(0.3, T.trees ? 4.6 : 1, 0.3, M(0x4a3020), x, T.trees ? 2.3 : 4, z, s); box(0.6, 0.25, 0.6, M(0x2a2830, { m: 0.7 }), x, 4.5, z, s); this.flame(s, x, 5.05, z, 1, false, T.torch); }
     // 횃불 빛은 가까운 곳에만 몇 개 켜요 (빛이 너무 많으면 느려져요)
     this.pool = []; for (let k = 0; k < 8; k++) { const L = new THREE.PointLight(T.torch, 0, 22, 1.6); s.add(L); this.pool.push(L); this.flick.push({ L, b: 0, ph: k * 1.3, pool: true }); }
@@ -1111,6 +1112,32 @@ export class View {
       }
       this.puzR.push(P);
     });
+  }
+  // 무너지는 다리 협곡: 낭떠러지 안쪽 벽·바닥과, 놓였다 무너지는 다리 (판자마다 따로 떨어져요)
+  buildChasm(s, T, brick) {
+    this.brR = [];
+    if (!(MAP.chasms && MAP.chasms.length)) return;
+    const dark = M(0x0a0608), glow = M(0x1a0a06, { e: 0xff5a18, ei: 0.1, op: 0.22, uniq: true }), wall = [0x5a4630, 0x65503a, 0x4c3a28, 0x6d583f];
+    instBoxes(s, add => {
+      for (let j = 0; j < MH; j++) for (let i = 0; i < MW; i++) {
+        if (!holeCell(i, j)) continue;
+        for (const [di, dj] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+          if (holeCell(i + di, j + dj)) continue;
+          const x = cw(i) + di * 0.95, z = cw(j) + dj * 0.95;
+          for (let y = 0; y < 7; y++) add(x, -0.5 - y, z, di ? 0.12 : 1.96, 0.95, dj ? 0.12 : 1.96, wall[(y + i + j) % 4]);
+        }
+      }
+    });
+    for (const [x, y, w, h] of MAP.chasms) { box(w * CS, 0.2, h * CS, dark, (x + w / 2) * CS, -7.6, (y + h / 2) * CS, s, false); const g = mesh(new THREE.PlaneGeometry(w * CS, h * CS), glow, (x + w / 2) * CS, -6.4, (y + h / 2) * CS, s, false); g.rotation.x = -Math.PI / 2; }
+    const wood = [0x7a5a38, 0x6e5030, 0x84623e], rail = M(0x4a3220), rope = M(0xb09a70);
+    for (const [x, y, w, h] of MAP.bridges) {
+      const g = new THREE.Group(), pm = M(0x7a5a38, { e: 0xff4a10, ei: 0, uniq: true }), L = h * CS - 0.2, planks = [];
+      g.position.set((x + w / 2) * CS, 0, (y + h / 2) * CS); s.add(g);
+      for (let k = 0; k < w; k++) { const m = box(CS * 0.92, 0.28, L, k % 3 === 1 ? pm : M(wood[k % 3]), (k - (w - 1) / 2) * CS, 0.04, 0, g); planks.push({ m, bx: m.position.x, y: 0, vy: 0, rz: 0, sp: (Math.random() - 0.5) * 3, dl: Math.abs(k - (w - 1) / 2) * 0.05 + Math.random() * 0.25 }); }
+      const rails = new THREE.Group(); g.add(rails);
+      for (const sz of [-1, 1]) { box(w * CS, 0.16, 0.16, rail, 0, 1.15, sz * (L / 2 - 0.1), rails); box(w * CS, 0.08, 0.08, rope, 0, 0.7, sz * (L / 2 - 0.1), rails); for (let k = 0; k <= w; k += 3) box(0.2, 1.3, 0.2, rail, (k - w / 2) * CS, 0.65, sz * (L / 2 - 0.1), rails); }
+      this.brR.push({ g, planks, pm, rails, ps: 0, fall: 0, cx: g.position.x, cz: g.position.z });
+    }
   }
   // 끊어진 길: 바닥이 꺼진 낭떠러지와 금 간 기둥 / 도르래 승강기: 절벽, 오르내리는 발판, 손잡이 둘
   buildCuts(s, T, brick) {
@@ -1449,6 +1476,17 @@ export class View {
     });
   }
   tick(dt, t) {
+    for (const B of this.brR || []) {   // 무너지는 다리: 금이 가면 붉게 깜빡이며 떨리고, 무너지면 판자가 하나씩 떨어져요
+      const st = BR.s;
+      if (st === 2) B.fall += dt; else B.fall = 0;
+      if (B.ps === 2 && st < 2) for (const pk of B.planks) { pk.y = -6; pk.vy = 0; pk.rz = 0; pk.m.visible = true; }   // 다시 놓일 때는 아래에서 올라와요
+      B.ps = st; B.pm.emissiveIntensity = st === 1 ? 0.4 + 0.4 * Math.sin(t * 16) : 0; B.rails.visible = st < 2;
+      for (const pk of B.planks) {
+        if (st === 2) { const f = B.fall - pk.dl; if (f > 0) { pk.vy -= 32 * dt; pk.y += pk.vy * dt; pk.rz += pk.sp * dt; } pk.m.visible = pk.y > -9; }
+        else { pk.y += (0 - pk.y) * Math.min(1, dt * 5); if (pk.y > -0.01) pk.y = 0; pk.rz *= 0.8; }
+        pk.m.position.set(pk.bx + (st === 1 ? (Math.random() - 0.5) * 0.12 : 0), 0.04 + pk.y, 0); pk.m.rotation.z = pk.rz;
+      }
+    }
     for (const m of this.doorM || []) { if (DSTATE.open) { m.position.y = -4.4; m.visible = false; } else { m.visible = true; m.position.y += (0 - m.position.y) * Math.min(1, dt * 4); } }
     for (const g of this.doorG || []) { const c = DSTATE.open ? 0x6aff9a : 0xff3a2a; g.material.color.setHex(c); g.material.emissive.setHex(c); g.material.emissiveIntensity = DSTATE.open ? 0.7 : 1.4; g.material.opacity = (DSTATE.open ? 0.3 : 0.45) + 0.15 * Math.sin(t * (DSTATE.open ? 5 : 3)); }   // 열리면 초록, 닫히면 붉은 빛이 길바닥에 깔려요
     for (const f of this.flick || []) f.L.intensity = f.b * (0.9 + Math.sin(t * 2.2 + f.ph) * 0.04 + Math.sin(t * 3.7 + f.ph * 2) * 0.02);
