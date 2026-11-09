@@ -19,6 +19,14 @@ export let GATE = new Int8Array(0); export const GOPEN = [];
 // HGT = 칸 바닥 높이 비율 (위층 1), PDOWN = 기둥이 쓰러졌는지, LIFTH = 승강기 높이 (0 아래 ~ 1 위)
 export const LEDGE_H = 2.6;
 export let CUT = new Uint8Array(0), HGT = new Float32Array(0); export const PDOWN = [], LIFTH = [];
+// 무너지는 다리 협곡: BR.s = 0 서 있음 · 1 금이 가는 중(아직 걸을 수 있어요) · 2 무너져 끊김. HOLE 칸 = 협곡·다리 칸 (낭떠러지, 화살은 위로 날아가요)
+export const BR = { s: 0 }; export let HOLE = new Uint8Array(0);
+export function setBridges(v) {
+  BR.s = v; FIELDS.clear();
+  for (const [x, y, w, h] of (MAP.bridges || [])) for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) if (i >= 0 && j >= 0 && i < MW && j < MH) GRID[j * MW + i] = v < 2 ? 1 : 0;
+}
+// 그 자리가 서 있는 다리 위인지 (무너질 때 떨어져요)
+export function onBridge(x, z) { const i = Math.floor(x / CS), j = Math.floor(z / CS); return (MAP.bridges || []).some(([bx, by, bw, bh]) => i >= bx && i < bx + bw && j >= by && j < by + bh); }
 let CUR = -1;
 // 장을 바꾸면 지도를 새로 만들어요 (끝없는 심연은 층마다 새로: force)
 export function useChapter(i, force) {
@@ -38,6 +46,8 @@ export function useChapter(i, force) {
   const fillC = ([x, y, w, h], v, g, hv) => { for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) { if (i < 0 || j < 0 || i >= MW || j >= MH) continue; CUT[j * MW + i] = v; if (g != null) GRID[j * MW + i] = g; if (hv != null) HGT[j * MW + i] = hv; } };
   for (const q of MAP.pits) fillC(q.band, 1, 0);
   for (const q of MAP.lifts) { fillC(q.ledge, 3, null, 1); for (const [x, y, w, h, v] of q.stairs) fillC([x, y, w, h], 5, null, v); fillC(q.band, 2, 0); fillC(q.plat, 4, 1); }
+  HOLE = new Uint8Array(MW * MH);
+  for (const [x, y, w, h] of [...(MAP.chasms || []), ...(MAP.bridges || [])]) for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) if (i >= 0 && j >= 0 && i < MW && j < MH) { HOLE[j * MW + i] = 1; CUT[j * MW + i] = 1; GRID[j * MW + i] = 0; }
   GATE = new Int8Array(MW * MH);
   MAP.puzzles.forEach((q, k) => { const [x, y, w, h] = q.gate; for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) GATE[j * MW + i] = k + 1; });
   resetSecrets();
@@ -49,6 +59,7 @@ export function resetSecrets() {
   MAP.secrets.forEach(q => { const [x, y, w, h] = q.pass; for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) GRID[j * MW + i] = 0; });
   GOPEN.length = 0; MAP.puzzles.forEach(q => gateSet(q, 0));
   PDOWN.length = 0; MAP.pits.forEach(q => { bridgeSet(q, 0); const [x, y, w, h] = q.bridge; for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) HGT[j * MW + i] = 0; }); LIFTH.length = 0; MAP.lifts.forEach((q, k) => { LIFTH[k] = 0; });
+  setBridges(0);
 }
 function bridgeSet(q, v) { const [x, y, w, h] = q.bridge; for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) GRID[j * MW + i] = v; }
 // 기둥이 쓰러져 다리가 놓여요
@@ -95,6 +106,8 @@ export function chapterIndex() { return CUR; }
 export function floorCell(i, j) { return i >= 0 && j >= 0 && i < MW && j < MH && GRID[j * MW + i] === 1; }
 WALK.f = floorCell;
 export function isWall(x, z) { return !floorCell(Math.floor(x / CS), Math.floor(z / CS)); }
+// 화살·던진 것이 막히는지: 벽은 막지만 협곡 위는 지나가요
+export function isBlock(x, z) { const i = Math.floor(x / CS), j = Math.floor(z / CS); if (floorCell(i, j)) return false; return !(i >= 0 && j >= 0 && i < MW && j < MH && HOLE[j * MW + i]); }
 
 // 원(위치 o, 반지름 r)을 벽과 기둥 밖으로 밀어내요
 export function collide(o, r) {

@@ -2,7 +2,7 @@
 // 게임 규칙 (방장·혼자 하기에서만 돌아가요). three.js를 쓰지 않아서 node에서도 시험할 수 있어요.
 import { ROLES, ROLE_IDS, ENEMIES, BLESSINGS, FOES, MAP, COMBOS, DEEP, ROLE_PUZ, flagShown } from './data.js';
 import * as D from './data.js';
-import { collide as mapCollide, isWall, lineClear, navDir, areaAt, cw, useChapter, PILLARS, resetSecrets, openSecret, secretFace, openGate, setDoors, DSTATE, dropPillar, pillarAt, LIFTH, liftOk } from './map.js';
+import { collide as mapCollide, isWall, isBlock, setBridges, onBridge, lineClear, navDir, areaAt, cw, useChapter, PILLARS, resetSecrets, openSecret, secretFace, openGate, setDoors, DSTATE, dropPillar, pillarAt, LIFTH, liftOk } from './map.js';
 
 export const INTRO_T = 16;
 const WAKE_R = 14, LEASH_R = 30;
@@ -65,7 +65,7 @@ export function createGame(slots, seed, ch = 0, mode = 'normal') {
   G.tm = {}; const cnt = [0, 0]; for (const p of G.players) { G.tm[p.id] = p.team; p.tIdx = cnt[p.team]++; }
   if (G.pvp) { G.fl = MAP.tflags.map(([x, y, o]) => ({ x: cw(x), z: cw(y), own: o, cap: -1, prog: 0 }));   // 시작할 때 팀마다 깃발은 진지에서 가장 가까운 하나만 가지고, 나머지는 주인 없이 시작해요
     for (const t of [0, 1]) { const sp = MAP.tspawn[t], op = MAP.tspawn[1 - t], dx = cw(op[0]) - cw(sp[0]), dz = cw(op[1]) - cw(sp[1]), mine = G.fl.filter(f => f.own === t).sort((a, b) => (a.x - cw(sp[0])) * dx + (a.z - cw(sp[1])) * dz - ((b.x - cw(sp[0])) * dx + (b.z - cw(sp[1])) * dz)); for (const f of mine.slice(1)) f.own = -1; }   // 진지 깃발 = 우리 깃발 중 맨 뒤쪽(상대 진지에서 가장 먼 쪽) 하나
-    initOrder(G); G.winTeam = -1; G.cb = [0, 0]; G.mk = [0, 0]; G.dr = MAP.doors && MAP.doors.length ? { t: D.DOOR_SHUT_T } : null; G.sm = G.dr ? { on: 0, t: D.STORM_CALM_T } : null; G.nt = MAP.tflags.night ? { on: 0, t: D.NIGHT_T } : null; setDoors(0); G.cTim = [50, 50, 50]; G.gi = G.dr ? MAP.tfi.indexOf(4) : -1; pvpSpawn(G); return G; }
+    initOrder(G); G.winTeam = -1; G.cb = [0, 0]; G.mk = [0, 0]; G.dr = MAP.doors && MAP.doors.length ? { t: D.DOOR_SHUT_T } : null; G.sm = G.dr ? { on: 0, t: D.STORM_CALM_T } : null; G.nt = MAP.tflags.night ? { on: 0, t: D.NIGHT_T } : null; setDoors(0); G.br = MAP.bridges && MAP.bridges.length ? { s: 0, t: D.BR_UP_T } : null; setBridges(0); G.cTim = [50, 50, 50]; G.gi = G.dr ? MAP.tfi.indexOf(4) : -1; pvpSpawn(G); return G; }
   placeAt(G, G.cp);
   // 몬스터는 지도에 정해진 자리에 한 번만 나와요
   for (const [k, x, y] of MAP.spawns) spawnEnemy(G, k, cw(x), cw(y), true);
@@ -272,6 +272,14 @@ function pvpCheck(G, dt) {
   if (G.dr) {   // 사막 신전: 문은 닫혀 있다가 열리고, 모래폭풍은 잠잠하다가 불어요
     G.dr.t -= dt; if (G.dr.t <= 0) { const o = DSTATE.open ? 0 : 1; setDoors(o); G.dr.t = o ? D.DOOR_OPEN_T : D.DOOR_SHUT_T; ev(G, 'door', { open: o }); }
     G.sm.t -= dt; if (G.sm.t <= 0) { G.sm.on = G.sm.on ? 0 : 1; G.sm.t = G.sm.on ? D.STORM_T : D.STORM_CALM_T; ev(G, 'storm', { on: G.sm.on }); }
+  }
+  if (G.br) {   // 무너지는 다리 협곡: 서 있다가 → 금이 가고 → 무너져 끊겼다가 → 다시 놓여요. 무너질 때 다리 위에 있으면 떨어져 쓰러져요
+    const B = G.br; B.t -= dt;
+    if (B.t <= 0) {
+      if (B.s === 0) { B.s = 1; B.t = D.BR_WARN_T; setBridges(1); ev(G, 'brwarn', {}); }
+      else if (B.s === 1) { B.s = 2; B.t = D.BR_DOWN_T; setBridges(2); ev(G, 'brdown', {}); for (const p of G.players) if (!p.dead && onBridge(p.x, p.z)) { ev(G, 'fall', { id: p.id, x: p.x, z: p.z }); for (const id of Object.keys(p.hitBy || {})) if (G.t - p.hitBy[id] > 4) delete p.hitBy[id]; koPlayer(G, p, null); } }   // 최근 4초 안에 맞았으면 때린 적에게 어시스트가 돌아가요 (킬은 없어요)
+      else { B.s = 0; B.t = D.BR_UP_T; setBridges(0); ev(G, 'brup', {}); }
+    }
   }
   if (G.nt) { G.nt.t -= dt; if (G.nt.t <= 0) { G.nt.on = G.nt.on ? 0 : 1; G.nt.t = D.NIGHT_T; ev(G, 'night', { on: G.nt.on }); } }   // 달빛 성채: 30초마다 낮과 밤이 바뀌어요
   // 중립 괴물: 가운데에 가끔 나타나고, 더 많이 때린 팀이 쓰러뜨리면 그 팀 점령이 20초 동안 1.5배 빨라져요
@@ -1585,7 +1593,7 @@ function stepProjs(G, dt) {
       continue;
     }
     pr.x += pr.vx * dt; pr.z += pr.vz * dt; pr.life -= dt;
-    if (pr.life <= 0 || isWall(pr.x, pr.z) || PILLARS.some(p => Math.hypot(p.x - pr.x, p.z - pr.z) < p.r)) { pr.dead = true; if (pr.k === 'pierce') { const o = G.players.find(p => p.id === pr.own); if (o && !o.bot) breakWall(G, pr.x, pr.z, 1.2, o); } continue; }
+    if (pr.life <= 0 || isBlock(pr.x, pr.z) || PILLARS.some(p => Math.hypot(p.x - pr.x, p.z - pr.z) < p.r)) { pr.dead = true; if (pr.k === 'pierce') { const o = G.players.find(p => p.id === pr.own); if (o && !o.bot) breakWall(G, pr.x, pr.z, 1.2, o); } continue; }
     if (pr.team === 0 && !pr.snipe && G.zones.some(z => (z.k === 'wall' || z.k === 'cover') && tOf(G, z.own) !== tOf(G, pr.own) && segDist(z.x - Math.cos(z.a) * z.len / 2, z.z - Math.sin(z.a) * z.len / 2, z.x + Math.cos(z.a) * z.len / 2, z.z + Math.sin(z.a) * z.len / 2, pr.x, pr.z) < 0.55)) { pr.dead = true; ev(G, 'wallhit', { x: pr.x, z: pr.z }); continue; }
     if (pr.team === 0) {
       const own = G.players.find(p => p.id === pr.own);
@@ -2009,7 +2017,7 @@ export function snapshot(G) {
   const near = e => e.k === 'boss' || (e.st !== 'sleep') || G.players.some(p => Math.abs(p.x - e.x) < 34 && Math.abs(p.z - e.z) < 26);
   return {
     mn: G.enemies.filter(e => e.mon && e.hp > 0).map(m => [r1(m.x), r1(m.z), Math.round(m.hp / m.maxhp * 100)]), mk: G.mk || [0, 0],
-    pv: G.pvp ? 1 : 0, win: G.winner || 0, wtm: G.winTeam != null ? G.winTeam : -1, lt: G.limit ? Math.max(0, Math.ceil(G.limit - G.mt)) : -1, tf: G.fl ? G.fl.map(f => [f.own, f.cap, r1(f.prog), f.hold > 0 ? r1(f.hold) : 0, f.seize > 0 ? r1(f.seize) : 0, (flagLocked(G, G.fl.indexOf(f), 0) ? 1 : 0) | (flagLocked(G, G.fl.indexOf(f), 1) ? 2 : 0)]) : 0, rg: G.range ? 1 : 0, dr: G.dr ? [DSTATE.open, r1(G.dr.t)] : 0, sm: G.sm ? [G.sm.on, r1(G.sm.t)] : 0, nt: G.nt ? [G.nt.on, r1(G.nt.t)] : 0, mc: G.cb ? [Math.ceil(G.cb[0]), Math.ceil(G.cb[1])] : 0, t: r1(G.t), mt: Math.floor(G.mt || 0), ph: G.phase, pt: r1(G.phaseT), c: G.ch, dp: G.deep, wk: G.weekly, wt: r1(G.winT || 0), msg: G.msg, won: G.won,
+    pv: G.pvp ? 1 : 0, win: G.winner || 0, wtm: G.winTeam != null ? G.winTeam : -1, lt: G.limit ? Math.max(0, Math.ceil(G.limit - G.mt)) : -1, tf: G.fl ? G.fl.map(f => [f.own, f.cap, r1(f.prog), f.hold > 0 ? r1(f.hold) : 0, f.seize > 0 ? r1(f.seize) : 0, (flagLocked(G, G.fl.indexOf(f), 0) ? 1 : 0) | (flagLocked(G, G.fl.indexOf(f), 1) ? 2 : 0)]) : 0, rg: G.range ? 1 : 0, dr: G.dr ? [DSTATE.open, r1(G.dr.t)] : 0, br: G.br ? [G.br.s, r1(G.br.t)] : 0, sm: G.sm ? [G.sm.on, r1(G.sm.t)] : 0, nt: G.nt ? [G.nt.on, r1(G.nt.t)] : 0, mc: G.cb ? [Math.ceil(G.cb[0]), Math.ceil(G.cb[1])] : 0, t: r1(G.t), mt: Math.floor(G.mt || 0), ph: G.phase, pt: r1(G.phaseT), c: G.ch, dp: G.deep, wk: G.weekly, wt: r1(G.winT || 0), msg: G.msg, won: G.won,
     sk: G.players.filter(p => !p.bot && G.skip[p.id]).length, hu: G.players.filter(p => !p.bot).length,
     pl: G.players.map(p => ({ id: p.id, tm: p.team, fz: p.inFl ? 1 : 0, dth: p.deaths | 0, role: p.role, rn: p.px && p.px.runeT > G.t ? r1(p.px.runeT - G.t) : 0, col: p.col, cos: p.cos, name: p.name, mp: p.mp | 0, rl: p.rl | 0, bot: p.bot, x: r1(p.x), z: r1(p.z), a: r1(p.a), hp: Math.round(p.hp), mx: p.maxhp, dn: p.down ? 1 : 0, dd: p.dead ? 1 : 0, bl: r1(p.bleed), rs: r1(p.respT), rv: r1(p.revT), ro: p.roll > 0 ? 1 : 0, bk: p.block > 0 ? 1 : 0, sh: Math.round(p.shield), tn: p.taunt > 0 ? 1 : 0, ra: p.rally > 0 ? 1 : 0, mr: p.moraleT > 0 ? 1 : 0, cb: p.capB > 0 ? r1(p.capB) : 0, an: p.animT > 0 ? p.anim : '', aN: p.animN || 0, ak: p.anim, mv: p.moving ? 1 : 0, cd: [r1(p.cd.s0), r1(p.cd.s1), r1(p.cd.s2)], rc: r1(p.rollCd), cv: p.covT > 0 ? r1(p.covT) : 0, rct: p.rcT > 0 ? r1(p.rcT) : 0, rcc: p.rcCd > 0 ? r1(p.rcCd) : 0, b: p.bl, cb: p.comboT > 0 ? p.combo : 0, ac: p.animC || 0, fc: p.focus > 0 ? 1 : 0, tc: p.torch || 0, cg: p.chg > 0 ? r1(p.chg) : 0, cl: p.chill > 0 ? 1 : 0, em: p.emb ? 1 : 0, kl: p.kills | 0, as: p.assists | 0, fcp: p.fcap | 0, mkp: p.monK | 0, pc: p.place | 0, sv: r1(p.survT || 0), bn: p.burn > 0 ? 1 : 0, sw: p.slow > 0 ? 1 : 0, stl: p.stl > 0 ? 1 : 0, sp: p.snipeT > 0 ? 1 : 0, bs: p.bast > 0 ? 1 : 0, rsh: p.rush ? 1 : 0, rst: p.rush ? r1(Math.max(0, p.rush.t)) : 0, cy: p.cry > 0 ? 1 : 0, vw: (p.vow && p.vow.t > 0) || p.vwSelf > 0 ? 1 : 0 })),
     en: G.enemies.filter(e => e.k !== 'dummy' && near(e)).map(e => ({ id: e.id, k: e.k, x: r1(e.x), z: r1(e.z), a: r1(e.a), hp: Math.round(e.hp), mx: e.maxhp, st: e.st, mk: e.mark > 0 ? 1 : 0, sn: e.stun > 0 ? 1 : 0, sl: e.slow > 0 ? 1 : 0, bu: e.burn > 0 ? 1 : 0, ph: e.phase || 0, mb: e.mb || 0, bg: e.big ? 1 : 0, tm: e.tm != null ? e.tm : -1, mv: e.moving ? 1 : 0, ak: e.atk ? e.atk.k + (e.atk.go ? '!' : '') : '', ht: e.hitT > 0 ? 1 : 0 })),
