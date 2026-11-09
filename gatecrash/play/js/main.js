@@ -35,11 +35,11 @@ function say(t) { $('modalT').textContent = t; $('modal').classList.add('on'); }
 $('modalOk').onclick = () => $('modal').classList.remove('on');
 
 /* ---------- 계정 / 프로필 ---------- */
-let GUEST = false;   // 게스트 모드: 온라인 대전은 되지만 Supabase는 쓰지 않아요
+let GUEST = false; const GNAME = '게스트' + String(Math.floor(Math.random() * 1000000)).padStart(6, '0');   // 게스트 모드: 온라인 대전은 되지만 Supabase는 쓰지 않아요
 function loggedIn() { try { return !!(window.FFAuth && FFAuth.user()); } catch (e) { return false; } }
 function myAid() { try { const u = window.FFAuth && FFAuth.user(); return u && u.id ? String(u.id) : ''; } catch (e) { return ''; } }
 function openProf(aid) { try { if (aid && window.FFAuth && FFAuth.openProfile) FFAuth.openProfile(aid, { game: 'gatecrash' }); } catch (e) { } }
-function myName() { try { const n = window.FFAuth && FFAuth.user() && FFAuth.nickname(); if (n) return String(n).slice(0, 15); } catch (e) { } return '손님'; }
+function myName() { try { const n = window.FFAuth && FFAuth.user() && FFAuth.nickname(); if (n) return String(n).slice(0, 15); } catch (e) { } return GNAME; }
 function paintWho() {
   const w = $('who'); w.innerHTML = '';
   const s = document.createElement('span'); s.textContent = loggedIn() ? myName() : (GUEST ? '게스트 모드' : '로그인 안 함'); w.appendChild(s);
