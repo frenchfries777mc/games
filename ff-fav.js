@@ -9,7 +9,7 @@
     var cards=[].slice.call(sec.querySelectorAll('article.game')); if(!cards.length) return;
     var order=cards.slice();                       // 원래 순서
     var css=document.createElement('style');
-    css.textContent='article.game{position:relative}.ffav{position:absolute;top:14px;right:72px;z-index:3;width:38px;height:38px;border-radius:50%;border:1px solid var(--fry,#d9b45f);background:none;color:var(--fry,#d9b45f);text-shadow:0 1px 4px #000;font-size:20px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}.ffav.on{background:none;color:var(--fry,#d9b45f)}';
+    css.textContent='article.game{position:relative}.ffav{position:absolute;top:14px;right:72px;z-index:3;width:38px;height:38px;border-radius:50%;border:0;background:none;color:var(--fry,#d9b45f);text-shadow:0 1px 4px #000;font-size:20px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}.ffav.on{background:none;color:var(--fry,#d9b45f)}';
     document.head.appendChild(css);
     function key(c){ var a=c.querySelector('a.play,a.shot'); return a?a.href:''; }
     function paint(){
