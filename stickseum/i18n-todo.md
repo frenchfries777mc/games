@@ -115,3 +115,7 @@ Stickseum-v1.0.1.html | 1111킬 챌린지 배너 | 🔥 1111킬 챌린지 · 모
 Stickseum-v1.0.1.html | 1111킬 챌린지 배너 | 일 남음 | build 759 | 2026-11-09
 patchnotes.json | v760 title | 네온 시티 로비 곡 추가 | build 760 | 2026-11-10
 patchnotes.json | v760 items[0] | 로비 곡을 네온 시티 곡으로 교체 | build 760 | 2026-11-10
+patchnotes.json | v762 title | 1111킬 챌린지 표시 수정 | build 762 | 2026-11-10
+patchnotes.json | v762 items[0] | 1111킬 챌린지 표시가 안 뜨는 문제 수정 (표시 위치를 아래로 옮기고, 서버 연결이 늦어도 계속 표시) | build 762 | 2026-11-10
+Stickseum-v1.0.1.html | 1111킬 챌린지 배너 | 🔥 1111킬 챌린지 · 11/15까지 · 불러오는 중 | build 762 | 2026-11-10
+patchnotes.json | v762 items[1] | 메인 화면 로고를 새 로고로 교체 | build 762 | 2026-11-10
