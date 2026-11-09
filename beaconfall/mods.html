@@ -347,6 +347,7 @@ function parseScript(text,lenient){
     return {item:id,field:f,value:num};
   }
   function splitOr(t){var parts=[],cur='',q=false;for(var i=0;i<t.length;i++){var ch=t[i];if(ch==='"')q=!q;if(!q&&/\s/.test(ch)){var r=t.slice(i).match(/^\s+or\s+/i);if(r){parts.push(cur);cur='';i+=r[0].length-1;continue;}}cur+=ch;}parts.push(cur);return parts;}
+  function splitAnd(t){var parts=[],cur='',q=false;for(var i=0;i<t.length;i++){var ch=t[i];if(ch==='"')q=!q;if(!q&&/\s/.test(ch)){var r=t.slice(i).match(/^\s+and\s+/i);if(r){parts.push(cur);cur='';i+=r[0].length-1;continue;}}cur+=ch;}parts.push(cur);return parts;}
   function evOf(l,en,tw){
     var ev=EVS[en.toLowerCase()];if(!ev){var g=guess(en,Object.keys(EVS));throw PE(l.n,"unknown event '"+en+"'."+(g?" Did you mean '"+g+"'?":" You can use: world generate, world load, game load, join, quit, key, click, left_click, right_click, every, mine, chop, kill, craft, fish, place, destroy, damage, death, respawn, roll, interaction, spawn"));}
     var tg=tw?tw.toLowerCase():'';
@@ -384,6 +385,9 @@ function parseScript(text,lenient){
   function condOf(l,c){
     c=c.trim();var m;
     if(m=c.match(/^(not\s+)?mod\s+"([^"]{1,40})"$/i))return {md:{n:m[2],not:!!m[1]}};
+    if(m=c.match(/^weather\s+(is\s+not|is)\s+(clear|rain|storm)$/i))return {cx:{k:'weather',v:m[2].toLowerCase(),not:/not/i.test(m[1])}};
+    if(m=c.match(/^time\s+(is\s+not|is)\s+(day|night)$/i))return {cx:{k:'time',v:m[2].toLowerCase(),not:/not/i.test(m[1])}};
+    if(m=c.match(/^inventory\s+(is\s+not|is)\s+(full|empty)$/i))return {cx:{k:'inv',v:m[2].toLowerCase(),not:/not/i.test(m[1])}};
     if(m=c.match(/^(player|world)\s+(max\s*hp|hp|x|y|z|biome|dimen[st]ion|item|name|day|hour|players)\s*(>=|<=|!=|>|<|=|is\s+not|is)\s*(.+)$/i))return gameCond(l,m);
     if(m=c.match(/^(not\s+)?(left[_\s]|right[_\s])?click\s+press$/i))return {mouse:{b:m[2]?(/right/i.test(m[2])?2:0):-1,not:!!m[1]}};
     if(m=c.match(/^(not\s+)?key\s+"([^"]+)"\s+press$/i)){var kc0=keyCode(m[2]);if(!kc0)throw PE(l.n,"unknown key '"+m[2]+"'. Use A-Z, 0-9, F1-F12, Space or Control");return {key:{c:kc0,not:!!m[1]}};}
@@ -402,7 +406,7 @@ function parseScript(text,lenient){
       var l=L[pos];
       if(l.ind>ind)throw PE(l.n,'indent does not match the line above');
       pos++;var m;
-      if(/^(set|add|subtract|multiply|divide|reset|loop|if\s+(variable|player|world|signal)|signal|every)\b/i.test(l.t))l={n:l.n,ind:l.ind,t:nb(l.t)};   // {변수} 는 {} 를 떼고 읽어요
+      if(/^(set|add|subtract|multiply|divide|reset|loop|if\s+(variable|player|world|signal)|signal|every)\b/i.test(l.t)&&!(/^if\s/i.test(l.t)&&/\sand\s/i.test(l.t)))l={n:l.n,ind:l.ind,t:nb(l.t)};   // {변수} 는 {} 를 떼고 읽어요
       var fchv=null,frv=null,frb=null;   // fill ... chance %{pct}% / replace %{block}% / replace <블록>: 변수·블록을 떼어 두고 나머지를 읽어요
       if(/^fill\s/i.test(l.t)){
         var ft1=l.t,fmm;
@@ -419,13 +423,17 @@ function parseScript(text,lenient){
       if(em){
         var tl=acts[acts.length-1];
         while(tl&&tl.elseIf&&tl.else&&tl.else.length===1)tl=tl.else[0];
-        if(!tl||!Array.isArray(tl.do)||!(tl.has||tl.hand||tl.key||tl.mouse||tl.ifp||tl.ifv||tl.ifs||tl.ifc||tl.ifg||tl.md||tl.anyof||typeof tl.chance==='number'))throw PE(l.n,'else has to come right under an if, with the same indent');
+        if(!tl||!Array.isArray(tl.do)||!(tl.has||tl.hand||tl.key||tl.mouse||tl.ifp||tl.ifv||tl.ifs||tl.ifc||tl.ifg||tl.md||tl.anyof||tl.allof||tl.cx||typeof tl.chance==='number'))throw PE(l.n,'else has to come right under an if, with the same indent');
         if(tl.else)throw PE(l.n,'this if already has an else');
         if(!em[1]){tl.else=sub(l,depth);continue;}
         pe=tl;l={n:l.n,ind:l.ind,t:'if '+em[1]+':'};
         if(/^if\s+(variable|player|world|signal)\b/i.test(l.t))l.t=nb(l.t);
       }
-      if(m=l.t.match(/^give\s+effect\s+(\w+)\s+(\d{1,3})\s+seconds?(?:\s+to\s+(.+?))?$/i)){
+      var ands=null;
+      if(/^if\s/i.test(l.t)&&/\sand\s/i.test(l.t)&&/:$/.test(l.t)){var an0=l.t.replace(/^if\s+/i,'').replace(/\s*:$/,'');ands=splitAnd(an0);if(ands.length<2)ands=null;else if(splitOr(an0).length>1)throw PE(l.n,"you can't mix  and  with  or  on one line. Put an  if  under an  if");}
+      if(ands){if(ands.length>6)throw PE(l.n,'and can join 6 conditions at most');acts.push({allof:ands.map(function(c){return condOf(l,c);}),do:sub(l,depth)});}
+      else if(m=l.t.match(/^set\s+variable\s+([a-z0-9_]{1,20})\s+to\s+length\s+of\s+variable\s+([a-z0-9_]{1,20})$/i)){acts.push({setv:{n:m[1].toLowerCase(),v:{len:m[2].toLowerCase()}}});}
+      else if(m=l.t.match(/^give\s+effect\s+(\w+)\s+(\d{1,3})\s+seconds?(?:\s+to\s+(.+?))?$/i)){
         var ef=m[1].toLowerCase(),EFS=['speed','strength','defense','regen','haste','breath','night','stun'];if(EFS.indexOf(ef)<0)throw PE(l.n,"unknown effect '"+m[1]+"'. You can use: "+EFS.join(', '));
         if(+m[2]<1||+m[2]>86400)throw PE(l.n,'effect seconds must be 1 to 86400');var ea={effect:{k:ef,sec:+m[2]}};if(m[3])ea.to=toT(l,m[3]);acts.push(ea);
       }else if(m=l.t.match(/^play\s+sound\s+(\w+)(?:\s+to\s+(.+?))?$/i)){
@@ -561,8 +569,18 @@ if(nv===''||nv==='-')nv=0;fc.push([rel?1:0,+nv]);}
         var ui=L[pos].ind,lines=[];
         while(pos<L.length&&L[pos].ind>=ui){var t2=L[pos++],q=t2.t.match(/^text\s+"([^"]{1,80})"$/i);if(!q)throw PE(t2.n,'inside ui, write  text "..."');lines.push(q[1]);}
         if(lines.length>12)throw PE(l.n,'ui can have 12 lines');acts.push({ui:{title:m[1],lines:lines}});
-      }else if(m=l.t.match(/^set\s+(\S+)\s+(damage|speed|name)\s+(.+)$/i)){acts.push({set:setStmt(l,m)});}
-      else throw PE(l.n,"I don't understand '"+l.t.split(' ')[0]+"'. You can use: give, say, chat, title, chance, if, teleport, open window, close window, spawn, build, place, remove, generate, fill, disable, enable, add, subtract, reset, loop, heal, damage, broadcast, play, button, ui, set");
+      }else if(m=l.t.match(/^wait\s+(\d{1,4}(?:\.\d{1,2})?)\s+seconds?$/i)){var ws=+m[1];if(ws<0.1||ws>3600)throw PE(l.n,'wait must be 0.1 to 3600 seconds');acts.push({wait:ws});}
+      else if(/^stop$/i.test(l.t)){acts.push({stop:1});}
+      else if(m=l.t.match(/^append\s+(?:"([^"]{1,100})"|variable\s+([a-z0-9_]{1,20}))\s+to\s+variable\s+([a-z0-9_]{1,20})$/i)){acts.push({app:{n:m[3].toLowerCase(),t:m[1],vr:m[2]?m[2].toLowerCase():undefined}});}
+      else if(m=l.t.match(/^hud\s+clear(?:\s+at\s+([a-z ]+?))?$/i)){var hpc=m[1]?m[1].toLowerCase().trim():'';if(hpc&&POS.indexOf(hpc)<0)throw PE(l.n,"unknown position '"+hpc+"'. You can use: "+POS.join(', '));acts.push({hudx:{p:hpc}});}
+      else if(m=l.t.match(/^hud\s+"([^"]{1,80})"(?:\s+at\s+([a-z ]+?))?$/i)){var hp0=m[2]?m[2].toLowerCase().trim():'top left';if(POS.indexOf(hp0)<0)throw PE(l.n,"unknown position '"+hp0+"'. You can use: "+POS.join(', '));acts.push({hud:{p:hp0,t:m[1]}});}
+      else if(m=l.t.match(/^kill\s+all\s+("[^"]{1,20}"|[a-z0-9_]{2,20})(?:\s+in\s+(\d{1,3})\s+blocks?\s+of\s+(player|spawn))?$/i)){var kt=m[1].charAt(0)==='"'?'@'+m[1].slice(1,-1):(/^(monster|mob)$/i.test(m[1])?'monster':mon(l,m[1]));acts.push({mk:{ty:kt,r:m[2]?+m[2]:0,of:m[3]?m[3].toLowerCase():'player'}});}
+      else if(m=l.t.match(/^set\s+("[^"]{1,20}"|[a-z0-9_]{2,20})\s+hp\s+(\d{1,5})(?:\s+in\s+(\d{1,3})\s+blocks?\s+of\s+(player|spawn))?$/i)){var ht=m[1].charAt(0)==='"'?'@'+m[1].slice(1,-1):(/^(monster|mob)$/i.test(m[1])?'monster':mon(l,m[1]));if(+m[2]<1)throw PE(l.n,'hp must be 1 or more');acts.push({mhp:{ty:ht,hp:+m[2],r:m[3]?+m[3]:0,of:m[4]?m[4].toLowerCase():'player'}});}
+      else if(m=l.t.match(/^set\s+recipe\s+(.+?)\s+to\s+(.+)$/i)){var rit=item(l,m[1].trim()),rcs2=[];m[2].split(',').forEach(function(pt){var mm=pt.trim().match(/^(.+?)(?:\s+(\d+))?$/);if(!mm)throw PE(l.n,'write it like  set recipe sword_iron to iron 3, stick 1');var cn=mm[2]?+mm[2]:1;if(cn<1||cn>7)throw PE(l.n,'each ingredient count must be 1 to 7');var iid=item(l,mm[1].trim());for(var ci=0;ci<cn;ci++)rcs2.push(iid);});if(rcs2.length<1||rcs2.length>7)throw PE(l.n,'a recipe can use 1 to 7 ingredient slots');acts.push({rcp:{it:rit,rc:rcs2}});}
+      else if(m=l.t.match(/^play\s+sound\s+"([^"]{1,40})"$/i)){acts.push({sndf:m[1]});}
+      else if(m=l.t.match(/^if\s+(weather|time|inventory)\s+(.+?)\s*:$/i)){var cx0=condOf(l,m[1]+' '+m[2]);cx0.do=sub(l,depth);acts.push(cx0);}
+      else if(m=l.t.match(/^set\s+(\S+)\s+(damage|speed|name)\s+(.+)$/i)){acts.push({set:setStmt(l,m)});}
+      else throw PE(l.n,"I don't understand '"+l.t.split(' ')[0]+"'. You can use: give, say, chat, title, chance, if, wait, stop, teleport, open window, close window, spawn, kill, build, place, remove, generate, fill, disable, enable, add, subtract, append, reset, loop, heal, damage, broadcast, play, button, hud, ui, set");
       if(pe){var na=acts.pop();pe.else=[na];pe.elseIf=true;}
     }
     return acts;
@@ -582,7 +600,10 @@ if(nv===''||nv==='-')nv=0;fc.push([rel?1:0,+nv]);}
     else if(m=l.t.match(/^every\s+%\{([a-z0-9_]{1,20})\}%\s+seconds?\s*:$/i)){out.events.push({on:'every',n:1,nv:m[1].toLowerCase(),do:sub(l,0)});}
     else if(m=l.t.match(/^every\s+(\S+)\s+seconds?\s*:$/i)){if(!/^\d+$/.test(m[1])||+m[1]<1)throw PE(l.n,'every needs a whole number of seconds, 1 or more');if(+m[1]>3600)throw PE(l.n,'every can be at most 3600 seconds');out.events.push({on:'every',n:+m[1],do:sub(l,0)});}
     else if(m=l.t.match(/^on\s+join\s*:$/i)){out.events.push({on:'join',do:sub(l,0)});}
-    else if(m=l.t.match(/^on\s+key\s+("[^"]+"(?:\s+or\s+"[^"]+")*)\s+press\s*:$/i)){var kl=m[1].match(/"([^"]+)"/g).map(function(x){return x.slice(1,-1);}),kd=sub(l,0);kl.forEach(function(kn){var kc=keyCode(kn);if(!kc)throw PE(l.n,"unknown key '"+kn+"'. Use A-Z, 0-9, F1-F12, Space or Control");out.events.push({on:'key',target:kc,do:kd});});}
+    else if(m=l.t.match(/^on\s+key\s+("[^"]+"(?:\s+or\s+"[^"]+")*)\s+press(?:\s+cooldown\s+(\d{1,4}(?:\.\d{1,2})?)\s+seconds?)?\s*:$/i)){var kcd=m[2]?+m[2]:0;if(kcd>3600)throw PE(l.n,'cooldown can be 3600 seconds at most');var kl=m[1].match(/"([^"]+)"/g).map(function(x){return x.slice(1,-1);}),kd=sub(l,0);kl.forEach(function(kn){var kc=keyCode(kn);if(!kc)throw PE(l.n,"unknown key '"+kn+"'. Use A-Z, 0-9, F1-F12, Space or Control");out.events.push(kcd?{on:'key',target:kc,do:kd,cd:kcd}:{on:'key',target:kc,do:kd});});}
+    else if(m=l.t.match(/^on\s+(day|night|travel)\s*:$/i)){out.events.push({on:m[1].toLowerCase(),do:sub(l,0)});}
+    else if(m=l.t.match(/^on\s+biome\s+(?:enter|change)(?:\s+(\w+))?\s*:$/i)){var bw0=m[1]?m[1].toLowerCase():'';if(bw0&&BIOMES.indexOf(bw0)<0)throw PE(l.n,"unknown biome '"+bw0+"'. You can use: "+BIOMES.join(', '));out.events.push({on:'biome',target:bw0,do:sub(l,0)});}
+    else if(m=l.t.match(/^on\s+command\s+"([^"\/\s]{1,20})"\s*:$/i)){out.events.push({on:'command',target:m[1].toLowerCase(),do:sub(l,0)});}
     else if(m=l.t.match(/^on\s+signal\s+"([^"]{1,40})"\s*:$/i)){out.events.push({on:'signal',target:m[1],do:sub(l,0)});}
     else if(m=l.t.match(/^on\s+(.+?)\s*:$/i)){
       var body=m[1],ofRaw='',byRaw='',om=body.match(/^(.*?)\s+of\s+(.+)$/i);if(om){body=om[1];ofRaw=om[2];}
