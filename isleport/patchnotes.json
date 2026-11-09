@@ -1,6 +1,101 @@
 {
  "notes": [
   {
+   "date": "2026-11-09",
+   "build": "v0.2 build 92",
+   "title": "섬 건설 허가증",
+   "items": [
+    "섬마다 건설 터가 3곳 생겼어요. 허가증을 사면 시설을 6칸씩 더 지을 수 있어요",
+    "허가증 값은 20,000, 80,000, 250,000 금화예요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Island building permits",
+     "items": [
+      "Each island now has 3 building lots. Buy a permit to get 6 more facility slots each",
+      "Permits cost 20,000, 80,000 and 250,000 gold"
+     ]
+    },
+    "ja": {
+     "title": "Island building permits",
+     "items": [
+      "Each island now has 3 building lots. Buy a permit to get 6 more facility slots each",
+      "Permits cost 20,000, 80,000 and 250,000 gold"
+     ]
+    },
+    "es": {
+     "title": "Island building permits",
+     "items": [
+      "Each island now has 3 building lots. Buy a permit to get 6 more facility slots each",
+      "Permits cost 20,000, 80,000 and 250,000 gold"
+     ]
+    },
+    "fr": {
+     "title": "Island building permits",
+     "items": [
+      "Each island now has 3 building lots. Buy a permit to get 6 more facility slots each",
+      "Permits cost 20,000, 80,000 and 250,000 gold"
+     ]
+    },
+    "de": {
+     "title": "Island building permits",
+     "items": [
+      "Each island now has 3 building lots. Buy a permit to get 6 more facility slots each",
+      "Permits cost 20,000, 80,000 and 250,000 gold"
+     ]
+    },
+    "zh": {
+     "title": "Island building permits",
+     "items": [
+      "Each island now has 3 building lots. Buy a permit to get 6 more facility slots each",
+      "Permits cost 20,000, 80,000 and 250,000 gold"
+     ]
+    },
+    "pt": {
+     "title": "Island building permits",
+     "items": [
+      "Each island now has 3 building lots. Buy a permit to get 6 more facility slots each",
+      "Permits cost 20,000, 80,000 and 250,000 gold"
+     ]
+    },
+    "ru": {
+     "title": "Island building permits",
+     "items": [
+      "Each island now has 3 building lots. Buy a permit to get 6 more facility slots each",
+      "Permits cost 20,000, 80,000 and 250,000 gold"
+     ]
+    },
+    "tr": {
+     "title": "Island building permits",
+     "items": [
+      "Each island now has 3 building lots. Buy a permit to get 6 more facility slots each",
+      "Permits cost 20,000, 80,000 and 250,000 gold"
+     ]
+    },
+    "it": {
+     "title": "Island building permits",
+     "items": [
+      "Each island now has 3 building lots. Buy a permit to get 6 more facility slots each",
+      "Permits cost 20,000, 80,000 and 250,000 gold"
+     ]
+    },
+    "pl": {
+     "title": "Island building permits",
+     "items": [
+      "Each island now has 3 building lots. Buy a permit to get 6 more facility slots each",
+      "Permits cost 20,000, 80,000 and 250,000 gold"
+     ]
+    },
+    "ar": {
+     "title": "Island building permits",
+     "items": [
+      "Each island now has 3 building lots. Buy a permit to get 6 more facility slots each",
+      "Permits cost 20,000, 80,000 and 250,000 gold"
+     ]
+    }
+   }
+  },
+  {
    "date": "2026-11-08",
    "build": "v0.2 build 91",
    "title": "모든 섬이 시작섬만큼 커졌어요",
