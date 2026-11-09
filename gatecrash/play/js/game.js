@@ -5,7 +5,7 @@
 /* ---------- 월드 ---------- */
 function makeWorld(mapId) {
   const m = MAPS[mapId].make();
-  const W = { id: mapId, w: m.w, h: m.h, g: m.g, objs: m.objs, spawns: m.spawns, starts: m.starts, rooms: m.rooms, finish: m.finish, pw: m.w * TS, ph: m.h * TS };
+  const W = { id: mapId, w: m.w, h: m.h, g: m.g, objs: m.objs, spawns: m.spawns, starts: m.starts, rooms: m.rooms, pads: m.pads || [], finish: m.finish, pw: m.w * TS, ph: m.h * TS };
   { const st = W.starts[0], F = W.finish; W.introT = Math.max(3.5, Math.min(8, (Math.abs((F.x0 + F.x1 + 1) / 2 * TS - st.x) + Math.abs((F.y0 + F.y1) / 2 * TS - st.y)) / 620)); }   // 맵 소개: 먼 맵일수록 천천히 (최대 8초)
   // 무기 자리가 가구 속이면 가까운 빈 바닥으로 옮겨요
   for (const sp of W.spawns) {
@@ -81,6 +81,7 @@ function stepBody(W, b, inp, dt) {
   const belt = beltUnder(W, b);
   moveX(W, b, (b.vx + belt * PH.BELT) * dt);
   moveY(W, b, b.vy * dt);
+  if (b.ground && W.pads.length) { const pcx = b.x + PH.W / 2, pfy = b.y + PH.H; for (const p of W.pads) if (pcx >= p.x && pcx <= p.x + p.w && Math.abs(pfy - p.y) < 2) { b.vy = -PH.PAD; b.ground = false; b.sprung = true; b.jumped = false; } }
   b.air = b.ground ? 0 : b.air + dt;
   return jumpedNow;
 }
@@ -89,6 +90,7 @@ function stepBody(W, b, inp, dt) {
 function isNode(W, tx, ty) {
   if (tx < 0 || tx >= W.w || ty < 1 || ty >= W.h - 1) return false;
   const c = tileAt(W, tx, ty), up = tileAt(W, tx, ty - 1);
+  if (W.pads.some(p => tx * TS >= p.x - 1 && tx * TS < p.x + p.w)) return false;      // 봇은 점프대를 밟지 않고 뛰어넘어요
   const bt = tileAt(W, tx, ty + 1);
   if (bt === '=' && !canStand(tileAt(W, tx - 1, ty + 1)) && !canStand(tileAt(W, tx + 1, ty + 1))) return false;      // 외딴 징검돌은 봇이 안 밟아요 (위험한 길)
   return !isSolid(c) && !isSolid(up) && c !== '=' && canStand(bt);
@@ -266,7 +268,7 @@ function clearLine(W, x0, y0, x1, y1) {
 
 /* ---------- 경기 ---------- */
 function newGame(mapId, players) {
-  const W = makeWorld(mapId), G = { W, phase: 'count', t: W.introT + 4.5, clock: 0, racers: [], items: [], shots: [], traps: [], fx: [], ev: [], rank: [], seq: 1 };
+  const W = makeWorld(mapId), G = { W, phase: 'count', t: W.introT + 4.5, clock: 0, racers: [], items: [], shots: [], traps: [], sprays: [], fx: [], ev: [], rank: [], seq: 1 };
   players.forEach((p, i) => G.racers.push(newRacer(Object.assign({ slot: i }, p), W)));
   W.spawns.forEach((s, i) => G.items.push({ id: i, x: s.x, y: s.y, k: WEP_IDS[(i * 7 + 3) % WEP_IDS.length], on: true, t: 0 }));
   return G;
@@ -275,11 +277,15 @@ function nearItem(G, r) {
   for (const it of G.items) if (it.on && Math.abs(it.x - (r.x + PH.W / 2)) < 14 && Math.abs(it.y - (r.y + PH.H / 2)) < 16) return it;
   return null;
 }
+function addSpray(G, r) {
+  G.sprays.push({ x: r.x + 5 + (Math.random() - .5) * 18, y: r.y + 4 + (Math.random() - .5) * 12, e: r.lastEmo || r.emo || 1, t: 10 });
+  if (G.sprays.length > 40) G.sprays.shift();
+}
 function hurt(G, v, from, w, dx, dy, mul) {
   if (v.inv > 0 || v.fin) return;
   const n = Math.hypot(dx, dy) || 1;
   v.hp -= w.dmg * (mul || 1); v.vx = dx / n * w.kb * (mul || 1); v.vy = -w.up - Math.max(0, -dy / n) * 60; v.ground = false; v.stun = Math.max(v.stun, w.stun); v.flash = 0.18;
-  G.ev.push({ t: 'hit', x: v.x + 5, y: v.y + 8 }); if (v.bot && Math.random() < .25) { v.emo = 2; v.emoT = 2; }
+  G.ev.push({ t: 'hit', x: v.x + 5, y: v.y + 8 }); if (v.bot && Math.random() < .25) { v.emo = 2; v.emoT = 2; v.lastEmo = 2; addSpray(G, v); }
   if (v.hp <= 0) { G.ev.push({ t: 'ko', x: v.x + 5, y: v.y + 8, id: v.id }); respawn(G.W, v); }
 }
 function useWeapon(G, r, ang) {
@@ -344,13 +350,15 @@ function stepGame(G, dt, inputs) {
   if (G.phase === 'count') { G.t -= dt; if (G.t <= 0) { G.phase = 'race'; G.clock = 0; G.ev.push({ t: 'go' }); } }
   for (const r of G.racers) {
     const inp = r.bot ? botInput(G, r, dt) : (inputs[r.id] || { d: 0 });
-    r.emoT = Math.max(0, r.emoT - dt); r.emoCd = Math.max(0, r.emoCd - dt); if (inp.emo && !r.bot && r.emoCd <= 0) { r.emo = inp.emo; r.emoT = 2; r.emoCd = 0.8; }
+    r.emoT = Math.max(0, r.emoT - dt); r.emoCd = Math.max(0, r.emoCd - dt); if (inp.emo && !r.bot && r.emoCd <= 0) { r.emo = inp.emo; r.lastEmo = inp.emo; r.emoT = 2; r.emoCd = 0.8; }
+    r.sprCd = Math.max(0, (r.sprCd || 0) - dt); if (inp.spr && !r.bot && r.sprCd <= 0 && G.phase === 'race' && !r.fin) { r.sprCd = 1; addSpray(G, r); G.ev.push({ t: 'spray', x: r.x + 5, y: r.y + 8 }); }
     r.cd = Math.max(0, r.cd - dt); r.inv = Math.max(0, r.inv - dt); r.swing = Math.max(0, r.swing - dt); r.flash = Math.max(0, r.flash - dt);
     if (r.fin || G.phase === 'end') { stepBody(G.W, r, { d: 0 }, dt); continue; }
     if (G.phase === 'count') { stepBody(G.W, r, { d: 0 }, dt); continue; }
     if (inp.d) r.face = inp.d;
     if (!r.bot && r.wep && inp.aim !== undefined) { r.aim = inp.aim; r.face = Math.cos(inp.aim) >= 0 ? 1 : -1; }      // 마우스로 직접 조준
     if (stepBody(G.W, r, inp, dt)) G.ev.push({ t: 'jump', x: r.x + 5, y: r.y + 22, id: r.id });
+    if (r.sprung) { r.sprung = false; G.ev.push({ t: 'spring', x: r.x + 5, y: r.y + 22 }); }
     r.anim += Math.abs(r.vx) * dt;
     if (r.y > G.W.ph + 40) respawn(G.W, r);
     const it = nearItem(G, r);
@@ -366,6 +374,7 @@ function stepGame(G, dt, inputs) {
     }
   }
   stepShots(G, dt); stepTraps(G, dt);
+  for (const s of G.sprays) s.t -= dt; G.sprays = G.sprays.filter(s => s.t > 0);
   for (const it of G.items) if (!it.on && it.t > 0 && (it.t -= dt) <= 0) { it.on = true; it.k = WEP_IDS[(Math.random() * WEP_IDS.length) | 0]; }
   for (const r of G.racers) r.prog = progressOf(G.W, r);
   if (G.phase === 'end') G.endT += dt;

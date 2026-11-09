@@ -167,7 +167,7 @@ function hostHandlers(p) {
         const pl = { id: d.id, aid: /^[0-9a-f-]{36}$/i.test(String(d.aid || '')) ? String(d.aid) : '', name: String(d.name || '손님').slice(0, 15), col: pickCol(d.col), skin: SKINS[d.skin] ? d.skin : '' }; c.gid = d.id; N.players.push(pl); N.conns.push(c);
         send(c, { t: 'welcome', id: d.id, players: N.players }); pushRoom(); paintSlots();
       } else if (d.t === 'go') { if (N.pub && !N.G && N.mode === 'host') beginGame();
-      } else if (d.t === 'i') { N.inputs[c.gid] = Object.assign(N.inputs[c.gid] || {}, d.i, { jp: (N.inputs[c.gid] || {}).jp || d.i.jp, swap: (N.inputs[c.gid] || {}).swap || d.i.swap, emo: d.i.emo || (N.inputs[c.gid] || {}).emo }); }
+      } else if (d.t === 'i') { N.inputs[c.gid] = Object.assign(N.inputs[c.gid] || {}, d.i, { jp: (N.inputs[c.gid] || {}).jp || d.i.jp, swap: (N.inputs[c.gid] || {}).swap || d.i.swap, emo: d.i.emo || (N.inputs[c.gid] || {}).emo, spr: (N.inputs[c.gid] || {}).spr || d.i.spr }); }
     });
     const drop = () => { N.conns = N.conns.filter(x => x !== c); if (!N.G) { N.players = N.players.filter(p => p.id !== c.gid); pushRoom(); if (scr === 'sRoom') paintSlots(); } else { const r = N.G.racers.find(r => r.id === c.gid); if (r) { r.bot = true; r.ai = { plan: null, stuck: 0, best: Infinity, wait: 0, noise: .3, aimT: 0, react: .35 }; } } };
     c.on('close', drop); c.on('error', drop);
@@ -237,7 +237,7 @@ function openQuick(gen, k) {
 
 /* ---------- 경기 ---------- */
 let G = null, myId = UID, cam = { x: 0, y: 0 }, view = { x: 0, y: 0 }, baked = null, t0 = 0, fx = [], acc = 0, last = 0, sendT = 0, snapT = 0;
-const keys = {}, mouse = { x: 0, y: 0, down: false }, pend = { jp: false, swap: false, emo: 0 };
+const keys = {}, mouse = { x: 0, y: 0, down: false }, pend = { jp: false, swap: false, emo: 0, spr: false };
 function beginGame() {
   clearTimeout(N.autoT); if (N.mode !== 'solo' && N.mode !== 'host') return;
   const map = N.mode === 'solo' && N.pick ? N.pick : MAP_IDS[(Math.random() * MAP_IDS.length) | 0], pl = N.players.map(p => ({ id: p.id, name: p.name, col: p.col, skin: p.skin || '', bot: false }));
@@ -249,7 +249,7 @@ function playGame(map, pl) {
   N.G = G = newGame(map, pl.map((p, i) => ({ id: p.id, name: p.name, col: p.col, skin: SKINS[p.skin] ? p.skin : '', bot: p.bot, own: p.id === UID })));
     baked = bakeWorld(G.W); fx = []; REC.length = 0; RP = null; recT = 0; N.inputs = {}; last = performance.now(); acc = 0; PHOTO.url = ''; PHOTO.tried = false; $('res').classList.remove('on'); const og = $('resGc'); if (og) og.remove();
   const me = G.racers.find(r => r.id === UID); cam.x = me ? me.x : 0; cam.y = me ? me.y : 0; snapT = 0;
-  $('hint').style.visibility = ''; $('hint').textContent = 'A D 이동 · W/Space 점프(길게 누르면 더 높이) · 클릭 무기 · F 바꾸기';
+  $('hint').style.visibility = ''; $('hint').textContent = 'A D 이동 · W/Space 점프(길게 누르면 더 높이) · 클릭 무기 · F 바꾸기 · T 낙서';
   show('game'); BGM.play('pixel-sprint'); loop.on = true; requestAnimationFrame(loop);
 }
 /* 한 판을 끝까지 마치고(결과 화면에서) 로비로 돌아올 때만 한 번 허브 퀘스트에 알려요 */
@@ -267,6 +267,7 @@ addEventListener('keydown', e => {
   if (k === 'a' || k === 'd') keys[k] = true;
   if (k === 'w' || k === ' ') { keys.j = true; pend.jp = true; e.preventDefault(); }
   if (k === 'f') pend.swap = true;
+  if (k === 't') pend.spr = true;
 });
 addEventListener('keyup', e => { const k = e.key.toLowerCase(); if (k === 'a' || k === 'd') keys[k] = false; if (k === 'w' || k === ' ') keys.j = false; });
 addEventListener('blur', () => { keys.a = keys.d = keys.j = false; mouse.down = false; });
@@ -290,6 +291,7 @@ if (TOUCH) {
   hold('tR', () => { keys.d = true; }, () => { keys.d = false; });
   hold('tJ', () => { keys.j = true; pend.jp = true; }, () => { keys.j = false; });
   hold('tF', () => { pend.swap = true; });
+  hold('tT', () => { pend.spr = true; });
 }
 
 /* 이모티콘 버튼 */
@@ -302,13 +304,13 @@ function myInput() {
   const sc = gl.clientHeight / VH, me = G.racers.find(r => r.id === UID), meG = me;
   const wx = view.x + mouse.x / sc, wy = view.y + mouse.y / sc;
   const aim = me ? Math.atan2(wy - (me.y + 8), wx - (me.x + 5)) : 0;
-  const inp = { d: (keys.d ? 1 : 0) - (keys.a ? 1 : 0), jp: pend.jp || (!!keys.j && !!meG && meG.ground), j: !!keys.j, atk: mouse.down, aim, swap: pend.swap, emo: pend.emo | 0 };
+  const inp = { d: (keys.d ? 1 : 0) - (keys.a ? 1 : 0), jp: pend.jp || (!!keys.j && !!meG && meG.ground), j: !!keys.j, atk: mouse.down, aim, swap: pend.swap, emo: pend.emo | 0, spr: pend.spr };
   return inp;
 }
 function snapshot() {
   return { t: 's', ph: G.phase, tt: G.t, ck: G.clock, rk: G.rank,
     r: G.racers.map(r => [r.id, +r.x.toFixed(1), +r.y.toFixed(1), +r.vx.toFixed(0), +r.vy.toFixed(0), r.hp | 0, r.wep ? r.wep.k : '', r.face, +r.aim.toFixed(2), r.swing > 0 ? 1 : 0, r.fin ? 1 : 0, r.inv > 0 ? 1 : 0, r.flash > 0 ? 1 : 0, r.stun > 0 ? 1 : 0, r.ground ? 1 : 0, r.ko, r.prog.toFixed(1), r.emoT > 0 ? r.emo : 0, r.boost > 0 ? 1 : 0, r.slow > 0 ? 1 : 0]),
-    it: G.items.map(i => [i.on ? 1 : 0, i.k]), sh: G.shots.map(s => [s.k, +s.x.toFixed(0), +s.y.toFixed(0), +s.vx.toFixed(0), +s.vy.toFixed(0)]), tr: G.traps.map(t => [Math.round(t.x), Math.round(t.y), t.k]), ev: G.ev };
+    it: G.items.map(i => [i.on ? 1 : 0, i.k]), sh: G.shots.map(s => [s.k, +s.x.toFixed(0), +s.y.toFixed(0), +s.vx.toFixed(0), +s.vy.toFixed(0)]), tr: G.traps.map(t => [Math.round(t.x), Math.round(t.y), t.k]), sp: G.sprays.map(s => [Math.round(s.x), Math.round(s.y), s.e, Math.round(s.t * 10) / 10]), ev: G.ev };
 }
 function applySnap(d) {
   if (d.ph === 'count' && d.tt <= 3 && Math.ceil(d.tt) !== Math.ceil(G.t)) SFX.beep();
@@ -320,7 +322,7 @@ function applySnap(d) {
     if (r.id !== UID || G.phase !== 'race') { r.vx = a[3]; r.vy = a[4]; } r.hp = a[5]; r.wep = a[6] ? { k: a[6], u: 1 } : null; r.face = a[7]; r.aim = a[8]; r.swing = a[9] ? .1 : 0; r.fin = !!a[10]; r.inv = a[11] ? 1 : 0; r.flash = a[12] ? .1 : 0; r.stun = a[13] ? .1 : 0; r.ground = !!a[14]; r.ko = a[15]; r.prog = +a[16]; r.emo = a[17] | 0; r.emoT = r.emo ? 1 : 0; r.boost = a[18] ? .3 : 0; r.slow = a[19] ? .3 : 0;
   }
   d.it.forEach((a, i) => { if (G.items[i]) { G.items[i].on = !!a[0]; G.items[i].k = a[1]; } });
-  G.traps = (d.tr || []).map(a => ({ x: a[0], y: a[1], t: 1, k: a[2] }));
+  G.traps = (d.tr || []).map(a => ({ x: a[0], y: a[1], t: 1, k: a[2] })); G.sprays = (d.sp || []).map(a => ({ x: a[0], y: a[1], e: a[2], t: a[3] }));
   evUpdate(G.W, G.clock, G.phase); liftCap(G);
   G.shots = d.sh.map(a => ({ k: a[0], x: a[1], y: a[2], vx: a[3], vy: a[4], t: 1 }));
   G.ev.push(...d.ev);
@@ -332,21 +334,21 @@ function loop(now) {
   const guest = N.mode === 'guest', inp = myInput();
   if (!guest) {
     const oi = N.inputs[UID] || {};
-    N.inputs[UID] = Object.assign(oi, inp, { jp: inp.jp || oi.jp, swap: inp.swap || oi.swap, emo: inp.emo || oi.emo });
+    N.inputs[UID] = Object.assign(oi, inp, { jp: inp.jp || oi.jp, swap: inp.swap || oi.swap, emo: inp.emo || oi.emo, spr: inp.spr || oi.spr });
     let ran = false;
     while (acc >= 1 / 60) {
       acc -= 1 / 60; for (const r of G.racers) { r.px = r.x; r.py = r.y; } const pc = G.phase, pt = Math.ceil(G.t); stepGame(G, 1 / 60, N.inputs); ran = true;
-      for (const k in N.inputs) { N.inputs[k].jp = false; N.inputs[k].swap = false; N.inputs[k].emo = 0; }
+      for (const k in N.inputs) { N.inputs[k].jp = false; N.inputs[k].swap = false; N.inputs[k].emo = 0; N.inputs[k].spr = false; }
       if (G.phase === 'count' && G.t <= 3 && Math.ceil(G.t) !== pt) SFX.beep();
     }
-    if (ran) { pend.jp = false; pend.swap = false; pend.emo = 0; N.inputs[UID].jp = false; N.inputs[UID].swap = false; N.inputs[UID].emo = 0; }
+    if (ran) { pend.jp = false; pend.swap = false; pend.emo = 0; pend.spr = false; N.inputs[UID].jp = false; N.inputs[UID].swap = false; N.inputs[UID].emo = 0; }
     if (N.conns.length) { snapT += dt; if (snapT >= SNAP) { snapT = 0; bcast(snapshot()); G.ev.length = 0; } }
   } else {
     const me = G.racers.find(r => r.id === UID);
     if (me && me.wep) { me.aim = inp.aim; me.face = Math.cos(inp.aim) >= 0 ? 1 : -1; }
-    sendT += dt; if (sendT > 1 / 30) { sendT = 0; send(N.host, { t: 'i', i: inp }); pend.jp = false; pend.swap = false; pend.emo = 0; }
+    sendT += dt; if (sendT > 1 / 30) { sendT = 0; send(N.host, { t: 'i', i: inp }); pend.jp = false; pend.swap = false; pend.emo = 0; pend.spr = false; }
     // 내 캐릭터는 바로 움직여요 (서버 위치로 조금씩 맞춰요)
-    while (acc >= 1 / 60) { acc -= 1 / 60; if (me) { me.px = me.x; me.py = me.y; } if (me && G.phase === 'race' && !me.fin && me.stun <= 0) { const own = Object.assign({}, inp, { jp: inp.jp || pend.jp }); if (stepBody(G.W, me, own, 1 / 60)) { addFx({ t: 'jump', x: me.x + 5, y: me.y + 22, id: UID, local: 1 }); } } }
+    while (acc >= 1 / 60) { acc -= 1 / 60; if (me) { me.px = me.x; me.py = me.y; } if (me && G.phase === 'race' && !me.fin && me.stun <= 0) { const own = Object.assign({}, inp, { jp: inp.jp || pend.jp }); if (stepBody(G.W, me, own, 1 / 60)) { addFx({ t: 'jump', x: me.x + 5, y: me.y + 22, id: UID, local: 1 }); } if (me.sprung) { me.sprung = false; addFx({ t: 'jump', x: me.x + 5, y: me.y + 22, id: UID, local: 1 }); } } }
     for (const r of G.racers) if (r !== me && r.tx !== undefined) { r.x += (r.tx - r.x) * Math.min(1, dt * 14); r.y += (r.ty - r.y) * Math.min(1, dt * 14); }
     evUpdate(G.W, G.clock, G.phase); liftCap(G);
   }
@@ -412,7 +414,7 @@ function render0(t, G, op) {
   x.setTransform(sc, 0, 0, sc, 0, 0); x.fillStyle = '#0c1220'; x.fillRect(0, 0, vw + 2, VH + 2);
   drawBackdrop(x, G.W, t, cx, cy, vw);
   x.translate(-Math.round(cx), -Math.round(cy)); x.drawImage(baked, 0, 0);
-  drawItems(x, G, t); drawTraps(x, G.traps || []);
+  drawSprays(x, G.sprays || []); drawPads(x, G.W.pads || []); drawItems(x, G, t); drawTraps(x, G.traps || []);
   if (G.W.wet) drawWet(x, G.W, cx, cy, vw);
   if (G.W.soonK && G.phase === 'race') drawWarn(x, G.W, t);
   if (G.W.liftOff) for (const o of G.W.objs) if (o.t === 'liftshaft') drawLiftOff(x, o);
