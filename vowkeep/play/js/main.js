@@ -117,12 +117,16 @@ function talkTick(dt, on) {
 }
 
 /* ---------- 로그인 ---------- */
+/* 게스트 모드: 로그인 없이 온라인(방 코드·링크)은 되고, Supabase를 쓰는 기능(프로필·업적 올리기·퀘스트·친구·초대·접속 표시)은 안 써요. 탭을 닫으면 다시 물어봐요 */
+let GUEST = false; try { GUEST = sessionStorage.getItem('vk.guest') === '1'; } catch (e) { }
+const isGuest = () => !loggedIn() && (GUEST || !window.FFAuth);
+function guestName() { let n = 7; for (const c of UID) n = (n * 131 + c.charCodeAt(0)) % 1000000; return T('게스트') + String(n).padStart(6, '0'); }  // 이름은 "게스트" + 무작위 숫자 6개
 function loggedIn() { try { return !!(window.FFAuth && FFAuth.user()); } catch (e) { return false; } }
-function myName() { try { const n = window.FFAuth && FFAuth.user() && FFAuth.nickname(); if (n) return String(n).slice(0, 15); } catch (e) { } return T('기사'); }
+function myName() { try { const n = window.FFAuth && FFAuth.user() && FFAuth.nickname(); if (n) return String(n).slice(0, 15); } catch (e) { } return isGuest() ? guestName() : T('기사'); }
 function paintWho() {
   const lv = roleLevel(SAVE.xp[SAVE.role] || 0);
   $('who').innerHTML = '';
-  const s = document.createElement('span'); s.className = 'tx'; s.textContent = (loggedIn() ? myName() : T('로그인 안 함')) + ' · ' + ROLES[SAVE.role].name + ' Lv ' + lv + ' · ' + T('vC {0}', SAVE.honor); $('who').appendChild(s);
+  const s = document.createElement('span'); s.className = 'tx'; s.textContent = (loggedIn() ? myName() : isGuest() ? myName() : T('로그인 안 함')) + ' · ' + ROLES[SAVE.role].name + ' Lv ' + lv + ' · ' + T('vC {0}', SAVE.honor); $('who').appendChild(s);
   if (loggedIn()) { const pb = document.createElement('button'); pb.textContent = T('프로필'); pb.onclick = openProfile; $('who').appendChild(pb); }
   if (!loggedIn() && window.FFAuth) { const b = document.createElement('button'); b.textContent = T('로그인'); b.onclick = () => { try { FFAuth.openLogin(); } catch (e) { } }; $('who').appendChild(b); }
 }
@@ -171,12 +175,16 @@ function ffSync() {
     } catch (e) { }
   }, 1500);
 }
-if (window.FFAuth) { FFAuth.ready.then(() => { paintWho(); autoJoin(); ffSync(); claimVC(); }); FFAuth.onChange(() => { paintWho(); ffSync(); claimVC(); }); }
+function gate() { const g = $('gate'); if (g) g.classList.toggle('on', !!window.FFAuth && !loggedIn() && !GUEST); }
+$('gLogin').onclick = () => { try { FFAuth.openLogin(); } catch (e) { } };
+$('gGuest').onclick = () => { GUEST = true; try { sessionStorage.setItem('vk.guest', '1'); } catch (e) { } gate(); paintWho(); autoJoin(); };
+if (window.FFAuth) { FFAuth.ready.then(() => { gate(); paintWho(); autoJoin(); ffSync(); claimVC(); }); FFAuth.onChange(() => { gate(); paintWho(); ffSync(); claimVC(); autoJoin(); }); }
 paintWho();
-function needLogin() { if (!window.FFAuth) return false; if (loggedIn()) return false; homeMsg(T('친구와 원정은 Frenchfries777 계정으로 로그인해야 해요.')); try { FFAuth.openLogin(); } catch (e) { } return true; }
-function hubRoom(on) { try { if (window.FFAuth && FFAuth.setRoom) FFAuth.setRoom(on && S.code ? { game: 'vowkeep', code: S.code, path: 'vowkeep/play/index.html' } : null); } catch (e) { } }
+function needLogin() { if (!window.FFAuth) return false; if (loggedIn() || isGuest()) return false; homeMsg(T('친구와 원정은 Frenchfries777 계정으로 로그인해야 해요.')); try { FFAuth.openLogin(); } catch (e) { } return true; }
+function hubRoom(on) { try { if (loggedIn() && window.FFAuth && FFAuth.setRoom) FFAuth.setRoom(on && S.code ? { game: 'vowkeep', code: S.code, path: 'vowkeep/play/index.html' } : null); } catch (e) { } }
 let autoDone = false;
-function autoJoin() { const c = (qs.get('join') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6); if (autoDone || c.length !== 6 || S.net) return; autoDone = true; if (needLogin()) return;
+function autoJoin() { const c = (qs.get('join') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6); if (autoDone || c.length !== 6 || S.net) return; if (!loggedIn() && !isGuest()) return; autoDone = true;
+  if (isGuest()) { startGuest(c); return; }
   // 초대 링크로 들어왔을 때: 취소됐거나 30분이 지난 초대면 들어가지 않아요 (확인 기능이 아직 없으면 그냥 들어가요)
   const sb = window.FFAuth && FFAuth.client && FFAuth.client();
   if (!sb) { startGuest(c); return; }
@@ -190,6 +198,7 @@ function menu(go) {
   homeMsg('');
   if (go === 'solo') { leaveNet(); S.net = 'solo'; S.slots = ROLE_IDS.map(r => ({ role: r, uid: r === SAVE.role ? UID : null, name: r === SAVE.role ? myName() : '' })); openRoom(); }
   else if (go === 'host') { if (needLogin()) return; startHost(); }
+  else if (go === 'join') { if (needLogin()) return; joinPanel(true); }
   else if (go === 'roles') { paintRoles(); show('sRoles'); }
   else if (go === 'achs') { paintAchs(); show('sAchs'); }
   else if (go === 'settings') { paintSettings(); show('sSettings'); }
@@ -294,6 +303,7 @@ function openRoom() {
   show('sRoom'); showGuide(); const solo = S.net === 'solo'; if (S.net !== 'guest') { S.chSel = chOpen(); S.wk = false; } paintChapters();
   $('roomTitle').textContent = solo ? T('혼자 원정 준비') : S.net === 'host' ? T('친구와 원정') : T('친구 방');
   $('codeRow').style.display = S.net === 'host' ? 'flex' : 'none';
+  $('inviteBtn').style.display = isGuest() ? 'none' : ''; $('codeNote').textContent = isGuest() ? T('방 코드 {0} · 링크를 친구에게 보내면 바로 들어와요.', S.code) : T('친구나 지금 접속 중인 플레이어에게 초대를 보내면 바로 들어와요.');
   $('roomNote').textContent = solo ? T('내 역할을 고르세요. 나머지 세 자리는 봇 동료가 맡아요.') : T('역할을 하나 골라 주세요. 빈 자리는 봇 동료가 맡아요.');
   $('startBtn').style.display = S.net === 'guest' ? 'none' : '';
   $('roomMsg').textContent = S.net === 'guest' ? T('방장이 시작하면 원정이 시작돼요.') : '';
@@ -318,7 +328,18 @@ function pickRole(r) {
   if (!tgt || tgt.uid) return; if (cur) { cur.uid = null; cur.name = ''; }
   tgt.uid = UID; tgt.name = myName(); paintSlots(); hostLobby();
 }
-$('inviteBtn').onclick = () => { SFX.play('click'); openInvite(); };
+function roomLink() { return location.origin + location.pathname + '?join=' + S.code; }
+function copyLink() {
+  const u = roomLink(); SFX.play('click');
+  const ok = () => homeMsg(T('방 링크를 복사했어요. 친구에게 보내 주세요.')), fail = () => { try { prompt(T('방 링크'), u); } catch (e) { } };
+  try { navigator.clipboard.writeText(u).then(ok, fail); } catch (e) { fail(); }
+}
+$('copyBtn').onclick = copyLink;
+$('inviteBtn').onclick = () => { SFX.play('click'); if (isGuest()) { copyLink(); return; } openInvite(); };
+function joinPanel(on) { $('jn').classList.toggle('on', on); if (on) { $('jnIn').value = ''; $('jnMsg').textContent = ''; setTimeout(() => $('jnIn').focus(), 50); } }
+$('jnX').onclick = () => joinPanel(false);
+$('jnGo').onclick = () => { const c = $('jnIn').value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6); if (c.length !== 6) { $('jnMsg').textContent = T('방 코드는 6자리예요.'); return; } joinPanel(false); startGuest(c); };
+$('jnIn').onkeydown = e => { if (e.key === 'Enter') $('jnGo').click(); e.stopPropagation(); };
 /* 초대 창: 친구는 접속 여부와 상관없이 맨 위(접속 중인 친구 먼저), 그 아래 지금 접속 중인 다른 플레이어 */
 const GN = { stickseum: 'Stickseum', crownenvoy: 'Crown Envoy', beaconfall: 'Beaconfall', isleport: 'Isleport', dummyparty: 'Dummy Party', vowkeep: 'Vowkeep', hub: T('허브') };
 const INV_T = 30 * 60 * 1000; S.sent = {};
