@@ -277,7 +277,7 @@ function pvpCheck(G, dt) {
     const B = G.br; B.t -= dt;
     if (B.t <= 0) {
       if (B.s === 0) { B.s = 1; B.t = D.BR_WARN_T; setBridges(1); ev(G, 'brwarn', {}); }
-      else if (B.s === 1) { B.s = 2; B.t = D.BR_DOWN_T; setBridges(2); ev(G, 'brdown', {}); for (const p of G.players) if (!p.dead && onBridge(p.x, p.z)) { ev(G, 'fall', { id: p.id, x: p.x, z: p.z }); koPlayer(G, p, null); } }
+      else if (B.s === 1) { B.s = 2; B.t = D.BR_DOWN_T; setBridges(2); ev(G, 'brdown', {}); for (const p of G.players) if (!p.dead && onBridge(p.x, p.z)) { ev(G, 'fall', { id: p.id, x: p.x, z: p.z }); for (const id of Object.keys(p.hitBy || {})) if (G.t - p.hitBy[id] > 4) delete p.hitBy[id]; koPlayer(G, p, null); } }   // 최근 4초 안에 맞았으면 때린 적에게 어시스트가 돌아가요 (킬은 없어요)
       else { B.s = 0; B.t = D.BR_UP_T; setBridges(0); ev(G, 'brup', {}); }
     }
   }
