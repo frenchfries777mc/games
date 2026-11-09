@@ -415,6 +415,18 @@ const EMO_PIX = [null,
   ['..bbbbb..', '.bbbbbbb.', 'bbKbbbKbb', 'bbbbbbbbb', 'bbbbbbbbb', 'bbKKKKKbb', 'bKbbbbbKb', '..bbbbb..'],
   ['.rr...rr.', 'rrrr.rrrr', 'rrrrrrrrr', 'rrrrrrrrr', '.rrrrrrr.', '..rrrrr..', '...rrr...', '....r....']];
 function drawEmoPix(x, id) { const p = EMO_PIX[id]; if (!p) return; const C = { y: '#ffd36b', r: '#ff5a4a', b: '#6ab8ff', K: '#222' }; x.imageSmoothingEnabled = false; for (let j = 0; j < p.length; j++) for (let i = 0; i < 9; i++) { const c = p[j][i]; if (c !== '.') { x.fillStyle = C[c]; x.fillRect(i + 1, j + 1, 1, 1); } } }
+/* 점프대와 벽 낙서 */
+function drawPads(x, pads) {
+  for (const p of pads) { R(x, 'rgba(0,0,0,.3)', p.x, p.y - 1, p.w, 2); R(x, '#444a58', p.x, p.y - 3, p.w, 3); R(x, '#e8483b', p.x + 2, p.y - 7, p.w - 4, 4); R(x, '#ff8a7a', p.x + 2, p.y - 7, p.w - 4, 1); R(x, '#ffd36b', p.x + 1, p.y - 9, p.w - 2, 2); }
+}
+function drawSprays(x, list) {
+  for (const s of list) {
+    const p = EMO_PIX[s.e]; if (!p) continue; const C = { y: '#ffd36b', r: '#ff5a4a', b: '#6ab8ff', K: '#222' };
+    x.save(); x.globalAlpha = Math.min(1, s.t / 3) * 0.6; x.translate(s.x - 10, s.y - 10);
+    for (let j = 0; j < p.length; j++) for (let i = 0; i < 9; i++) { const c = p[j][i]; if (c !== '.') { x.fillStyle = C[c]; x.fillRect(i * 2.2, j * 2.2, 2.3, 2.3); } }
+    x.restore();
+  }
+}
 function drawEmo(x, id, px, py) {
   R(x, 'rgba(0,0,0,.5)', px - 9, py - 8, 19, 17); R(x, '#fff', px - 8, py - 9, 17, 16); R(x, '#fff', px - 1, py + 6, 3, 3);
   x.save(); x.translate(px - 7, py - 8); const p = EMO_PIX[id], C = { y: '#ffd36b', r: '#ff5a4a', b: '#6ab8ff', K: '#222' };
