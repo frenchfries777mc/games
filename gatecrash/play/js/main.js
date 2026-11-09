@@ -35,13 +35,14 @@ function say(t) { $('modalT').textContent = t; $('modal').classList.add('on'); }
 $('modalOk').onclick = () => $('modal').classList.remove('on');
 
 /* ---------- 계정 / 프로필 ---------- */
+let GUEST = false; const GNAME = '게스트' + String(Math.floor(Math.random() * 1000000)).padStart(6, '0');   // 게스트 모드: 온라인 대전은 되지만 Supabase는 쓰지 않아요
 function loggedIn() { try { return !!(window.FFAuth && FFAuth.user()); } catch (e) { return false; } }
 function myAid() { try { const u = window.FFAuth && FFAuth.user(); return u && u.id ? String(u.id) : ''; } catch (e) { return ''; } }
 function openProf(aid) { try { if (aid && window.FFAuth && FFAuth.openProfile) FFAuth.openProfile(aid, { game: 'gatecrash' }); } catch (e) { } }
-function myName() { try { const n = window.FFAuth && FFAuth.user() && FFAuth.nickname(); if (n) return String(n).slice(0, 15); } catch (e) { } return '손님'; }
+function myName() { try { const n = window.FFAuth && FFAuth.user() && FFAuth.nickname(); if (n) return String(n).slice(0, 15); } catch (e) { } return GNAME; }
 function paintWho() {
   const w = $('who'); w.innerHTML = '';
-  const s = document.createElement('span'); s.textContent = loggedIn() ? myName() : '로그인 안 함'; w.appendChild(s);
+  const s = document.createElement('span'); s.textContent = loggedIn() ? myName() : (GUEST ? '게스트 모드' : '로그인 안 함'); w.appendChild(s);
   if (!loggedIn() && window.FFAuth) { const b = document.createElement('button'); b.textContent = '로그인'; b.onclick = () => { try { FFAuth.openLogin(); } catch (e) { } }; w.appendChild(b); }
 }
 let ffMarked = '';
@@ -57,7 +58,18 @@ async function ffSync() {
 }
 if (window.FFAuth) { FFAuth.ready.then(() => { paintWho(); ffSync(); }); FFAuth.onChange(() => { paintWho(); ffSync(); }); }
 paintWho();
-function needLogin() { if (!window.FFAuth || loggedIn()) return false; homeMsg('온라인 대전은 Frenchfries777 계정으로 로그인해야 해요.'); try { FFAuth.openLogin(); } catch (e) { } return true; }
+function needLogin(act) {                  // 로그인도 게스트도 아니면 로그인 창을 띄우고, 창 아래 '게스트 모드로 하기' 버튼을 둬요
+  if (loggedIn() || GUEST) return false;
+  let w = document.getElementById('gstWin'); if (w) w.remove();
+  w = document.createElement('div'); w.id = 'gstWin';
+  w.style.cssText = 'position:fixed;inset:0;z-index:99;background:rgba(5,6,10,.72);display:flex;align-items:center;justify-content:center;padding:16px';
+  w.innerHTML = '<div style="width:100%;max-width:340px;background:#14203d;border:2px solid #ffd9a0;border-radius:12px;padding:20px;text-align:center"><h2 style="margin:0 0 6px">로그인</h2><div class="note" style="margin-bottom:14px">로그인하면 기록과 보상이 저장돼요</div><button class="btn go" id="gstLogin" style="width:100%;text-align:center">로그인</button><button class="btn" id="gstGuest" style="width:100%;text-align:center;margin-top:10px">게스트 모드로 하기</button><div class="note" style="margin-top:8px;font-size:12px">게스트는 온라인 대전은 되지만 기록·보상은 저장되지 않아요</div><button class="btn" id="gstX" style="margin-top:10px;padding:5px 14px;font-size:13px">닫기</button></div>';
+  document.body.appendChild(w);
+  w.querySelector('#gstLogin').onclick = () => { w.remove(); try { FFAuth.openLogin(); } catch (e) { } };
+  w.querySelector('#gstGuest').onclick = () => { GUEST = true; w.remove(); paintWho(); if (act) act(); };
+  w.querySelector('#gstX').onclick = () => w.remove();
+  return true;
+}
 function homeMsg(t) { $('homeMsg').textContent = t || ''; }
 
 /* ---------- 화면 ---------- */
@@ -76,10 +88,10 @@ function menu(go) {
   if (go === 'more') { const on = $('moreBox').classList.toggle('on'); $('moreBtn').textContent = on ? '더보기 ▴' : '더보기 ▾'; return; }
   homeMsg('');
   if (go === 'solo') { leaveNet(); N.mode = 'solo'; N.players = [{ id: UID, name: myName(), col: COLORS[SAVE.col % COLORS.length], skin: skinOf() }]; pickMap(id => { N.pick = id; beginGame(); }); }
-  else if (go === 'match') { if (needLogin()) return; startMatch(); }
+  else if (go === 'match') { if (needLogin(startMatch)) return; startMatch(); }
   else if (go === 'shop') { paintShop(); show('sShop'); }
-  else if (go === 'host') { if (needLogin()) return; startHost(); }
-  else if (go === 'join') { if (needLogin()) return; $('joinMsg').textContent = ''; $('joinCode').value = ''; show('sJoin'); setTimeout(() => $('joinCode').focus(), 50); }
+  else if (go === 'host') { if (needLogin(startHost)) return; startHost(); }
+  else if (go === 'join') { const j = () => { $('joinMsg').textContent = ''; $('joinCode').value = ''; show('sJoin'); setTimeout(() => $('joinCode').focus(), 50); }; if (needLogin(j)) return; j(); }
   else if (go === 'help') { $('wl').innerHTML = WEP_IDS.concat('boots').map(k => { const w = WEAPONS[k]; return '<div><b>' + w.name + '</b><small>' + ({ melee: '가까이 휘둘러요', shot: '멀리 쏴요', spray: '뿌리는 동안 뒤로 밀려요', rocket: '터지면 주변이 다 날아가요', boost: '꼴찌일 때만 나와요, 3초 동안 빨라져요', trap: '바닥에 놓으면 밟은 사람이 걸려요' })[w.kind] + ' · ' + w.uses + '번</small></div>'; }).join(''); show('sHelp'); }
   else if (go === 'notes') { loadNotes(); show('sNotes'); }
   else if (go === 'opt') {
@@ -132,7 +144,7 @@ function peerOpts() {
 }
 function leaveNet() {
   N.gen++; N.mg++; try { N.peer && N.peer.destroy(); } catch (e) { } N.peer = null; N.conns = []; N.host = null; N.mode = ''; N.pub = false; N.G = null; N.code = ''; clearTimeout(N.autoT);
-  try { if (window.FFAuth && FFAuth.setRoom) FFAuth.setRoom(null); } catch (e) { }
+  try { if (loggedIn() && FFAuth.setRoom) FFAuth.setRoom(null); } catch (e) { }
 }
 function send(c, m) { try { c.open && c.send(m); } catch (e) { } }
 function bcast(m) { N.conns.forEach(c => send(c, m)); }
@@ -167,7 +179,7 @@ function hostHandlers(p) {
         const pl = { id: d.id, aid: /^[0-9a-f-]{36}$/i.test(String(d.aid || '')) ? String(d.aid) : '', name: String(d.name || '손님').slice(0, 15), col: pickCol(d.col), skin: SKINS[d.skin] ? d.skin : '' }; c.gid = d.id; N.players.push(pl); N.conns.push(c);
         send(c, { t: 'welcome', id: d.id, players: N.players }); pushRoom(); paintSlots();
       } else if (d.t === 'go') { if (N.pub && !N.G && N.mode === 'host') beginGame();
-      } else if (d.t === 'i') { N.inputs[c.gid] = Object.assign(N.inputs[c.gid] || {}, d.i, { jp: (N.inputs[c.gid] || {}).jp || d.i.jp, swap: (N.inputs[c.gid] || {}).swap || d.i.swap, emo: d.i.emo || (N.inputs[c.gid] || {}).emo }); }
+      } else if (d.t === 'i') { N.inputs[c.gid] = Object.assign(N.inputs[c.gid] || {}, d.i, { jp: (N.inputs[c.gid] || {}).jp || d.i.jp, swap: (N.inputs[c.gid] || {}).swap || d.i.swap, emo: d.i.emo || (N.inputs[c.gid] || {}).emo, spr: (N.inputs[c.gid] || {}).spr || d.i.spr }); }
     });
     const drop = () => { N.conns = N.conns.filter(x => x !== c); if (!N.G) { N.players = N.players.filter(p => p.id !== c.gid); pushRoom(); if (scr === 'sRoom') paintSlots(); } else { const r = N.G.racers.find(r => r.id === c.gid); if (r) { r.bot = true; r.ai = { plan: null, stuck: 0, best: Infinity, wait: 0, noise: .3, aimT: 0, react: .35 }; } } };
     c.on('close', drop); c.on('error', drop);
@@ -178,7 +190,7 @@ N.inputs = {};
 function startHost() {
   leaveNet(); const gen = N.gen; N.mode = 'host'; N.pub = false; N.code = rcode(); N.players = [{ id: UID, aid: myAid(), name: myName(), col: COLORS[SAVE.col % COLORS.length], skin: skinOf() }];
   homeMsg('방을 만드는 중이에요'); const p = new Peer(PREFIX + N.code, peerOpts()); N.peer = p; hostHandlers(p);
-  p.on('open', () => { if (N.gen !== gen) return; homeMsg(''); try { FFAuth.setRoom && FFAuth.setRoom({ game: 'gatecrash', code: N.code, path: 'prototypes/gatecrash/index.html' }); } catch (e) { } openRoom(); });
+  p.on('open', () => { if (N.gen !== gen) return; homeMsg(''); try { loggedIn() && FFAuth.setRoom && FFAuth.setRoom({ game: 'gatecrash', code: N.code, path: 'prototypes/gatecrash/index.html' }); } catch (e) { } openRoom(); });
   p.on('error', e => { if (N.gen !== gen) return; if (e.type === 'unavailable-id') startHost(); else { leaveNet(); show('sLobby'); homeMsg('연결하지 못했어요. 잠시 뒤에 다시 해 봐요.'); } });
 }
 function startGuest(code) {
@@ -237,7 +249,7 @@ function openQuick(gen, k) {
 
 /* ---------- 경기 ---------- */
 let G = null, myId = UID, cam = { x: 0, y: 0 }, view = { x: 0, y: 0 }, baked = null, t0 = 0, fx = [], acc = 0, last = 0, sendT = 0, snapT = 0;
-const keys = {}, mouse = { x: 0, y: 0, down: false }, pend = { jp: false, swap: false, emo: 0 };
+const keys = {}, mouse = { x: 0, y: 0, down: false }, pend = { jp: false, swap: false, emo: 0, spr: false };
 function beginGame() {
   clearTimeout(N.autoT); if (N.mode !== 'solo' && N.mode !== 'host') return;
   const map = N.mode === 'solo' && N.pick ? N.pick : MAP_IDS[(Math.random() * MAP_IDS.length) | 0], pl = N.players.map(p => ({ id: p.id, name: p.name, col: p.col, skin: p.skin || '', bot: false }));
@@ -249,7 +261,7 @@ function playGame(map, pl) {
   N.G = G = newGame(map, pl.map((p, i) => ({ id: p.id, name: p.name, col: p.col, skin: SKINS[p.skin] ? p.skin : '', bot: p.bot, own: p.id === UID })));
     baked = bakeWorld(G.W); fx = []; REC.length = 0; RP = null; recT = 0; N.inputs = {}; last = performance.now(); acc = 0; PHOTO.url = ''; PHOTO.tried = false; $('res').classList.remove('on'); const og = $('resGc'); if (og) og.remove();
   const me = G.racers.find(r => r.id === UID); cam.x = me ? me.x : 0; cam.y = me ? me.y : 0; snapT = 0;
-  $('hint').style.visibility = ''; $('hint').textContent = 'A D 이동 · W/Space 점프(길게 누르면 더 높이) · 클릭 무기 · F 바꾸기';
+  $('hint').style.visibility = ''; $('hint').textContent = 'A D 이동 · W/Space 점프(길게 누르면 더 높이) · 클릭 무기 · F 바꾸기 · T 낙서';
   show('game'); BGM.play('pixel-sprint'); loop.on = true; requestAnimationFrame(loop);
 }
 /* 한 판을 끝까지 마치고(결과 화면에서) 로비로 돌아올 때만 한 번 허브 퀘스트에 알려요 */
@@ -267,6 +279,7 @@ addEventListener('keydown', e => {
   if (k === 'a' || k === 'd') keys[k] = true;
   if (k === 'w' || k === ' ') { keys.j = true; pend.jp = true; e.preventDefault(); }
   if (k === 'f') pend.swap = true;
+  if (k === 't') pend.spr = true;
 });
 addEventListener('keyup', e => { const k = e.key.toLowerCase(); if (k === 'a' || k === 'd') keys[k] = false; if (k === 'w' || k === ' ') keys.j = false; });
 addEventListener('blur', () => { keys.a = keys.d = keys.j = false; mouse.down = false; });
@@ -290,6 +303,7 @@ if (TOUCH) {
   hold('tR', () => { keys.d = true; }, () => { keys.d = false; });
   hold('tJ', () => { keys.j = true; pend.jp = true; }, () => { keys.j = false; });
   hold('tF', () => { pend.swap = true; });
+  hold('tT', () => { pend.spr = true; });
 }
 
 /* 이모티콘 버튼 */
@@ -302,13 +316,13 @@ function myInput() {
   const sc = gl.clientHeight / VH, me = G.racers.find(r => r.id === UID), meG = me;
   const wx = view.x + mouse.x / sc, wy = view.y + mouse.y / sc;
   const aim = me ? Math.atan2(wy - (me.y + 8), wx - (me.x + 5)) : 0;
-  const inp = { d: (keys.d ? 1 : 0) - (keys.a ? 1 : 0), jp: pend.jp || (!!keys.j && !!meG && meG.ground), j: !!keys.j, atk: mouse.down, aim, swap: pend.swap, emo: pend.emo | 0 };
+  const inp = { d: (keys.d ? 1 : 0) - (keys.a ? 1 : 0), jp: pend.jp || (!!keys.j && !!meG && meG.ground), j: !!keys.j, atk: mouse.down, aim, swap: pend.swap, emo: pend.emo | 0, spr: pend.spr };
   return inp;
 }
 function snapshot() {
   return { t: 's', ph: G.phase, tt: G.t, ck: G.clock, rk: G.rank,
     r: G.racers.map(r => [r.id, +r.x.toFixed(1), +r.y.toFixed(1), +r.vx.toFixed(0), +r.vy.toFixed(0), r.hp | 0, r.wep ? r.wep.k : '', r.face, +r.aim.toFixed(2), r.swing > 0 ? 1 : 0, r.fin ? 1 : 0, r.inv > 0 ? 1 : 0, r.flash > 0 ? 1 : 0, r.stun > 0 ? 1 : 0, r.ground ? 1 : 0, r.ko, r.prog.toFixed(1), r.emoT > 0 ? r.emo : 0, r.boost > 0 ? 1 : 0, r.slow > 0 ? 1 : 0]),
-    it: G.items.map(i => [i.on ? 1 : 0, i.k]), sh: G.shots.map(s => [s.k, +s.x.toFixed(0), +s.y.toFixed(0), +s.vx.toFixed(0), +s.vy.toFixed(0)]), tr: G.traps.map(t => [Math.round(t.x), Math.round(t.y), t.k]), ev: G.ev };
+    it: G.items.map(i => [i.on ? 1 : 0, i.k]), sh: G.shots.map(s => [s.k, +s.x.toFixed(0), +s.y.toFixed(0), +s.vx.toFixed(0), +s.vy.toFixed(0)]), tr: G.traps.map(t => [Math.round(t.x), Math.round(t.y), t.k]), sp: G.sprays.map(s => [Math.round(s.x), Math.round(s.y), s.e, Math.round(s.t * 10) / 10]), ev: G.ev };
 }
 function applySnap(d) {
   if (d.ph === 'count' && d.tt <= 3 && Math.ceil(d.tt) !== Math.ceil(G.t)) SFX.beep();
@@ -320,7 +334,7 @@ function applySnap(d) {
     if (r.id !== UID || G.phase !== 'race') { r.vx = a[3]; r.vy = a[4]; } r.hp = a[5]; r.wep = a[6] ? { k: a[6], u: 1 } : null; r.face = a[7]; r.aim = a[8]; r.swing = a[9] ? .1 : 0; r.fin = !!a[10]; r.inv = a[11] ? 1 : 0; r.flash = a[12] ? .1 : 0; r.stun = a[13] ? .1 : 0; r.ground = !!a[14]; r.ko = a[15]; r.prog = +a[16]; r.emo = a[17] | 0; r.emoT = r.emo ? 1 : 0; r.boost = a[18] ? .3 : 0; r.slow = a[19] ? .3 : 0;
   }
   d.it.forEach((a, i) => { if (G.items[i]) { G.items[i].on = !!a[0]; G.items[i].k = a[1]; } });
-  G.traps = (d.tr || []).map(a => ({ x: a[0], y: a[1], t: 1, k: a[2] }));
+  G.traps = (d.tr || []).map(a => ({ x: a[0], y: a[1], t: 1, k: a[2] })); G.sprays = (d.sp || []).map(a => ({ x: a[0], y: a[1], e: a[2], t: a[3] }));
   evUpdate(G.W, G.clock, G.phase); liftCap(G);
   G.shots = d.sh.map(a => ({ k: a[0], x: a[1], y: a[2], vx: a[3], vy: a[4], t: 1 }));
   G.ev.push(...d.ev);
@@ -332,21 +346,21 @@ function loop(now) {
   const guest = N.mode === 'guest', inp = myInput();
   if (!guest) {
     const oi = N.inputs[UID] || {};
-    N.inputs[UID] = Object.assign(oi, inp, { jp: inp.jp || oi.jp, swap: inp.swap || oi.swap, emo: inp.emo || oi.emo });
+    N.inputs[UID] = Object.assign(oi, inp, { jp: inp.jp || oi.jp, swap: inp.swap || oi.swap, emo: inp.emo || oi.emo, spr: inp.spr || oi.spr });
     let ran = false;
     while (acc >= 1 / 60) {
       acc -= 1 / 60; for (const r of G.racers) { r.px = r.x; r.py = r.y; } const pc = G.phase, pt = Math.ceil(G.t); stepGame(G, 1 / 60, N.inputs); ran = true;
-      for (const k in N.inputs) { N.inputs[k].jp = false; N.inputs[k].swap = false; N.inputs[k].emo = 0; }
+      for (const k in N.inputs) { N.inputs[k].jp = false; N.inputs[k].swap = false; N.inputs[k].emo = 0; N.inputs[k].spr = false; }
       if (G.phase === 'count' && G.t <= 3 && Math.ceil(G.t) !== pt) SFX.beep();
     }
-    if (ran) { pend.jp = false; pend.swap = false; pend.emo = 0; N.inputs[UID].jp = false; N.inputs[UID].swap = false; N.inputs[UID].emo = 0; }
+    if (ran) { pend.jp = false; pend.swap = false; pend.emo = 0; pend.spr = false; N.inputs[UID].jp = false; N.inputs[UID].swap = false; N.inputs[UID].emo = 0; }
     if (N.conns.length) { snapT += dt; if (snapT >= SNAP) { snapT = 0; bcast(snapshot()); G.ev.length = 0; } }
   } else {
     const me = G.racers.find(r => r.id === UID);
     if (me && me.wep) { me.aim = inp.aim; me.face = Math.cos(inp.aim) >= 0 ? 1 : -1; }
-    sendT += dt; if (sendT > 1 / 30) { sendT = 0; send(N.host, { t: 'i', i: inp }); pend.jp = false; pend.swap = false; pend.emo = 0; }
+    sendT += dt; if (sendT > 1 / 30) { sendT = 0; send(N.host, { t: 'i', i: inp }); pend.jp = false; pend.swap = false; pend.emo = 0; pend.spr = false; }
     // 내 캐릭터는 바로 움직여요 (서버 위치로 조금씩 맞춰요)
-    while (acc >= 1 / 60) { acc -= 1 / 60; if (me) { me.px = me.x; me.py = me.y; } if (me && G.phase === 'race' && !me.fin && me.stun <= 0) { const own = Object.assign({}, inp, { jp: inp.jp || pend.jp }); if (stepBody(G.W, me, own, 1 / 60)) { addFx({ t: 'jump', x: me.x + 5, y: me.y + 22, id: UID, local: 1 }); } } }
+    while (acc >= 1 / 60) { acc -= 1 / 60; if (me) { me.px = me.x; me.py = me.y; } if (me && G.phase === 'race' && !me.fin && me.stun <= 0) { const own = Object.assign({}, inp, { jp: inp.jp || pend.jp }); if (stepBody(G.W, me, own, 1 / 60)) { addFx({ t: 'jump', x: me.x + 5, y: me.y + 22, id: UID, local: 1 }); } if (me.sprung) { me.sprung = false; addFx({ t: 'jump', x: me.x + 5, y: me.y + 22, id: UID, local: 1 }); } } }
     for (const r of G.racers) if (r !== me && r.tx !== undefined) { r.x += (r.tx - r.x) * Math.min(1, dt * 14); r.y += (r.ty - r.y) * Math.min(1, dt * 14); }
     evUpdate(G.W, G.clock, G.phase); liftCap(G);
   }
@@ -412,7 +426,7 @@ function render0(t, G, op) {
   x.setTransform(sc, 0, 0, sc, 0, 0); x.fillStyle = '#0c1220'; x.fillRect(0, 0, vw + 2, VH + 2);
   drawBackdrop(x, G.W, t, cx, cy, vw);
   x.translate(-Math.round(cx), -Math.round(cy)); x.drawImage(baked, 0, 0);
-  drawItems(x, G, t); drawTraps(x, G.traps || []);
+  drawSprays(x, G.sprays || []); drawPads(x, G.W.pads || []); drawItems(x, G, t); drawTraps(x, G.traps || []);
   if (G.W.wet) drawWet(x, G.W, cx, cy, vw);
   if (G.W.soonK && G.phase === 'race') drawWarn(x, G.W, t);
   if (G.W.liftOff) for (const o of G.W.objs) if (o.t === 'liftshaft') drawLiftOff(x, o);
@@ -474,7 +488,7 @@ function showResult() {
   BGM.duck(.35); if (me === 0) SFX.win();
   $('resT').textContent = me === 0 ? '1등!' : (me + 1) + '등'; $('resL').innerHTML = list.map(r => '<li style="color:' + r.col + '">' + esc(r.name) + '</li>').join('');
   let prize = 0;
-  if (me >= 0 && !G.paid) { G.paid = true; if (N.mode !== 'solo') { prize = GC_PRIZE[Math.min(me, GC_PRIZE.length - 1)]; SAVE.gc += prize; save(); } }
+  if (me >= 0 && !G.paid) { G.paid = true; if (N.mode !== 'solo' && loggedIn()) { prize = GC_PRIZE[Math.min(me, GC_PRIZE.length - 1)]; SAVE.gc += prize; save(); } }
   if (prize) $('resL').insertAdjacentHTML('afterend', '<div class="note" id="resGc">+' + prize + ' gC (지금 ' + SAVE.gc + ' gC)</div>');
   if (PHOTO.url) $('resL').insertAdjacentHTML('beforebegin', '<div id="resPh"><img alt="결승선 사진" src="' + PHOTO.url + '" style="max-width:100%;border-radius:6px;display:block;margin-bottom:8px"><a class="btn" download="gatecrash-finish.jpg" href="' + PHOTO.url + '" style="display:inline-block;margin-bottom:10px">사진 저장</a></div>');
   $('res').classList.add('on');
@@ -498,7 +512,7 @@ function showResult() {
 FFAuthJoin();
 function FFAuthJoin() {
   const c = (qs.get('join') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 5); if (c.length !== 5) return;
-  const go = () => { if (needLogin()) return; startGuest(c); };
+  const go = () => { if (needLogin(() => startGuest(c))) return; startGuest(c); };
   if (window.FFAuth) FFAuth.ready.then(go); else go();
 }
 if (qs.get('test')) { if (qs.get('auto') === 'solo') { setTimeout(() => { menu('solo'); setTimeout(beginGame, 200); }, 300); } }

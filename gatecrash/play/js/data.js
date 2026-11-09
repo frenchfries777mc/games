@@ -1,9 +1,9 @@
 /* Gatecrash · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
    데이터: 상수, 무기, 맵 */
 'use strict';
-const VERSION = '0.1', BUILD = 32;
+const VERSION = '0.1', BUILD = 35;
 const TS = 16;                                   // 타일 한 칸 (px)
-const PH = { RUN: 120, ACC: 1500, AIR: 1000, G: 1500, JUMP: 440, CUT: 400, MAXF: 560, W: 10, H: 22, COY: 0.08, BUF: 0.12, BELT: 70, ICE: 180, LIFT: 130 };
+const PH = { RUN: 120, ACC: 1500, AIR: 1000, G: 1500, JUMP: 440, CUT: 400, MAXF: 560, W: 10, H: 22, COY: 0.08, BUF: 0.12, BELT: 70, ICE: 180, LIFT: 130, PAD: 600 };
 const MAX_HP = 100, RACERS = 4;
 const COLORS = ['#e8483b', '#3b8de8', '#3fbf5a', '#f2b632', '#a65be0', '#f07ab8', '#2cc4c4', '#f0f0f0'];
 
@@ -47,12 +47,13 @@ const GC_PRIZE = [40, 25, 15, 10];               // 1등부터 받는 gC (봇과
    칸: '.' 빈칸, '#' 벽·바닥, 'x' 가구(단단함), '=' 아래에서 뚫고 올라가는 발판, '>' '<' 무빙워크 */
 function Builder(w, h) {
   const g = []; for (let y = 0; y < h; y++) g.push(new Array(w).fill('.'));
-  const b = { w, h, g, objs: [], spawns: [], starts: [], rooms: [], finish: null };
+  const b = { w, h, g, objs: [], spawns: [], starts: [], rooms: [], pads: [], finish: null };
   b.fill = (x0, y0, x1, y1, c) => { for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) if (y >= 0 && y < h && x >= 0 && x < w) g[y][x] = c; };
   // 가구: bottom = 바닥 바로 위 줄
   b.obj = (t, x, bottom, ww, hh, solid = true) => { b.objs.push({ t, x, y: bottom - hh + 1, w: ww, h: hh, solid }); if (solid) b.fill(x, bottom - hh + 1, x + ww - 1, bottom, 'x'); };
   b.deco = (t, x, bottom, ww, hh) => b.obj(t, x, bottom, ww, hh, false);
   b.spawn = (x, bottom) => b.spawns.push({ x: x * TS + TS / 2, y: (bottom + 1) * TS - 6 });
+  b.pad = (x, bottom, ww) => b.pads.push({ x: x * TS, y: (bottom + 1) * TS, w: ww * TS });
   b.room = (x0, y0, x1, y1, theme) => b.rooms.push({ x0, y0, x1, y1, theme });
   return b;
 }
@@ -92,6 +93,18 @@ function hurdles(b, R, from, to, bottom, res, hs) {
     const hx = from + (R() * Math.max(1, to - from - w) | 0);
     if (res.some(r => hx + w + 2 >= r[0] && hx - 2 <= r[1])) continue;
     hs.forEach((hh, n) => b.obj('boxes', hx + n * 5, bottom, 2, hh)); res.push([hx - 2, hx + w + 2]); return hx;
+  }
+  return -1;
+}
+/* 점프대: 밟으면 높이 튀어 올라 상자 위의 높은 길로 질러가요 (안 밟고 아래로 가도 돼요) */
+function springRoute(b, R, from, to, bottom, res) {
+  const w = 22;
+  for (let t = 0; t < 12; t++) {
+    const hx = from + (R() * Math.max(1, to - from - w) | 0);
+    if (res.some(r => hx + w + 2 >= r[0] && hx - 2 <= r[1])) continue;
+    b.pad(hx, bottom, 2); b.fill(hx + 4, bottom - 6, hx + 21, bottom - 6, '=');
+    for (let n = 0; n < 3; n++) b.obj('boxes', hx + 8 + n * 5, bottom, 2, 3);
+    b.spawn(hx + 18, bottom - 7); res.push([hx - 2, hx + w + 2]); return hx;
   }
   return -1;
 }
@@ -205,7 +218,7 @@ function longMap(segs, goal, seed) {
     if (g.includes('belt')) { const bx = x + 14 + (R() * Math.max(1, s.len - 44) | 0); b.fill(bx, top, bx + 14, top, R() < .5 ? '>' : '<'); res.push([bx - 1, bx + 15]); }
     if (g.includes('ice')) { const ix = x + 18 + (R() * Math.max(1, s.len - 50) | 0); if (!res.some(r => ix + 14 >= r[0] && ix - 2 <= r[1])) { b.fill(ix, top, ix + 11, top, 'I'); res.push([ix - 1, ix + 12]); b.deco('cone', ix - 1, bottom, 1, 1); } }
     for (const o of s.objs) if (o[0][0] === '~') b.deco(o[0].slice(1), x + o[1], bottom, o[2], o[3]);
-    if (s.len >= 50) { hurdles(b, R, x + 16, x1 - 8, bottom, res, [1, 2, 3, 2, 1]); if (s.len >= 90) hurdles(b, R, x + 16, x1 - 8, bottom, res, [2, 3, 2]); if (s.len >= 60) skyRoute(b, R, x + 14, x1 - 8, bottom, res, [3, 6, 3, 6]); }   // 파쿠르
+    if (s.len >= 50) { hurdles(b, R, x + 16, x1 - 8, bottom, res, [1, 2, 3, 2, 1]); if (s.len >= 90) hurdles(b, R, x + 16, x1 - 8, bottom, res, [2, 3, 2]); if (s.len >= 60) skyRoute(b, R, x + 14, x1 - 8, bottom, res, [3, 6, 3, 6]); if (s.len >= 70) springRoute(b, R, x + 14, x1 - 8, bottom, res); }   // 파쿠르
     const placed = []; placeRun(b, R, s.objs, x + 5, x1 - 4, bottom, res, placed);
     if (g.includes('mezz')) mezzOn(b, placed, bottom, Math.max(1, placed.length >> 2));
     itemSpots(b, x + 3, x1 - 3, bottom, Math.max(2, s.len / 22 | 0));

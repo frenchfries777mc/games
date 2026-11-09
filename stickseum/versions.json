@@ -1,19 +1,30 @@
 {
  "name": "Stickseum",
- "latest": "1.0",
+ "latest": "1.0.1",
  "latestFile": "Stickseum-latest.html",
- "updated": "2026-11-07",
+ "updated": "2026-11-09",
  "versions": [
+  {
+   "version": "1.0.1",
+   "date": "2026-11-09",
+   "file": "Stickseum-v1.0.1.html",
+   "title": "네온 시티",
+   "summary": "새 캐릭터 네온(대검·사슬)·카다스(암흑총)\n네온·카다스 스킨 6종\n새 네온 도시 인트로·로비·방 매칭 배경과 새 로고\n폐허도시 발판 조정",
+   "latest": true,
+   "size": 15509706,
+   "sha256": "90438210e287e37be248aff81e0606ee4cf6400c1d9b843e666214610ae1ed84",
+   "build": "v757"
+  },
   {
    "version": "1.0",
    "date": "2026-11-07",
    "file": "Stickseum-v1.0.html",
    "title": "신화의 전설",
    "summary": "새 캐릭터 하랄드·용살자·빌헬름 텔\n새 맵 올림포스 신전·미궁·파라오의 무덤\n시즌 패스 한정 스킨 7종·팀전 3라운드제·새 모드 데스매치 더블\n새 인트로·1.0 로고·예고 영상\n친선과 연습 개편 (인터넷 없이도 봇과 플레이)·맵 에디터 맵 공개·봇 난이도 7단계",
-   "latest": true,
-   "size": 14388205,
-   "sha256": "775b91902015b61a8e6b8638168d35849a94a8624942da076830c42321a0b4e8",
-   "build": "v749"
+   "latest": false,
+   "size": 14389617,
+   "sha256": "d1617d03a668ec865ee3888479c3005128d6e9f516819329013cc3e94a77ce88",
+   "build": "v756"
   },
   {
    "version": "0.9",
@@ -103,7 +114,7 @@
   },
   {
    "version": "0.1",
-   "date": "2026-09-29",
+   "date": "2026-09-26",
    "file": "Stickseum-v0.1.html",
    "size": 195495,
    "sha256": "e1fedfb1a765ca9bd1f8431ca2ffc7548fecebad7f368e537e379832415f70ed",

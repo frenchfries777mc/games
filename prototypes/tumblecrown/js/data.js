@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.2', BUILD = 310;
+export const VERSION = 'v0.2', BUILD = 312;
 
 export const ROLES = {
   knight: {
@@ -421,6 +421,7 @@ Object.assign(ROLE_PUZ, {
 // 5대5 깃발 점령전 지도: 아주 넓은 벌판에 돌담과 기둥이 흩어져 있어요 (180도 돌려도 똑같아서 두 팀이 공평해요)
 export const PUSH_N = 6, PUSH_T = 10;
 export function pushTime(n, total, mode) { if (mode === 'duel') return 0; return n >= total - 1 ? 15 : n >= total - 2 ? 10 : 0; }   // 깃발을 (전체-2)개 가진 팀이 몰아붙이면 상대 부활 +10초, (전체-1)개면 +15초 (5대5는 5·6개, 3대3은 3·4개)   // 깃발을 이만큼 가진 팀이 몰아붙이면 상대 부활이 이만큼(초) 늘어요
+export const BR_UP_T = 40, BR_WARN_T = 4, BR_DOWN_T = 20;   // 무너지는 다리 협곡: 다리가 서 있는 시간·무너지기 전 경고·끊겨 있는 시간(초)
 export const DOOR_OPEN_T = 14, DOOR_SHUT_T = 16, STORM_CALM_T = 30, STORM_T = 12, NIGHT_T = 30;   // 사막 신전: 문이 열려 있는 시간·닫혀 있는 시간, 모래폭풍이 잠잠한 시간·부는 시간(초)
 export const BIG_T = 600;   // 큰 괴물이 나타나는 시각(초)
 export const TEAM_N = 5, FLAG_T = 7, FLAG_R = 6.5, RESP_T = 15, SPAWN_INV = 2, TEAM_HP = 1.5, RECALL_CD = 25, RECALL_T = 3;
@@ -487,7 +488,13 @@ const ARENAS = [
   // 달빛 성채: 깃발 셋은 서로 벽으로 가려져 있어요. 30초마다 낮과 밤이 바뀌고, 밤에는 주변과 바라보는 방향의 좁고 긴 부채꼴만 보여요 (180도 돌려도 똑같아요)
   { name: '달빛 성채', night: 1, c3: 1, line: '가운데 깃발과 두 깃발이 서로 벽으로 가려져 있어요. 30초마다 낮과 밤이 바뀌고, 밤에는 내 주변과 바라보는 방향만 보여요. 횃불을 따라 가요.', theme: 'abyss',
     walls: [[48, 26, 8, 3], [48, 26, 3, 6], [34, 12, 12, 3], [34, 12, 3, 10], [14, 24, 10, 3], [30, 6, 3, 10], [12, 4, 8, 3]],
-    fl: [[10, 42], [22, 60]], mid: [[56, 36], [41, 18]], pil: [[18, 30], [44, 8], [28, 40], [6, 14]] }
+    fl: [[10, 42], [22, 60]], mid: [[56, 36], [41, 18]], pil: [[18, 30], [44, 8], [28, 40], [6, 14]] },
+  // 무너지는 다리 협곡: 가운데에 세로로 긴 협곡이 지나가고, 한가운데 좁은 땅(깃발)과 위·아래 다리 둘로만 건너요. 다리는 주기적으로 무너졌다 다시 놓여요 (180도 돌려도 똑같아요)
+  // chasm·bridges = 칸 좌표 [x,y,너비,높이] (스케일 없이 그대로), 반대쪽은 180도 돌려서 만들어요
+  { name: '무너지는 다리 협곡', c3: 1, line: '가운데 협곡을 좁은 땅 하나와 위·아래 다리 둘이 이어요. 다리는 40초마다 금이 가다가 무너지고, 다리 위에 있으면 떨어져 쓰러져요. 한동안 끊겨 있다가 다시 놓여요.', theme: 'desert',
+    walls: [[20, 22, 3, 9], [8, 12, 12, 3], [34, 40, 3, 10]],
+    chasm: [[133, 0, 14, 84]], bridges: [[133, 36, 14, 10]],
+    fl: [[10, 40], [36, 60]], mid: [[56, 36], [30, 18]], pil: [[16, 10], [28, 34], [10, 28], [34, 50]] }
 ];
 function arenaMap(def) {
   const m = genMap(777, [{ name: T('전장'), line: T(def.line), boss: 1 }], { noSecret: 1, noMimic: 1, st: { cols: 1 } });
@@ -505,6 +512,10 @@ function arenaMap(def) {
   const g = new Uint8Array(AW * AH).fill(1);
   for (const [x, y, w, h] of walls) for (let j = Math.max(0, y); j < Math.min(AH, y + h); j++) for (let i = Math.max(0, x); i < Math.min(AW, x + w); i++) g[j * AW + i] = 0;
   if (def.wallIf) for (let j = 0; j < AH; j++) for (let i = 0; i < AW; i++) if (def.wallIf(i, j, AW, AH)) g[j * AW + i] = 0;   // 모양이 둥근 지도는 칸마다 벽인지 따져요 (180도 돌려도 같아야 해요)
+  // 협곡(낭떠러지)과 다리: 협곡 칸은 걸을 수 없고, 다리 칸은 서 있을 때만 걸어요 (다리 칸은 지도에 바닥으로 넣지 않고 규칙이 열고 닫아요)
+  const mirR = ([x, y, w, h]) => [AW - x - w, AH - y - h, w, h], chasm = [], bridges = [];
+  for (const q of def.chasm || []) chasm.push(q, mirR(q)); for (const q of def.bridges || []) bridges.push(q, mirR(q));
+  for (const [x, y, w, h] of chasm) for (let j = Math.max(0, y); j < Math.min(AH, y + h); j++) for (let i = Math.max(0, x); i < Math.min(AW, x + w); i++) g[j * AW + i] = 0;
   m.cols = [];   // 기둥: 칸 덩어리마다 가운데와 너비를 적어 둬요 (화면에서 벽돌 대신 둥근 기둥을 세워요)
   if (def.colIf) { const seen = new Set(); for (let j = 0; j < AH; j++) for (let i = 0; i < AW; i++) { if (!def.colIf(i, j, AW, AH) || seen.has(j * AW + i)) continue; const st = [[i, j]], cs = []; seen.add(j * AW + i); while (st.length) { const [a, b] = st.pop(); cs.push([a, b]); g[b * AW + a] = 0; for (const [da, db] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const u = a + da, v = b + db; if (u >= 0 && v >= 0 && u < AW && v < AH && !seen.has(v * AW + u) && def.colIf(u, v, AW, AH)) { seen.add(v * AW + u); st.push([u, v]); } } } const xs = cs.map(c => c[0]), ys = cs.map(c => c[1]); m.cols.push([ox + (Math.min(...xs) + Math.max(...xs) + 1) / 2, oy + (Math.min(...ys) + Math.max(...ys) + 1) / 2, Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys)) + 1]); } }
   const floors = [];
@@ -518,7 +529,7 @@ function arenaMap(def) {
   if (def.night) m.tflags.night = 1;   // 밤낮이 바뀌는 지도   // 중앙 깃발이 셋인 지도 (끝 세 개가 중앙): 점령 순서가 달라요
   m.boss = [ox + (AW >> 1), oy + (AH >> 1)]; m.bossTrig = [0, 0, 0, 0]; m.start = m.tspawn[0]; m.route = [m.boss];
   m.doors = (def.gates || []).flatMap(([t, k]) => { const [x, y, w, h] = def.walls[k]; return t === 'h' ? [[x + w, y, AW - 2 * x - 2 * w, h], [x + w, AH - y - h, AW - 2 * x - 2 * w, h]] : [[x, y + h, w, AH - 2 * y - 2 * h], [AW - x - w, y + h, w, AH - 2 * y - 2 * h]]; }).map(([x, y, w, h]) => [ox + x, oy + y, w, h]);   // 신전 문: 닫히면 막히고 열리면 지나가요
-  m.spawns = []; m.traps = []; m.fires = []; m.altars = []; m.chests = []; m.secrets = []; m.puzzles = []; m.darks = []; m.pits = []; m.lifts = []; m.fork = null; m.niches = {}; m.mimic = -1;
+  m.spawns = []; m.traps = []; m.fires = []; m.altars = []; m.chests = []; m.secrets = []; m.puzzles = []; m.darks = []; m.pits = []; m.lifts = []; m.chasms = chasm.map(([x, y, w, h]) => [ox + x, oy + y, w, h]); m.bridges = bridges.map(([x, y, w, h]) => [ox + x, oy + y, w, h]); m.fork = null; m.niches = {}; m.mimic = -1;
   return m;
 }
 export const CHAPTERS = ARENAS.map((d, i) => ({ id: i + 1, pvp: 1, title: T(d.name), place: T(d.name), diff: 1, introT: 3.5, boss: {}, theme: d.theme, map: arenaMap(d) }));
