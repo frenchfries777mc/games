@@ -413,7 +413,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.6<br>build 208</p>
+    <p class="foot">v0.6<br>build 209</p>
   </nav>
 </div>
 
@@ -3126,7 +3126,15 @@ function skyReefTick(dt){
 }
 /* ===== 패치20: 멀티플레이 — 가판대 · 우체통 · 파티 던전 · 공유 탐험 ===== */
 const myTitle=()=>{const a=ACH.find(q=>q.id===settings.title&&settings.ach[q.id]);return a?'['+a.name.slice(0,8)+'] ':'';};
-const myName=()=>{if(!settings.pname){settings.pname='탐험가'+(1000+((Math.random()*9000)|0));saveSettings();}return String(settings.pname).slice(0,15);};
+const guestName=()=>'게스트'+String((Math.random()*1e6)|0).padStart(6,'0');   // 손님 이름: 게스트 + 무작위 숫자 6개
+const myName=()=>{
+  if(settings.pname&&!settings.pacct&&/^탐험가\d{4}$/.test(String(settings.pname))){   // 예전 손님 이름은 새 형식으로 바꾸고, 내가 설치한 것의 주인 이름도 같이 따라가요
+    settings.palias=[settings.pname].concat((settings.palias||[]).filter(x=>x!==settings.pname)).slice(0,6);delete settings.pname;
+    setTimeout(()=>{try{bfOwnerFix();}catch(e){}},0);
+  }
+  if(!settings.pname){settings.pname=guestName();saveSettings();}
+  return String(settings.pname).slice(0,15);
+};
 const nameOfPeer=by=>(!by||by==='host')?myName():String((remotes.get(by)||{}).name||'손님').slice(0,15);
 const clampN=(v,a,b)=>Math.max(a,Math.min(b,v|0));
 let stallRd=null,mailRd=null;
@@ -15192,7 +15200,7 @@ function ffRoomSync(){try{const r=frRoom();if(r===ffRoomSent||!window.FFAuth||!F
 /* 로그인했으면 계정 닉네임(사이트·다른 게임에서 바꾼 이름 포함)이 곧 내 이름이에요 */
 function ffNickSync(){try{if(!window.FFAuth||!FFAuth.user())return;const n=String(FFAuth.nickname()||'').trim().slice(0,15);if(n&&settings.pname!==n){settings.pname=n;saveSettings();}}catch(e){}}
 window.addEventListener('ff-nick',ffNickSync);
-/* 채팅·방 이름: 로그인했으면 프로필 닉네임(profiles.display_name)이 내 이름이에요. 로그인 안 했거나 체험이면 '탐험가1234' 손님 이름을 써요.
+/* 채팅·방 이름: 로그인했으면 프로필 닉네임(profiles.display_name)이 내 이름이에요. 로그인 안 했거나 체험이면 '게스트123456' 손님 이름을 써요.
    (허브 FFAuth가 없는 화면에서도 되도록 게임이 직접 읽어요. 이름이 바뀌면 내가 설치한 통행문·상점·우편함 주인 이름도 같이 바꿔요) */
 let bfNickAt=0,bfNickUid=null,bfNickBusy=false;
 function bfOwnerFix(){try{const al=settings.palias||[],me=myName();if(!al.length||typeof world==='undefined'||!world||!world.structs)return;for(const b of world.structs){if(b.ow&&al.includes(b.ow))b.ow=me;if(b.on&&al.includes(b.on))b.on=me;}}catch(e){}}
