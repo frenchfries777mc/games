@@ -1498,6 +1498,37 @@ const NO_REGEN_MODES={survival:1};
 let ULT_CD = 20;   // (a `let` only so the practice mode can shorten it)
 let practiceMode=false;   // the offline practice mode: no rewards of any kind, endless, no match end
 function noRewards(){ return practiceMode || currentMode==='private'; }   // practice and private rooms earn nothing: no gold, souls, player/season/character xp, missions, achievements or stats (owner, v227: fairness)
+/* ===== 1111킬 챌린지 (11/9~11/15 KST): every player's kills in ONLINE games (daily + experimental modes count; practice, private rooms and user maps do not) add up on the server; reaching 1111 together = special reward ===== */
+const CK_ID='k1111_2026_11', CK_GOAL=1111, CK_END=Date.UTC(2026,10,15,15,0,0);      // (ends 11/16 0:00 KST)
+let ckPending=0, ckBusy=false, ckTotal=null, ckMine=0, ckOk=true, ckLast=0;
+function ckActive(){ return Date.now()<CK_END; }
+function ckCounts(){ return ckActive() && currentMode==='online' && !practiceMode && sb && sbUser && !(MAP&&MAP.custom) && gameMode!=='usermap'; }
+function ckAdd(n){ if(ckCounts()) ckPending+=n; }
+async function ckFlush(){
+  if(ckBusy || !sb || !sbUser) return; ckBusy=true;
+  try{
+    while(ckPending>0){ const n=Math.min(20,ckPending); const r=await sb.rpc('challenge_add_kills',{p_challenge:CK_ID,p_n:n}); if(r.error) throw r.error; ckPending-=n; if(r.data){ ckTotal=+r.data.total||0; ckMine=+r.data.mine||0; } }
+    ckOk=true;
+  }catch(e){ ckOk=false; } ckBusy=false; ckPaint();
+}
+async function ckRefresh(){
+  if(!ckActive() || !sb) { ckPaint(); return; }
+  try{ const r=await sb.rpc('challenge_totals',{p_challenge:CK_ID}); if(r.error) throw r.error; if(r.data){ ckTotal=+r.data.total||0; ckMine=+r.data.mine||0; ckOk=true; } }catch(e){ ckOk=false; }
+  ckLast=Date.now(); ckPaint();
+}
+function ckPaint(){
+  let el=document.getElementById('ckBanner');
+  if(!el){ el=document.createElement('div'); el.id='ckBanner'; el.setAttribute('data-noemo','1'); el.style.cssText='position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:6;display:none;padding:7px 14px;border-radius:999px;background:rgba(20,22,28,.88);border:1px solid #ff7a3d;color:#ffd9c2;font:700 13px/1.3 system-ui,sans-serif;text-align:center;max-width:92vw;pointer-events:none;'; document.body.appendChild(el); }
+  const onMenu=document.getElementById('menuScreen') && document.getElementById('menuScreen').classList.contains('active');
+  if(!ckActive() || !onMenu || (sb && !ckOk && ckTotal===null)){ el.style.display='none'; return; }
+  const left=Math.max(0, Math.ceil((CK_END-Date.now())/86400000));
+  let t;
+  if(!sb) t='🔥 1111킬 챌린지 · 로그인하면 참여할 수 있어요';
+  else if(ckTotal!==null && ckTotal>=CK_GOAL) t='🎉 1111킬 챌린지 달성! ('+ckTotal+'킬) · 내 '+ckMine+'킬';
+  else t='🔥 1111킬 챌린지 · 모두 합쳐 '+(ckTotal||0)+' / '+CK_GOAL+' · 내 '+ckMine+'킬 · '+left+'일 남음';
+  el.textContent=t; el.style.display='block';
+}
+setInterval(()=>{ try{ if(ckPending>0) ckFlush(); else if(Date.now()-ckLast>60000 && document.getElementById('menuScreen') && document.getElementById('menuScreen').classList.contains('active')) ckRefresh(); }catch(e){} }, 15000);
 const PRACTICE_ULT_CD=3, PRACTICE_TELEPORT_CD=2, PRACTICE_RESPAWN_SEC=2, PRACTICE_MAX_OPPONENTS=8;
 const BAT_DMG_MULT = 1.6, BAT_SPEED_MULT = 1.7, BAT_FORM_SEC = 8, BAT_TEAM_HEAL_SHARE = 0.5, BAT_VERT_SPEED = 260;   // (260px/s up with jump, the same down with S)
 const WIZ_CIRCLE_R = 330, WIZ_CIRCLE_SEC = 10, WIZ_HEAL_PER_SEC = 12, WIZ_ENEMY_DPS = 9, WIZ_SPEED_MULT = 1.4, WIZ_DMG_MULT = 1.3, WIZ_CD_MULT = 0.7;
@@ -1908,7 +1939,7 @@ function persistOtherSettings(){ try{ localStorage.setItem('arenaClashSettings',
    fetched from the site, and if that fails too the game simply stays without music. Web Audio is used (not <audio>) so the
    loop has no gap and the volume can fade on iPad, where an <audio> element's volume can't be changed. */
 const BGM_GAIN={battle:1.5};      // the battle song is mastered quieter than the rest
-const BGM_FILES={lobby:'music-lobby.mp3', battle:'music-battle-jump.mp3', boss:'music-boss.mp3'}, BGM_ALT='https://frenchfries777.com/games/stickseum/';
+const BGM_FILES={lobby:'music-lobby-neon.mp3', battle:'music-battle-jump.mp3', boss:'music-boss.mp3'}, BGM_ALT='https://frenchfries777.com/games/stickseum/';
 const BGM_LOOP={lobby:41.739, battle:51.2, boss:41.143};            // loop length in seconds (whole bars, so the end joins the start)
 let bgmCtx=null, bgmBufs={}, bgmLoading={}, bgmCur=null, bgmGain=null;
 function bgmWanted(){
@@ -6009,7 +6040,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-09-v758';
+const GAME_BUILD='build 2026-11-10-v760';
 const GAME_VERSION='1.0.1', GAME_VERSION_NAME='네온 시티';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -7370,6 +7401,7 @@ function refreshDailyBadge(screenId){
   try{ refreshMissionBadge(); }catch(e){}
 }
 function showScreen(id){
+  try{ setTimeout(()=>{ ckPaint(); if(id==='menuScreen'){ if(ckPending>0) ckFlush(); else if(Date.now()-ckLast>20000) ckRefresh(); } }, 0); }catch(e){}
   { const bz=document.getElementById('bzBox'); if(bz) bz.style.display='none'; }      // (the danger-zone countdown belongs to the match: leaving to a menu mid-match used to leave it hanging there; brzHud shows it again every frame in a match)
   document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -21401,7 +21433,7 @@ function render(fxDt){
   ctx.fillStyle='#0e1622'; ctx.fillRect(0,0,canvas.width,canvas.height);
   if(!started || !MAP) return;
   { const me0=players[myId];
-    if(me0 && me0.kills>lastKnownKills){ const gained=me0.kills-lastKnownKills; lastKnownKills=me0.kills; if(!noRewards()){ saveData.totalKills=(saveData.totalKills||0)+gained; addXP(gained*KILL_XP); } } }
+    if(me0 && me0.kills>lastKnownKills){ const gained=me0.kills-lastKnownKills; lastKnownKills=me0.kills; if(!noRewards()){ saveData.totalKills=(saveData.totalKills||0)+gained; addXP(gained*KILL_XP); } ckAdd(gained); } }
   if(killcamActive) killcamRenderFrame(); // advance replay playback before computing the camera this frame
   const th = MAP.theme;
   const cam=getCamera();
