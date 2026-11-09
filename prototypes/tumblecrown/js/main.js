@@ -3,7 +3,7 @@
 import { View } from './render.js';
 import { createGame, step, snapshot, chooseBless, carryOver, koPlayer, surVote, INTRO_T, HV_DELAY, wallClamp, setupRange, callBots } from './sim.js';
 import { useMode, RECALL_CD, pushTime, TEAMS, FLAG_T, FLAG_R, RESP_T, MODES, ROLES, ROLE_IDS, COLORS, BOT_NAMES, MAX_PLAYERS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, COSMETICS, WEEKLY, weekInfo, VERSION, BUILD, roleLevel, CHAR_RANKS, charRankFor, rankImg, roleImg, typeImg, typeFile, MASTERY_PT, MASTERY_BASE, MODE_MASTERY, streakBonusFor, COMBOS, DEEP, DEEP_I, TALK_X, ROLE_PUZ, flagShown, achImg, itemImg } from './data.js';
-import { collide as mapCollide, areaAt, floorCell, MW, MH, CS, cw, useChapter, chapterIndex, SOPEN, openSecret, resetSecrets, hiddenCell, GOPEN, openGate, setDoors, DSTATE, PDOWN, dropPillar, LIFTH, liftOk, CUT } from './map.js';
+import { collide as mapCollide, areaAt, floorCell, MW, MH, CS, cw, useChapter, chapterIndex, SOPEN, openSecret, resetSecrets, hiddenCell, GOPEN, openGate, setDoors, DSTATE, setBridges, BR, HOLE, PDOWN, dropPillar, LIFTH, liftOk, CUT } from './map.js';
 import * as SFX from './sfx.js';
 import * as MUS from './music.js';
 import { T, trDom } from './tr.js';
@@ -1302,6 +1302,10 @@ function onEvent(e) {
     case 'capbuff': view.rise(e.x, e.z, 0xffd36a, 12, 2.2, 0.9, 5); view.ring(e.x, e.z, 1.8, 0xffd36a, 0.5); if (e.id === me) { toast(T('점령 효과! 5초 동안 이동 속도와 공격이 20% 올라요'), 2400); SFX.play('bless'); } break;
     case 'door': if (e.open) toast(T('신전 문이 열렸어요!'), 2400); else bigMsg(T('신전 문이 닫혔어요!'), T('안에 있는 깃발은 닫혀도 차지할 수 있어요'), 2600); SFX.play(e.open ? 'warn' : 'slam'); view.shake = Math.max(view.shake, 0.5); break;
     case 'night': toast(e.on ? T('밤이 됐어요! 내 둘레와 바라보는 방향만 보여요') : T('아침이 밝았어요'), 2400); break;
+    case 'brwarn': bigMsg(T('다리에 금이 가요!'), T('곧 무너져요. 건너는 중이면 서둘러요'), 2600); SFX.play('warn'); view.shake = Math.max(view.shake, 0.4); break;
+    case 'brdown': bigMsg(T('다리가 무너졌어요!'), T('한동안 끊겨 있어요. 가운데 땅으로 돌아가요'), 2600); SFX.play('slam'); view.shake = Math.max(view.shake, 0.9); for (const [bx, by, bw, bh] of MAP.bridges || []) view.burst((bx + bw / 2) * CS, 1.2, (by + bh / 2) * CS, 0x9a7a52, 26, 8, 1.0, 0.2); break;
+    case 'brup': toast(T('다리가 다시 놓였어요'), 2400); SFX.play('door'); break;
+    case 'fall': if (e.id === S.me) toast(T('다리에서 떨어졌어요!'), 2400); break;
     case 'storm': toast(e.on ? T('모래폭풍이 불어요! 멀리가 안 보여요') : T('모래폭풍이 잦아들었어요'), 2400); break;
     case 'monster': view.column(e.x, e.z, 0xff7a3a, 1.6); view.shock(e.x, e.z, 8, 0xff7a3a, 0.6); view.flash(e.x, e.z, 0xff7a3a, 140); if (e.big) { bigMsg(T('가운데에 큰 괴물이 나타났어요!'), T('쓰러뜨린 팀은 점령이 40초 동안 빨라지고 공격이 영구히 4% 올라요'), 3200); SFX.play('roar'); break; } bigMsg(T('꼭짓점에 괴물이 나타났어요!'), T((S.G ? S.G.mode : S.mode) === 'hyper' ? '쓰러뜨리면 우리 팀 공격과 점령 속도가 영구히 3% 올라요' : '쓰러뜨리면 우리 팀 공격과 점령 속도가 영구히 2% 올라요'), 2600); SFX.play('roar'); break;
     case 'push': if (e.id === S.me && S.local) { S.local.kvx = (S.local.kvx || 0) + e.vx; S.local.kvz = (S.local.kvz || 0) + e.vz; } break;
@@ -1432,6 +1436,7 @@ function nightDraw(dt) {
 function paintHud() {
   const sn = S.snap, me = myP();
   if (sn.dr) { if (sn.dr[0] !== DSTATE.open) { setDoors(sn.dr[0]); mini.dirty = true; } } else if (DSTATE.open) { setDoors(0); mini.dirty = true; }
+  if (sn.br) { if (sn.br[0] !== BR.s) { setBridges(sn.br[0]); mini.dirty = true; } } else if (BR.s) { setBridges(0); mini.dirty = true; }   // 무너지는 다리 협곡
   $('storm').classList.toggle('on', !!(sn.sm && sn.sm[0]));   // 사막 신전 모래폭풍
   const mt = myTm(), nf = [0, 0]; if (sn.tf) for (const f of sn.tf) if (f[0] >= 0) nf[f[0]]++;
   $('roomTag').textContent = (S.net && S.net !== 'solo' ? MODES[S.mode || 'normal'].name + ' · ' : '') + CH.title + ' · ' + T('우리 깃발 {0} · 상대 깃발 {1}', nf[mt], nf[1 - mt]) + (sn.lt >= 0 ? ' · ' + T('남은 시간 {0}:{1}', Math.floor(sn.lt / 60), String(sn.lt % 60).padStart(2, '0')) : '');
@@ -1539,6 +1544,7 @@ const mini = {
       g.fillStyle = '#1a1424'; g.fillRect(0, 0, this.c.width, this.c.height);
       // 바닥은 모두 한 색, 벽은 밝은 색으로 또렷하게
       for (let j = 0; j < MH; j++) for (let i = 0; i < MW; i++) {
+        if (HOLE[j * MW + i]) { g.fillStyle = floorCell(i, j) ? '#a07a46' : '#120a0e'; g.fillRect(i * 3, j * 3, 3, 3); continue; }   // 협곡은 어둡게, 서 있는 다리는 나무색
         if (floorCell(i, j)) { g.fillStyle = '#5a5470'; g.fillRect(i * 3, j * 3, 3, 3); }
         else { let nb = false; for (let dj = -2; dj <= 2 && !nb; dj++) for (let di = -2; di <= 2; di++) if (floorCell(i + di, j + dj)) { nb = true; break; } if (nb) { g.fillStyle = '#efe4c4'; g.fillRect(i * 3, j * 3, 3, 3); } }
       }
