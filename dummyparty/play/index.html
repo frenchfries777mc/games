@@ -1763,7 +1763,7 @@ body.playing #emoBar{display:flex}
    <div class="acctLine" id="acctLine"></div>
    <button class="pb ghost" id="loginBtn" style="display:none">Frenchfries777 계정으로 로그인</button>
    <button class="pb ghost" id="offBtn" style="display:none">게스트 모드로 하기</button>
-   <input id="nameIn" maxlength="15" placeholder="닉네임 (저장되지 않아요)" autocomplete="off" style="display:none">
+   <input id="nameIn" type="hidden">
    <button class="pb gold" id="hostBtn">방 만들기</button>
    <div class="seg" id="pubSeg"><button type="button" data-p="1">공개방</button><button type="button" data-p="0" class="on">비공개방</button></div>
    <button class="pb" id="soloBtn">혼자 하기</button>
@@ -1777,7 +1777,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b100)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b101)</summary>
+   <b>2026-11-09 · v0.1 · b101 · 게스트 이름</b>
+   <ul><li>게스트 모드의 이름은 "게스트"와 무작위 숫자 6개로 정해져요. 직접 적지 않아도 돼요</li></ul>
    <b>2026-11-09 · v0.1 · b100 · 게스트 모드</b>
    <ul><li>로그인하지 않아도 "게스트 모드로 하기"를 누르면 방 만들기, 방 들어가기, 혼자 하기를 할 수 있어요</li><li>게스트 모드에서는 dC, 꾸미기, 업적, 공개방 목록처럼 계정이 필요한 것은 쓰지 않고 저장도 안 돼요</li></ul>
    <b>2026-11-09 · v0.1 · b99 · 새 미니게임 마네킹 줄 서기</b>
@@ -1974,7 +1976,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 · b1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 42개 미니게임 중 7개 · v0.1 b100 · <a href="../">← Dummy Party 사이트로</a></p>
+  <p class="foot">2~8명 · 판마다 42개 미니게임 중 7개 · v0.1 b101 · <a href="../">← Dummy Party 사이트로</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -8454,7 +8456,7 @@ var PREFIX = 'ff-dummyparty-', CODE_CH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', MAX
 var PTS = [5, 3, 2, 1];
 var T_INTRO = 6, T_COUNT = 3, T_END = 4.0, T_RESULT = 6;
 // 게임 버전(0.x)과 빌드. 버전이 다르면 같은 방에 못 들어와요 (빌드가 달라도 괜찮아요). dp_config 의 min_build 보다 낮은 빌드는 dC를 못 받아요
-var DP_VER = '0.1', DP_BUILD = 100;
+var DP_VER = '0.1', DP_BUILD = 101;
 function dpNotice(msg) { dpAsk(msg, '확인', function () { }); }
 var BOT_NAMES = ['방귀쟁이', '홀쭉이', '바보1', '멍청이', '10급 공무원', '교무실 단골', '벌점부자', '말썽이', '김개똥'];
 var qs = new URLSearchParams(location.search);
@@ -9755,11 +9757,11 @@ function dpAsk(msg, okLabel, onOk) {
   document.addEventListener('pointerdown', function () { SFX.unlock(); }, { once: true });
   $('nameIn').value = '';   // 로그인 없이는 이름을 저장하지 않아요
   if (qs.get('room')) $('codeIn').value = qs.get('room').toUpperCase().slice(0, 5);
-  var OFFLINE = false;
+  var OFFLINE = false, GUESTNAME = '';   // 게스트 모드: 이름은 "게스트" + 무작위 숫자 6개, 저장하지 않아요
   function loggedIn() { try { return !!(window.FFAuth && FFAuth.user()); } catch (e) { return false; } }
   function needLogin() { homeMsg('방 만들기와 친구 방은 로그인해야 해요.'); try { FFAuth.openLogin(); } catch (e) { } }
-  function needName() { var n = $('nameIn').value.trim(); if (!n) { if (loggedIn()) { homeMsg('Frenchfries777 계정으로 로그인해야 해요.'); try { FFAuth.openLogin(); } catch (e) { } } else { homeMsg('닉네임을 적어 주세요.'); try { $('nameIn').focus(); } catch (e) { } } return null; } n = cleanName(n); if (loggedIn()) lsSet('dummyparty.name', n); homeMsg(''); return n; }
-  function soloName() { return loggedIn() ? needName() : cleanName($('nameIn').value.trim() || '마네킹'); }
+  function needName() { if (!loggedIn()) return GUESTNAME || null; var n = $('nameIn').value.trim(); if (!n) { homeMsg('Frenchfries777 계정으로 로그인해야 해요.'); try { FFAuth.openLogin(); } catch (e) { } return null; } n = cleanName(n); if (loggedIn()) lsSet('dummyparty.name', n); homeMsg(''); return n; }
+  function soloName() { return needName(); }
   $('codeIn').addEventListener('input', function () { this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); });
   $('codeIn').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('joinBtn').click(); });
   function pracStart(id) {
@@ -9839,7 +9841,7 @@ function dpAsk(msg, okLabel, onOk) {
   ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (t) { document.addEventListener(t, function (e) { e.preventDefault(); }, { passive: false }); });
   $('profBtn').onclick = openProfile;
   $('loginBtn').onclick = function () { try { FFAuth.openLogin(); } catch (e) { } };
-  $('offBtn').onclick = function () { OFFLINE = true; homeMsg(''); useNickRefresh(); };
+  $('offBtn').onclick = function () { OFFLINE = true; GUESTNAME = '게스트' + ('' + Math.floor(Math.random() * 1000000)).padStart(6, '0'); homeMsg(''); useNickRefresh(); };
   $('hostBtn').onclick = function () { if (!loggedIn() && !OFFLINE) { homeMsg('로그인하거나 게스트 모드로 하기를 눌러 주세요.'); return; } var n = needName(); if (n) startHost(n); };
   $('soloBtn').onclick = function () {
     if (!loggedIn() && !OFFLINE) { homeMsg('로그인하거나 게스트 모드로 하기를 눌러 주세요.'); return; }
@@ -9990,7 +9992,7 @@ function dpAsk(msg, okLabel, onOk) {
   (function () {
     function useNick() {
       try { var u = window.FFAuth && FFAuth.user(), n = u && FFAuth.nickname(); if (n) { $('nameIn').value = cleanName(n); lsSet('dummyparty.name', cleanName(n)); }
-        $('nameIn').style.display = (!n && OFFLINE) ? '' : 'none'; $('pubSeg').style.display = n ? '' : 'none';
+        $('pubSeg').style.display = n ? '' : 'none';
         $('acctLine').textContent = n ? n + ' 님 (Frenchfries777 계정)' : (OFFLINE ? '게스트 모드 · 저장은 안 돼요' : 'dC와 꾸미기는 로그인해야 저장돼요'); $('loginBtn').style.display = n ? 'none' : ''; $('profBtn').style.display = n ? '' : 'none'; $('offBtn').style.display = (n || OFFLINE) ? 'none' : ''; } catch (e) { }
     }
     window.useNickRefresh = useNick;
