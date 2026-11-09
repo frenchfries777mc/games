@@ -96,3 +96,9 @@ patchnotes.json | v756 items[0] | 로그인 화면 아래에 게스트 모드 �
 patchnotes.json | v756 items[1] | 게스트 모드에서는 온라인 게임을 할 수 있고, 랭크·친구·클랜·파티처럼 계정이 필요한 기능은 쓸 수 없어요 | build 756 | 2026-11-09
 Stickseum-v1.0.html | 로그인 화면 | 게스트 모드로 하기 | build 756 | 2026-11-09
 Stickseum-v1.0.html | 로그인 화면 | 계정 없이 온라인 게임은 할 수 있어요. 랭크·친구·클랜·파티 같은 계정 기능은 쓸 수 없어요. | build 756 | 2026-11-09
+patchnotes.json | v757 title | 1.0.1 네온 시티 | build 757 | 2026-11-09
+patchnotes.json | v757 items[0] | 새 캐릭터 네온 추가 (대검과 사슬, 점멸로 상대를 끌어와 기절) | build 757 | 2026-11-09
+patchnotes.json | v757 items[1] | 새 캐릭터 카다스 추가 (암흑총, 암흑 덩어리) | build 757 | 2026-11-09
+patchnotes.json | v757 items[2] | 네온·카다스 스킨 6종 추가 (200·1200·3600 sC) | build 757 | 2026-11-09
+patchnotes.json | v757 items[3] | 네온 도시 인트로·로비·방 매칭 배경과 새 로고 | build 757 | 2026-11-09
+patchnotes.json | v757 items[4] | 폐허도시에서 점프로 갈 수 없던 발판 조정 | build 757 | 2026-11-09
