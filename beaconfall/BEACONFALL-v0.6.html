@@ -413,7 +413,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.6<br>build 206</p>
+    <p class="foot">v0.6<br>build 207</p>
   </nav>
 </div>
 
@@ -3125,6 +3125,7 @@ function skyReefTick(dt){
   if(!isGuest())ghostTick(dt);
 }
 /* ===== 패치20: 멀티플레이 — 가판대 · 우체통 · 파티 던전 · 공유 탐험 ===== */
+const myTitle=()=>{const a=ACH.find(q=>q.id===settings.title&&settings.ach[q.id]);return a?'['+a.name.slice(0,8)+'] ':'';};
 const myName=()=>{if(!settings.pname){settings.pname='탐험가'+(1000+((Math.random()*9000)|0));saveSettings();}return String(settings.pname).slice(0,15);};
 const nameOfPeer=by=>(!by||by==='host')?myName():String((remotes.get(by)||{}).name||'손님').slice(0,15);
 const clampN=(v,a,b)=>Math.max(a,Math.min(b,v|0));
@@ -4489,7 +4490,7 @@ function saveWorld(force){
     const rem=collectRemoved(),brm=collectBrem();
     if(mode==='play')world.savedPlayer=(P.air&&P.airX!==undefined)?{x:Math.round(P.airX),y:Math.round(P.airY),f:P.f}:{x:Math.round(P.sailing&&P.landX!==undefined?P.landX:P.x),y:Math.round(P.sailing&&P.landY!==undefined?P.landY:P.y),f:P.f};
     localStorage.setItem(SAVE_KEY(world.id),JSON.stringify({
-      v:1,vpt:world.vpt||null,mg:world.mg||[],tf:world.tf||null,vr:world.vars||{},rc:world.rcIt||null,stc:world.stc||{},nt:world.nt|0,pt:Math.round(world.pt||0),pe:Math.round(world.pe||0),clock:Math.round(world.clock),removed:rem,brem:brm,ores:world.conv,trader:world.trader,lastTraderDay:world.lastTraderDay,expl:packBits(world.expl),treasureInit:!!world.treasureInit,lmChestInit:world.lmChestInit|0,pirInit:world.pirInit|0,ruinInit:world.ruinInit|0,trClean:world.trClean|0,dunFl:world.dunFl||{},dunBD:world.dunBD|0,fortBD:world.fortBD|0,skyDay:world.skyDay||{},dby:world.discBy||{},gsDay:world.gsDay|0,trains:[...(world.trains||[]),...((typeof P!=='undefined'&&P&&P.train)?[P.train]:[])].slice(0,40).map(T=>({x:T.gx,y:T.gy,dx:T.dx,dy:T.dy,p:Math.round(T.p*100)/100,run:T.run?1:0,it:(T.it||[]).map(q=>q?Object.assign({},q):null)})),herd:animals.filter(a=>a.tame).map(a=>[ANIM_IDX.indexOf(a.type),Math.round(a.hx),Math.round(a.hy),a.baby?1:0,Math.round(a.gt||0)]),disc:world.disc.map(b=>b?'1':'0').join(''),seen:world.seen.map(b=>b?'1':'0').join(''),escaped:!!world.escaped,pilot:world.pilot?1:0,vship:world.voidShip?world.voidShip.x+','+world.voidShip.y:'',voidWon:world.voidWon|0,voidBD:world.voidBD|0,intro:world.introSeen?1:0,bossDay:world.bossDay.join(','),
+      v:1,vpt:world.vpt||null,mg:world.mg||[],tf:world.tf||null,vr:world.vars||{},rc:world.rcIt||null,stc:world.stc||{},nt:world.nt|0,pt:Math.round(world.pt||0),pe:Math.round(world.pe||0),clock:Math.round(world.clock),removed:rem,brem:brm,ores:world.conv,trader:world.trader,lastTraderDay:world.lastTraderDay,expl:packBits(world.expl),treasureInit:!!world.treasureInit,lmChestInit:world.lmChestInit|0,pirInit:world.pirInit|0,ruinInit:world.ruinInit|0,dvo:world.dvo||[],dvk:world.dvk||{},trClean:world.trClean|0,dunFl:world.dunFl||{},dunBD:world.dunBD|0,fortBD:world.fortBD|0,skyDay:world.skyDay||{},dby:world.discBy||{},gsDay:world.gsDay|0,trains:[...(world.trains||[]),...((typeof P!=='undefined'&&P&&P.train)?[P.train]:[])].slice(0,40).map(T=>({x:T.gx,y:T.gy,dx:T.dx,dy:T.dy,p:Math.round(T.p*100)/100,run:T.run?1:0,it:(T.it||[]).map(q=>q?Object.assign({},q):null)})),herd:animals.filter(a=>a.tame).map(a=>[ANIM_IDX.indexOf(a.type),Math.round(a.hx),Math.round(a.hy),a.baby?1:0,Math.round(a.gt||0)]),disc:world.disc.map(b=>b?'1':'0').join(''),seen:world.seen.map(b=>b?'1':'0').join(''),escaped:!!world.escaped,pilot:world.pilot?1:0,vship:world.voidShip?world.voidShip.x+','+world.voidShip.y:'',voidWon:world.voidWon|0,voidBD:world.voidBD|0,intro:world.introSeen?1:0,bossDay:world.bossDay.join(','),
       beltv:2,
       structs:world.structs.filter(b=>!b.lm).map(b=>Object.assign({id:b.id,gx:b.gx,gy:b.gy},exOf(b))),
       drops:drops.map(d=>({x:Math.round(d.tx),y:Math.round(d.ty),v:d.v,item:d.item||'stick',n:d.n||1,dur:d.dur})),
@@ -4512,7 +4513,7 @@ function applySave(){
   world.mg=Array.isArray(d.mg)?d.mg.slice(0,50).map(String):[];
   world.lastTraderDay=d.lastTraderDay|0;
   if(typeof d.expl==='string')unpackBits(d.expl,world.expl);
-  world.treasureInit=!!d.treasureInit;world.lmChestInit=d.lmChestInit|0;world.pirInit=d.pirInit|0;world.ruinInit=d.ruinInit|0;world.trClean=d.trClean|0;world.dunFl=(d.dunFl&&typeof d.dunFl==='object')?d.dunFl:{};world.dunBD=d.dunBD|0;world.fortBD=d.fortBD|0;world.skyDay=(d.skyDay&&typeof d.skyDay==='object')?d.skyDay:{};world.gsDay=d.gsDay|0;world.discBy=(d.dby&&typeof d.dby==='object')?d.dby:{};
+  world.treasureInit=!!d.treasureInit;world.lmChestInit=d.lmChestInit|0;world.pirInit=d.pirInit|0;world.ruinInit=d.ruinInit|0;world.dvo=Array.isArray(d.dvo)?d.dvo.filter(Number.isInteger).slice(0,8):[];world.dvk=(d.dvk&&typeof d.dvk==='object')?d.dvk:{};world.trClean=d.trClean|0;world.dunFl=(d.dunFl&&typeof d.dunFl==='object')?d.dunFl:{};world.dunBD=d.dunBD|0;world.fortBD=d.fortBD|0;world.skyDay=(d.skyDay&&typeof d.skyDay==='object')?d.skyDay:{};world.gsDay=d.gsDay|0;world.discBy=(d.dby&&typeof d.dby==='object')?d.dby:{};
   if(!isGuest())world.trains=(Array.isArray(d.trains)?d.trains:[]).slice(0,40).filter(q=>q&&Number.isFinite(+q.x)&&Number.isFinite(+q.y)&&Math.abs(q.dx|0)+Math.abs(q.dy|0)===1).map(q=>({gx:q.x|0,gy:q.y|0,dx:q.dx|0,dy:q.dy|0,p:Math.max(0,Math.min(0.99,+q.p||0)),spd:96,stop:false,auto:true,run:!!q.run,it:sanitize(q.it,CH_N)}));
   if(!isGuest()&&Array.isArray(d.herd)){animals=animals.filter(a=>!a.tame);for(const q of d.herd){const ty=ANIM_IDX[q[0]];if(!ty||!Number.isFinite(+q[1]))continue;const T=ANIM_TYPES[ty],x=+q[1],y=+q[2];animals.push({id:nextAid++,type:ty,x,y,tx:x,ty:y,f:1,hp:T.hp,hurt:0,wt:0,wa:0,ws:0,flee:0,fx:0,fy:0,stun:0,kx:0,ky:0,lay:0,fed:0,mt:25,tame:1,baby:q[3]?1:0,gt:q[4]||0,hx:x,hy:y,love:0,bc:0});}}
   if(typeof d.disc==='string')for(let i=0;i<world.disc.length;i++)if(d.disc[i]==='1')world.disc[i]=true;
@@ -9950,7 +9951,7 @@ function buildDeepVoid(){
   const rnd=mulberry32(hashStr((world.seedStr||shown.seed)+'dv')),c=TER.camp,cx=(c.x/GRID)|0,cy=(c.y/GRID)|0;
   const place=(lay,ref,rad,kind,cap,mix)=>{const lw=lay[0].length,lh=lay.length,s0=lmFind(ref,lw,lh,rad,null);if(!s0)return null;lmClear(s0.ox,s0.oy,lw,lh);lmPlace(lay,s0.ox,s0.oy,9);
     const cells=[];for(let y=1;y<lh-1;y++)for(let x=1;x<lw-1;x++)if(lay[y][x]==='.')cells.push([s0.ox+x,s0.oy+y]);
-    world.dvSt.push({kind,ox:s0.ox,oy:s0.oy,w:lw,h:lh,cap,mix,cells,next:0});return s0;};
+    world.dvSt.push({kind,ox:s0.ox,oy:s0.oy,w:lw,h:lh,cap,mix,cells,next:0,need:Math.round(cap*1.5)});return s0;};
   place(dvCastle(rnd),[cx,cy-60],120,'castle',10,['vknight','vknight','vreaper','vstalker']);
   place(dvMaze(61,61,rnd,31),[cx+80,cy+50],120,'maze',7,['vstalker','vstalker','vreaper','vknight']);
   place(dvMaze(45,45,rnd,23),[cx-90,cy+44],120,'maze',5,['vstalker','vreaper','vstalker','vknight']);
@@ -9958,6 +9959,8 @@ function buildDeepVoid(){
 function dvEliteTick(dt,pl){   // 구조물 안에서만 정예 몹이 나와요 (들판에서는 안 나와요)
   const S=world.dvSt;if(!S||!S.length)return;
   S.forEach((st,i)=>{
+    const op=(world.dvo||[]).includes(i);
+    if(op){if(!st.ap){st.ap=1;dvCrumble(i);}return;}   // 이미 무너진 구조물: 벽만 다시 허물고 정예는 더 안 나와요
     st.next-=dt;
     const x0=st.ox*GRID-260,y0=st.oy*GRID-260,x1=(st.ox+st.w)*GRID+260,y1=(st.oy+st.h)*GRID+260;
     if(!pl.some(q=>q.x>=x0&&q.x<=x1&&q.y>=y0&&q.y<=y1))return;
@@ -9976,6 +9979,29 @@ function dvEliteTick(dt,pl){   // 구조물 안에서만 정예 몹이 나와요
       break;
     }
   });
+}
+function dvCrumble(i){   // 구조물 벽·기둥 일부를 허물어요 (같은 좌표 해시라 다시 불러와도 똑같이 무너져요)
+  const st=world.dvSt[i];if(!st)return;
+  for(const b of world.structs.slice()){
+    if(!b.lm||(b.k!=='wall'&&b.k!=='pillar'))continue;
+    if(b.gx<st.ox||b.gy<st.oy||b.gx>=st.ox+st.w||b.gy>=st.oy+st.h)continue;
+    if(hashStr(b.gx+','+b.gy+'dvc')%100<40)removeStructCell(b.gx,b.gy,b.layer);
+  }
+}
+function dvEliteKill(i){
+  const st=world.dvSt&&world.dvSt[i];if(!st||isGuest())return;
+  world.dvo=world.dvo||[];if(world.dvo.includes(i))return;
+  world.dvk=world.dvk||{};const k=(world.dvk[i]=(+world.dvk[i]||0)+1);
+  if(k<st.need){if(k%3===0)toast('정예 몹 처치 '+k+' / '+st.need);return;}
+  world.dvo.push(i);st.ap=1;dvCrumble(i);
+  const cx=st.ox+st.w/2,cy=st.oy+st.h/2;
+  const c=st.cells.filter(q=>!sgAt(q[0],q[1])).sort((a,b)=>Math.hypot(a[0]-cx,a[1]-cy)-Math.hypot(b[0]-cx,b[1]-cy))[0];
+  if(c){
+    addStructCell('chest',c[0],c[1],{it:ruinLoot(mulberry32(hashStr((world.seedStr||shown.seed)+'dvt'+i))),tr:1});
+    spawnWorldDrop('gold_ingot',3,c[0]*GRID+8,c[1]*GRID+8);
+    for(let j=0;j<40;j++)parts.push({x:c[0]*GRID+8,y:c[1]*GRID+4,vx:(Math.random()-0.5)*90,vy:-20-Math.random()*60,life:0.9,c:j%2?'#8a4aff':'#e9d9a4'});
+  }
+  toast('구조물이 무너지며 보물이 드러났어요!');saveWorld(true);
 }
 async function dvTravel(back){   // 공허의 포탈: Deep Void 차원 ↔ 원래 월드
   if(modTravelBusy||mode!=='play'||P.dead||isGuest()||net.role){if(net.role)toast('포탈은 혼자 할 때만 쓸 수 있어요.');return;}
@@ -11789,16 +11815,17 @@ function toggleAch(){
   if(!$('#modal').hidden){closeModal();return;}
   const cats=[...new Set(ACH.map(a=>a.cat))];
   const done=ACH.filter(a=>settings.ach[a.id]).length;
-  let html=`<h2>업적<small>${done} / ${ACH.length}</small></h2>`;
+  const tA=ACH.find(q=>q.id===settings.title&&settings.ach[q.id]);
+  let html=`<h2>업적<small>${done} / ${ACH.length}</small></h2><div class="achcat">칭호: ${tA?esc(tA.name):'없음'} (달성한 업적을 누르면 칭호로 선택)</div>`;
   for(const c of cats){
     html+=`<div class="achcat">${c}</div>`;
     for(const a of ACH.filter(q=>q.cat===c)){
       const on=!!settings.ach[a.id],pr=a.prog?a.prog():null;
-      html+=`<div class="achrow${on?' on':''}"><b>${on?'★ ':'☆ '}${esc(a.name)} <small data-noi18n="1" style="color:#8a5a00;font-weight:700">+${bC(achBc(a.id))}</small></b><span>${esc(a.desc)}</span>${pr&&!on?`<i>${pr[0]} / ${pr[1]}</i>`:''}</div>`;
+      html+=`<div class="achrow${on?' on':''}"${on?` data-ttl="${a.id}" style="cursor:pointer"`:''}><b>${on?'★ ':'☆ '}${esc(a.name)}${settings.title===a.id?' [칭호]':''} <small data-noi18n="1" style="color:#8a5a00;font-weight:700">+${bC(achBc(a.id))}</small></b><span>${esc(a.desc)}</span>${pr&&!on?`<i>${pr[0]} / ${pr[1]}</i>`:''}</div>`;
     }
   }
   html+=`<div class="actions"><button class="btn sm" data-fdex>낚시 도감</button><button class="btn sm" data-stats>통계</button><button class="btn sm ghost" data-close>닫기</button></div>`;
-  openModal(html,m=>{m.querySelector('[data-close]').onclick=closeModal;m.querySelector('[data-fdex]').onclick=()=>{closeModal();openFishDex();};m.querySelector('[data-stats]').onclick=()=>{closeModal();openStats();};},'ach');
+  openModal(html,m=>{m.querySelectorAll('[data-ttl]').forEach(el=>{el.onclick=()=>{settings.title=settings.title===el.dataset.ttl?'':el.dataset.ttl;saveSettings();closeModal();toggleAch();};});m.querySelector('[data-close]').onclick=closeModal;m.querySelector('[data-fdex]').onclick=()=>{closeModal();openFishDex();};m.querySelector('[data-stats]').onclick=()=>{closeModal();openStats();};},'ach');
 }
 /* ===== 채팅 (멀티플레이 · T 키) ===== */
 const CHAT_MAX=80;let chatEl=null,chatIn=null,chatLastT=0,chatMp=false;const chatBub=new Map();
@@ -11831,12 +11858,12 @@ function chatSend(t){
   try{const tt=String(t||'').trim();if(tt[0]==='/'&&tt.length>1&&mode==='play'&&MOD.ev.length){const nm=tt.slice(1).split(/\s+/)[0].toLowerCase();if(MOD.ev.some(e=>e.on==='command'&&e.t===nm)){modEvent('command',nm);return;}}}catch(e){}   // on command "이름": /이름 을 치면 모드가 받아요
   t=chatClean(t);if(!t||!net.role)return;
   const now=performance.now();if(now-chatLastT<600)return;chatLastT=now;
-  chatAdd(isGuest()?net.id:'host',myName(),t);
-  if(isGuest())sendHost({t:'chat',x:t});else bcastAll({t:'chat',id:'host',n:myName(),x:t});
+  chatAdd(isGuest()?net.id:'host',myTitle()+myName(),t);
+  if(isGuest())sendHost({t:'chat',x:t,tt:myTitle()});else bcastAll({t:'chat',id:'host',n:myTitle()+myName(),x:t});
 }
 function chatAdd(id,name,t){
   if(id==='mod'){const raw=String(t||'').replace(/[\u0000-\u001f\u007f]/g,' ').replace(/\s+/g,' ').trim();t=raw.slice(0,CHAT_MAX+2*((raw.match(/\\[abcef0-9udlr]/g)||[]).length));}else t=chatClean(t);if(!t)return;chatUI();
-  name=String(name||'').slice(0,15)||'???';
+  name=String(name||'').slice(0,26)||'???';
   const d=document.createElement('div');d.innerHTML=`<b>${esc(name)}</b>${id==='mod'?modRich(t):esc(t)}`;
   chatEl.appendChild(d);while(chatEl.children.length>8)chatEl.firstChild.remove();
   setTimeout(()=>d.classList.add('old'),12000);
@@ -12161,7 +12188,7 @@ function monsterDamage(m,dmg,fx,fy,rune,kind){
     try{if(mode==='play'){MODX.ap=true;MODX.vp=false;MODX.attacker=myName();MODX.victim=T.name||m.ty||'slime';modEvent('die','',{k:'monster',n:T.name||'',n2:m.ty||'slime'});}}catch(e){}
     for(let j=0;j<(m.boss?30:12);j++)parts.push({x:m.x,y:m.y-3,vx:(Math.random()-0.5)*70,vy:-15-Math.random()*35,life:0.6,c:j%2?T.col:'#241638'});
     if(!m.dead){
-      m.dead=true;achKill(m.ty||'slime');if(isHost())bcastAll({t:'kill',ty:m.ty||'slime'});
+      m.dead=true;if(m.elite&&m.dvs!==undefined)dvEliteKill(m.dvs);achKill(m.ty||'slime');if(isHost())bcastAll({t:'kill',ty:m.ty||'slime'});
       for(let e of (T.drop||[])){
         if(e[0]==='*')e=e[1][(Math.random()*e[1].length)|0];
         const [it,mn,mx]=e;const n=mn+Math.floor(Math.random()*(mx-mn+1));if(n>0&&ITEMS[it]&&it!=='coin')spawnWorldDrop(it,n,m.x+(Math.random()-0.5)*10,m.y);}
@@ -14338,7 +14365,7 @@ function onHostData(c,d){
     r.tx=d.x;r.ty=d.y;r.f=d.f===-1?-1:1;r.m=d.m?1:0;r.dead=d.d?1:0;r.sleep=!!d.s;r.boat=!!d.b;r.horse=!!d.h;r.air=!!d.a;r.alt=Math.max(0,Math.min(3,+d.al||0));r.ea=String(d.e||'').slice(0,80);r.eq=cleanArm(r.ea);r.name=String(d.n||r.name||'').slice(0,15);r.down=!!d.dn;r.wk=String(d.w||'').slice(0,12);r.sk=cleanLook(d.k);if(r.sleep){r.x=d.x;r.y=d.y;}
   }else if(d.t==='chat'){
     const r=remotes.get(c.peer),t=chatClean(d.x),now=performance.now();
-    if(t&&r&&!(r._ct>now-500)){r._ct=now;const n=r.name||'손님';chatAdd(c.peer,n,t);bcastAll({t:'chat',id:c.peer,n,x:t},c);}
+    if(t&&r&&!(r._ct>now-500)){r._ct=now;const n=String(d&&d.tt||'').replace(/[\u0000-\u001f\u007f<>]/g,'').slice(0,11)+(r.name||'손님');chatAdd(c.peer,n,t);bcastAll({t:'chat',id:c.peer,n,x:t},c);}
   }else if(d.t==='modto'){
     const r=remotes.get(c.peer),now=performance.now();
     if(r&&!(r._mt>now-150)){r._mt=now;const to=String(d.to||'').toLowerCase(),m2={t:'modto',k:d.k,x:d.x,s:d.s,e:d.e,sec:d.sec,i:d.i,n:d.n,fr:r.name||'손님'};
