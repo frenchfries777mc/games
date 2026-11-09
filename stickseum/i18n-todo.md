@@ -91,3 +91,8 @@ patchnotes.json | v755 title | 복서 봇·마법사·포탈 조정 | build 755 
 patchnotes.json | v755 items[0] | 복서 봇이 쉬지 않고 계속 연타하도록 수정 | build 755 | 2026-11-08
 patchnotes.json | v755 items[1] | 마법사 데미지 12에서 14로 상향 (한 번 관통하면 7) | build 755 | 2026-11-08
 patchnotes.json | v755 items[2] | 차원여행자 포탈은 만든 사람만 이용 가능 | build 755 | 2026-11-08
+patchnotes.json | v756 title | 게스트 모드 추가 | build 756 | 2026-11-09
+patchnotes.json | v756 items[0] | 로그인 화면 아래에 게스트 모드 버튼 추가 (계정 없이 시작) | build 756 | 2026-11-09
+patchnotes.json | v756 items[1] | 게스트 모드에서는 온라인 게임을 할 수 있고, 랭크·친구·클랜·파티처럼 계정이 필요한 기능은 쓸 수 없어요 | build 756 | 2026-11-09
+Stickseum-v1.0.html | 로그인 화면 | 게스트 모드로 하기 | build 756 | 2026-11-09
+Stickseum-v1.0.html | 로그인 화면 | 계정 없이 온라인 게임은 할 수 있어요. 랭크·친구·클랜·파티 같은 계정 기능은 쓸 수 없어요. | build 756 | 2026-11-09
