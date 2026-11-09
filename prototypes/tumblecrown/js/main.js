@@ -178,10 +178,20 @@ function loggedIn() { try { return !!(window.FFAuth && FFAuth.user()); } catch (
 function myAid() { try { const u = window.FFAuth && FFAuth.user(); return u && u.id ? String(u.id) : ''; } catch (e) { return ''; } }
 // 닉네임을 누르면 그 사람의 Tumble Crown 프로필 카드를 열어요 (계정이 있는 사람만)
 function openProf(aid) { try { if (aid && window.FFAuth && FFAuth.openProfile) FFAuth.openProfile(aid, { game: 'tumblecrown' }); } catch (e) { } }
-function myName() { try { const n = window.FFAuth && FFAuth.user() && FFAuth.nickname(); if (n) return String(n).slice(0, 15); } catch (e) { } return T('기사'); }
+// 게스트 모드: 로그인 없이 온라인 대전에 들어가요. 계정(Supabase)이 필요한 일(친구·프로필·허브 기록)만 못 해요
+function isGuest() { if (loggedIn()) return false; try { return sessionStorage.getItem('tc.guest') === '1'; } catch (e) { return !!S.guestMem; } }
+function guestName() { let h = 0; for (const c of String(UID)) h = (h * 31 + c.charCodeAt(0)) % 10000; return T('손님') + String(h).padStart(4, '0'); }
+function myName() { try { const n = window.FFAuth && FFAuth.user() && FFAuth.nickname(); if (n) return String(n).slice(0, 15); } catch (e) { } return isGuest() ? guestName() : T('기사'); }
+// 로그인 안 한 채 온라인으로 가면 로그인 창을 보여 주고, 그 아래에 게스트 모드 단추를 둬요
+function askGuest(then) {
+  const m = $('guestAsk'); m.classList.add('on');
+  $('gaLogin').onclick = () => { SFX.play('click'); m.classList.remove('on'); try { FFAuth.openLogin(); } catch (e) { } };
+  $('gaGuest').onclick = () => { SFX.play('click'); try { sessionStorage.setItem('tc.guest', '1'); } catch (e) { S.guestMem = true; } m.classList.remove('on'); paintWho(); then(); };
+  $('gaX').onclick = () => { SFX.play('click'); m.classList.remove('on'); };
+}
 function paintWho() {
   $('who').innerHTML = '';
-  const s = document.createElement('span'); s.className = 'tx'; s.textContent = loggedIn() ? myName() : T('로그인 안 함'); $('who').appendChild(s);
+  const s = document.createElement('span'); s.className = 'tx'; s.textContent = loggedIn() ? myName() : isGuest() ? myName() + ' (' + T('게스트') + ')' : T('로그인 안 함'); $('who').appendChild(s);
   { const t = myTitle(); if (t) { const e = document.createElement('small'); e.className = 'tx'; e.style.cssText = 'margin-left:8px;color:#ffd36b'; e.textContent = seasonTitle(t.id, t.tk); $('who').appendChild(e); } }
   if (!loggedIn() && window.FFAuth) { const b = document.createElement('button'); b.textContent = T('로그인'); b.onclick = () => { try { FFAuth.openLogin(); } catch (e) { } }; $('who').appendChild(b); }
 }
@@ -243,7 +253,7 @@ function menu(go) {
   if (PICKS[go]) { paintPick(go); return; }
   if (go === 'solo') { leaveNet(); S.net = 'solo'; S.slots = [meSlot()]; newBots(); openRoom(); }
   if (go === 'range') { leaveNet(); S.net = 'solo'; S.range = true; S.slots = [meSlot()]; newBots(); openRoom(); }
-  else if (go === 'match') { if (needLogin()) return; document.querySelector('#sMode h2').textContent = T('모드 선택'); paintModes(); show('sMode'); }
+  else if (go === 'match') { if (window.FFAuth && !loggedIn() && !isGuest()) { askGuest(() => menu('match')); return; } document.querySelector('#sMode h2').textContent = T('모드 선택'); paintModes(); show('sMode'); }
   else if (go === 'ward') { S.wardTab = S.wardTab || 'skin'; S.wardSel = null; paintWard(); show('sWard'); view.cos = curOn(); view.setPreview(SAVE.role, COLORS[SAVE.col | 0].c); }
   else if (go === 'weps') { leaveNet(); S.net = 'solo'; S.info = true; S.slots = [meSlot()]; openRoom(); }   // 직업·조작: 시작 버튼 없이 직업을 눌러 정보만 봐요
   else if (go === 'season') { paintSeason(); show('sSeason'); }
@@ -814,7 +824,7 @@ function startClient() {
 // 친구 방(봇과 연습 · 친구 초대): 경기가 끝나면 방을 닫지 않고 대기실로 돌아가요. 방장이 시작을 누르면 같은 친구들과 다시 해요
 function backToRoom() {
   RP.recDrop();
-  const fin = !!(S.snap && S.snap.ph === 'won' && S.resultShown);
+  const fin = !!(S.snap && S.snap.ph === 'won' && S.resultShown) && loggedIn();
   if (fin) ffProfile().then(ok => { try { const sb = window.FFAuth && FFAuth.client && FFAuth.client(); if (ok && sb && FFProfile.matchDone) FFProfile.matchDone(sb, 'tumblecrown'); } catch (e) { } });
   awardHonor(); S.G = null; S.snap = null; setHud(false); $('bless').classList.remove('on');
   if (S.net === 'guest') S.back = 1;   // 방장이 다시 시작할 때까지 이전 판 화면 신호는 무시해요
@@ -826,7 +836,7 @@ function backToRoom() {
 function endToLobby(msg) {
   RP.recDrop(); stopReplay();
   if (S.lite) { S.lite = false; S.slowN = 0; try { view.setLow(!!SAVE.set.opt); } catch (e) { } }
-  const fin = !!(S.snap && S.snap.ph === 'won' && S.resultShown);   // 한 판을 끝까지 마친 경우만 허브 퀘스트에 알려요
+  const fin = !!(S.snap && S.snap.ph === 'won' && S.resultShown) && loggedIn();   // 한 판을 끝까지 마친 경우만 허브 퀘스트에 알려요
   if (fin) ffProfile().then(ok => { try { const sb = window.FFAuth && FFAuth.client && FFAuth.client(); if (ok && sb && FFProfile.matchDone) FFProfile.matchDone(sb, 'tumblecrown'); } catch (e) { } });
   awardHonor(); S.wk = false; if (WEEKLY.on) { WEEKLY.on = false; useChapter(chapterIndex(), true); }
   leaveNet(); S.G = null; S.snap = null; setHud(false); $('bless').classList.remove('on');
