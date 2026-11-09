@@ -49,6 +49,8 @@ try{ if(!document.getElementById('ffTap')){ var tp=document.createElement('style
 /* 모든 페이지에서 접속 신호(+게임 화면이면 "지금 하는 게임")를 보내는 ff-presence.js 도 불러요 */
 try{ var me=document.currentScript, base=(me&&me.src)?me.src.replace(/[^\/]*$/,''):'https://frenchfries777.com/games/';
   if(!window.FFPresence){ var ps=document.createElement('script'); ps.src=base+'ff-presence.js?v=20261107h'; ps.async=true; (document.head||document.documentElement).appendChild(ps); } }catch(e){}
+/* 즐겨찾기(ff-fav.js): 카드 목록(#games)이 있는 첫 화면에서만 동작해요 */
+try{ if(!window.FFFav&&document.getElementById&&/^\/(games|tools|educations)\/?$/.test(location.pathname)){ var fs=document.createElement('script'); fs.src=base+'ff-fav.js?v=20261109a'; fs.async=true; (document.head||document.documentElement).appendChild(fs); } }catch(e){}
 /* 설치 버튼(ff-install.js): frenchfries777.com 에서만 동작해요 */
 try{ if(!window.FFInstall){ var is=document.createElement('script'); is.src=base+'ff-install.js?v=20261108c'; is.async=true; (document.head||document.documentElement).appendChild(is); } }catch(e){}
 /* 테마(다크 · 라이트)와 글자 크기: 허브나 게임 사이트의 ⚙️ 에서 고르면 모두 같이 바뀌어요.
