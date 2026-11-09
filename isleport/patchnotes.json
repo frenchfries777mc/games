@@ -2,6 +2,183 @@
  "notes": [
   {
    "date": "2026-11-09",
+   "build": "v0.2 build 94",
+   "title": "게스트 이름",
+   "items": [
+    "로그인하지 않으면 이름이 게스트와 숫자 6개로 나와요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Guest names",
+     "items": [
+      "Without logging in, your name shows as Guest followed by 6 digits"
+     ]
+    },
+    "ja": {
+     "title": "Guest names",
+     "items": [
+      "Without logging in, your name shows as Guest followed by 6 digits"
+     ]
+    },
+    "es": {
+     "title": "Guest names",
+     "items": [
+      "Without logging in, your name shows as Guest followed by 6 digits"
+     ]
+    },
+    "fr": {
+     "title": "Guest names",
+     "items": [
+      "Without logging in, your name shows as Guest followed by 6 digits"
+     ]
+    },
+    "de": {
+     "title": "Guest names",
+     "items": [
+      "Without logging in, your name shows as Guest followed by 6 digits"
+     ]
+    },
+    "zh": {
+     "title": "Guest names",
+     "items": [
+      "Without logging in, your name shows as Guest followed by 6 digits"
+     ]
+    },
+    "pt": {
+     "title": "Guest names",
+     "items": [
+      "Without logging in, your name shows as Guest followed by 6 digits"
+     ]
+    },
+    "ru": {
+     "title": "Guest names",
+     "items": [
+      "Without logging in, your name shows as Guest followed by 6 digits"
+     ]
+    },
+    "tr": {
+     "title": "Guest names",
+     "items": [
+      "Without logging in, your name shows as Guest followed by 6 digits"
+     ]
+    },
+    "it": {
+     "title": "Guest names",
+     "items": [
+      "Without logging in, your name shows as Guest followed by 6 digits"
+     ]
+    },
+    "pl": {
+     "title": "Guest names",
+     "items": [
+      "Without logging in, your name shows as Guest followed by 6 digits"
+     ]
+    },
+    "ar": {
+     "title": "Guest names",
+     "items": [
+      "Without logging in, your name shows as Guest followed by 6 digits"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-11-09",
+   "build": "v0.2 build 93",
+   "title": "게스트 모드",
+   "items": [
+    "로그인하지 않고 들어가면 로그인 창이 뜨고, 그 아래에 게스트 모드로 하기 버튼이 있어요",
+    "게스트는 온라인 게임은 할 수 있고, 업적과 랭킹처럼 계정이 필요한 기능만 꺼져요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Guest mode",
+     "items": [
+      "If you are not logged in, a login window appears with a Play as guest button under it",
+      "Guests can play online; only account features like goals and ranking are off"
+     ]
+    },
+    "ja": {
+     "title": "Guest mode",
+     "items": [
+      "If you are not logged in, a login window appears with a Play as guest button under it",
+      "Guests can play online; only account features like goals and ranking are off"
+     ]
+    },
+    "es": {
+     "title": "Guest mode",
+     "items": [
+      "If you are not logged in, a login window appears with a Play as guest button under it",
+      "Guests can play online; only account features like goals and ranking are off"
+     ]
+    },
+    "fr": {
+     "title": "Guest mode",
+     "items": [
+      "If you are not logged in, a login window appears with a Play as guest button under it",
+      "Guests can play online; only account features like goals and ranking are off"
+     ]
+    },
+    "de": {
+     "title": "Guest mode",
+     "items": [
+      "If you are not logged in, a login window appears with a Play as guest button under it",
+      "Guests can play online; only account features like goals and ranking are off"
+     ]
+    },
+    "zh": {
+     "title": "Guest mode",
+     "items": [
+      "If you are not logged in, a login window appears with a Play as guest button under it",
+      "Guests can play online; only account features like goals and ranking are off"
+     ]
+    },
+    "pt": {
+     "title": "Guest mode",
+     "items": [
+      "If you are not logged in, a login window appears with a Play as guest button under it",
+      "Guests can play online; only account features like goals and ranking are off"
+     ]
+    },
+    "ru": {
+     "title": "Guest mode",
+     "items": [
+      "If you are not logged in, a login window appears with a Play as guest button under it",
+      "Guests can play online; only account features like goals and ranking are off"
+     ]
+    },
+    "tr": {
+     "title": "Guest mode",
+     "items": [
+      "If you are not logged in, a login window appears with a Play as guest button under it",
+      "Guests can play online; only account features like goals and ranking are off"
+     ]
+    },
+    "it": {
+     "title": "Guest mode",
+     "items": [
+      "If you are not logged in, a login window appears with a Play as guest button under it",
+      "Guests can play online; only account features like goals and ranking are off"
+     ]
+    },
+    "pl": {
+     "title": "Guest mode",
+     "items": [
+      "If you are not logged in, a login window appears with a Play as guest button under it",
+      "Guests can play online; only account features like goals and ranking are off"
+     ]
+    },
+    "ar": {
+     "title": "Guest mode",
+     "items": [
+      "If you are not logged in, a login window appears with a Play as guest button under it",
+      "Guests can play online; only account features like goals and ranking are off"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-11-09",
    "build": "v0.2 build 92",
    "title": "섬 건설 허가증",
    "items": [

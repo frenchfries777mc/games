@@ -534,6 +534,12 @@
     "카트 위에서 드리프트하는 마네킹, 오늘의 장보기는 목숨 걸고 합니다.": ["A mannequin drifting on a cart. Today's grocery run is life or death.", "Un maniquí derrapando en un carrito. Hoy las compras son a vida o muerte.", "Un mannequin qui dérape en caddie. Les courses du jour se font au péril de sa vie.", "Eine Puppe driftet im Wagen. Der Einkauf heute ist lebensgefährlich.", "カートでドリフトするマネキン。今日の買い物は命がけです。"],
     "물건이 쏟아졌습니다! 계산대 직원이 한숨을 쉽니다.": ["Goods everywhere! The cashier sighs.", "¡Compras por todas partes! La cajera suspira.", "Des courses partout ! La caissière soupire.", "Ware überall! Die Kassiererin seufzt.", "荷物が散らばりました！レジの店員がため息をつきます。"],
     "벽에 박았습니다. 카트는 괜찮습니다. 마네킹도 괜찮아 보입니다.": ["Hit the wall. The cart's fine. The mannequin looks fine too.", "Choque contra la pared. El carrito está bien. El maniquí también parece estar bien.", "Collision avec le mur. Le caddie va bien. Le mannequin aussi, apparemment.", "Gegen die Wand. Dem Wagen geht's gut. Der Puppe scheinbar auch.", "壁にぶつかりました。カートは無事です。マネキンも無事そうです。"],
+    /* 로그인 없이 온라인 테스트 */
+    "닉네임 (저장되지 않아요)": ["Nickname (not saved)", "Apodo (no se guarda)", "Pseudo (non enregistré)", "Spitzname (wird nicht gespeichert)", "ニックネーム(保存されません)"],
+    "닉네임을 적어 주세요.": ["Please enter a nickname.", "Escribe un apodo.", "Saisis un pseudo.", "Bitte gib einen Spitznamen ein.", "ニックネームを入力してください。"],
+    "게스트 모드로 하기": ["Play as guest", "Jugar como invitado", "Jouer en invité", "Als Gast spielen", "ゲストで遊ぶ"],
+    "로그인하거나 게스트 모드로 하기를 눌러 주세요.": ["Please log in or choose Play as guest.", "Inicia sesión o elige Jugar como invitado.", "Connecte-toi ou choisis Jouer en invité.", "Bitte melde dich an oder wähle Als Gast spielen.", "ログインするか「ゲストで遊ぶ」を押してください。"],
+    "게스트 모드 · 저장은 안 돼요": ["Guest mode · nothing is saved", "Modo invitado · no se guarda nada", "Mode invité · rien n'est enregistré", "Gastmodus · nichts wird gespeichert", "ゲストモード・保存されません"],
     /* 빌드 99 추가분 */
     "마네킹 줄 서기": ["Mannequin Queue", "Fila de maniquíes", "File d'attente de mannequins", "Puppen-Schlange", "マネキン行列"],
     "번호표를 받고 바닥의 내 번호 자리에 서요. 새치기하는 마네킹은 밀쳐서 내보내요.": ["Take a ticket and stand on your number on the floor. Shove out any mannequin cutting in line.", "Toma un número y colócate en tu casilla del suelo. Empuja fuera a quien se cuele.", "Prends un ticket et place-toi sur ton numéro au sol. Pousse dehors les mannequins qui coupent la file.", "Zieh eine Nummer und stell dich auf dein Feld am Boden. Wer sich vordrängelt, wird weggeschubst.", "番号札をもらって、床の自分の番号の場所に立とう。割り込むマネキンは押し出そう。"],
@@ -1756,7 +1762,7 @@ body.playing #emoBar{display:flex}
   <aside class="menuR">
    <div class="acctLine" id="acctLine"></div>
    <button class="pb ghost" id="loginBtn" style="display:none">Frenchfries777 계정으로 로그인</button>
-   <button class="pb ghost" id="offBtn" style="display:none">오프라인으로 하기</button>
+   <button class="pb ghost" id="offBtn" style="display:none">게스트 모드로 하기</button>
    <input id="nameIn" type="hidden">
    <button class="pb gold" id="hostBtn">방 만들기</button>
    <div class="seg" id="pubSeg"><button type="button" data-p="1">공개방</button><button type="button" data-p="0" class="on">비공개방</button></div>
@@ -1771,7 +1777,11 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b99)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b101)</summary>
+   <b>2026-11-09 · v0.1 · b101 · 게스트 이름</b>
+   <ul><li>게스트 모드의 이름은 "게스트"와 무작위 숫자 6개로 정해져요. 직접 적지 않아도 돼요</li></ul>
+   <b>2026-11-09 · v0.1 · b100 · 게스트 모드</b>
+   <ul><li>로그인하지 않아도 "게스트 모드로 하기"를 누르면 방 만들기, 방 들어가기, 혼자 하기를 할 수 있어요</li><li>게스트 모드에서는 dC, 꾸미기, 업적, 공개방 목록처럼 계정이 필요한 것은 쓰지 않고 저장도 안 돼요</li></ul>
    <b>2026-11-09 · v0.1 · b99 · 새 미니게임 마네킹 줄 서기</b>
    <ul><li>번호표를 받고 바닥의 내 번호 자리에 서요. 먼저 선 사람이 점수가 커요</li><li>자리를 가로챈 마네킹은 밀쳐서 내보내요. 선 사람은 안 밀려요</li></ul>
    <b>2026-11-07 · v0.1 · b98 · 새 미니게임 2개</b>
@@ -1966,7 +1976,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 · b1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 42개 미니게임 중 7개 · v0.1 b99 · <a href="../">← Dummy Party 사이트로</a></p>
+  <p class="foot">2~8명 · 판마다 42개 미니게임 중 7개 · v0.1 b101 · <a href="../">← Dummy Party 사이트로</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -2055,7 +2065,9 @@ function mkRng(seed) {
 function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
 function $(id) { return document.getElementById(id); }
 function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
-function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) { } }
+function dpGuest() { try { return !(window.FFAuth && FFAuth.user()); } catch (e) { return true; } }   // 로그인 없이 하는 중이에요
+var GUEST_NOSAVE = { 'dummyparty.ach': 1, 'dummyparty.stats': 1, 'dummyparty.name': 1 };   // 로그인 없이는 저장하지 않는 것들
+function lsSet(k, v) { if (GUEST_NOSAVE[k] && dpGuest()) return; try { localStorage.setItem(k, v); } catch (e) { } }
 function emptyInput() { return { mx: 0, my: 0, a: false, b: false, ap: false, bp: false, acts: [] }; }
 /* 봇 도우미: 목표 지점으로 가는 입력 */
 function botToward(px, py, tx, ty, slow) {
@@ -8312,6 +8324,7 @@ function achShow() {
   setTimeout(function () { achBusy = false; achShow(); }, 3000);
 }
 function achUnlock(id, a) {
+  if (dpGuest()) return false;
   var own = !a; a = a || achLoad(); if (a.d[id]) return false;
   var row = ACH.filter(function (r) { return r[0] === id; })[0]; if (!row) return false;
   a.d[id] = Math.floor(Date.now() / 1000); if (own) achSave(a);
@@ -8443,7 +8456,7 @@ var PREFIX = 'ff-dummyparty-', CODE_CH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', MAX
 var PTS = [5, 3, 2, 1];
 var T_INTRO = 6, T_COUNT = 3, T_END = 4.0, T_RESULT = 6;
 // 게임 버전(0.x)과 빌드. 버전이 다르면 같은 방에 못 들어와요 (빌드가 달라도 괜찮아요). dp_config 의 min_build 보다 낮은 빌드는 dC를 못 받아요
-var DP_VER = '0.1', DP_BUILD = 99;
+var DP_VER = '0.1', DP_BUILD = 101;
 function dpNotice(msg) { dpAsk(msg, '확인', function () { }); }
 var BOT_NAMES = ['방귀쟁이', '홀쭉이', '바보1', '멍청이', '10급 공무원', '교무실 단골', '벌점부자', '말썽이', '김개똥'];
 var qs = new URLSearchParams(location.search);
@@ -9742,18 +9755,18 @@ function dpAsk(msg, okLabel, onOk) {
   });
   CV.addEventListener('pointerleave', function () { MOUSE.on = false; });
   document.addEventListener('pointerdown', function () { SFX.unlock(); }, { once: true });
-  $('nameIn').value = lsGet('dummyparty.name') || '';
+  $('nameIn').value = '';   // 로그인 없이는 이름을 저장하지 않아요
   if (qs.get('room')) $('codeIn').value = qs.get('room').toUpperCase().slice(0, 5);
-  var OFFLINE = false;
+  var OFFLINE = false, GUESTNAME = '';   // 게스트 모드: 이름은 "게스트" + 무작위 숫자 6개, 저장하지 않아요
   function loggedIn() { try { return !!(window.FFAuth && FFAuth.user()); } catch (e) { return false; } }
   function needLogin() { homeMsg('방 만들기와 친구 방은 로그인해야 해요.'); try { FFAuth.openLogin(); } catch (e) { } }
-  function needName() { var n = $('nameIn').value.trim(); if (!n) { homeMsg('Frenchfries777 계정으로 로그인해야 해요.'); try { FFAuth.openLogin(); } catch (e) { } return null; } n = cleanName(n); lsSet('dummyparty.name', n); homeMsg(''); return n; }
+  function needName() { if (!loggedIn()) return GUESTNAME || null; var n = $('nameIn').value.trim(); if (!n) { homeMsg('Frenchfries777 계정으로 로그인해야 해요.'); try { FFAuth.openLogin(); } catch (e) { } return null; } n = cleanName(n); if (loggedIn()) lsSet('dummyparty.name', n); homeMsg(''); return n; }
+  function soloName() { return needName(); }
   $('codeIn').addEventListener('input', function () { this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); });
   $('codeIn').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('joinBtn').click(); });
   function pracStart(id) {
-    var n = '마네킹';
-    if (!loggedIn()) { if (!OFFLINE) { $('pracModal').classList.remove('on'); homeMsg('로그인하거나 오프라인으로 하기를 눌러 주세요.'); return; } }
-    else { n = needName(); if (!n) return; }
+    if (!loggedIn() && !OFFLINE) { $('pracModal').classList.remove('on'); homeMsg('로그인하거나 게스트 모드로 하기를 눌러 주세요.'); return; }
+    var n = soloName(); if (!n) return;
     $('pracModal').classList.remove('on'); homeMsg('');
     startSolo(n, id); G.bots = 1; trimBots(); SFX.unlock(); startMatch();
   }
@@ -9828,13 +9841,13 @@ function dpAsk(msg, okLabel, onOk) {
   ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (t) { document.addEventListener(t, function (e) { e.preventDefault(); }, { passive: false }); });
   $('profBtn').onclick = openProfile;
   $('loginBtn').onclick = function () { try { FFAuth.openLogin(); } catch (e) { } };
-  $('offBtn').onclick = function () { OFFLINE = true; homeMsg(''); useNickRefresh(); };
-  $('hostBtn').onclick = function () { if (!loggedIn()) { needLogin(); return; } var n = needName(); if (n) startHost(n); };
+  $('offBtn').onclick = function () { OFFLINE = true; GUESTNAME = '게스트' + ('' + Math.floor(Math.random() * 1000000)).padStart(6, '0'); homeMsg(''); useNickRefresh(); };
+  $('hostBtn').onclick = function () { if (!loggedIn() && !OFFLINE) { homeMsg('로그인하거나 게스트 모드로 하기를 눌러 주세요.'); return; } var n = needName(); if (n) startHost(n); };
   $('soloBtn').onclick = function () {
-    if (!loggedIn()) { if (!OFFLINE) { homeMsg('로그인하거나 오프라인으로 하기를 눌러 주세요.'); return; } homeMsg(''); startSolo('마네킹'); return; }
-    var n = needName(); if (n) startSolo(n);
+    if (!loggedIn() && !OFFLINE) { homeMsg('로그인하거나 게스트 모드로 하기를 눌러 주세요.'); return; }
+    var n = soloName(); if (n) { homeMsg(''); startSolo(n); }
   };
-  $('joinBtn').onclick = function () { if (!loggedIn()) { needLogin(); return; } var n = needName(); if (!n) return; var c = $('codeIn').value.trim().toUpperCase(); if (c.length !== 5) { homeMsg('방 코드 5자리를 입력하세요.'); return; } startGuest(n, c); };
+  $('joinBtn').onclick = function () { if (!loggedIn() && !OFFLINE) { homeMsg('로그인하거나 게스트 모드로 하기를 눌러 주세요.'); return; } var n = needName(); if (!n) return; var c = $('codeIn').value.trim().toUpperCase(); if (c.length !== 5) { homeMsg('방 코드 5자리를 입력하세요.'); return; } startGuest(n, c); };
   // 대기실에서 나가기: 방을 정리하고, 이 게임 창이 닫히도록 해요 (직접 연 탭처럼 브라우저가 못 닫게 하면 첫 화면에 남아요)
   $('lobBack').onclick = function () { goHome(); setTimeout(function () { try { window.close(); } catch (e) { } }, 450); };
   $('quitBtn').onclick = function () { dpAsk('게임에서 나가 처음 화면으로 돌아갈까요?', '나가기', goHome); };
@@ -9979,11 +9992,12 @@ function dpAsk(msg, okLabel, onOk) {
   (function () {
     function useNick() {
       try { var u = window.FFAuth && FFAuth.user(), n = u && FFAuth.nickname(); if (n) { $('nameIn').value = cleanName(n); lsSet('dummyparty.name', cleanName(n)); }
-        $('acctLine').textContent = n ? n + ' 님 (Frenchfries777 계정)' : (OFFLINE ? '오프라인 · 혼자 하기만 할 수 있어요' : 'dC와 꾸미기는 로그인해야 저장돼요'); $('loginBtn').style.display = n ? 'none' : ''; $('profBtn').style.display = n ? '' : 'none'; $('offBtn').style.display = (n || OFFLINE) ? 'none' : ''; } catch (e) { }
+        $('pubSeg').style.display = n ? '' : 'none';
+        $('acctLine').textContent = n ? n + ' 님 (Frenchfries777 계정)' : (OFFLINE ? '게스트 모드 · 저장은 안 돼요' : 'dC와 꾸미기는 로그인해야 저장돼요'); $('loginBtn').style.display = n ? 'none' : ''; $('profBtn').style.display = n ? '' : 'none'; $('offBtn').style.display = (n || OFFLINE) ? 'none' : ''; } catch (e) { }
     }
     window.useNickRefresh = useNick;
     function hook() { if (!window.FFAuth) return false; FFAuth.ready.then(function () { useNick(); walletRefresh(); autoJoin(); }); FFAuth.onChange(function () { useNick(); walletRefresh(); }); return true; }
-    useNick(); if (!window.FFAuth) { $('loginBtn').style.display = ''; $('offBtn').style.display = ''; }
+    useNick(); if (!window.FFAuth) { $('loginBtn').style.display = ''; $('offBtn').style.display = ''; $('pubSeg').style.display = 'none'; }
     if (!hook()) { var tries = 0, iv = setInterval(function () { if (hook() || ++tries > 40) clearInterval(iv); }, 250); }
   })();
   requestAnimationFrame(frame);

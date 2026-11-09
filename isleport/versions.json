@@ -11,8 +11,8 @@
    "title": "큰 항해",
    "summary": "캐릭터를 직접 조종하고, 하나로 이어진 섬 지도에서 키우고 팔고, 배를 몰아 다른 섬과 비밀 섬을 찾아가는 버전",
    "latest": true,
-   "size": 2152207,
-   "sha256": "5edbe0884e7c1e15d8575a84e0ce04544d2f1ed5ec91e3701019ff0e8871b8c7",
+   "size": 2153841,
+   "sha256": "d4bcd148ccfe7e9e39f4d6d101ef9a49918a93b54f1a027442cd3990728ffa4b",
    "tr": {
     "title": {
      "en": "The big voyage",
@@ -47,7 +47,7 @@
      "gk": "Steer 당신의 성격 directly, farm 그리고 팔다 위에 하나 connected 섬 지도, 그리고 sail 에게 다른 섬들 그리고 secret 섬들"
     }
    },
-   "build": 92
+   "build": 94
   },
   {
    "version": "0.1",
