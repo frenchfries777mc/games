@@ -21581,7 +21581,7 @@ function renderAuthGateForm(){
     '<div class="row"><button class="btn-secondary" id="gateSignInBtn" style="flex:1;">로그인</button><button class="btn-primary" id="gateSignUpBtn" style="flex:1;">계정 만들기</button></div>'+
     '<button class="btn-secondary btn-full" id="gateGuestBtn" style="margin-top:10px;">게스트 모드로 하기</button>'+
     '<div class="hint" style="margin-top:6px;">계정 없이 온라인 게임은 할 수 있어요. 랭크·친구·클랜·파티 같은 계정 기능은 쓸 수 없어요.</div>';
-  document.getElementById('gateGuestBtn').onclick=()=>{ sb=null; sbUser=null; showScreen('menuScreen'); };      // 게스트 모드: the same state as when the social server cannot be reached (every account feature already checks "!sb")
+  document.getElementById('gateGuestBtn').onclick=()=>{ sb=null; sbUser=null; myName='게스트'+String(Math.floor(Math.random()*1000000)).padStart(6,'0'); myNameSet=true; showScreen('menuScreen'); };      // (the guest name is for this visit only: it is not saved)      // 게스트 모드: the same state as when the social server cannot be reached (every account feature already checks "!sb")
   document.getElementById('gateSignInBtn').onclick=async ()=>{
     const msg=document.getElementById('gateAuthMsg'); msg.textContent='처리 중...';
     const r=await sbSignIn(document.getElementById('gateUserInput').value, document.getElementById('gatePassInput').value, document.getElementById('gateRememberPw').checked);
