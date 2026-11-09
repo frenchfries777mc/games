@@ -335,7 +335,7 @@ const ANIM={
  goat:{n:P('염소 우리','Goat pen'),cost:240,feed:['wheat',2],out:'goatmilk',y:2,time:42,col:'#d8d0c0'},
  bee:{n:P('양봉장','Apiary'),cost:200,feed:null,out:'honey',y:2,time:45,col:'#f0c84a'}};
 /* 섬 개척지: 상륙한 섬에 밭과 시설을 지어요 */
-const OPF_N=6,OPB_N=6,OPF_COST=400,OPGD={6:['pearl','seaweed'],7:['honey','amber'],8:['salt','spice'],9:['salt','amber']};
+const OPF_N=6,OPB_N=6,OPLOTS=3,OPB_ALL=OPB_N*(OPLOTS+1),OPLOT_COST=[20000,80000,250000],OPF_COST=400,OPGD={6:['pearl','seaweed'],7:['honey','amber'],8:['salt','spice'],9:['salt','amber']};
 const OPB={
  hut:{n:P('채집 오두막','Gatherer hut'),d:P('70초에 하나씩 섬 특산물을 모아 둬요 (최대 10개)','Gathers one island good every 70 s (max 10)'),cost:2500,per:70,cap:10},
  well:{uniq:1,n:P('관개 우물','Irrigation well'),d:P('이 섬 개척 밭의 작물이 30% 빨리 자라요','Crops in this isle\'s frontier fields grow 30% faster'),cost:3000},
@@ -500,7 +500,7 @@ const TUT=[
  [P('다 자라면 ▼ 표시의 밭을 눌러 수확해요','When it is grown, tap the field with the ▼ to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=91;
+const OUTMAX=12,BUILD=92;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const CASTLE_T=[
  {n:P('망루','Watchtower'),d:P('돌로 쌓은 망루를 세워요. 세금이 걷히기 시작해요','A stone watchtower. Taxes start to come in'),cost:6000,rank:1},
@@ -645,6 +645,7 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-11-09',build:'v0.2 build 92',title:P('섬 건설 허가증','Island building permits'),items:[P('섬마다 건설 터가 3곳 생겼어요. 허가증을 사면 시설을 6칸씩 더 지을 수 있어요','Each island now has 3 building lots. Buy a permit to get 6 more facility slots each'),P('허가증 값은 20,000, 80,000, 250,000 금화예요','Permits cost 20,000, 80,000 and 250,000 gold')]},
  {date:'2026-11-08',build:'v0.2 build 91',title:P('모든 섬이 시작섬만큼 커졌어요','Every island is now as big as the home island'),items:[P('비밀 섬과 내륙 섬이 작았던 것을 시작섬과 같은 크기로 키웠어요','Secret and inland islands were smaller, so they are now the same size as the home island'),P('모든 섬에 저택, 탑, 분수, 집, 가판이 훨씬 많아졌어요','Every island has many more manors, towers, fountains, houses and stalls')]},
  {date:'2026-11-07',build:'v0.2 build 90',title:P('기증한 장부 되찾기','Take the ledger back'),items:[P('박물관에 기증한 장부를 이야기 창에서 다시 내 것으로 되찾을 수 있어요','You can take the donated ledger back from the museum in the story window'),P('되찾으면 박물관 입장료 1.5배는 사라지고 모든 판매가가 3% 올라요','Taking it back removes the 1.5x museum fee and raises all sell prices by 3%')]},
  {date:'2026-11-07',build:'v0.2 build 89',title:P('공동 건설 두 가지 더','Two more shared projects'),items:[P('공공 공사에 마을 광장 분수와 섬을 잇는 다리가 생겼어요','Shared projects now include the plaza fountain and the island bridge'),P('마을 광장 분수를 지으면 모두의 활동 보너스가 25% 늘어요','Building the plaza fountain adds 25% to everyone\'s activity bonus'),P('섬을 잇는 다리를 지으면 모두의 주민 심부름 보상이 20% 늘어요','Building the island bridge adds 20% to everyone\'s errand rewards')]},
@@ -1598,7 +1599,9 @@ function coDonate(n){const c=CO.cur;if(!c)return 0;n=Math.min(n,inv(c.g),c.n-c.h
 function setAutoAll(v){S.autoAll=!!v;S.plots.forEach(q=>{if(q&&q.k==='crop'&&!CROPS[q.g].per)q.auto=!!v;});}
 
 /* ---- 섬 개척지: 다른 섬의 밭과 시설 ---- */
-const opOf=k=>{S.op=S.op||{};return S.op[k]||(S.op[k]={f:Array(OPF_N).fill(0),b:Array(OPB_N).fill(null)});};
+const opOf=k=>{S.op=S.op||{};const O=S.op[k]||(S.op[k]={f:Array(OPF_N).fill(0),b:Array(OPB_ALL).fill(null),lots:0});while(O.b.length<OPB_ALL)O.b.push(null);if(O.lots==null)O.lots=0;return O;};
+const opLotOpen=(k,i)=>i<OPB_N||opOf(k).lots>Math.floor(i/OPB_N)-1;
+function opLotBuy(k,l){const O=opOf(k);if(O.lots!==l||l>=OPLOTS||S.money<OPLOT_COST[l])return false;spend(OPLOT_COST[l]);O.lots=l+1;sfx('build');return true;}
 const opWell=k=>!!(S.op&&S.op[k]&&S.op[k].b.some(q=>q&&q.t==='well'));
 const opGoods=k=>{const th=ISLES[k],l=(th.fg&&th.fg.length?th.fg:OPGD[k]||['salt']).filter(g=>GI[g]);return l.length?l:['salt'];};
 function opTill(k,i){const O=opOf(k);if(O.f[i]!==0||S.money<OPF_COST)return false;spend(OPF_COST);O.f[i]=null;sfx('build');return true;}
@@ -3395,6 +3398,8 @@ MODS.opfac=m=>{const O=opOf(m.ik),q=O.b[m.i];
   return `<h2>${tx(d.n)}</h2><div class="muted">${tx(d.d)}</div>`+(d.per?`<div class="card"><div class="grow">${d.coin?T('모인 금화 {0}','Stored {0}',fmt(n*d.unit)+UG()):T('모인 물건 {0}/{1}','Stored {0}/{1}',n,d.cap)}${d.coin||d.out?'':`<div class="muted">${opGoods(m.ik).map(GN).join(', ')}</div>`}</div><button class="pb sm gold" data-act="opget:${m.i}" ${n<1?'disabled':''}>${T('받기','Collect')}</button></div>`:`<div class="muted" style="margin-top:6px">${T('지어 둔 것만으로 효과가 있어요','It works just by standing there')}</div>`);};
 ACT.optill=a=>{opTill(MOD.ik,+a);updateHud();renderModal();};
 ACT.opseed=a=>{const [i,g]=a.split(':');if(opPlant(MOD.ik,+i,g))closeModal();updateHud();};
+MODS.oplotbuy=m=>{const O=opOf(m.ik),c=OPLOT_COST[m.l],ok=O.lots===m.l;return `<h2>${T('건설 허가증','Building permit')}</h2><div class="muted">${T('이 터를 사면 시설 6칸을 더 지을 수 있어요.','This lot gives you 6 more facility slots.')} <b>${fmt(S.money)}${UG()}</b></div><div class="card"><div class="grow"><b>${T('건설 터 {0}','Building lot {0}',m.l+1)}</b><div class="muted">${ok?T('시설 6칸','6 facility slots'):T('앞의 터를 먼저 사세요','Buy the earlier lot first')}</div></div><button class="pb sm gold" data-act="oplotbuy:${m.l}" ${!ok||S.money<c?'disabled':''}>${fmt(c)}${UG()}</button></div>`;};
+ACT.oplotbuy=a=>{if(opLotBuy(MOD.ik,+a)){toast(T('건설 터를 샀어요!','You bought the lot!'));closeModal();}updateHud();};
 ACT.opbuild=a=>{const [i,t]=a.split(':');opBuild(MOD.ik,+i,t);updateHud();renderModal();};
 ACT.opload=a=>{opLoad(MOD.ik,+a);updateHud();renderModal();};
 ACT.opget=a=>{opCollect(MOD.ik,+a);updateHud();renderModal();};
@@ -3662,6 +3667,10 @@ function buildIsl(k){const th=ISLES[k],rnd=islRng(th.seed),c=document.createElem
     if(zb){const t={x:zb[0],y:zb[1],w:60,h:36};obs.push(t);opTmp.push(t);IR(zb[0]-1,zb[1]-1,62,38,'rgba(60,40,20,.22)');
       for(let j=0;j<OPB_N;j++)objs.push({k:'opb',i:j,x:zb[0]+2+(j%3)*19,y:zb[1]+2+Math.floor(j/3)*17,w:18,h:16,r:9});
       lab.push([P('개척 시설','Frontier facilities'),zb[0]+30,zb[1]-6,'#d8f0c0']);}
+    let ln=0;for(let l=0;l<OPLOTS;l++){const zl=spot(60,36,.55,300)||spot(60,36,.66,300)||spot(60,36,.74,200);if(!zl)continue;
+      const t={x:zl[0],y:zl[1],w:60,h:36};obs.push(t);opTmp.push(t);IR(zl[0]-1,zl[1]-1,62,38,'rgba(60,40,20,.22)');
+      for(let j=0;j<OPB_N;j++)objs.push({k:'opb',i:OPB_N*(ln+1)+j,x:zl[0]+2+(j%3)*19,y:zl[1]+2+Math.floor(j/3)*17,w:18,h:16,r:9});
+      objs.push({k:'oplot',l:ln,x:zl[0],y:zl[1],w:60,h:36,r:9});lab.push([P('건설 터','Building lot'),zl[0]+30,zl[1]-6,'#ffe0a0']);ln++;}
   }
   /* 꾸밈 */
   const place=(type,n)=>{for(let i=0;i<n;i++){let w=8,h=8,fieldw=0;
@@ -3745,7 +3754,7 @@ function islTrainTick(dt){const T0=ISL.tr;if(!T0)return;
 function leaveIsl(){if(ISL.th&&ISL.th.inland){if(ISL.dep||ISL.arr)return;ISL.dep=true;ISL.at=0;ISL.goal=null;ISL.near=null;toast(T('기차가 출발해요!','The train is leaving!'));sfx('click');return;}ISL.on=false;VIEW='helm';ISL.goal=null;const bb=$('backBtn');if(bb)bb.hidden=false;toast(T('다시 배에 탔어요','Back on the ship'));}
 function islWalk(x,y){const ix=Math.round(x),iy=Math.round(y);if(ix<2||iy<2||ix>=IW-2||iy>=IH-2)return false;if(ISL.mask[iy*IW+ix]<2)return false;
   for(const o of ISL.obs)if(x>=o.x&&x<=o.x+o.w&&y>=o.y&&y<=o.y+o.h)return false;return true;}
-function islNear(){let best=null,bd=1e9;for(const o of ISL.objs){const d=rectDist(ISL.x,ISL.y,o);if(d<=o.r&&d<bd){bd=d;best=o;}}return best;}
+function islNear(){let best=null,bd=1e9;for(const o of ISL.objs){if(o.k==='opb'&&o.i>=OPB_N&&!opLotOpen(ISL.k,o.i))continue;if(o.k==='oplot'&&opOf(ISL.k).lots>o.l)continue;const d=rectDist(ISL.x,ISL.y,o);if(d<=o.r&&d<bd){bd=d;best=o;}}return best;}
 function moveIsl(dt){if(ISL.arr||ISL.dep){islTrainTick(dt);return;}if(!$('modal').hidden)return;let vx=0,vy=0;
   if(KEYS.ArrowLeft||KEYS.a)vx-=1;if(KEYS.ArrowRight||KEYS.d)vx+=1;if(KEYS.ArrowUp||KEYS.w)vy-=1;if(KEYS.ArrowDown||KEYS.s)vy+=1;vx+=JOY.x;vy+=JOY.y;
   if(vx||vy){ISL.goal=null;const m=Math.hypot(vx,vy);if(m>1){vx/=m;vy/=m;}}
@@ -3768,6 +3777,7 @@ function islAct(o){o=o||ISL.near;if(!o){toast(T('건물이나 부두 가까이�
   if(o.k==='npcw'){npcTalk(o);return;}
   if(o.k==='ore'){if(ISL.th.volc)volHit(o);else mineHit(o);return;}
   if(o.k==='opf'){const p=opOf(ISL.k).f[o.i];if(ripe(p)){opHarvest(ISL.k,o.i);updateHud();}else if(p&&p.k==='crop')toast(T('{0}이(가) 자라는 중이에요 ({1}초 남음)','{0} is growing ({1}s left)',GN(p.g),Math.max(1,Math.ceil((p.dur-(NOW()-p.t0))/1000))));else openModal('opplot',{ik:ISL.k,i:o.i});return;}
+  if(o.k==='oplot'){openModal('oplotbuy',{ik:ISL.k,l:o.l});return;}
   if(o.k==='opb'){openModal('opfac',{ik:ISL.k,i:o.i});return;}
   if(ISL.th.volc&&(o.k==='market'||o.k==='lm')){openModal('vol');return;}
   if(o.k==='market'&&ISL.th.prov!=null){openModal('prov',{pi:ISL.th.prov});return;}
@@ -3775,6 +3785,8 @@ function islAct(o){o=o||ISL.near;if(!o){toast(T('건물이나 부두 가까이�
   if(o.k==='market'){if(ISL.th.secret)openModal('secret',{id:ISL.th.secret});else openModal('isle',{pi:ISL.k});return;}
   if(o.k==='lm'){if(o.npc&&NPCS[ISL.k]){openModal('npc',{pi:ISL.k,msg:o.msg});sfx('click');}else{toast(o.msg);sfx('click');}}}
 function opDraw(t){const O=S.op&&S.op[ISL.k];ISL.objs.forEach(o=>{
+  if(o.k==='oplot'){if(O&&O.lots>o.l)return;R(o.x,o.y,o.w,o.h,'rgba(30,20,10,.28)');for(const [px,py] of [[0,0],[o.w-2,0],[0,o.h-6],[o.w-2,o.h-6]])R(o.x+px,o.y+py,2,6,'#8a6a42');R(o.x+2,o.y+3,o.w-4,1,'#d8c8a0');R(o.x+2,o.y+o.h-4,o.w-4,1,'#d8c8a0');R(o.x+26,o.y+13,8,6,'#e8dcc0');R(o.x+28,o.y+15,4,2,'#c0452f');R(o.x+29,o.y+19,2,6,'#6a4a22');return;}
+  if(o.k==='opb'&&o.i>=OPB_N&&!(O&&O.lots>Math.floor(o.i/OPB_N)-1))return;
   if(o.k==='opf'){const p=O&&O.f[o.i];
     if(!O||p===0){R(o.x,o.y,o.w,1,'#9aaa62');R(o.x,o.y+o.h-1,o.w,1,'#9aaa62');R(o.x,o.y,1,o.h,'#9aaa62');R(o.x+o.w-1,o.y,1,o.h,'#9aaa62');return;}
     R(o.x,o.y,o.w,o.h,'#7a5a34');R(o.x,o.y+o.h-1,o.w,1,'#4a3220');for(let r=2;r<o.h-1;r+=3)R(o.x+1,o.y+r,o.w-2,1,'#6a4a2a');
@@ -3828,7 +3840,7 @@ function drawIsl(t){const th=ISL.th;g.fillStyle=th.sea;g.fillRect(0,0,VW,VH);
 function islLabels(){cx.textBaseline='middle';cx.textAlign='center';const fnt=n=>(n*SC)+'px Gugi,"Malgun Gothic",sans-serif';
   const th=ISL.th,nm=th.prov!=null?tx(PROVS[th.prov].n):ISL.k<6?tx(PORTS[ISL.k].n):tx(secretOf(th.secret).n);cx.font=fnt(9);label(nm,VW*SC/2,12*SC,'#fff6b0');
   cx.font=fnt(6);ISL.walkers.forEach(o=>{if(Math.hypot(ISL.x-o.px,ISL.y-o.py)<60)label(tx(o.nm),(o.px-ISL.cx)*SC,(o.py-19-ISL.cy)*SC,'#ffffff');});ISL.lab.forEach(l=>label(typeof l[0]==='string'?l[0]:tx(l[0]),(l[1]-ISL.cx)*SC,(l[2]-ISL.cy)*SC,l[3]));
-  cx.font=fnt(7);const n=ISL.near,msg=n?(n.k==='dock'?(th.inland?T('E: 기차역으로 돌아가기','E: back to the station'):T('E: 배로 돌아가기','E: back to ship')):n.k==='market'?T('E: {0}','E: {0}',tx(th.mk[0])):n.k==='ore'?T('E: 캐기','E: mine'):n.k==='npcw'?T('E: 말 걸기','E: talk'):n.k==='opf'?T('E: 밭','E: field'):n.k==='opb'?T('E: 시설','E: facility'):T('E: 둘러보기','E: look')):T('걸어서 섬을 둘러보세요. 반짝이는 물건을 주울 수 있어요','Walk around. Pick up the shiny things');
+  cx.font=fnt(7);const n=ISL.near,msg=n?(n.k==='dock'?(th.inland?T('E: 기차역으로 돌아가기','E: back to the station'):T('E: 배로 돌아가기','E: back to ship')):n.k==='market'?T('E: {0}','E: {0}',tx(th.mk[0])):n.k==='ore'?T('E: 캐기','E: mine'):n.k==='npcw'?T('E: 말 걸기','E: talk'):n.k==='opf'?T('E: 밭','E: field'):n.k==='opb'?T('E: 시설','E: facility'):n.k==='oplot'?T('E: 건설 허가증','E: building permit'):T('E: 둘러보기','E: look')):T('걸어서 섬을 둘러보세요. 반짝이는 물건을 주울 수 있어요','Walk around. Pick up the shiny things');
   label(msg,VW*SC/2,(VH-14)*SC,n?'#fff6b0':'#d8e8f0');}
 
 /* ================= 시작, 루프 ================= */
