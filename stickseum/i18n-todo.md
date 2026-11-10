@@ -137,3 +137,5 @@ patchnotes.json | v768 title | 카다스 암흑 덩어리 시야 효과 | build 
 patchnotes.json | v768 items[0] | 카다스 암흑 덩어리에 갇히면 주변이 어두워지고, 갇힌 플레이어 화면에서만 덩어리가 반투명하게 보여 내 위치를 알 수 있음 | build 768 | 2026-11-10
 patchnotes.json | v769 title | 카다스 암흑 덩어리 아군 표시 | build 769 | 2026-11-10
 patchnotes.json | v769 items[0] | 아군(본인 포함)의 암흑 덩어리 안에서는 주변이 어두워지지 않고, 덩어리만 반투명하게 보임 (아군에게는 디버프도 없음) | build 769 | 2026-11-10
+patchnotes.json | v770 title | 봇이 적 카다스 암흑 덩어리에서 벗어남 | build 770 | 2026-11-10
+patchnotes.json | v770 items[0] | 봇이 적 카다스 암흑 덩어리에 갇히면 잠깐 뒤(약 0.5~1초) 가까운 가장자리로 빠져나옴 (미리 피하지는 않음) | build 770 | 2026-11-10
