@@ -20,7 +20,7 @@ create or replace function public.ff_itch_take(p_code text)
 returns table(access_token text, refresh_token text) language plpgsql security definer set search_path = public as $$
 begin
   delete from public.ff_itch_handoff where created_at < now() - interval '5 minutes';
-  return query delete from public.ff_itch_handoff h where h.code = p_code returning h.access_token, h.refresh_token;
+  return query with d as (delete from public.ff_itch_handoff h where h.code = p_code returning h.access_token, h.refresh_token) select d.access_token, d.refresh_token from d;
 end $$;
 
 revoke all on function public.ff_itch_put(text,text,text) from public, anon;
