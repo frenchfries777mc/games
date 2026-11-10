@@ -119,3 +119,5 @@ patchnotes.json | v762 title | 1111킬 챌린지 표시 수정 | build 762 | 202
 patchnotes.json | v762 items[0] | 1111킬 챌린지 표시가 안 뜨는 문제 수정 (표시 위치를 아래로 옮기고, 서버 연결이 늦어도 계속 표시) | build 762 | 2026-11-10
 Stickseum-v1.0.1.html | 1111킬 챌린지 배너 | 🔥 1111킬 챌린지 · 11/15까지 · 불러오는 중 | build 762 | 2026-11-10
 patchnotes.json | v762 items[1] | 메인 화면 로고를 새 로고로 교체 | build 762 | 2026-11-10
+patchnotes.json | v763 title | 카다스 암흑 덩어리 조정 | build 763 | 2026-11-10
+patchnotes.json | v763 items[0] | 카다스 암흑 덩어리 처음 크기 60에서 150으로, 최대 크기 540에서 600으로 변경 | build 763 | 2026-11-10

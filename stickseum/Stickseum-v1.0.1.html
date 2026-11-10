@@ -6033,7 +6033,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-10-v762';
+const GAME_BUILD='build 2026-11-10-v763';
 const GAME_VERSION='1.0.1', GAME_VERSION_NAME='네온 시티';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -13262,11 +13262,11 @@ function surfaceBelow(x, y){      // the top of the first platform at or below (
   return best===null ? groundY() : best;
 }
 const SHADE_ULT_LEN=620;
-const KD_RANGE=560, KD_R0=60, KD_RMAX=540, KD_GROW=14, KD_DMG=8, KD_LIFE=14;
+const KD_RANGE=560, KD_R0=150, KD_RMAX=600, KD_EDGE=60, KD_GROW=14, KD_DMG=8, KD_LIFE=14;
 function kdHoleSpot(p, ax, ay){      // the lump: where the cursor is (at most KD_RANGE from the caster), inside the room
   let x=p.x+(Math.cos(p.angle||0)>=0?1:-1)*160, y=p.y-40;
   if(hasAim(ax,ay)){ const dx=ax-p.x, dy=ay-(p.y-40), d=Math.hypot(dx,dy)||1, k=Math.min(1,KD_RANGE/d); x=p.x+dx*k; y=(p.y-40)+dy*k; }
-  return {x:clamp(x, KD_R0, MAP.arenaW-KD_R0), y:clamp(y, KD_R0, MAP.arenaH-KD_R0)};
+  return {x:clamp(x, KD_EDGE, MAP.arenaW-KD_EDGE), y:clamp(y, KD_EDGE, MAP.arenaH-KD_EDGE)};
 }
 function kdHoleTick(dt, t){       // every second each enemy inside takes 8 and the lump grows; 0.6 s without hurting anybody and it shrinks until it is gone
   const tS=t/1000;
