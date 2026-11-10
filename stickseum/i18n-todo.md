@@ -131,3 +131,5 @@ Stickseum-v1.0.1.html | 카다스 궁극기 설명 | 안에 있는 적은 이동
 patchnotes.json | v766 title | 카다스 암흑 덩어리 지속 조정 | build 766 | 2026-11-10
 patchnotes.json | v766 items[0] | 카다스 암흑 덩어리가 시간 제한 없이 소멸할 때까지 계속 유지 | build 766 | 2026-11-10
 patchnotes.json | v766 items[1] | 금고 약탈에서 암흑 덩어리가 금고에 피해는 주지만, 금고만 때리면 커지지 않고 줄어듦 (캐릭터를 때려야 유지) | build 766 | 2026-11-10
+patchnotes.json | v767 title | 황금 쟁탈·금고 약탈 무승부 오류 수정 | build 767 | 2026-11-10
+patchnotes.json | v767 items[0] | 황금 쟁탈·금고 약탈에서 다른 탭을 갔다 오거나 방을 나갔다 들어오면 캐릭터 선택 중에 무승부 처리되던 오류 수정 | build 767 | 2026-11-10
