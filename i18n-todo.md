@@ -964,3 +964,6 @@
 
 ## Crown Envoy b194 (2026-11-10)
 - 새 문구(한국어만): 패치노트 b194
+
+## Kitchen Defense b1 (2026-11-10)
+- 새 문구(한국어만): 프로토타입 페이지 카드와 소개 문장(prototypes/index.html), 게임 안 문구 전부(prototypes/kitchendefense/index.html, 번역 없음)
