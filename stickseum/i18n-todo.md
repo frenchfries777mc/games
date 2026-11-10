@@ -141,3 +141,6 @@ patchnotes.json | v770 title | 봇이 적 카다스 암흑 덩어리에서 벗�
 patchnotes.json | v770 items[0] | 봇이 적 카다스 암흑 덩어리에 갇히면 잠깐 뒤(약 0.5~1초) 가까운 가장자리로 빠져나옴 (미리 피하지는 않음) | build 770 | 2026-11-10
 patchnotes.json | v771 title | 온라인 경기는 모두 서버가 방장 | build 771 | 2026-11-10
 patchnotes.json | v771 items[0] | 사람이 함께하는 온라인 경기는 컴퓨터 성능과 상관없이 모두 서버가 방장을 맡음 (봇과만 하는 경기는 전과 같이 내 컴퓨터) | build 771 | 2026-11-10
+patchnotes.json | v772 title | 파티 경기도 서버 방장 · 자체 중계 서버 | build 772 | 2026-11-10
+patchnotes.json | v772 items[0] | 파티로 하는 온라인 경기도 서버가 방장을 맡음 (파티장이 서버 방에 들어가면 파티원이 같은 방으로 들어옴) | build 772 | 2026-11-10
+patchnotes.json | v772 items[1] | 온라인 연결이 막힐 때 쓰는 중계를 자체 서버로 우선 사용해 렉 감소 | build 772 | 2026-11-10
