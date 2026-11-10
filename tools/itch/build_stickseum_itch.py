@@ -18,7 +18,7 @@ b = html.index('initAuthGate();', a)
 new_gate = r'''function renderAuthGateForm(){
   const box=document.getElementById('authGateBox');
   box.innerHTML=
-    '<button class="btn-primary btn-full" id="gateGoogleBtn">Google로 계속하기</button>'+
+    '<button class="btn-primary btn-full" id="gateGoogleBtn">Google</button>'+
     '<div id="gateAuthMsg" class="hint" style="margin:8px 0;"></div>'+
     '<button class="btn-secondary btn-full" id="gateGuestBtn" style="margin-top:10px;">게스트 모드로 하기</button>'+
     '<div class="hint" style="margin-top:6px;">계정 없이 온라인 게임은 할 수 있어요. 랭크·친구·클랜·파티 같은 계정 기능은 쓸 수 없어요.</div>';
