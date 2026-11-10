@@ -4538,7 +4538,7 @@ function xmTimeUp(){
 function xmTick(dt,t){
   if(!xm || matchEnded) return;
   const now=Date.now(), id=xm.id;
-  if(xm.endsAt && now>=xm.endsAt){ xmTimeUp(); xmV=buildXmView(t); return; }
+  if(xm.endsAt && started && !matchEnded && now>=xm.endsAt){ xmTimeUp(); xmV=buildXmView(t); return; }
   const P=xmPlayers();
   if(id==='vip'){
     for(const tm of [0,1]){ if(!players[xm.kings[tm]]){ const mem=xmTeamMembers(tm); xm.kings[tm]=mem.length?mem[0].id:null; } }
@@ -6033,7 +6033,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-10-v766';
+const GAME_BUILD='build 2026-11-10-v767';
 const GAME_VERSION='1.0.1', GAME_VERSION_NAME='네온 시티';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -10789,7 +10789,7 @@ function showErrorAndReturnToMenu(msg){ roomLoading(false);
   stkRoomSync(null);
   if(peer){ try{peer.destroy();}catch(e){} peer=null; }
   window.__versionNoted=false; chatPending=[];
-  spectatorMode=false; onlineClan=''; onlineWar=null; netLastFull=null; try{ clanWaitSet(false); }catch(e){} document.body.classList.remove('specView'); conns={}; players={}; isHost=false; hostConn=null; MAP=null; started=false; currentMode=null; currentMapId=null; countdownEndsAt=null; gameLoopStarted=false; weaponChosenLocally=false; hostRoomLive=false; if(typeof weaponCountdownTimer!=='undefined' && weaponCountdownTimer){ clearInterval(weaponCountdownTimer); weaponCountdownTimer=null; } matchEnded=false; duelScores={}; duelRoundEndsAt=null; duelPick=false; matchTimerEndsAt=null; document.getElementById('matchTimerLabel').style.display='none'; document.getElementById('duelScoreLabel').style.display='none'; cq=null; walls=[]; hostTimers=[]; magicCircles=[]; fieldZones=[]; poisonZones=[]; turrets=[]; weaponPhase=null; document.getElementById('cqLabel').style.display='none'; bombHolderId=null; bombTimerEndsAt=0; hotpotatoOriginalCount=0; survivalRound=0; survivalPhase=null; survivalPhaseEndsAt=0; survivalCurrentDisaster=null; survivalHazards=[]; survivalZombies=[]; document.getElementById('survivalLabel').style.display='none'; ctf=null; ctfEndsLocal=0; document.getElementById('ctfLabel').style.display='none'; { const mini=document.getElementById('ctfMini'); if(mini) mini.style.display='none'; }
+  spectatorMode=false; onlineClan=''; onlineWar=null; netLastFull=null; try{ clanWaitSet(false); }catch(e){} document.body.classList.remove('specView'); conns={}; players={}; isHost=false; hostConn=null; MAP=null; started=false; currentMode=null; currentMapId=null; countdownEndsAt=null; gameLoopStarted=false; weaponChosenLocally=false; hostRoomLive=false; if(typeof weaponCountdownTimer!=='undefined' && weaponCountdownTimer){ clearInterval(weaponCountdownTimer); weaponCountdownTimer=null; } matchEnded=false; duelScores={}; duelRoundEndsAt=null; duelPick=false; matchTimerEndsAt=null; document.getElementById('matchTimerLabel').style.display='none'; document.getElementById('duelScoreLabel').style.display='none'; cq=null; walls=[]; hostTimers=[]; magicCircles=[]; fieldZones=[]; poisonZones=[]; turrets=[]; weaponPhase=null; document.getElementById('cqLabel').style.display='none'; bombHolderId=null; bombTimerEndsAt=0; hotpotatoOriginalCount=0; survivalRound=0; survivalPhase=null; survivalPhaseEndsAt=0; survivalCurrentDisaster=null; survivalHazards=[]; survivalZombies=[]; document.getElementById('survivalLabel').style.display='none'; ctf=null; ctfEndsLocal=0; gdm=null; goldEndsLocal=0; xm=null; xmV=null; document.getElementById('ctfLabel').style.display='none'; { const mini=document.getElementById('ctfMini'); if(mini) mini.style.display='none'; }
   resetFlowState();
   showScreen('menuScreen');
   if(msg) uiAlert(msg);
@@ -11757,7 +11757,7 @@ function leaveRoom(){
   if(peer){ const op=peer; peer=null; if(handOff) setTimeout(()=>{ try{op.destroy();}catch(e){} }, 900); else { try{op.destroy();}catch(e){} } }   // (the last messages need a moment to go out)
   migState=null; migBundle=null; migOrderIds=[]; migPending=[]; try{ migBanner(false); }catch(e){}
   window.__versionNoted=false; chatPending=[];
-  spectatorMode=false; onlineClan=''; onlineWar=null; netLastFull=null; try{ clanWaitSet(false); }catch(e){} document.body.classList.remove('specView'); conns={}; players={}; isHost=false; hostConn=null; MAP=null; started=false; currentMode=null; currentMapId=null; countdownEndsAt=null; gameLoopStarted=false; weaponChosenLocally=false; hostRoomLive=false; if(typeof weaponCountdownTimer!=='undefined' && weaponCountdownTimer){ clearInterval(weaponCountdownTimer); weaponCountdownTimer=null; } matchEnded=false; duelScores={}; duelRoundEndsAt=null; duelPick=false; matchTimerEndsAt=null; document.getElementById('matchTimerLabel').style.display='none'; document.getElementById('duelScoreLabel').style.display='none'; cq=null; walls=[]; hostTimers=[]; magicCircles=[]; fieldZones=[]; poisonZones=[]; turrets=[]; weaponPhase=null; document.getElementById('cqLabel').style.display='none'; bombHolderId=null; bombTimerEndsAt=0; hotpotatoOriginalCount=0; survivalRound=0; survivalPhase=null; survivalPhaseEndsAt=0; survivalCurrentDisaster=null; survivalHazards=[]; survivalZombies=[]; document.getElementById('survivalLabel').style.display='none'; ctf=null; ctfEndsLocal=0; document.getElementById('ctfLabel').style.display='none'; { const mini=document.getElementById('ctfMini'); if(mini) mini.style.display='none'; }
+  spectatorMode=false; onlineClan=''; onlineWar=null; netLastFull=null; try{ clanWaitSet(false); }catch(e){} document.body.classList.remove('specView'); conns={}; players={}; isHost=false; hostConn=null; MAP=null; started=false; currentMode=null; currentMapId=null; countdownEndsAt=null; gameLoopStarted=false; weaponChosenLocally=false; hostRoomLive=false; if(typeof weaponCountdownTimer!=='undefined' && weaponCountdownTimer){ clearInterval(weaponCountdownTimer); weaponCountdownTimer=null; } matchEnded=false; duelScores={}; duelRoundEndsAt=null; duelPick=false; matchTimerEndsAt=null; document.getElementById('matchTimerLabel').style.display='none'; document.getElementById('duelScoreLabel').style.display='none'; cq=null; walls=[]; hostTimers=[]; magicCircles=[]; fieldZones=[]; poisonZones=[]; turrets=[]; weaponPhase=null; document.getElementById('cqLabel').style.display='none'; bombHolderId=null; bombTimerEndsAt=0; hotpotatoOriginalCount=0; survivalRound=0; survivalPhase=null; survivalPhaseEndsAt=0; survivalCurrentDisaster=null; survivalHazards=[]; survivalZombies=[]; document.getElementById('survivalLabel').style.display='none'; ctf=null; ctfEndsLocal=0; gdm=null; goldEndsLocal=0; xm=null; xmV=null; document.getElementById('ctfLabel').style.display='none'; { const mini=document.getElementById('ctfMini'); if(mini) mini.style.display='none'; }
   resetFlowState();
   showScreen('menuScreen');
   clearStrayMatchUi();
@@ -16947,8 +16947,8 @@ function hostTickCore(dt,t){
   if(gameMode==='raid'){ try{ raidTick(t); }catch(e){ recordDiagError('raidTick', e); } }
   if(gameMode==='tournament'){ try{ tournamentTick(t); }catch(e){ recordDiagError('tournamentTick', e); } }
   if(gameMode==='hotpotato' && bombHolderId && Date.now()>=bombTimerEndsAt && !matchEnded){ explodeBombHolder(t); }
-  if(gameMode==='ctf' && !matchEnded){ tickCtf(t, dt); checkCtfTimer(); }
-  if(gameMode==='gold' && !matchEnded){ tickGold(t, dt); checkGoldTimer(); }
+  if(gameMode==='ctf' && !matchEnded){ tickCtf(t, dt); if(started) checkCtfTimer(); }
+  if(gameMode==='gold' && !matchEnded){ tickGold(t, dt); if(started) checkGoldTimer(); }
   if(gameMode==='survival' && !matchEnded && survivalPhase){
     if(Date.now()>=survivalPhaseEndsAt){
       if(survivalPhase==='waiting') startSurvivalDisaster();
@@ -17751,7 +17751,7 @@ function ctfEnd(team){
   announceMatchEnd(teamLabelCtf(team)+' 승리! ('+ctf.scores[0]+':'+ctf.scores[1]+(ctf.overtime?', 연장 결승점':'')+')', winners);
 }
 function checkCtfTimer(){
-  if(!ctf || matchEnded || gameMode!=='ctf' || ctf.overtime) return;
+  if(!ctf || matchEnded || !started || gameMode!=='ctf' || ctf.overtime) return;
   if(Date.now()<ctf.endsAt) return;
   if(ctf.scores[0]!==ctf.scores[1]) ctfEnd(ctf.scores[0]>ctf.scores[1]?0:1);
   else announceMatchEnd('무승부! ('+ctf.scores[0]+' : '+ctf.scores[1]+')', []);       // time is up and the score is level: a draw
@@ -17820,7 +17820,7 @@ function goldEnd(team){
   announceMatchEnd(teamLabelCtf(team)+' 승리! ('+gdm.pts[0]+':'+gdm.pts[1]+')', winners);
 }
 function checkGoldTimer(){
-  if(!gdm || matchEnded || gameMode!=='gold') return;
+  if(!gdm || matchEnded || !started || gameMode!=='gold') return;
   if(Date.now()<gdm.endsAt) return;
   if(gdm.pts[0]!==gdm.pts[1]) goldEnd(gdm.pts[0]>gdm.pts[1]?0:1);
   else announceMatchEnd('무승부! ('+gdm.pts[0]+' : '+gdm.pts[1]+')', []);
