@@ -1,0 +1,93 @@
+name: itch
+
+# 게임이 main에 올라가면 itch 판을 만들어 itch.io에 자동으로 올려요.
+# 필요한 것: 저장소 Secret ITCH_API_KEY (itch 계정 API 키)
+# 게임마다 저장소 Variable (예: 계정이름/게임이름:html5): ITCH_STICKSEUM_TARGET, ITCH_CROWNENVOY_TARGET, ITCH_BEACONFALL_TARGET, ITCH_TUMBLECROWN_TARGET
+# Secret이나 그 게임의 Variable이 없으면 그 게임은 아무것도 올리지 않아요.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  BUTLER_API_KEY: ${{ secrets.ITCH_API_KEY }}
+
+jobs:
+  stickseum:
+    runs-on: ubuntu-latest
+    env:
+      TARGET: ${{ vars.ITCH_STICKSEUM_TARGET }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 2 }
+      - id: go
+        run: |
+          if [ -n "$BUTLER_API_KEY" ] && [ -n "$TARGET" ] && { [ "${{ github.event_name }}" = workflow_dispatch ] || git diff --name-only HEAD^ HEAD | grep -qE '^(stickseum/|tools/itch/build_stickseum_itch.py)'; }; then echo run=1 >> "$GITHUB_OUTPUT"; fi
+      - if: steps.go.outputs.run == '1'
+        run: python3 -I tools/itch/build_stickseum_itch.py stickseum build/out
+      - if: steps.go.outputs.run == '1'
+        run: |
+          curl -fsSL -o butler.zip https://broth.itch.zone/butler/linux-amd64/LATEST/archive/default
+          unzip -q butler.zip -d butler && chmod +x butler/butler
+          VER=$(python3 -c "import json;print(json.load(open('stickseum/versions.json'))['latest'])")
+          ./butler/butler push build/out "$TARGET" --userversion "$VER"
+
+  crownenvoy:
+    runs-on: ubuntu-latest
+    env:
+      TARGET: ${{ vars.ITCH_CROWNENVOY_TARGET }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 2 }
+      - id: go
+        run: |
+          if [ -n "$BUTLER_API_KEY" ] && [ -n "$TARGET" ] && { [ "${{ github.event_name }}" = workflow_dispatch ] || git diff --name-only HEAD^ HEAD | grep -qE '^(crownenvoy/|tools/itch/build_itch_other.py)'; }; then echo run=1 >> "$GITHUB_OUTPUT"; fi
+      - if: steps.go.outputs.run == '1'
+        run: python3 -I tools/itch/build_itch_other.py crownenvoy crownenvoy build/out
+      - if: steps.go.outputs.run == '1'
+        run: |
+          curl -fsSL -o butler.zip https://broth.itch.zone/butler/linux-amd64/LATEST/archive/default
+          unzip -q butler.zip -d butler && chmod +x butler/butler
+          VER=$(python3 -c "import json;print(json.load(open('crownenvoy/versions.json'))['latest'])")
+          ./butler/butler push build/out "$TARGET" --userversion "$VER"
+
+  beaconfall:
+    runs-on: ubuntu-latest
+    env:
+      TARGET: ${{ vars.ITCH_BEACONFALL_TARGET }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 2 }
+      - id: go
+        run: |
+          if [ -n "$BUTLER_API_KEY" ] && [ -n "$TARGET" ] && { [ "${{ github.event_name }}" = workflow_dispatch ] || git diff --name-only HEAD^ HEAD | grep -qE '^(beaconfall/|tools/itch/build_itch_other.py)'; }; then echo run=1 >> "$GITHUB_OUTPUT"; fi
+      - if: steps.go.outputs.run == '1'
+        run: python3 -I tools/itch/build_itch_other.py beaconfall beaconfall build/out && cp beaconfall/OFL.txt build/out/
+      - if: steps.go.outputs.run == '1'
+        run: |
+          curl -fsSL -o butler.zip https://broth.itch.zone/butler/linux-amd64/LATEST/archive/default
+          unzip -q butler.zip -d butler && chmod +x butler/butler
+          VER=$(python3 -c "import json;print(json.load(open('beaconfall/versions.json'))['latest'])")
+          ./butler/butler push build/out "$TARGET" --userversion "$VER"
+
+  tumblecrown:
+    runs-on: ubuntu-latest
+    env:
+      TARGET: ${{ vars.ITCH_TUMBLECROWN_TARGET }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 2 }
+      - id: go
+        run: |
+          if [ -n "$BUTLER_API_KEY" ] && [ -n "$TARGET" ] && { [ "${{ github.event_name }}" = workflow_dispatch ] || git diff --name-only HEAD^ HEAD | grep -qE '^(prototypes/tumblecrown/|tools/itch/build_tumblecrown_itch.py)'; }; then echo run=1 >> "$GITHUB_OUTPUT"; fi
+      - if: steps.go.outputs.run == '1'
+        run: python3 -I tools/itch/build_tumblecrown_itch.py prototypes/tumblecrown build/out
+      - if: steps.go.outputs.run == '1'
+        run: |
+          curl -fsSL -o butler.zip https://broth.itch.zone/butler/linux-amd64/LATEST/archive/default
+          unzip -q butler.zip -d butler && chmod +x butler/butler
+          VER="b$(python3 -c "import json;print(json.load(open('prototypes/tumblecrown/build.json'))['build'])")"
+          ./butler/butler push build/out "$TARGET" --userversion "$VER"
