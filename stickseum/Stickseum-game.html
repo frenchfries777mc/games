@@ -6033,7 +6033,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-10-v769';
+const GAME_BUILD='build 2026-11-10-v770';
 const GAME_VERSION='1.0.1', GAME_VERSION_NAME='네온 시티';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -16289,6 +16289,19 @@ function botMoveStep(p, ai, inp, t){
   if((gameMode==='dashbr' || gameMode==='hyperbr') && (inp.left||inp.right) && t/1000-(p.lastDash===undefined?-9999:p.lastDash)>=(ai.dbGap||0)){ inp.dash=true; ai.dbGap=0.9+Math.random()*0.9; }   // infinite-dash battle royale: bots keep dashing whenever they move (the lava guard below can still cancel it)
   botLavaGuard(p, inp, t);
   botMineGuard(p, inp, t);
+  botKdGuard(p, ai, inp, t);
+}
+// 카다스 암흑 덩어리: a bot caught inside an ENEMY lump needs about half a second to react (and it is slowed 25%), then runs out toward the nearer edge, hopping now and then. It never goes out of its way to avoid one beforehand.
+function botKdGuard(p, ai, inp, t){
+  if(!p.alive || p.x===undefined || p.swordCharge || p.darkSub) { ai.kdSince=0; return; }
+  let hole=null;
+  for(const z of fieldZones){ if(z.kind!=='kdhole') continue; const ow=players[z.owner]; if(!ow || ow.id===p.id || isAlly(ow,p) || !tnSameMatch(z.owner,p.id)) continue;
+    if(Math.hypot(p.x-z.x,(p.y-PLAYER_H/2)-z.y)<=(+z.r||0)){ hole=z; break; } }
+  if(!hole){ ai.kdSince=0; return; }
+  if(!ai.kdSince) ai.kdSince=t;
+  if(t-ai.kdSince<550+(1-(ai.skill||0.5))*450) return;           // still reacting
+  const dir=(p.x>=hole.x)?1:-1; inp.left=dir<0; inp.right=dir>0; inp.shoot=false;
+  if(p.grounded && t>=(ai.jumpOkAt||0) && Math.random()<0.04){ inp.jump=true; ai.jumpOkAt=t+450; }
 }
 // 화산 지대: the floor pools glow from 5 s into every cycle and burn from 7 s. A bot stays out of a pool from 4 s on and leaves one it is standing in.
 function botLavaGuard(p, inp, t){
