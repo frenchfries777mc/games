@@ -102,3 +102,20 @@ patchnotes.json | v757 items[1] | 새 캐릭터 카다스 추가 (암흑총, 암
 patchnotes.json | v757 items[2] | 네온·카다스 스킨 6종 추가 (200·1200·3600 sC) | build 757 | 2026-11-09
 patchnotes.json | v757 items[3] | 네온 도시 인트로·로비·방 매칭 배경과 새 로고 | build 757 | 2026-11-09
 patchnotes.json | v757 items[4] | 폐허도시에서 점프로 갈 수 없던 발판 조정 | build 757 | 2026-11-09
+patchnotes.json | v758 title | 카다스 암흑 덩어리 조정 | build 758 | 2026-11-09
+patchnotes.json | v758 items[0] | 카다스 암흑 덩어리 최대 반지름 170에서 540으로 변경 | build 758 | 2026-11-09
+patchnotes.json | v759 title | 1111킬 챌린지 추가 | build 759 | 2026-11-09
+patchnotes.json | v759 items[0] | 1111킬 챌린지 추가 (11/15까지 모든 플레이어의 킬을 합쳐 1111킬을 넘기면 특별 보상) | build 759 | 2026-11-09
+patchnotes.json | v759 items[1] | 온라인 게임의 킬만 집계 (일일 모드와 실험적 모드 포함, 연습·친선·유저 맵 제외) | build 759 | 2026-11-09
+patchnotes.json | v759 items[2] | 메인 화면에 전체 킬 수와 내 킬 수 표시 | build 759 | 2026-11-09
+Stickseum-v1.0.1.html | 1111킬 챌린지 배너 | 🔥 1111킬 챌린지 · 로그인하면 참여할 수 있어요 | build 759 | 2026-11-09
+Stickseum-v1.0.1.html | 1111킬 챌린지 배너 | 🎉 1111킬 챌린지 달성! ( | build 759 | 2026-11-09
+Stickseum-v1.0.1.html | 1111킬 챌린지 배너 | 킬) · 내  | build 759 | 2026-11-09
+Stickseum-v1.0.1.html | 1111킬 챌린지 배너 | 🔥 1111킬 챌린지 · 모두 합쳐  | build 759 | 2026-11-09
+Stickseum-v1.0.1.html | 1111킬 챌린지 배너 | 일 남음 | build 759 | 2026-11-09
+patchnotes.json | v760 title | 네온 시티 로비 곡 추가 | build 760 | 2026-11-10
+patchnotes.json | v760 items[0] | 로비 곡을 네온 시티 곡으로 교체 | build 760 | 2026-11-10
+patchnotes.json | v762 title | 1111킬 챌린지 표시 수정 | build 762 | 2026-11-10
+patchnotes.json | v762 items[0] | 1111킬 챌린지 표시가 안 뜨는 문제 수정 (표시 위치를 아래로 옮기고, 서버 연결이 늦어도 계속 표시) | build 762 | 2026-11-10
+Stickseum-v1.0.1.html | 1111킬 챌린지 배너 | 🔥 1111킬 챌린지 · 11/15까지 · 불러오는 중 | build 762 | 2026-11-10
+patchnotes.json | v762 items[1] | 메인 화면 로고를 새 로고로 교체 | build 762 | 2026-11-10
