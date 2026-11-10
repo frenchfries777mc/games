@@ -1572,7 +1572,7 @@ const ULTS = {
   portalgun:{name:'포탈 연결', desc:'현재 위치와 조준한 위치에 보라색 포탈 한 쌍을 생성 · 둘 중 하나에 닿으면 반대쪽으로 순간이동 (만든 사람만 사용 가능, 나올 때 근처 적에게 12 피해와 약한 넉백, 새로 생성하면 기존 포탈은 사라짐)'},
   pirate:{name:'대포 포탑', desc:'10초 동안 내 위치에 대포 포탑을 소환 · 가장 가까운 상대에게 포물선을 그리는 대포알을 발사 (대포알 데미지 20)'},
   harald:{name:'도끼 돌진', desc:'손에 든 도끼를 포물선으로 던져 발판(아랫면 포함)에 박고, 방패를 들고 박힌 도끼 쪽으로 2.5초 동안 돌진 (돌진 중 받는 피해 50% 감소) · 돌진하다 부딪힌 상대는 아주 크게 밀려나고 1초 기절 + 35 피해 · 도끼는 누군가 닿을 때까지 박혀 있고, 그때까지 하랄드는 방패로 싸움'},
-  kadas:{name:'암흑 덩어리', desc:'원하는 위치(커서 기준, 모바일은 방 안)에 보라색으로 꿈틀거리는 암흑 덩어리를 만듦 · 안에 있는 적은 이동속도 10% 감소, 1초마다 8 피해 · 피해를 줄 때마다 덩어리가 커지고, 아무에게도 못 주면 천천히 작아져 사라짐 (작아지는 동안은 이동속도 25% 감소)'},
+  kadas:{name:'암흑 덩어리', desc:'원하는 위치(커서 기준, 모바일은 방 안)에 보라색으로 꿈틀거리는 암흑 덩어리를 만듦 · 안에 있는 적은 이동속도 25% 감소, 1초마다 8 피해 · 피해를 줄 때마다 덩어리가 커지고, 아무에게도 못 주면 천천히 작아져 사라짐'},
   shade:{name:'네온 점멸', desc:'조준 방향으로 길게(620) 점멸하며, 점멸 경로에 있던 모든 상대를 내 앞으로 끌어오고 1.2초 동안 기절시킴'},
   samurai:{name:'심안 연참', desc:'사정거리 안의 가까운 적 최대 5명을 차례로 순간이동하며 베어 25 피해씩 주고, 끝나면 원래 자리로 돌아옴 · 발동하는 동안 무적'},
   vacuum:{name:'먼지 폭풍', desc:'청소기에서 먼지를 뱉어내 상대를 강하게 밀치고 쌓인 스택 수 × 10만큼 피해 (사거리는 일반공격의 절반, 사용하면 스택 초기화)'},
@@ -6033,7 +6033,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-10-v764';
+const GAME_BUILD='build 2026-11-10-v765';
 const GAME_VERSION='1.0.1', GAME_VERSION_NAME='네온 시티';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -13275,7 +13275,7 @@ function kdHoleTick(dt, t){       // every second each enemy inside takes 8 and 
     const ow=players[z.owner]; if(!ow){ z.until=0; continue; }
     const inside=[];
     for(const id in players){ const q=players[id]; if(!q.alive || q.x===undefined || q.swordCharge || q.darkSub || q.isClone || id===z.owner || isAlly(ow,q) || !tnSameMatch(z.owner,id)) continue;
-      if(Math.hypot(q.x-z.x, (q.y-PLAYER_H/2)-z.y)<=z.r){ inside.push(q); q.kdSlowUntil=tS+0.25; q.kdSlowMul=(tS-z.lastHit>0.6)?0.75:0.9; } }
+      if(Math.hypot(q.x-z.x, (q.y-PLAYER_H/2)-z.y)<=z.r){ inside.push(q); q.kdSlowUntil=tS+0.25; q.kdSlowMul=0.75; } }
     if(tS>=z.nextTick){ z.nextTick+=1; let hurt=false;
       for(const q of inside){ const ex=absorbIntoShield(q, KD_DMG); q.hp-=ex; markHit(q, ow.id, t, ex); pushFx('dmg', q.x, q.y-PLAYER_H-8, t, {v:KD_DMG, color:'#c9a0ff'}); hurt=true; if(q.hp<=0) handleDeath(q, ow, t, ow.name); }
       if(hurt){ z.r=Math.min(KD_RMAX, z.r+KD_GROW*(1+(ow.kdAffinity||0))); z.lastHit=tS; pushFx('skillring', z.x, z.y, t, {color:'#9a4cff', r:z.r}); } }
@@ -16820,7 +16820,7 @@ function pvSpeed(p, tS){        // every passive that changes the walking speed,
   if(k==='vacuum') m*=1+0.05*(p.vacuumStacks||0);
   if(k==='flamethrower' && p.pvOnFire) m*=1.3;
   if(p.pvSlowUntil>tS) m*=(p.pvSlowMult||1);
-  if(p.kdSlowUntil>tS) m*=(p.kdSlowMul||0.9);      // 카다스's lump: -10% for everybody inside, -25% while it is shrinking
+  if(p.kdSlowUntil>tS) m*=(p.kdSlowMul||0.75);     // 카다스's lump: -25% for everybody inside
   if(p.poison && p.poison.until>tS && p.poison.stacks>=KAN_POISON_MAX){ const ko=players[p.poison.owner]; if(ko && ko.weapon==='kan') m*=0.8; }     // 칸: a victim with 4 poison stacks is slower
   return m;
 }
