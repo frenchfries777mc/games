@@ -19,14 +19,11 @@ START = r"""const code=Array.from(crypto.getRandomValues(new Uint8Array(24))).ma
 SITE_OPEN = "window.open('https://frenchfries777.com/games/','_blank');"
 
 if game == 'crownenvoy':
-    # login modal: Google button only
-    a = html.index("  else{o.innerHTML='<div class=\"ab\"><h2>Frenchfries777 계정</h2><div class=\"as\">계정으로")
-    b = html.index("o.querySelector('.am').textContent=msg;if(keepId)$('#aEm').value=keepId;}", a) + len("o.querySelector('.am').textContent=msg;if(keepId)$('#aEm').value=keepId;}")
-    html = html[:a] + """  else{o.innerHTML='<div class="ab"><h2>Frenchfries777 계정</h2><div class="as">계정으로 로그인하면 닉네임이 게임에 그대로 쓰여요.</div><div class="am'+(ok?' ok':'')+'"></div><div class="ar"><button class="btn" data-a="close">닫기</button><button class="btn primary" data-a="go">Google</button></div></div>';
-    o.querySelector('.am').textContent=msg;}""" + html[b:]
-    a = html.index("async function go(){if(busy)return;")
-    b = html.index("async function out(){", a)
-    html = html[:a] + """async function go(){if(busy)return;busy=true;
+    # login modal: keep the ID/password form, add a Google button
+    rep("""<button class="btn primary" data-a="go">'+(mode==='up'?'가입하기':'로그인')+'</button>""", """<button class="btn primary" data-a="go">'+(mode==='up'?'가입하기':'로그인')+'</button><button class="btn" data-a="google">Google</button>""")
+    rep("else if(a==='go')go();", "else if(a==='go')go();else if(a==='google')goG();")
+    a = html.index("async function out(){")
+    html = html[:a] + """async function goG(){if(busy)return;busy=true;
   %s
   if(!w){busy=false;msg='로그인 창이 막혔어요. 이 페이지의 팝업을 허용해 주세요.';ok=false;draw();return;}
   msg='열린 창에서 Google 로그인을 마쳐 주세요.';ok=true;draw();
@@ -37,14 +34,11 @@ if game == 'crownenvoy':
     msg='시간이 지났어요. 다시 눌러 주세요.';ok=false;
   }catch(e){msg=errKo(e);ok=false;}
   busy=false;draw();}
-""" % START + html[b:]
+""" % START + html[a:]
     rep("location.href='https://frenchfries777.com/games/?r='+Date.now();", SITE_OPEN)
     rep('<script src="https://frenchfries777.com/games/ff-auth.js"></script>', '')
 else:  # beaconfall
-    rep('<button class="main" id="alogin">로그인</button>', '<button class="main" id="alogin">Google</button>')
-    rep('<input id="auser"', '<input id="auser" style="display:none"')
-    rep('<input id="apass"', '<input id="apass" style="display:none"')
-    rep('<button id="asign">', '<button id="asign" style="display:none">')
+    rep('<button id="aguest">', '<button id="agoogle">Google</button>\n<button id="aguest">')
     rep("bl.onclick=login;bs.onclick=sign;", """function ffItchLogin(){
   if(!sb)return say('서버에 연결하지 못했어요. 인터넷을 확인하고 다시 시도해 주세요.');
   %s
@@ -63,8 +57,7 @@ else:  # beaconfall
     }catch(e){clearInterval(poll);say('로그인하지 못했어요. 다시 해 주세요.');}
   },1500);
 }
-bl.onclick=ffItchLogin;bs.onclick=sign;""" % START)
-    rep("if(e.key==='Enter')login();", "if(e.key==='Enter')ffItchLogin();")
+bl.onclick=login;bs.onclick=sign;$g('agoogle').onclick=ffItchLogin;""" % START)
     rep('<button class="btn sm" data-gosite>사이트로 이동</button>', '<button class="btn sm" data-gosite>사이트 열기</button>')
     rep("location.href='https://frenchfries777.com/games/?r='+Date.now();", SITE_OPEN)
 
