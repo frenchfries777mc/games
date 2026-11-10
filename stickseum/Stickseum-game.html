@@ -6033,7 +6033,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-10-v765';
+const GAME_BUILD='build 2026-11-10-v766';
 const GAME_VERSION='1.0.1', GAME_VERSION_NAME='네온 시티';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -13268,7 +13268,7 @@ function kdHoleSpot(p, ax, ay){      // the lump: where the cursor is (at most K
   if(hasAim(ax,ay)){ const dx=ax-p.x, dy=ay-(p.y-40), d=Math.hypot(dx,dy)||1, k=Math.min(1,KD_RANGE/d); x=p.x+dx*k; y=(p.y-40)+dy*k; }
   return {x:clamp(x, KD_EDGE, MAP.arenaW-KD_EDGE), y:clamp(y, KD_EDGE, MAP.arenaH-KD_EDGE)};
 }
-function kdHoleTick(dt, t){       // every second each enemy inside takes 8 and the lump grows; 0.6 s without hurting anybody and it shrinks until it is gone
+function kdHoleTick(dt, t){       // every second each enemy inside takes 8 and the lump grows; 0.6 s without hurting a character (a vault hit does not count) and it shrinks until it is gone; it has no time limit
   const tS=t/1000;
   for(const z of fieldZones){
     if(z.kind!=='kdhole') continue;
@@ -13277,7 +13277,7 @@ function kdHoleTick(dt, t){       // every second each enemy inside takes 8 and 
     for(const id in players){ const q=players[id]; if(!q.alive || q.x===undefined || q.swordCharge || q.darkSub || q.isClone || id===z.owner || isAlly(ow,q) || !tnSameMatch(z.owner,id)) continue;
       if(Math.hypot(q.x-z.x, (q.y-PLAYER_H/2)-z.y)<=z.r){ inside.push(q); q.kdSlowUntil=tS+0.25; q.kdSlowMul=0.75; } }
     if(tS>=z.nextTick){ z.nextTick+=1; let hurt=false;
-      for(const q of inside){ const ex=absorbIntoShield(q, KD_DMG); q.hp-=ex; markHit(q, ow.id, t, ex); pushFx('dmg', q.x, q.y-PLAYER_H-8, t, {v:KD_DMG, color:'#c9a0ff'}); hurt=true; if(q.hp<=0) handleDeath(q, ow, t, ow.name); }
+      for(const q of inside){ const ex=absorbIntoShield(q, KD_DMG); q.hp-=ex; markHit(q, ow.id, t, ex); pushFx('dmg', q.x, q.y-PLAYER_H-8, t, {v:KD_DMG, color:'#c9a0ff'}); if(!q.isVault) hurt=true; if(q.hp<=0) handleDeath(q, ow, t, ow.name); }
       if(hurt){ z.r=Math.min(KD_RMAX, z.r+KD_GROW*(1+(ow.kdAffinity||0))); z.lastHit=tS; pushFx('skillring', z.x, z.y, t, {color:'#9a4cff', r:z.r}); } }
     if(tS-z.lastHit>0.6){ z.r=Math.max(0, z.r-13*Math.min(dt,0.1)); if(z.r<22) z.until=0; }
   }
@@ -13410,7 +13410,7 @@ const ULT_IMPL = {
   gambler(p,tSec,tMs){ drawGamblerCards(p,tSec,tMs); },
   kadas(p,tSec,tMs,ax,ay){         // 카다스: a lump of darkness at the point (at most KD_RANGE away); see kdHoleTick
     const sp=kdHoleSpot(p, ax, ay);
-    fieldZones.push({kind:'kdhole', owner:p.id, team:p.team, ownerName:p.name, x:sp.x, y:sp.y, r:KD_R0, dur:KD_LIFE, until:tSec+KD_LIFE, born:tSec, nextTick:tSec+1, lastHit:tSec+0.4});
+    fieldZones.push({kind:'kdhole', owner:p.id, team:p.team, ownerName:p.name, x:sp.x, y:sp.y, r:KD_R0, dur:KD_LIFE, until:tSec+1e7, born:tSec, nextTick:tSec+1, lastHit:tSec+0.4});
     pushFx('skillring', sp.x, sp.y, tMs, {color:'#9a4cff', r:KD_R0});
     return true; },
   shade(p,tSec,tMs,ax,ay){         // 셰이드: a long neon blink; everyone along the way is dragged in front of where he lands and stunned
