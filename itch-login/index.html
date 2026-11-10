@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Frenchfries777 · Google 로그인</title>
+<meta name="robots" content="noindex">
+<style>body{font-family:system-ui,sans-serif;background:#12100e;color:#f3e9dc;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;text-align:center}p{max-width:320px;line-height:1.5}</style>
+</head><body><p id="m">Google 로그인으로 이동 중…</p>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* itch.io 판 로그인 창. 게임이 정한 일회용 코드(c)로, 로그인이 끝나면 로그인 정보를 서버에 잠깐 맡겨요. 게임 쪽이 그 코드로 한 번 받아 가요. */
+(function(){
+var SB_URL='https://kebsbuvuutilitwlvxzv.supabase.co', SB_KEY='sb_publishable_4Egu0zm3p6cxWGvP_-GlIw_mlCpO1Nf';
+var m=document.getElementById('m'), sb=window.supabase.createClient(SB_URL,SB_KEY);
+function say(t){ m.textContent=t; }
+var q=new URLSearchParams(location.search), code=q.get('c');
+if(code){ try{ localStorage.setItem('ffitch.c',code); }catch(e){} } else { try{ code=localStorage.getItem('ffitch.c'); }catch(e){} }
+async function ensureProfile(user){
+  var r=await sb.from('profiles').select('username').eq('id',user.id).maybeSingle();
+  if(r&&r.data) return;
+  window.FFAuthClient=sb; say('아이디를 정해 주세요.');   /* 처음 Google로 들어온 사람: 허브의 '아이디 정하기' 창이 떠요 */
+  var s=document.createElement('script'); s.src='https://frenchfries777.com/games/ff-auth.js'; document.head.appendChild(s);
+  await new Promise(function(res){ var t=setInterval(async function(){ var z=await sb.from('profiles').select('username').eq('id',user.id).maybeSingle(); if(z&&z.data){ clearInterval(t); res(); } },1500); });
+}
+(async function(){
+  if(!code||!/^[a-f0-9]{48}$/.test(code)){ say('게임 안의 "Google로 계속하기"로 열어 주세요.'); return; }
+  var s=(await sb.auth.getSession()).data.session;
+  if(!s && /[?&]code=|access_token/.test(location.search+location.hash)){ for(var i=0;i<20&&!s;i++){ await new Promise(function(z){ setTimeout(z,300); }); s=(await sb.auth.getSession()).data.session; } }
+  if(!s){ if(q.get('go')!=='google'){ say('로그인하지 못했어요. 게임에서 다시 눌러 주세요.'); return; }
+          await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}}); return; }
+  await ensureProfile(s.user);
+  s=(await sb.auth.getSession()).data.session||s;
+  var r=await sb.rpc('ff_itch_put',{p_code:code,p_access:s.access_token,p_refresh:s.refresh_token});
+  if(r.error){ say('로그인을 넘기지 못했어요. 게임에서 다시 눌러 주세요.'); return; }
+  try{ localStorage.removeItem('ffitch.c'); }catch(e){}
+  try{ await sb.auth.signOut({scope:'local'}); }catch(e){}   /* 이 창의 로그인은 지워요 (같은 토큰을 두 곳에서 쓰지 않게) */
+  say('로그인했어요. 이 창은 닫아도 돼요.'); setTimeout(function(){ try{ window.close(); }catch(e){} },800);
+})();
+})();
+</script></body></html>
