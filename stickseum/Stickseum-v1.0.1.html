@@ -6033,7 +6033,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-10-v771';
+const GAME_BUILD='build 2026-11-10-v772';
 const GAME_VERSION='1.0.1', GAME_VERSION_NAME='네온 시티';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -10902,6 +10902,8 @@ let hostRoomLive=false;
 // silently. These are OpenRelay Project's free, public, no-signup TURN servers, commonly used for small
 // projects and testing exactly this kind of connectivity gap.
 const PEERJS_ICE_CONFIG = { config: { iceServers: [
+  { urls: 'turn:140.238.55.153:3478?transport=udp', username: 'ffturn', credential: 'a2daa08340367f7b1d03ff30' },
+  { urls: 'turn:140.238.55.153:3478?transport=tcp', username: 'ffturn', credential: 'a2daa08340367f7b1d03ff30' },
   { urls: 'stun:stun.l.google.com:19302' },
   { urls: 'stun:stun.relay.metered.ca:80' },
   { urls: 'turn:global.relay.metered.ca:80', username: 'openrelayproject', credential: 'openrelayproject' },
@@ -12323,7 +12325,7 @@ function scanSequential(p, mapIds, idx, slot, freeSlots, held){
     if(!onlineMatchActive) return;
     const chosen = freeSlots[0] || {mapId: mapIds[Math.floor(Math.random()*mapIds.length)], slot:3};
     const hostSelf=()=>{ setOnlineProgress(1, MAP_TEMPLATES[chosen.mapId].name+' 방을 새로 만듭니다...'); startHostPeer(roomIdFor(chosen.mapId, chosen.slot), chosen.mapId, 'online', null); };
-    if(onlineClan || gameMode==='usermap' || partySeatsNeeded()>1 || idleOnlineOthers()===0){ hostSelf(); return; }       // (the server only hosts matches where another person can show up: when nobody else is in the game it is a match against bots and is hosted here as before (owner 10-26))
+    if(onlineClan || gameMode==='usermap' || (idleOnlineOthers()===0 && partySeatsNeeded()<=1)){ hostSelf(); return; }       // (the server only hosts matches where another person can show up: when nobody else is in the game it is a match against bots and is hosted here as before (owner 10-26))
     setOnlineProgress(1, '서버에 방을 부탁하는 중...');
     askServerRoom(chosen, roomId=>{
       if(!onlineMatchActive) return;
@@ -12339,7 +12341,7 @@ function scanSequential(p, mapIds, idx, slot, freeSlots, held){
           if(r.status==='joined'){ setOnlineProgress(1, '서버 방에 참가합니다...'); finalizeAsOnlineClient(p2, r.conn, chosen.mapId, r.initialLobby); }
           else if(r.status==='full' || r.status==='started' || ++tries>=3) bail();
           else setTimeout(go, 700);
-        }, 1);
+        }, partySeatsNeeded());
         go();
       });
     });
