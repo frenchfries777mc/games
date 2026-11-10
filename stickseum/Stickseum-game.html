@@ -6033,7 +6033,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-10-v768';
+const GAME_BUILD='build 2026-11-10-v769';
 const GAME_VERSION='1.0.1', GAME_VERSION_NAME='네온 시티';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -14661,7 +14661,7 @@ function drawFieldZones(){
       }
     } else if(z.kind==='kdhole'){      // 카다스: a writhing lump of darkness
       const ow0=players[z.owner], K=kdPal(ow0?conceptOfP(ow0):''); const R=Math.max(2,+z.r||0), tt=now/1000, fo=Math.max(0,Math.min(1,(R-18)/30));
-      ctx.globalAlpha=fo*(kdTrappedIn(z)?0.4:1);      // trapped in it: I see the lump see-through so I know where I am
+      ctx.globalAlpha=fo*(kdInside(z)?0.4:1);      // trapped in it: I see the lump see-through so I know where I am
       ctx.save(); ctx.globalCompositeOperation='lighter'; const og=ctx.createRadialGradient(z.x,z.y,R*0.4,z.x,z.y,R*1.5); og.addColorStop(0,hexA(K.a,0.38)); og.addColorStop(1,hexA(K.a,0)); ctx.fillStyle=og; ctx.beginPath(); ctx.arc(z.x,z.y,R*1.5,0,7); ctx.fill(); ctx.restore();
       const blob=(rr)=>{ ctx.beginPath(); for(let i=0;i<=40;i++){ const a=i/40*Math.PI*2, w=1+0.12*Math.sin(a*3+tt*2.2)+0.08*Math.sin(a*5-tt*3.1)+0.05*Math.sin(a*7+tt*4); const x=z.x+Math.cos(a)*rr*w, y=z.y+Math.sin(a)*rr*w; if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); } ctx.closePath(); };
       blob(R); const bg=ctx.createRadialGradient(z.x,z.y,0,z.x,z.y,R); bg.addColorStop(0,'#030008'); bg.addColorStop(0.7,K.wing); bg.addColorStop(1,K.mid); ctx.fillStyle=bg; ctx.fill();
@@ -14686,6 +14686,10 @@ function drawFieldZones(){
 }
 let smokeA=0, smokeCv=null;
 let kdVeilA=0, kdVeilCv=null;
+function kdInside(z){       // is MY character inside this 카다스 lump at all (mine, an ally's or an enemy's)?
+  const me=players[myId];
+  return !!(me && me.alive && me.x!==undefined && !killcamActive && !rpView && Math.hypot(me.x-z.x,(me.y-PLAYER_H/2)-z.y)<=(+z.r||0));
+}
 function kdTrappedIn(z){       // is MY character an enemy inside this 카다스 lump?
   const me=players[myId], ow=players[z.owner];
   return !!(me && ow && me.alive && me.x!==undefined && !killcamActive && !rpView && me.id!==ow.id && !isAlly(ow,me) && !me.swordCharge && !me.darkSub && Math.hypot(me.x-z.x,(me.y-PLAYER_H/2)-z.y)<=(+z.r||0));
