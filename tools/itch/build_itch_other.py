@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Crown Envoy / Beaconfall itch edition builder.
 Usage: build_itch_other.py <crownenvoy|beaconfall> <games/<game> dir> <out dir>
-Patches only the copy: Google (popup + one-time handoff) + guest login, no hub account script,
+Patches only the copy: original login stays as is, no hub account script,
 exit button opens the site in a new tab, small 'ItchEdition' tag bottom-left."""
 import sys, re, shutil, os, json
 game, src, out = sys.argv[1], sys.argv[2], sys.argv[3]
@@ -19,45 +19,10 @@ START = r"""const code=Array.from(crypto.getRandomValues(new Uint8Array(24))).ma
 SITE_OPEN = "window.open('https://frenchfries777.com/games/','_blank');"
 
 if game == 'crownenvoy':
-    # login modal: keep the ID/password form, add a Google button
-    rep("""<button class="btn primary" data-a="go">'+(mode==='up'?'가입하기':'로그인')+'</button>""", """<button class="btn primary" data-a="go">'+(mode==='up'?'가입하기':'로그인')+'</button><button class="btn" data-a="google">Google</button>""")
-    rep("else if(a==='go')go();", "else if(a==='go')go();else if(a==='google')goG();")
-    a = html.index("async function out(){")
-    html = html[:a] + """async function goG(){if(busy)return;busy=true;
-  %s
-  if(!w){busy=false;msg='로그인 창이 막혔어요. 이 페이지의 팝업을 허용해 주세요.';ok=false;draw();return;}
-  msg='열린 창에서 Google 로그인을 마쳐 주세요.';ok=true;draw();
-  try{const c=await ensureSb();const t0=Date.now();
-    while(Date.now()-t0<300000){await new Promise(r=>setTimeout(r,1500));
-      const r=await c.rpc('ff_itch_take',{p_code:code});const row=r&&r.data&&r.data[0];
-      if(row){const s=await c.auth.setSession({access_token:row.access_token,refresh_token:row.refresh_token});if(s.error)throw s.error;onSession(s.data.session);await loadProf();paint();close();mark();busy=false;return;}}
-    msg='시간이 지났어요. 다시 눌러 주세요.';ok=false;
-  }catch(e){msg=errKo(e);ok=false;}
-  busy=false;draw();}
-""" % START + html[a:]
+    # login modal stays as is (ID/password)
     rep("location.href='https://frenchfries777.com/games/?r='+Date.now();", SITE_OPEN)
     rep('<script src="https://frenchfries777.com/games/ff-auth.js"></script>', '')
 else:  # beaconfall
-    rep('<button id="aguest">', '<button id="agoogle">Google</button>\n<button id="aguest">')
-    rep("bl.onclick=login;bs.onclick=sign;", """function ffItchLogin(){
-  if(!sb)return say('서버에 연결하지 못했어요. 인터넷을 확인하고 다시 시도해 주세요.');
-  %s
-  if(!w)return say('로그인 창이 막혔어요. 이 페이지의 팝업을 허용해 주세요.');
-  say('열린 창에서 Google 로그인을 마쳐 주세요.',true);
-  const t0=Date.now();
-  const poll=setInterval(async()=>{
-    if(Date.now()-t0>300000){clearInterval(poll);say('시간이 지났어요. 다시 눌러 주세요.');return;}
-    try{
-      const r=await sb.rpc('ff_itch_take',{p_code:code});const row=r&&r.data&&r.data[0];
-      if(row){clearInterval(poll);say('로그인 중…',true);
-        const s=await sb.auth.setSession({access_token:row.access_token,refresh_token:row.refresh_token});if(s.error)throw s.error;
-        const us=(s.data.session&&s.data.session.user)||s.data.user;let name=(us.email||'').split('@')[0];
-        try{const q=await sb.from('profiles').select('username').eq('id',us.id).single();if(q.data&&q.data.username)name=q.data.username;}catch(e){}
-        say('');enter(name,us.id);}
-    }catch(e){clearInterval(poll);say('로그인하지 못했어요. 다시 해 주세요.');}
-  },1500);
-}
-bl.onclick=login;bs.onclick=sign;$g('agoogle').onclick=ffItchLogin;""" % START)
     rep('<button class="btn sm" data-gosite>사이트로 이동</button>', '<button class="btn sm" data-gosite>사이트 열기</button>')
     rep("location.href='https://frenchfries777.com/games/?r='+Date.now();", SITE_OPEN)
 
