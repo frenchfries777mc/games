@@ -12,17 +12,13 @@ if os.path.exists(out): shutil.rmtree(out)
 os.makedirs(out)
 html = open(os.path.join(src, game), encoding='utf-8').read()
 
-# 1. login gate -> Google + guest
+# 1. login gate: keep the original ID/password form, add a Google button (popup + one-time handoff)
 a = html.index('function renderAuthGateForm(){')
 b = html.index('initAuthGate();', a)
-new_gate = r'''function renderAuthGateForm(){
-  const box=document.getElementById('authGateBox');
-  box.innerHTML=
-    '<button class="btn-primary btn-full" id="gateGoogleBtn">Google</button>'+
-    '<div id="gateAuthMsg" class="hint" style="margin:8px 0;"></div>'+
-    '<button class="btn-secondary btn-full" id="gateGuestBtn" style="margin-top:10px;">게스트 모드로 하기</button>'+
-    '<div class="hint" style="margin-top:6px;">계정 없이 온라인 게임은 할 수 있어요. 랭크·친구·클랜·파티 같은 계정 기능은 쓸 수 없어요.</div>';
-  document.getElementById('gateGuestBtn').onclick=()=>{ sb=null; sbUser=null; myName='게스트'+String(Math.floor(Math.random()*1000000)).padStart(6,'0'); myNameSet=true; showScreen('menuScreen'); };
+fn = html[a:b]
+end = fn.rindex('\n}')
+google = r"""
+  box.insertAdjacentHTML('beforeend','<button class="btn-secondary btn-full" id="gateGoogleBtn" style="margin-top:10px;">Google</button>');
   document.getElementById('gateGoogleBtn').onclick=()=>{
     const msg=document.getElementById('gateAuthMsg');
     const code=Array.from(crypto.getRandomValues(new Uint8Array(24))).map(b=>b.toString(16).padStart(2,'0')).join('');
@@ -38,10 +34,8 @@ new_gate = r'''function renderAuthGateForm(){
         if(row){ clearInterval(poll); msg.textContent='로그인 중...'; const s=await sb.auth.setSession({access_token:row.access_token, refresh_token:row.refresh_token}); if(s.error) throw s.error; await initAuthGate(); }
       }catch(x){ clearInterval(poll); msg.textContent='로그인하지 못했어요. 다시 해 주세요.'; }
     }, 1500);
-  };
-}
-'''
-html = html[:a] + new_gate + html[b:]
+  };"""
+html = html[:a] + fn[:end] + google + fn[end:] + html[b:]
 
 # 2. no hub account script, no 'back to site' button
 tag = '<script src="https://frenchfries777.com/games/ff-auth.js"></script>'
