@@ -560,7 +560,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.8 · build 192</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.8 · build 193</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div><p class="tagline">사절을 보내 동맹을 맺고, 군대를 보내 왕관을 차지하세요.</p></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -10484,7 +10484,7 @@ function formHTML(o){const D=dip(),me=R.me,k=D.form;if(!k)return'';const n=R.nat
   else if(k==='war'){
     if(w){h+=tcHTML(o);}
     else{const ci=cbInfo(me,o),D2=dip();h+='<div class="dft">전쟁</div><div class="sm">선전포고하면 그 나라의 동맹도 끼어들 수 있어요.'+(truceOn(me,o)?' 휴전 중이라 먼저 휴전을 깨야 해요.':napOn(me,o)?' 불가침 중이라 먼저 파기해야 해요.':'')+'</div>';
-      h+=`<div class="sm" style="margin-top:6px">전쟁 명분: ${ci?(ci.build?`<span class="tag">만드는 중 ${ci.build}초</span>`:`<span class="tag good">${esc(ci.kind)}${ci.left?' · '+ci.left+'초':''}</span>`):'<span class="tag bad">없음 — 선전포고하면 평판이 크게 떨어져요</span>'}</div>`;
+      h+=`<div class="sm" style="margin-top:6px">전쟁 명분: ${ci?(ci.build?`<span class="tag" data-cbt="${ci.t}" data-cbp="만드는 중 ">만드는 중 ${ci.build}초</span>`:`<span class="tag good" ${ci.left?`data-cbt="${ci.t}" data-cbp="${esc(ci.kind)} · "`:''}>${esc(ci.kind)}${ci.left?' · '+ci.left+'초':''}</span>`):'<span class="tag bad">없음 — 선전포고하면 평판이 크게 떨어져요</span>'}</div>`;
       h+=`<div class="sm" style="margin-top:6px">전쟁 목표 <span class="muted">(휴전 때 이루면 토큰 +4, 위신 +4)</span></div><div class="dacts"><button class="dbtn ${D2.pgoal==='land'?'on':''}" data-dip="pgoal" data-v="${o}" data-k="land">🗺 영토 점령</button><button class="dbtn ${D2.pgoal==='break'?'on':''}" data-dip="pgoal" data-v="${o}" data-k="break">⚔ 병력 격파</button></div>`;
       h+='<div class="row">'+btn('war','선전포고','dng')+(ci?'':btn('cb','명분 만들기 · '+CB_COST+'금','',R.nat[me].gold<CB_COST||!!(D2.cb[me*1000+o]&&D2.cb[me*1000+o].t>R.t)))+(truceOn(me,o)?btn('c-truce','휴전 깨기','dng'):'')+'</div>';}}
   else if(k==='spy'){h+='<div class="dft">첩보 공작</div><div class="sm">실패하면 첩보원이 붙잡히고 호감이 크게 떨어져요.</div><div class="row">'+btn('spy1','💰 금고 약탈 · 60금','',R.nat[me].gold<60||al)+btn('spy2','🔥 선동 · 80금','',R.nat[me].gold<80||al)+'</div><div class="sm" style="margin-top:4px">약탈: 상대 금화 일부를 훔쳐요 · 선동: 상대 사단들의 사기를 떨어뜨려요</div>';}
@@ -10828,7 +10828,7 @@ function hasCB(a,b){const D=dip(),c=cbNorm(D.cb[a*1000+b],a,b);if(c&&c.t>R.t&&!c
   const H=D.home;for(const t of R.v.terr)if(TDEF[t.id].kind!=='sea'&&t.owner===b&&H[t.id]===a)return '옛 땅 회복';
   for(const n of R.nat){if(n.alive&&n.i!==a&&n.i!==b&&allied(a,n.i)&&atWar(b,n.i))return '동맹 보호';}
   if(D.cbHist&&D.cbHist[b*1000+a]>R.t)return '선제 공격 응징';return null;}
-function cbInfo(a,b){const c=cbNorm(dip().cb[a*1000+b],a,b);if(c&&c.build&&c.t>R.t)return {build:Math.ceil(c.t-R.t)};const k=hasCB(a,b);return k?{kind:k,left:(c&&c.t>R.t)?Math.ceil(c.t-R.t):null}:null;}
+function cbInfo(a,b){const c=cbNorm(dip().cb[a*1000+b],a,b);if(c&&c.build&&c.t>R.t)return {build:Math.ceil(c.t-R.t),t:c.t};const k=hasCB(a,b);return k?{kind:k,left:(c&&c.t>R.t)?Math.ceil(c.t-R.t):null,t:c&&c.t}:null;}
 function makeCB(a,b){const D=dip(),g=R.nat[a];if(a!==R.me)return false;if(hasCB(a,b)||(D.cb[a*1000+b]&&D.cb[a*1000+b].t>R.t)){toast('이미 명분이 있거나 만드는 중이에요',1);return false;}
   if(g.gold<CB_COST){toast('금화가 모자라요',1);return false;}g.gold-=CB_COST;D.cb[a*1000+b]={t:R.t+CB_BUILD,build:1,kind:'조작'};toast(short(R.nat[b])+'에 대한 명분을 만드는 중이에요 ('+CB_BUILD+'초)');return true;}
 function setGoal(a,b,cbk){const D=dip(),k=a===R.me?(D.pgoal||'land'):(Math.random()<.7?'land':'break');
@@ -10871,6 +10871,7 @@ function dipTick(dt){const D=dip();if(D.lastT===R.t)return;D.lastT=R.t;
   for(const v in D.vas){const vn=R.nat[v],on=R.nat[D.vas[v]];if(!vn||!on||!vn.alive||!on.alive){delete D.vas[v];continue;}const tr=.15*vn.inc*dt;vn.gold-=tr;on.gold+=tr;}
   if(D.conv&&D.conv.length){for(const c of D.conv)c.left-=dt;for(const c of D.conv.filter(c=>c.left<=0)){const me=R.nat[R.me],t=R.nat[c.to];if(t&&t.alive&&!atWar(R.me,c.to)){me.gold+=110;t.gold+=40;addMod(R.me,c.to,3);toast('상선이 도착했어요 (+110금)');}}D.conv=D.conv.filter(c=>c.left>0);}
   tcTick(dt);
+  {const pe=Q('#rtDip');if(pe&&pe.style.display!=='none'){let done=0;pe.querySelectorAll('[data-cbt]').forEach(e=>{const l=Math.ceil(+e.dataset.cbt-R.t);if(l<=0)done=1;else e.textContent=e.dataset.cbp+l+'초';});if(done)panel(true);}}
   D.rd=(D.rd||0)-dt;if(D.rd<=0){D.rd=2;const pe=Q('#rtDip');if(pe&&pe.style.display!=='none'&&!pe.matches(':hover'))panel(true);}
   /* 호감은 천천히 0 으로 돌아가요 */
   D.t6-=dt;if(D.t6<=0){D.t6=20;for(const k in D.mod){D.mod[k]*=.93;if(Math.abs(D.mod[k])<.5)delete D.mod[k];}for(const k in D.inf)D.inf[k]=Math.max(0,D.inf[k]-1);}
