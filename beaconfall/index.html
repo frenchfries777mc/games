@@ -30,6 +30,8 @@ a{color:inherit}
 #bgshade{position:fixed;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(6,16,30,.3),rgba(6,16,30,.62) 50%,rgba(6,16,30,.82))}
 /* 픽셀 버튼 (박스 없이 버튼만) */
 .pb{display:inline-block;padding:10px 16px;border:3px solid var(--gold);border-radius:0;background:var(--btn);color:var(--cream);font:700 15px/1.2 inherit;text-decoration:none;cursor:pointer;box-shadow:4px 4px 0 #000b;text-align:center}
+.itchLink{display:inline-block;margin-top:14px;padding:5px 13px;border:2px solid var(--gold);background:var(--btn);color:var(--cream);font-size:13px;font-weight:700;text-decoration:none;box-shadow:3px 3px 0 #000b}
+.itchLink:hover{background:var(--gold);color:#10141f}
 .pb:hover,.pb.on{background:var(--gold);color:#10141f}
 .pb:active{transform:translate(3px,3px);box-shadow:1px 1px 0 #000b}
 .pb.big{font-size:21px;padding:16px 28px;border-color:var(--sky)}
@@ -107,6 +109,7 @@ footer{padding:50px 0 40px;color:var(--gold);font-size:13px;text-shadow:2px 2px 
  </div>
  <div class="row joinrow"><input class="jin" id="joinAddr" maxlength="24" autocomplete="off" spellcheck="false" data-ph="j_ph"><a class="pb" id="joinBtn" href="#play" data-i="j_btn"></a></div>
  <div class="meta" id="heroMeta" data-i="loading"></div>
+ <a class="itchLink" data-notr href="https://frenchfries777.itch.io/beaconfall" target="_blank" rel="noopener">itch.io ↗</a>
 </header>
 <section id="versions">
  <h2 data-i="v_h"></h2>
