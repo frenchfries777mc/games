@@ -121,3 +121,7 @@ Stickseum-v1.0.1.html | 1111킬 챌린지 배너 | 🔥 1111킬 챌린지 · 11/
 patchnotes.json | v762 items[1] | 메인 화면 로고를 새 로고로 교체 | build 762 | 2026-11-10
 patchnotes.json | v763 title | 카다스 암흑 덩어리 조정 | build 763 | 2026-11-10
 patchnotes.json | v763 items[0] | 카다스 암흑 덩어리 처음 크기 60에서 150으로, 최대 크기 540에서 600으로 변경 | build 763 | 2026-11-10
+patchnotes.json | v764 title | 카다스 암흑 덩어리 조정 | build 764 | 2026-11-10
+patchnotes.json | v764 items[0] | 카다스 암흑 덩어리가 줄어드는 속도를 절반으로 줄임 | build 764 | 2026-11-10
+patchnotes.json | v764 items[1] | 카다스 암흑 덩어리가 줄어드는 동안 안에 있는 적의 이동속도 25% 감소 | build 764 | 2026-11-10
+Stickseum-v1.0.1.html | 카다스 궁극기 설명 | 안에 있는 적은 이동속도 10% 감소, 1초마다 8 피해 · 피해를 줄 때마다 덩어리가 커지고, 아무에게도 못 주면 천천히 작아져 사라짐 (작아지는 동안은 이동속도 25% 감소) | build 764 | 2026-11-10
