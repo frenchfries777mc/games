@@ -125,7 +125,7 @@ function lightCss(){ var k=sitePage(); if(!k||document.getElementById('ff-light'
 function tget(){ var t='dark', z='m'; try{ var tv=localStorage.getItem(TK); if(tv==='yellow') tv='light'; else if(tv==='red'||tv==='blue') tv='dark'; if(THEMES.indexOf(tv)>=0) t=tv; var v=localStorage.getItem(SK); if(ZOOM[v]) z=v; }catch(e){} return {theme:t, size:z}; }
 function tapply(){ var st=tget(), h=document.documentElement; h.setAttribute('data-ff-theme',st.theme==='light'?'light':'dark'); h.removeAttribute('data-ff-accent'); h.setAttribute('data-ff-size',st.size); if(isSite()) h.style.zoom=ZOOM[st.size]===1?'':String(ZOOM[st.size]); }
 /* 새 디자인(2026-11-06): 검정/흰색 바탕 + 황금 포인트. 허브·게임 첫 화면·교육·도구가 같은 변수(--bg --panel --line --text --dim --fry --fry2)를 읽어요. 게임 사이트 안쪽 화면은 자기 색을 써요. */
-function skinCss(){ if(document.getElementById('ff-skin')) return; if(/\/(stickseum|crownenvoy|beaconfall|isleport|vowkeep|tumblecrown|dummyparty|gatecrash)\//i.test(location.pathname||'')) return;
+function skinCss(){ if(document.getElementById('ff-skin')) return; if(/\/(stickseum|crownenvoy|beaconfall|isleport|vowkeep|tumblecrown|dummyparty|gatecrash|kitchendefense)\//i.test(location.pathname||'')) return;
   var D='html[data-ff-theme=dark]:root', W='html[data-ff-theme=light]:root';
   var css=D+'{--bg:#0e0e0e;--panel:#171717;--panel2:#121212;--line:#2e2b25;--text:#ece6d8;--dim:#a39c8c;--fry:#d9b45f;--fry2:#b8923a;color-scheme:dark}'+
     W+'{--bg:#ffffff;--panel:#f7f5ef;--panel2:#fbfaf6;--line:#e4dfd2;--text:#111111;--dim:#4b4b4b;--fry:#c8a02a;--fry2:#d4a62a;color-scheme:light}'+

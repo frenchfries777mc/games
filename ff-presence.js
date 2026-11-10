@@ -19,6 +19,7 @@ function which(){
   if(/\/(prototypes\/vowkeep|vowkeep\/play)\//i.test(p)) return 'vowkeep';
   if(/\/prototypes\/tumblecrown\//i.test(p)) return 'tumblecrown';
   if(/\/(prototypes\/gatecrash|gatecrash\/play)\//i.test(p)) return 'gatecrash';
+  if(/\/prototypes\/kitchendefense\//i.test(p)) return 'kitchendefense';
   return null;
 }
 /* 게임이 아닌 곳은 '장소'로 따로 세요: hub(허브) / games(게임 사이트) / educations·tools(사이트) / edu_이름·tools_이름(그 프로그램) */
