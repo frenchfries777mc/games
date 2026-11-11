@@ -154,3 +154,6 @@ patchnotes.json | v776 title | 카다스 총이 왼쪽을 볼 때 뒤집히던 �
 patchnotes.json | v776 items[0] | 카다스가 왼쪽을 바라볼 때 암흑총이 위아래로 뒤집혀 보이던 문제를 고침 | build 776 | 2026-11-11
 patchnotes.json | v777 title | 제국 수호전 숙련도 웨이브당 5로 조정 | build 777 | 2026-11-11
 patchnotes.json | v777 items[0] | 제국 수호전 캐릭터 숙련도: 방어한 웨이브당 8 → 5 (완주 3은 그대로) | build 777 | 2026-11-11
+patchnotes.json | v778 title | 제국 수호전 마스터리 포인트 변경 | build 778 | 2026-11-11
+patchnotes.json | v778 items[0] | 제국 수호전 마스터리 포인트: 처치·어시스트·승리 대신 방어한 웨이브당 5, 경기를 끝까지 하면 3 | build 778 | 2026-11-11
+patchnotes.json | v778 items[1] | 제국 수호전 캐릭터 숙련도는 v777 이전처럼 다른 모드와 같은 방식으로 되돌림 | build 778 | 2026-11-11
