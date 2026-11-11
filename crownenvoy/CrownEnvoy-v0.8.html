@@ -560,7 +560,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.8 · build 194</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.8 · build 195</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div><p class="tagline">사절을 보내 동맹을 맺고, 군대를 보내 왕관을 차지하세요.</p></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -6095,7 +6095,7 @@ const UI={
     $('#evwin').addEventListener('click',e=>{e.stopPropagation();UI.nextEvent();});
     document.addEventListener('keydown',e=>{if(C.evQ&&C.evQ.length&&(e.key==='Enter'||e.key===' '||e.key==='Escape')){e.preventDefault();UI.nextEvent();}});
     $('#menu').addEventListener('input',e=>{if(e.target.id==='bgmVol'){Music.setVol(+e.target.value/100);const n=$('#bgmVolNum');if(n)n.textContent=e.target.value+'%';}});
-    ['pointerdown','keydown','touchstart'].forEach(ev=>document.addEventListener(ev,()=>{Music.want=(C.started&&C.view)?'game':'lobby';Music.start();},{passive:true}));
+    ['pointerdown','keydown','touchstart'].forEach(ev=>document.addEventListener(ev,()=>{const ed=document.getElementById('editor');Music.want=(C.started&&C.view)?'game':(ed&&!ed.classList.contains('hidden'))?'editor':'lobby';Music.start();},{passive:true}));
     $('#tabs').addEventListener('click',e=>{const b=e.target.closest('button[data-tab]');if(b){C.tab=b.dataset.tab;if(C.tab==='dip')C.unreadBy={};UI.renderTabs();UI.renderPanel();}});
     const panel=$('#panel');panel.addEventListener('click',e=>UI.onPanelClick(e));panel.addEventListener('input',e=>UI.onPanelInput(e));panel.addEventListener('compositionstart',()=>{UI._comp=1;});panel.addEventListener('compositionend',()=>{UI._comp=0;});
     panel.addEventListener('toggle',e=>{const d=e.target;if(d.dataset&&d.dataset.acc)C.acc[d.dataset.acc]=d.open;},true);
