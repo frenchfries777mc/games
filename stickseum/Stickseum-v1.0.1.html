@@ -6033,7 +6033,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-11-v773';
+const GAME_BUILD='build 2026-11-11-v774';
 const GAME_VERSION='1.0.1', GAME_VERSION_NAME='네온 시티';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -13305,8 +13305,11 @@ function rifleBarrageXs(ax){                // three missiles around the point
 }
 function magiccardTarget(p, ax, ay){ return hasAim(ax,ay) ? pickTarget(p, ax, ay) : nearestEnemyOf(p); }
 const ARM_FIRE_ULTS={pistol:1, bazooka:1, shuriken:1};   // ultimates that arm the next shot: a click while holding the key also fires that shot at the click
-function dsPlanePos(s){      // 만화가 용살자's ultimate: a big paper plane. It cannot turn on the spot: at each end it climbs in a half loop (180 degrees, up and over), then comes back down along the straight run
-  const W=MAP.arenaW, R=60, v=380, x0=W*0.2, x1=W*0.8, yRun=260, yTop=yRun-2*R, L=x1-x0, arc=Math.PI*R, cyc=2*L+2*arc;
+function dsBigMap(){ return !!MAP && (MAP.arenaW>2700 || MAP.arenaH>1100); }      // the big scrolling maps (flag maps and the like): a dragon that flies along the top of the whole map is nowhere near the fight, so there it follows its owner
+function dsPlanePos(s, ow){      // 만화가 용살자's ultimate: a big paper plane. It cannot turn on the spot: at each end it climbs in a half loop (180 degrees, up and over), then comes back down along the straight run
+  let W=MAP.arenaW, R=60, v=380, x0=W*0.2, x1=W*0.8, yRun=260;
+  if(ow && dsBigMap() && ow.x!==undefined){ x0=clamp(ow.x, 700, W-700)-600; x1=x0+1200; yRun=Math.max(260, ow.y-250); }
+  const yTop=yRun-2*R, L=x1-x0, arc=Math.PI*R, cyc=2*L+2*arc;
   let d=((v*s)%cyc+cyc)%cyc, x, y, ang;
   if(d<L){ x=x0+d; y=yTop+(yRun-yTop)*(d/L); ang=Math.atan2(yRun-yTop, L); }
   else if(d<L+arc){ const u=(d-L)/R, cy=yRun-R; x=x1+R*Math.sin(u); y=cy+R*Math.cos(u); ang=-u; }
@@ -13322,9 +13325,10 @@ function dsDragonY0(){      // 용살자 dragon: it flies a little above the HIG
   let top=1e9; for(const pl of MAP.platforms) if(pl.y<top) top=pl.y;
   const y=Math.max(110, top-130); dsDragonY0Cache={m:MAP, n:MAP.platforms.length, y:y}; return y;
 }
-function dsDragonPos(s,manga){
-  if(manga) return dsPlanePos(s);      // the dragon's flight: it flies in from above, then sweeps back and forth along the top of the map
-  const W=MAP.arenaW, x=W*0.5+Math.sin(s*0.75)*W*0.4, y=dsDragonY0()+Math.sin(s*1.9)*16-(1-Math.min(1,s/0.7))*300;
+function dsDragonPos(s,manga,ow){
+  if(manga) return dsPlanePos(s, ow);      // the dragon's flight: it flies in from above, then sweeps back and forth along the top of the map
+  const W=MAP.arenaW, big=(ow && dsBigMap() && ow.x!==undefined);
+  const x=big ? clamp(ow.x, 700, W-700)+Math.sin(s*0.75)*600 : W*0.5+Math.sin(s*0.75)*W*0.4, y=(big ? Math.max(110, ow.y-320) : dsDragonY0())+Math.sin(s*1.9)*16-(1-Math.min(1,s/0.7))*300;
   return {x:x, y:y, face:(Math.cos(s*0.75)>=0)?1:-1};
 }
 function dsDragonUlt(p, tSec, tMs){
@@ -13334,7 +13338,7 @@ function dsDragonUlt(p, tSec, tMs){
   for(let k=0;k*DS_SHOT_GAP+1.0<DS_ULT_SEC;k++){
     hostTimers.push({au:curAur, ta:fxActor, at:tSec+1.0+k*DS_SHOT_GAP, fn:(tt)=>{
       if(matchEnded || !p.alive) return;
-      const s=tt/1000-tSec, dp=dsDragonPos(s,manga), mx=manga?dp.x+Math.cos(dp.ang)*40:dp.x+dp.face*120*DS_DRAGON_SCALE, my=manga?dp.y+Math.sin(dp.ang)*40:dp.y-46*DS_DRAGON_SCALE;
+      const s=tt/1000-tSec, dp=dsDragonPos(s,manga,p), mx=manga?dp.x+Math.cos(dp.ang)*40:dp.x+dp.face*120*DS_DRAGON_SCALE, my=manga?dp.y+Math.sin(dp.ang)*40:dp.y-46*DS_DRAGON_SCALE;
       let best=null, bd=1e9; for(const o of enemiesOf(p)){ if(o.swordCharge || o.isClone) continue; const d=Math.hypot(o.x-mx,(o.y-30)-my); if(d<bd){ bd=d; best=o; } }
       if(!best) return;
       const a=Math.atan2((best.y-30)-my, best.x-mx), sp=DS_FIRE_SPEED_V;
@@ -13355,7 +13359,7 @@ function dsAssistFire(p, tSec, tMs, aimX, aimY){      // the skill key while the
   for(let k=0;k<DS_ASSIST_N;k++){
     hostTimers.push({au:curAur, ta:fxActor, at:tSec+k*DS_ASSIST_GAP, fn:(tt)=>{
       if(matchEnded || !p.alive || tt/1000>until) return;
-      const dp=dsDragonPos(tt/1000-st, manga), mx=manga?dp.x+Math.cos(dp.ang)*40:dp.x+dp.face*120*DS_DRAGON_SCALE, my=manga?dp.y+Math.sin(dp.ang)*40:dp.y-46*DS_DRAGON_SCALE;
+      const dp=dsDragonPos(tt/1000-st, manga, p), mx=manga?dp.x+Math.cos(dp.ang)*40:dp.x+dp.face*120*DS_DRAGON_SCALE, my=manga?dp.y+Math.sin(dp.ang)*40:dp.y-46*DS_DRAGON_SCALE;
       const a=Math.atan2(ty-my, tx-mx), sp=DS_FIRE_SPEED_V, dist=Math.hypot(tx-mx,ty-my);
       bullets.push({x:mx, y:my, spawnX:mx, spawnY:my, vx:Math.cos(a)*sp, vy:Math.sin(a)*sp, owner:p.id, ownerName:p.name, life:Math.max(0.05,dist/sp), boom:true, color:manga?'#f4f1e8':'#ff7a2a', dmg:DS_FIRE_DMG, wid:manga?'dspaper':'dsfire', arcs:false, splash:DS_FIRE_SPLASH, passPlatforms:true, noSelf:true, hitR:13, big:true});
       if(!manga) pushFx('dsbreath', mx, my, tt, {ang:a, pid:p.id});
@@ -14748,7 +14752,7 @@ function abilityPreviewOps(action, p, mx, my){
   const w=(action==='skill')?skW(p):((action==='ultimate')?ulW(p):p.weapon);
   if(action==='skill' && w==='dragonslayer' && dsAssistOn(p)){      // 지원 발사: where the 4 fireballs burst, and the way from the dragon's mouth
     const tx=clamp(mx,0,MAP.arenaW), ty=clamp(my,0,MAP.arenaH), d=DS_DRAGONS[p.id];
-    if(d){ const dp=dsDragonPos(Math.min((performance.now()-d.start)/1000, d.dur/1000), d.manga), fx=d.manga?dp.x+Math.cos(dp.ang)*40:dp.x+dp.face*120*DS_DRAGON_SCALE, fy=d.manga?dp.y+Math.sin(dp.ang)*40:dp.y-46*DS_DRAGON_SCALE; ops.push({t:'line', x1:fx, y1:fy, x2:tx, y2:ty, dash:true}); }
+    if(d){ const dp=dsDragonPos(Math.min((performance.now()-d.start)/1000, d.dur/1000), d.manga, p), fx=d.manga?dp.x+Math.cos(dp.ang)*40:dp.x+dp.face*120*DS_DRAGON_SCALE, fy=d.manga?dp.y+Math.sin(dp.ang)*40:dp.y-46*DS_DRAGON_SCALE; ops.push({t:'line', x1:fx, y1:fy, x2:tx, y2:ty, dash:true}); }
     ops.push(mark(tx,ty,DS_FIRE_SPLASH)); ops.push({t:'cross', x:tx, y:ty, r:10}); return ops;
   }
   if(action==='dash'){ ops.push(arrowX(localInput.left?-1:(localInput.right?1:(mx>=p.x?1:-1)), 190)); return ops; }
@@ -21031,7 +21035,7 @@ function drawPaperPlane(c, pos, alpha, now){      // the ultimate's big plane (a
 function drawDsDragons(){
   const now=performance.now();
   for(const pid in DS_DRAGONS){ const d=DS_DRAGONS[pid], s=(now-d.start)/1000; if(s>d.dur/1000+0.3){ delete DS_DRAGONS[pid]; continue; }
-    const pos=dsDragonPos(Math.min(s,d.dur/1000), d.manga), fade=s>d.dur/1000-0.4?Math.max(0,(d.dur/1000+0.3-s)/0.7):1;
+    const pos=dsDragonPos(Math.min(s,d.dur/1000), d.manga, players[pid]), fade=s>d.dur/1000-0.4?Math.max(0,(d.dur/1000+0.3-s)/0.7):1;
     if(d.manga){ drawPaperPlane(ctx, pos, Math.min(1,fade), now); continue; }
     ctx.save(); ctx.globalAlpha=Math.min(1,fade); ctx.translate(pos.x,pos.y); ctx.scale(DS_DRAGON_SCALE,DS_DRAGON_SCALE); drawFireDragon(ctx,now,pos.face,pid.length,d.breath?Math.max(0,1-(now-d.breath)/420):0); ctx.restore();
     if(Math.random()<0.6) addP({x:pos.x+pos.face*(110+Math.random()*10)*DS_DRAGON_SCALE*0.6,y:pos.y-30+Math.random()*30,vx:pos.face*RND(40,120),vy:RND(-30,40),life:RND(.3,.55),size:RND(3,6),color:Math.random()<.5?'#ff7a2a':'#ffd34d',drag:2});
