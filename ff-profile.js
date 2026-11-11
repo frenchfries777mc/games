@@ -1003,23 +1003,23 @@ function modal(T){
   document.head.appendChild(css);
   var rc=document.createElement('style'), P='html[data-ff-theme] #ffpModal ';
   rc.textContent=P.trim()+'{background:var(--ffw-ov);-webkit-backdrop-filter:none;backdrop-filter:none;font-family:"Oswald","Noto Sans KR",sans-serif}'+
-   P+':is(.D,.G,.AV,.hn){background:linear-gradient(var(--fry),var(--fry)) 18px 100%/70px 3px no-repeat,var(--bg);border:1px solid var(--fry);border-left:8px solid var(--fry);border-radius:16px;padding-bottom:18px}'+
+   P+':is(.D,.G,.AV,.hn){background:linear-gradient(var(--fry,#d9b45f),var(--fry,#d9b45f)) 18px 100%/70px 3px no-repeat,var(--bg,#0e0e0e);border:1px solid var(--fry,#d9b45f);border-left:8px solid var(--fry,#d9b45f);border-radius:16px;padding-bottom:18px}'+
    P+'.hn{border-style:solid}'+
-   P+'canvas{border:1px solid var(--fry);border-left:8px solid var(--fry);border-radius:16px;box-shadow:none;box-sizing:border-box}'+
-   P+':is(.D b,.G h5,.AV .avh b){color:var(--fry);font-family:"Oswald","Noto Sans KR",sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.05em}'+
-   P+':is(.G h5,.AV .avh b){display:block;padding-bottom:6px;margin-bottom:8px;background:linear-gradient(var(--fry),var(--fry)) 0 100%/60px 4px no-repeat}'+
-   P+'.AV .avh{background:var(--bg)}'+
-   P+'button{font-family:"Oswald","Noto Sans KR",sans-serif;font-weight:600;letter-spacing:.04em;border-radius:99px;background:var(--fry);color:var(--bg)}'+
-   P+'button.alt{background:transparent;color:var(--text);border:1px solid var(--fry)}'+
-   P+'.x{background:var(--bg);color:var(--fry);border:1px solid var(--fry);padding:0}'+
-   P+'.ch{background:transparent;color:var(--text);border:1px solid var(--fry);font-family:"Oswald","Noto Sans KR",sans-serif}'+
-   P+'.ch.on{background:var(--fry);color:var(--bg)}'+
-   P+'.bio input{background:transparent;border:1px solid var(--fry);border-radius:12px;color:var(--text)}'+
-   P+':is(.D,.DD) .av{background:transparent;border:1px solid var(--ffw-ln);color:var(--text)}'+
-   P+':is(.D,.DD) .av:hover,'+P+':is(.D,.DD) .av.on{border-color:var(--fry)}'+
-   P+':is(.D,.DD) .avq{background:transparent;border-color:var(--fry)}'+
-   P+'.sw.on i{border-color:var(--fry)}'+
-   P+'.hn a,'+P+'.m{color:var(--fry)}'+P+'.m{color:var(--text)}';
+   P+'canvas{border:1px solid var(--fry,#d9b45f);border-left:8px solid var(--fry,#d9b45f);border-radius:16px;box-shadow:none;box-sizing:border-box}'+
+   P+':is(.D b,.G h5,.AV .avh b){color:var(--fry,#d9b45f);font-family:"Oswald","Noto Sans KR",sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.05em}'+
+   P+':is(.G h5,.AV .avh b){display:block;padding-bottom:6px;margin-bottom:8px;background:linear-gradient(var(--fry,#d9b45f),var(--fry,#d9b45f)) 0 100%/60px 4px no-repeat}'+
+   P+'.AV .avh{background:var(--bg,#0e0e0e)}'+
+   P+'button{font-family:"Oswald","Noto Sans KR",sans-serif;font-weight:600;letter-spacing:.04em;border-radius:99px;background:var(--fry,#d9b45f);color:var(--bg,#0e0e0e)}'+
+   P+'button.alt{background:transparent;color:var(--text,#ece6d8);border:1px solid var(--fry,#d9b45f)}'+
+   P+'.x{background:var(--bg,#0e0e0e);color:var(--fry,#d9b45f);border:1px solid var(--fry,#d9b45f);padding:0}'+
+   P+'.ch{background:transparent;color:var(--text,#ece6d8);border:1px solid var(--fry,#d9b45f);font-family:"Oswald","Noto Sans KR",sans-serif}'+
+   P+'.ch.on{background:var(--fry,#d9b45f);color:var(--bg,#0e0e0e)}'+
+   P+'.bio input{background:transparent;border:1px solid var(--fry,#d9b45f);border-radius:12px;color:var(--text,#ece6d8)}'+
+   P+':is(.D,.DD) .av{background:transparent;border:1px solid var(--ffw-ln);color:var(--text,#ece6d8)}'+
+   P+':is(.D,.DD) .av:hover,'+P+':is(.D,.DD) .av.on{border-color:var(--fry,#d9b45f)}'+
+   P+':is(.D,.DD) .avq{background:transparent;border-color:var(--fry,#d9b45f)}'+
+   P+'.sw.on i{border-color:var(--fry,#d9b45f)}'+
+   P+'.hn a,'+P+'.m{color:var(--fry,#d9b45f)}'+P+'.m{color:var(--text,#ece6d8)}';
   document.head.appendChild(rc);
   el=document.createElement('div'); el.id='ffpModal'; el.innerHTML='<button class="x" aria-label="'+T.close+'">✕</button><div class="b"><div class="m"></div><div class="cw"><canvas width="480" height="640"></canvas><div class="AV"><div class="avh"><b></b><button type="button" class="ch avx" aria-label="✕">✕</button></div><div class="DD"></div></div></div><div class="G"></div><div class="r"><button class="s"></button><button class="alt dc"></button><button class="alt ac"></button><button class="alt k"></button><button class="alt c"></button></div><div class="hn"></div><div class="D"></div></div>';
   document.body.appendChild(el);
