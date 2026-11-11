@@ -23,7 +23,7 @@ function build(){
   document.body.insertBefore(bar,document.body.firstChild); document.documentElement.classList.add('ffhb-on');
   bar.querySelector('.tb').appendChild(acc);
   /* the hub script drives the coin chip and the search box */
-  if(!window.__ffHubJs&&!document.querySelector('script[src*="/hub.js"]')){ window.__ffHubJs=1; var s=document.createElement('script'); s.src=B+'games/hub.js?v=20261107g'; document.body.appendChild(s); }
+  if(!window.__ffHubJs&&!document.querySelector('script[src*="/hub.js"]')){ window.__ffHubJs=1; var s=document.createElement('script'); s.src=B+'games/hub.js?v=20261111a'; document.body.appendChild(s); }
 }
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',build); else build();
 })();
