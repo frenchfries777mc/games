@@ -165,3 +165,7 @@ patchnotes.json | v780 items[0] | 킬 캠: 캐릭터가 걷는 모습과 공격 
 patchnotes.json | v780 items[1] | 킬 캠: 제국 수호전에서는 반란군과 제국의 수정, 폐광 맵에서는 광산열차(광차)와 움직이는 발판이 그 순간 모습 그대로 보여요 | build 780 | 2026-11-11
 patchnotes.json | v781 title | 크레온 1세 스킬 쿨타임 증가 | build 781 | 2026-11-11
 patchnotes.json | v781 items[0] | 크레온 1세 근위병 소환 쿨타임 10.5초 → 18.5초 | build 781 | 2026-11-11
+patchnotes.json | v782 title | 버그 수정과 밸런스 조정 | build 782 | 2026-11-11
+patchnotes.json | v782 items[0] | 버그 수정: 특수요원 궁극기 방벽과 입냄새 학살자 궁극기 방패를 맵 끝에 세우면 벽과 맵 끝 사이에 낀 사람이 빠져나오지 못하던 문제 (벽은 맵 끝에서 조금 떨어져 서고, 좁은 틈으로는 밀려나지 않아요) | build 782 | 2026-11-11
+patchnotes.json | v782 items[1] | 크레온 1세: 황제의 홀 데미지 14 → 19 | build 782 | 2026-11-11
+patchnotes.json | v782 items[2] | 카다스 암흑 덩어리: 피해를 줄 때마다 커지는 양 14 → 10, 최대 크기 600 → 450 | build 782 | 2026-11-11
