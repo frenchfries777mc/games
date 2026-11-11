@@ -28,7 +28,7 @@ function css(){
   s.textContent='.ffpn{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px}'+
     '.ffpn input{flex:1 1 240px;max-width:440px;min-width:0;box-sizing:border-box;background:transparent;color:var(--text,inherit);border:1px solid var(--fry,#d9b45f);border-radius:99px;padding:8px 16px;font:inherit;font-size:15px}'+
     '.ffpn input:focus{outline:none;box-shadow:0 0 0 1px var(--fry,#d9b45f)}'+
-    'html[data-ff-theme=light] mark.ffpn-mark{background:var(--fry);color:var(--bg)}'+
+    'html[data-ff-theme=light] mark.ffpn-mark{background:var(--fry,#d9b45f);color:var(--bg,#0e0e0e)}'+
     '.ffpn input::placeholder{color:inherit;opacity:.55}'+
     '.ffpn span{font-size:13.5px;opacity:.7}'+
     '.ffpn-none{opacity:.7;padding:8px 0}'+
