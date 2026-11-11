@@ -6040,7 +6040,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-11-v775';
+const GAME_BUILD='build 2026-11-11-v776';
 const GAME_VERSION='1.0.1', GAME_VERSION_NAME='네온 시티';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -19093,7 +19093,7 @@ function drawHeldWeapon(c, weaponId, ax, ay, hx, hy, swingProg, concept){
   c.translate(hx, hy); c.rotate(ang);
   switch(w.shape){
     case 'kdgun': {      // 카다스: the dark gun (long, low, P90-like: a magazine along the top)
-      const K=kdPal(concept); c.save(); c.lineJoin='round'; c.shadowColor=K.a; c.shadowBlur=8; c.fillStyle='#0a0612'; c.strokeStyle=K.a; c.lineWidth=1.2;
+      const K=kdPal(concept); c.save(); if(ax<0) c.scale(1,-1); c.lineJoin='round'; c.shadowColor=K.a; c.shadowBlur=8; c.fillStyle='#0a0612'; c.strokeStyle=K.a; c.lineWidth=1.2;
       c.beginPath(); c.moveTo(-8,-4); c.lineTo(26,-5); c.lineTo(31,-2.5); c.lineTo(31,1); c.lineTo(22,2.6); c.lineTo(10,3.4); c.lineTo(8,11); c.lineTo(2.5,11); c.lineTo(1.5,4); c.lineTo(-8,4); c.closePath(); c.fill(); c.stroke();
       c.fillStyle=K.mid; c.beginPath(); c.moveTo(1,-5); c.lineTo(2,-9.5); c.lineTo(21,-9.5); c.lineTo(24,-5); c.closePath(); c.fill(); c.stroke();
       c.fillStyle='#0a0612'; c.beginPath(); c.rect(31,-2.6,6,2.8); c.fill(); c.stroke();
