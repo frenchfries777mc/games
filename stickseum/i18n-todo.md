@@ -150,3 +150,5 @@ patchnotes.json | v774 title | 큰 맵에서 용살자 용이 안 보이던 문�
 patchnotes.json | v774 items[0] | 깃발 뺏기 같은 큰 맵에서 용살자의 용(만화가 스킨은 종이비행기)이 맵 맨 위를 날아 화면에 안 보이던 문제를 고침: 큰 맵에서는 용이 용살자 근처 위쪽을 날아다님 | build 774 | 2026-11-11
 patchnotes.json | v775 title | 제국 수호전 숙련도 변경 | build 775 | 2026-11-11
 patchnotes.json | v775 items[0] | 제국 수호전 캐릭터 숙련도: 처치·어시스트·승리 대신 방어한 웨이브당 8, 경기를 끝까지 하면 3 | build 775 | 2026-11-11
+patchnotes.json | v776 title | 카다스 총이 왼쪽을 볼 때 뒤집히던 문제 수정 | build 776 | 2026-11-11
+patchnotes.json | v776 items[0] | 카다스가 왼쪽을 바라볼 때 암흑총이 위아래로 뒤집혀 보이던 문제를 고침 | build 776 | 2026-11-11
