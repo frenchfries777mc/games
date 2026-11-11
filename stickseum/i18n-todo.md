@@ -144,3 +144,5 @@ patchnotes.json | v771 items[0] | 사람이 함께하는 온라인 경기는 컴
 patchnotes.json | v772 title | 파티 경기도 서버 방장 · 자체 중계 서버 | build 772 | 2026-11-10
 patchnotes.json | v772 items[0] | 파티로 하는 온라인 경기도 서버가 방장을 맡음 (파티장이 서버 방에 들어가면 파티원이 같은 방으로 들어옴) | build 772 | 2026-11-10
 patchnotes.json | v772 items[1] | 온라인 연결이 막힐 때 쓰는 중계를 자체 서버로 우선 사용해 렉 감소 | build 772 | 2026-11-10
+patchnotes.json | v773 title | 카다스 패시브 공격 가속 변경 | build 773 | 2026-11-11
+patchnotes.json | v773 items[0] | 카다스 패시브 공격 가속: 상대를 맞힐 때마다 이동속도 +1% (중첩 가능), 12%가 되면 모든 쿨타임이 1초씩 차고 1초 동안 공격력이 25% 감소한 뒤 초기화됨 | build 773 | 2026-11-11
