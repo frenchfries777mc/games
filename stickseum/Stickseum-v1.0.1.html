@@ -2111,6 +2111,12 @@ const MASTERY_XP_NEEDED=[0,40,100,200,350,550,800,1100,1450,1850];       // Lv.1
 const MASTERY_STAR_LV=MASTERY_XP_NEEDED.length;      // Lv.10: the old top level. There is no top level any more, but Lv.10 keeps the gold colour, the ★ and its 50 gold bonus
 const MASTERY_FLAT_FROM=20;                          // from Lv.20 on every level costs XP_FLAT
 const MASTERY_KILL_XP=6, MASTERY_ASSIST_XP=3, MASTERY_MATCH_XP=3, MASTERY_WIN_XP=6;      // (owner 10-25: harder, about 40% less XP per match than the old 10 / 5 / 5 / 10; levels already reached stay)
+const MASTERY_DEFEND_WAVE_XP=8;      // 제국 수호전 (owner 11-11): 8 per defended wave instead of kills, 3 for finishing, nothing else
+function defendWavesDone(){      // waves that were beaten: the one still running does not count
+  if(xm && xm.id==='defend') return Math.max(0, (xm.wave||0)-(xm.active?1:0));
+  if(xmV && xmV.w!==undefined) return Math.max(0, (xmV.w||0)-((xmV.rb||0)>0?1:0));
+  return 0;
+}
 function masteryIncrement(n){ return n<MASTERY_STAR_LV ? MASTERY_XP_NEEDED[n]-MASTERY_XP_NEEDED[n-1] : Math.min(XP_FLAT, 400+50*(n-9)); }   // what it costs to go from level n to n+1
 function masteryXpForLevel(lv){                      // the total XP at which level lv is reached
   lv=Math.max(1,Math.floor(lv||1));
@@ -2137,11 +2143,12 @@ function applyWeaponMastery(me, won, assists){
   const wid=trueW(me); saveData.weaponXp=saveData.weaponXp||{};
   const before=saveData.weaponXp[wid]||0;
   const as=(assists===undefined) ? Math.max(0,Math.floor(matchAssists)||0) : Math.max(0,Math.floor(+assists)||0);     // (the assists of the match that has just ended, unless a number is handed in)
-  const gained=(me.kills||0)*MASTERY_KILL_XP + as*MASTERY_ASSIST_XP + MASTERY_MATCH_XP + (won?MASTERY_WIN_XP:0);
+  const dfn=(gameMode==='defend'), waves=dfn?defendWavesDone():0;
+  const gained=dfn ? waves*MASTERY_DEFEND_WAVE_XP+MASTERY_MATCH_XP : (me.kills||0)*MASTERY_KILL_XP + as*MASTERY_ASSIST_XP + MASTERY_MATCH_XP + (won?MASTERY_WIN_XP:0);
   saveData.weaponXp[wid]=before+gained;
   const oldLv=masteryLevelFor(before), newLv=masteryLevelFor(before+gained);
   let gold=0; for(let l=oldLv+1;l<=newLv;l++) gold+=masteryReward(l);
-  return {wid, gained, oldLv, newLv, gold, xp:before+gained, kills:me.kills||0, assists:as, won:!!won};
+  return {wid, gained, oldLv, newLv, gold, xp:before+gained, kills:me.kills||0, assists:as, won:!!won, waves:dfn?waves:-1};
 }
 let lastMastery=null; // what the finished match gave, shown on the match-end screen
 let lastMatchXp={kills:0, finish:0, win:0};
@@ -6033,7 +6040,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-11-v774';
+const GAME_BUILD='build 2026-11-11-v775';
 const GAME_VERSION='1.0.1', GAME_VERSION_NAME='네온 시티';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -12229,7 +12236,7 @@ function finishMatchEndOverlay(resultText){
   if(mEl){
     if(lastMastery){
       const lm=lastMastery, mi=masteryInfo(lm.wid), nm=WEAPON_PERSONA_NAME[lm.wid]||lm.wid;
-      let line1='🎖️ '+nm+' 숙련도 <b style="color:#ffd34d">+'+lm.gained+'</b> <span style="color:#9aa0a6">(처치 '+lm.kills+'×'+MASTERY_KILL_XP+(lm.assists>0?' + 어시스트 '+lm.assists+'×'+MASTERY_ASSIST_XP:'')+' + 완주 '+MASTERY_MATCH_XP+(lm.won?' + 승리 '+MASTERY_WIN_XP:'')+')</span>';
+      let line1='🎖️ '+nm+' 숙련도 <b style="color:#ffd34d">+'+lm.gained+'</b> <span style="color:#9aa0a6">'+(lm.waves>=0 ? '(웨이브 '+lm.waves+'×'+MASTERY_DEFEND_WAVE_XP+' + 완주 '+MASTERY_MATCH_XP+')' : '(처치 '+lm.kills+'×'+MASTERY_KILL_XP+(lm.assists>0?' + 어시스트 '+lm.assists+'×'+MASTERY_ASSIST_XP:'')+' + 완주 '+MASTERY_MATCH_XP+(lm.won?' + 승리 '+MASTERY_WIN_XP:'')+')')+'</span>';
       let line2 = lm.newLv>lm.oldLv ? ('<b style="color:#7ef0a8">Lv.'+lm.oldLv+' → Lv.'+lm.newLv+' 레벨 업!</b> +'+lm.gold+' sC') : ('Lv.'+mi.lv+(mi.next===null?' (최고 레벨)':' · 다음 레벨까지 '+(mi.next-mi.xp)+' XP'));
       mEl.innerHTML=line1+'<br>'+line2+tierGainHtml(); mEl.style.display='block';
     }
