@@ -163,3 +163,5 @@ patchnotes.json | v779 items[1] | 모드 배율: 하이퍼 배틀로얄 ×3.25, 
 patchnotes.json | v780 title | 킬 캠 보강 | build 780 | 2026-11-11
 patchnotes.json | v780 items[0] | 킬 캠: 캐릭터가 걷는 모습과 공격 동작이 그대로 움직여요 | build 780 | 2026-11-11
 patchnotes.json | v780 items[1] | 킬 캠: 제국 수호전에서는 반란군과 제국의 수정, 폐광 맵에서는 광산열차(광차)와 움직이는 발판이 그 순간 모습 그대로 보여요 | build 780 | 2026-11-11
+patchnotes.json | v781 title | 크레온 1세 스킬 쿨타임 증가 | build 781 | 2026-11-11
+patchnotes.json | v781 items[0] | 크레온 1세 근위병 소환 쿨타임 10.5초 → 18.5초 | build 781 | 2026-11-11
