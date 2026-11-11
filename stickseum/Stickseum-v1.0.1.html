@@ -2111,12 +2111,6 @@ const MASTERY_XP_NEEDED=[0,40,100,200,350,550,800,1100,1450,1850];       // Lv.1
 const MASTERY_STAR_LV=MASTERY_XP_NEEDED.length;      // Lv.10: the old top level. There is no top level any more, but Lv.10 keeps the gold colour, the ★ and its 50 gold bonus
 const MASTERY_FLAT_FROM=20;                          // from Lv.20 on every level costs XP_FLAT
 const MASTERY_KILL_XP=6, MASTERY_ASSIST_XP=3, MASTERY_MATCH_XP=3, MASTERY_WIN_XP=6;      // (owner 10-25: harder, about 40% less XP per match than the old 10 / 5 / 5 / 10; levels already reached stay)
-const MASTERY_DEFEND_WAVE_XP=5;      // 제국 수호전 (owner 11-11): 5 per defended wave instead of kills, 3 for finishing, nothing else
-function defendWavesDone(){      // waves that were beaten: the one still running does not count
-  if(xm && xm.id==='defend') return Math.max(0, (xm.wave||0)-(xm.active?1:0));
-  if(xmV && xmV.w!==undefined) return Math.max(0, (xmV.w||0)-((xmV.rb||0)>0?1:0));
-  return 0;
-}
 function masteryIncrement(n){ return n<MASTERY_STAR_LV ? MASTERY_XP_NEEDED[n]-MASTERY_XP_NEEDED[n-1] : Math.min(XP_FLAT, 400+50*(n-9)); }   // what it costs to go from level n to n+1
 function masteryXpForLevel(lv){                      // the total XP at which level lv is reached
   lv=Math.max(1,Math.floor(lv||1));
@@ -2143,12 +2137,11 @@ function applyWeaponMastery(me, won, assists){
   const wid=trueW(me); saveData.weaponXp=saveData.weaponXp||{};
   const before=saveData.weaponXp[wid]||0;
   const as=(assists===undefined) ? Math.max(0,Math.floor(matchAssists)||0) : Math.max(0,Math.floor(+assists)||0);     // (the assists of the match that has just ended, unless a number is handed in)
-  const dfn=(gameMode==='defend'), waves=dfn?defendWavesDone():0;
-  const gained=dfn ? waves*MASTERY_DEFEND_WAVE_XP+MASTERY_MATCH_XP : (me.kills||0)*MASTERY_KILL_XP + as*MASTERY_ASSIST_XP + MASTERY_MATCH_XP + (won?MASTERY_WIN_XP:0);
+  const gained=(me.kills||0)*MASTERY_KILL_XP + as*MASTERY_ASSIST_XP + MASTERY_MATCH_XP + (won?MASTERY_WIN_XP:0);
   saveData.weaponXp[wid]=before+gained;
   const oldLv=masteryLevelFor(before), newLv=masteryLevelFor(before+gained);
   let gold=0; for(let l=oldLv+1;l<=newLv;l++) gold+=masteryReward(l);
-  return {wid, gained, oldLv, newLv, gold, xp:before+gained, kills:me.kills||0, assists:as, won:!!won, waves:dfn?waves:-1};
+  return {wid, gained, oldLv, newLv, gold, xp:before+gained, kills:me.kills||0, assists:as, won:!!won};
 }
 let lastMastery=null; // what the finished match gave, shown on the match-end screen
 let lastMatchXp={kills:0, finish:0, win:0};
@@ -6040,7 +6033,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-11-v777';
+const GAME_BUILD='build 2026-11-11-v778';
 const GAME_VERSION='1.0.1', GAME_VERSION_NAME='네온 시티';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -11997,6 +11990,7 @@ function showMatchEndOverlay(resultText, winnerIds, forcedPick){
       const evSum=Object.keys(myKillByW).reduce((a,k)=>a+myKillByW[k],0);      // (when every kill was seen as an event, each kill goes to the character that made it: a duel's first character used to lose its kills when the next round's weapon arrived before the kill count did)
       for(const uw of used){ const kb=charKillsFor(uw), kk=(used.length>1)?((evSum>0 && evSum===(me.kills||0))?(myKillByW[uw]||0):(myCharKb[uw]||0)):(me.kills||0), aa=(uw===wid)?as:0; saveData.charKills[uw]=(saveData.charKills[uw]||0)+kk;
         const sh=((MODES[gameMode]||{}).autoWeapon && used.length>1)?1/used.length:1;      // relay / roulette: the win and match points are shared by the characters I was handed, not paid in full to each
+        if(gameMode==='defend'){ const dw=defendWavesDone(); saveData.charPts[uw]=kb+dw*TIER_PT_DEFEND_WAVE+TIER_PT_DEFEND_DONE; lastTierUps=lastTierUps.concat(tierUpsFor(uw, kb, saveData.charPts[uw])); lastTierGain.push({wid:uw, gained:saveData.charPts[uw]-kb, k:0, kp:0, a:0, won:false, wp:0, sp:0, st:saveData.winStreak||0, total:saveData.charPts[uw], dw:dw}); continue; }
         saveData.charPts[uw]=kb+kk*kpt+aa*TIER_PT_ASSIST+Math.round(((won?(bigm?TIER_PT_BIG_WIN:(gameMode==='duel'?TIER_PT_DUEL_WIN:(brLike(gameMode)?TIER_PT_BR_WIN:TIER_PT_WIN)))+streakPts:0)+TIER_PT_MATCH)*sh);
         lastTierUps=lastTierUps.concat(tierUpsFor(uw, kb, saveData.charPts[uw]));
         lastTierGain.push({wid:uw, gained:saveData.charPts[uw]-kb, k:kk, kp:kpt, a:aa, won, wp:(won?(bigm?TIER_PT_BIG_WIN:(gameMode==='duel'?TIER_PT_DUEL_WIN:(brLike(gameMode)?TIER_PT_BR_WIN:TIER_PT_WIN))):0), sp:(won?streakPts:0), st:saveData.winStreak||0, total:saveData.charPts[uw]}); } }
@@ -12236,7 +12230,7 @@ function finishMatchEndOverlay(resultText){
   if(mEl){
     if(lastMastery){
       const lm=lastMastery, mi=masteryInfo(lm.wid), nm=WEAPON_PERSONA_NAME[lm.wid]||lm.wid;
-      let line1='🎖️ '+nm+' 숙련도 <b style="color:#ffd34d">+'+lm.gained+'</b> <span style="color:#9aa0a6">'+(lm.waves>=0 ? '(웨이브 '+lm.waves+'×'+MASTERY_DEFEND_WAVE_XP+' + 완주 '+MASTERY_MATCH_XP+')' : '(처치 '+lm.kills+'×'+MASTERY_KILL_XP+(lm.assists>0?' + 어시스트 '+lm.assists+'×'+MASTERY_ASSIST_XP:'')+' + 완주 '+MASTERY_MATCH_XP+(lm.won?' + 승리 '+MASTERY_WIN_XP:'')+')')+'</span>';
+      let line1='🎖️ '+nm+' 숙련도 <b style="color:#ffd34d">+'+lm.gained+'</b> <span style="color:#9aa0a6">(처치 '+lm.kills+'×'+MASTERY_KILL_XP+(lm.assists>0?' + 어시스트 '+lm.assists+'×'+MASTERY_ASSIST_XP:'')+' + 완주 '+MASTERY_MATCH_XP+(lm.won?' + 승리 '+MASTERY_WIN_XP:'')+')</span>';
       let line2 = lm.newLv>lm.oldLv ? ('<b style="color:#7ef0a8">Lv.'+lm.oldLv+' → Lv.'+lm.newLv+' 레벨 업!</b> +'+lm.gold+' sC') : ('Lv.'+mi.lv+(mi.next===null?' (최고 레벨)':' · 다음 레벨까지 '+(mi.next-mi.xp)+' XP'));
       mEl.innerHTML=line1+'<br>'+line2+tierGainHtml(); mEl.style.display='block';
     }
@@ -12693,6 +12687,12 @@ const CHAR_RANKS=[
 const STREAK_BONUS=[[10,5],[7,4],[5,3],[3,2],[1,1]];
 function streakBonusFor(n){ for(const [a,b] of STREAK_BONUS) if(n>=a) return b; return 0; }       // (연승 보너스, owner 10-26: 1연승 +1, 3연승 +2, 5연승 +3, 7연승 +4, 10연승 이상 +5)
 function streakTagHtml(n){ n=Math.floor(+n||0); return n>=2 ? ' <span class="streakTag">🔥'+n+'연승</span>' : ''; }
+const TIER_PT_DEFEND_WAVE=5, TIER_PT_DEFEND_DONE=3;      // 제국 수호전 (owner 11-11): 5 per defended wave and 3 for finishing, no kills / assists / win / streak
+function defendWavesDone(){      // waves that were beaten: the one still running does not count
+  if(xm && xm.id==='defend') return Math.max(0, (xm.wave||0)-(xm.active?1:0));
+  if(xmV && xmV.w!==undefined) return Math.max(0, (xmV.w||0)-((xmV.rb||0)>0?1:0));
+  return 0;
+}
 const TIER_PT_MVP=8, TIER_PT_KILL=3, TIER_PT_ASSIST=1, TIER_PT_WIN=3, TIER_PT_MATCH=1, TIER_PT_MULT=10, TIER_PT_BIG_KILL=2, TIER_PT_BIG_WIN=3, TIER_PT_BIG_PLAYERS=6, TIER_PT_DUEL_KILL=5, TIER_PT_DUEL_WIN=10, TIER_PT_BR_KILL=5, TIER_PT_BR_WIN=8;      // (a match with 6 or more players and respawns has many kills (깃발 뺏기 about 21): kill 2 instead of 3; a duel kill is worth 5, a battle royale kill 5 (owner 10-26). TIER_PT_MULT is only how old kills are carried over: x10 keeps every rank already reached)
 { const base=CHAR_RANKS.slice(); CHAR_RANKS.length=0;      // two in-between steps (II, III) inside every rank from 브론즈 up, so a level-up comes often even though the points are 1.75x harder (owner 10-26); the skin ranks (다이아, 그랜드 마스터) keep their own names
   base.forEach((r,i)=>{ CHAR_RANKS.push({min:r.min, name:r.name, color:r.color}); const nx=base[i+1];
@@ -12720,7 +12720,7 @@ function tierGainHtml(){      // per character used: "마스터리 포인트 +N 
   const list=Array.isArray(lastTierGain)?lastTierGain:(lastTierGain?[lastTierGain]:[]); if(!list.length) return '';
   return list.map(g=>{
   const nm=WEAPON_PERSONA_NAME[g.wid]||g.wid, rk=charRankFor(g.total), idx=CHAR_RANKS.findIndex(r=>r.name===rk.name), nx=CHAR_RANKS[idx+1];
-  const parts=[]; if(g.k>0) parts.push('처치 '+g.k+'×'+g.kp); if(g.a>0) parts.push('어시스트 '+g.a+'×'+TIER_PT_ASSIST); parts.push('완주 '+TIER_PT_MATCH); if(g.won) parts.push('승리 '+g.wp); if(g.sp>0) parts.push('🔥'+g.st+'연승 +'+g.sp);
+  const parts=[]; if(g.dw!==undefined){ parts.push('웨이브 '+g.dw+'×'+TIER_PT_DEFEND_WAVE); parts.push('완주 '+TIER_PT_DEFEND_DONE); } else { if(g.k>0) parts.push('처치 '+g.k+'×'+g.kp); if(g.a>0) parts.push('어시스트 '+g.a+'×'+TIER_PT_ASSIST); parts.push('완주 '+TIER_PT_MATCH); if(g.won) parts.push('승리 '+g.wp); if(g.sp>0) parts.push('🔥'+g.st+'연승 +'+g.sp); }
   const frac=nx?clamp((g.total-rk.min)/Math.max(1,nx.min-rk.min),0,1):1;
   return '<div style="margin-top:8px; padding-top:8px; border-top:1px solid #3a3320;">🏅 '+escapeHtmlText(nm)+' 마스터리 포인트 <b style="color:#ffd34d">+'+g.gained+'</b> <span style="color:#9aa0a6">('+parts.join(' + ')+')</span>'+
     '<div style="display:flex; align-items:center; gap:12px; justify-content:center; margin-top:6px;">'+rankEmblemSvg(rk,56)+'<div style="text-align:left; min-width:190px;"><div style="font-weight:800; font-size:15px; color:'+rk.color+';">'+rk.name+'</div>'+
