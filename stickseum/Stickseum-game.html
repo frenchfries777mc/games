@@ -5507,7 +5507,7 @@ function drawMineDark(cam){      // lights out: everything is dark except a lamp
 }
 function drawMapHazards(){
   if(!MAP || !MAP.hazard) return;
-  const now=performance.now(), hz=hzDraw;
+  const now=performance.now(), hz=(killcamActive && killcamReplay && killcamReplay.hzNow) || hzDraw;      // (in a killcam the mine cart is where it was at that moment)
   if(MAP.hazard==='pipefactory'){
     ctx.save();
     for(const pl of MAP.platforms){ if(!pl.conv) continue;
@@ -6033,7 +6033,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-11-v779';
+const GAME_BUILD='build 2026-11-11-v780';
 const GAME_VERSION='1.0.1', GAME_VERSION_NAME='네온 시티';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -12054,6 +12054,9 @@ function showMatchEndOverlay(resultText, winnerIds, forcedPick){
   }
   if(!killcamStarted) finishMatchEndOverlay(resultText);
 }
+let kcAnimAt=0, kcPrevX={};
+function kcAnimStep(id, vx, grounded, dt){ if(!animPhases[id]) animPhases[id]=0; animPhases[id]+=(grounded && Math.abs(vx||0)>10)?dt*9:dt*2; }      // (the same walk cycle as updateAnimPhases, for the figures of the replay)
+function kcLastAttack(events, replayT){ let best=null; for(const ev of (events||[])){ if(ev.type==='attack' && ev.t<=replayT && (best===null || ev.t>best)) best=ev.t; } return best; }
 function killcamRenderFrame(){
   // called once per render frame while the killcam is active - advances playback, moves the camera and
   // zoom to track the current positions, and spawns the death burst exactly when the replay reaches it
@@ -12066,12 +12069,30 @@ function killcamRenderFrame(){
   const kSt = (sc && rp.scene.killerId) ? sc.players[rp.scene.killerId] : null, vSt = (sc && rp.scene.victimId) ? sc.players[rp.scene.victimId] : null;
   const killerPos = kSt ? {x:kSt.x, y:kSt.y, angle:kSt.angle} : interpolateReplayPos(rp.killer, replayT, rp.killerFallback);
   const victimPos = vSt ? {x:vSt.x, y:vSt.y, angle:vSt.angle} : interpolateReplayPos(rp.victim, replayT, rp.victimFallback);
+  { // the figures MOVE in the replay: the walk cycle runs as it did, an attack swings the arm, the moving platforms and the mine cart are where they really were then
+    const nowP=performance.now(), kdt=kcAnimAt?Math.min(0.1,(nowP-kcAnimAt)/1000):0; kcAnimAt=nowP;
+    if(kdt>0){
+      const fvx=(key,pos)=>{ const q=kcPrevX[key]; kcPrevX[key]=pos.x; return q===undefined?0:(pos.x-q)/kdt; };
+      kcAnimStep('killcam_killer', kSt?kSt.vx:fvx('k',killerPos), kSt?!!(kSt.flags&1):true, kdt);
+      kcAnimStep('killcam_victim', vSt?vSt.vx:fvx('v',victimPos), vSt?!!(vSt.flags&1):true, kdt);
+      if(sc && sc.others) for(const oid in sc.others){ const st=sc.others[oid]; kcAnimStep('killcam_o_'+oid, st.vx, !!(st.flags&1), kdt); }
+    }
+    rp.hzNow=null;
+    if(rp.scene && rp.scene.t0!==undefined){
+      const gt=rp.scene.t0+replayT;
+      try{ updateMovingPlatforms(gt); }catch(e){}
+      if(MAP && MAP.hazard==='mine'){ const C=MINE_CART, ph=2*Math.PI*(gt/1000)/C.period; rp.hzNow={w:null, dir:0, v:[], c:Math.round(C.base+C.amp*Math.sin(ph)), cd:Math.cos(ph)>=0?1:-1}; }
+    }
+  }
   const victimIsDeadNow = replayT>=0; // the victim was ALIVE for almost the whole replay (being chased, fighting back) -
   // only actually dead once playback reaches the kill moment itself, not semi-transparent the entire time
   killcamSnapshot = {
     killer: rp.killerFallback ? (kSt ? Object.assign(sceneFigure(kSt, rp.killerFallback, 'killcam_killer'), {alive:true}) : Object.assign({}, rp.killerFallback, killerPos, {alive:true})) : null,
     victim: vSt ? Object.assign(sceneFigure(vSt, rp.victimFallback, 'killcam_victim'), {alive:!victimIsDeadNow}) : Object.assign({}, rp.victimFallback, victimPos, {alive:!victimIsDeadNow})
   };
+  { const nowS=performance.now()/1000, kA=kcLastAttack(rp.killerEvents, replayT), vA=kcLastAttack(rp.victimEvents, replayT);      // an attack just made: the arm swings / the hand throws (hrAge reads lastShot)
+    if(killcamSnapshot.killer && kA!==null) killcamSnapshot.killer.lastShot=nowS-(replayT-kA)/1000;
+    if(killcamSnapshot.victim && vA!==null) killcamSnapshot.victim.lastShot=nowS-(replayT-vA)/1000; }
   killcamOverride = killcamSnapshot.killer
     ? {x:(killerPos.x+victimPos.x)/2, y:(killerPos.y+victimPos.y)/2}
     : {x:victimPos.x, y:victimPos.y};
@@ -13082,7 +13103,7 @@ function finalizeGameplayStart(mte){
     matchEnded=false; try{ rpRecStart(); }catch(e){}
     myCharKb={}; myKillByW={}; myCharUsed=[]; myTrackW=null; myTrackK=0;
     hrAxes=[]; xm=null; xmV=null; brz=null; brzV=null; particles=[]; fxSeen={}; prevGround={}; prevHp={}; hitFlashUntil={}; screenShake=0; walls=[]; hostTimers=[]; magicCircles=[]; fieldZones=[]; poisonZones=[]; turrets=[]; droneBombs=[]; fleetShows=[]; darkPools=[]; darkView=[]; lastKnownKills=0; matchAssists=0;
-    matchKillLog=[]; killcamActive=false; killcamOverride=null; killcamSnapshot=null; killcamReplay=null; killcamReplayStartAt=0; replayBuffer={}; replayFrames=[]; replayFxLog=[]; replayDefs={};
+    matchKillLog=[]; killcamActive=false; killcamOverride=null; killcamSnapshot=null; killcamReplay=null; killcamReplayStartAt=0; replayBuffer={}; replayFrames=[]; replayFxLog=[]; replayDefs={}; replayInfo={};
     hitStopUntil=0; staggers={}; setTimeout(()=>{ try{ entranceShow(); }catch(e){ console.error('[entrance]', e); } }, 450);
     if(gameMode==='parkour') initParkourItems(); // runs for host and every client alike, so everyone's item-icon rendering starts from the same "all available" state
     if(weaponCountdownTimer){ clearInterval(weaponCountdownTimer); weaponCountdownTimer=null; }
@@ -18447,6 +18468,9 @@ function replaySamplesFor(playerId, uptoT){
    victim's things, to keep it small) and sent along with the match-end message, and the killcam plays it back with the game's own drawing code. */
 const REPLAY_SCENE_MS=REPLAY_WINDOW_MS+700, REPLAY_SCENE_MAX_BYTES=200000, REPLAY_FX_RANGE=1300;
 let replayFrames=[], replayFxLog=[], replayDefs={}, replayRidSeq=0; const replayRid=new WeakMap();
+// who was on the field (name, colour, character...) of everybody seen in the recorded window: a 반란군 that was killed meanwhile is already gone from `players` when the kill is packed at the end of the match
+let replayInfo={}, replayInfoTick=0;
+function replayInfoOf(p){ const o={name:p.name, color:p.color, weapon:p.weapon, cos:p.cos, team:p.team, isBoss:p.isBoss?1:0, bt:p.bt}; if(p.isMinion) o.mn=1; if(p.isVault) o.vl=1; if(p.isCrystal) o.cr=1; return o; }
 // packed player array: [id, x, y, vx, angle, hp, flags, buff(1+index, 0 = none), vacuum stacks, spinAngle, dashRemain, teleportRemain, ultRemain, skillRemain]
 const RPI={x:1,y:2,vx:3,angle:4,hp:5,flags:6,buff:7,vac:8,spin:9,dash:10,tp:11,ult:12,skill:13};
 function replayFlagsOf(p){ return (p.grounded?1:0)|(p.alive?2:0)|(p.ultOn?4:0)|(p.invis?8:0)|(p.burning?16:0)|(p.slowed?32:0)|(p.stunned?64:0)|(p.cardSlowed?128:0)|(p.bladeSpin?256:0)|(p.teleportChannel?512:0)|(p.flaming?1024:0)|(p.batting?2048:0)|(p.isZombie?4096:0)|(p.parkourItem?8192:0)|(p.swordCharge?16384:0)|(p.darkSub?32768:0); }
@@ -18455,6 +18479,7 @@ function recordReplayScene(t){
   const tS=t/1000, fr={t, p:{}, b:[], w:[], c:[], pp:[]};
   for(const id in players){
     const p=players[id]; if(p.x===undefined) continue;
+    { const ri=replayInfo[id]; if(!ri) replayInfo[id]={i:replayInfoOf(p), seen:t}; else { ri.seen=t; if(ri.i.weapon!==p.weapon) ri.i=replayInfoOf(p); } }
     const w=WEAPONS[p.weapon], dashCd=dashCdOf(p), bi=p.buff?BUFF_ORDER.indexOf(p.buff)+1:0;
     fr.p[id]=[p.x, p.y, p.vx||0, p.angle||0, p.hp, replayFlagsOf(p), bi, p.vacuumStacks||0, p.spinAngle||0,
       Math.max(0, dashCd-(tS-(p.lastDash===undefined?-9999:p.lastDash))), Math.max(0, TELEPORT_CD-(tS-(p.lastTeleport===undefined?-9999:p.lastTeleport))),
@@ -18469,6 +18494,7 @@ function recordReplayScene(t){
   for(const wl of walls) fr.w.push([wl.x, wl.y, wl.w, wl.h, wl.owner||null, wl.isShield?1:0, wl.dmgAbsorbed||0, (wl.until!==undefined)?wl.until-tS:99]);
   for(const z of magicCircles) fr.c.push([z.x, z.y, z.r, z.owner||null, (z.until!==undefined)?z.until-tS:99]);
   replayFrames.push(fr);
+  if(++replayInfoTick>=120){ replayInfoTick=0; for(const id in replayInfo) if(t-replayInfo[id].seen>REPLAY_SCENE_MS+1500) delete replayInfo[id]; }
   while(replayFrames.length && t-replayFrames[0].t>REPLAY_SCENE_MS) replayFrames.shift();
   while(replayFxLog.length && t-replayFxLog[0].t>REPLAY_SCENE_MS) replayFxLog.shift();
 }
@@ -18521,7 +18547,7 @@ function packKillScene(ref){
     others=r.frames; pl=r.pl; defsO=r.defs;
     if(!others.length || JSON.stringify({frames,defs:Object.assign({},defsOut,defsO),fx,others,pl}).length<=REPLAY_SCENE_MAX_BYTES) break;
   }
-  return {killerId:ref.killerId, victimId:ref.victimId, frames, defs:Object.assign({}, defsOut, defsO), fx, step:keep, others, pl};
+  return {killerId:ref.killerId, victimId:ref.victimId, frames, defs:Object.assign({}, defsOut, defsO), fx, step:keep, others, pl, t0:Math.round(t0)};
 }
 const REPLAY_OTHERS_RANGE=3200, REPLAY_OTHERS_STUFF_RANGE=1800, REPLAY_OTHERS_STEP_MS=66;
 function packOthers(ref, idSet, withStuff, maxPlayers){
@@ -18536,7 +18562,7 @@ function packOthers(ref, idSet, withStuff, maxPlayers){
   }
   const ids=Object.keys(best).sort((a,b)=>best[a]-best[b]).slice(0,maxPlayers), idsSet=new Set(ids);
   if(!ids.length) return out;
-  for(const id of ids){ const p=players[id]; if(p) out.pl[id]={name:p.name, color:p.color, weapon:p.weapon, cos:p.cos, team:p.team, isBoss:p.isBoss?1:0, bt:p.bt}; }
+  for(const id of ids){ const ri=replayInfo[id], inf=ri?ri.i:(players[id]?replayInfoOf(players[id]):null); if(inf) out.pl[id]=inf; }
   const t0=ref.t, nearStuff=(f,x,y)=>key.some(k=>{ const kp=f.p[k]; return kp && Math.hypot(kp[0]-x, kp[1]-y)<=REPLAY_OTHERS_STUFF_RANGE; });
   let lastT=-1e9;
   ref.frames.forEach((f,fi)=>{
@@ -21593,7 +21619,7 @@ function render(fxDt){
       if(kcScene && kcScene.others){                      // everybody else who was around, behind the two main figures
         for(const oid in kcScene.others){
           const st=kcScene.others[oid], info=kcScene.pl && kcScene.pl[oid]; if(!info || !(st.flags&2)) continue;       // (somebody already dead is not drawn)
-          safeDraw(()=>{ const fig=Object.assign({alive:true, batting:false}, sceneFigure(st, info, 'killcam_o_'+oid)); ctx.save(); if(fig.ghost) ctx.globalAlpha=0.4; drawFigure(fig); ctx.restore(); });
+          safeDraw(()=>{ const fig=Object.assign({alive:true, batting:false}, sceneFigure(st, info, 'killcam_o_'+oid), {isMinion:!!info.mn, isVault:!!info.vl, isCrystal:!!info.cr}); ctx.save(); if(fig.ghost) ctx.globalAlpha=0.4; drawFigure(fig); ctx.restore(); });
         }
       }
       if(snap.killer){
