@@ -967,3 +967,6 @@
 ## Kitchen Defense b2 (2026-11-10)
 - 새 문구(한국어·영어만): 도전과제 14개 이름과 설명(ach/kitchendefense.json 에 en 넣음, 다른 언어는 번역 대기; prototypes/kitchendefense/index.html 안 ACH), 칭호, 핑 문구(여기/도움), 새 적 이름 말풍선 대사, 메뉴 버튼(도전과제), 최고 웨이브 문구
 
+
+## Kitchen Defense b3 (2026-11-12)
+- 새 문구(한국어만, prototypes/kitchendefense/index.html): 새로운 적 알림과 적 이름(ENM), 다음, 남은 적, 일찍 시작 보너스, 가장 활약한 타워, 결과 화면 한 줄(웨이브 N 클리어 · 처치)
