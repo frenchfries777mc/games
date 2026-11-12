@@ -958,3 +958,12 @@
 
 ## Crown Envoy b192 버전 0.8 (2026-11-09)
 - 새 문구(한국어만): 패치노트 b192, 버전 0.8 제목·요약, 실시간 전투 모드 화면 문구 전체
+
+
+
+## Kitchen Defense b1 (2026-11-10)
+- 새 문구(한국어만): 프로토타입 페이지 카드와 소개 문장(prototypes/index.html), 게임 안 문구 전부(prototypes/kitchendefense/index.html, 번역 없음)
+
+## Kitchen Defense b2 (2026-11-10)
+- 새 문구(한국어·영어만): 도전과제 14개 이름과 설명(ach/kitchendefense.json 에 en 넣음, 다른 언어는 번역 대기; prototypes/kitchendefense/index.html 안 ACH), 칭호, 핑 문구(여기/도움), 새 적 이름 말풍선 대사, 메뉴 버튼(도전과제), 최고 웨이브 문구
+

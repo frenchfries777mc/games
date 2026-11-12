@@ -165,12 +165,26 @@ function errText(e){ var m=String((e&&e.message)||''), c=String((e&&(e.code||e.e
   if(s===429||/rate limit|too many/i.test(m)) return T.rate;
   if(!s||/fetch|network|timeout|failed to|load failed/i.test(m)) return T.net;
   return T.fail; }
+/* 입력칸에서 글자를 드래그하다가 창 밖에서 마우스를 떼면 바깥을 누른 것으로 처리돼 창이 닫히던 문제: 입력칸에서 시작한 클릭은 바깥 클릭으로 보지 않아요 */
+if(!window.__ffDragGuard){ window.__ffDragGuard=1; var dgDown=null;
+  document.addEventListener('mousedown',function(e){ dgDown=e.target; },true);
+  document.addEventListener('click',function(e){ var d=dgDown; dgDown=null; if(d&&d!==e.target&&d.tagName&&/^(INPUT|TEXTAREA|SELECT)$/.test(d.tagName)&&e.target.contains&&e.target.contains(d)) e.stopImmediatePropagation(); },true); }
+/* 5분 안에 5번 틀리면 5분 동안 로그인을 막아요 (이 기기 기준) */
+var LK_KEY='ffLoginLock', LK_WIN=300000, LK_MAX=5;
+var LK_MSG={ko:'로그인을 너무 많이 틀렸어요. {0} 뒤에 다시 해 주세요.',en:'Too many failed sign-ins. Try again in {0}.'};
+function lkGet(){ try{ var o=JSON.parse(localStorage.getItem(LK_KEY)||'null'); if(o&&Array.isArray(o.f)) return o; }catch(e){} return {f:[],u:0}; }
+function lkSet(o){ try{ localStorage.setItem(LK_KEY,JSON.stringify(o)); }catch(e){} }
+function lkLeft(){ var o=lkGet(), n=Date.now(); return o.u>n?o.u-n:0; }
+function lkFail(){ var o=lkGet(), n=Date.now(); o.f=o.f.filter(function(t){ return n-t<LK_WIN; }); o.f.push(n); if(o.f.length>=LK_MAX){ o.u=n+LK_WIN; o.f=[]; } lkSet(o); }
+function lkMsg(ms){ var m=Math.max(1,Math.ceil(ms/1000)), t=m>=60?Math.ceil(m/60)+(lang()==='ko'?'분':' min'):m+(lang()==='ko'?'초':' s'); return (LK_MSG[lang()]||LK_MSG.en).replace('{0}',t); }
 async function signIn(id, pw){
+  var left=lkLeft(); if(left>0) return {error:lkMsg(left)};
   var emails=emailsFor(String(id||'').trim()), err=null, vs=pwVariants(pw);
   for(var j=0;j<emails.length;j++){
     for(var i=0;i<vs.length;i++){ var r; try{ r=await sb.auth.signInWithPassword({email:emails[j], password:vs[i]}); }catch(e){ r={error:{message:String(e&&e.message||e)}}; }
-      if(!r.error){ pwSave(id,vs[i]); await setUser(r.data.user); return {ok:true}; }
+      if(!r.error){ lkSet({f:[],u:0}); pwSave(id,vs[i]); await setUser(r.data.user); return {ok:true}; }
       err=r.error; if(errText(err)!==T.cred) return {error:errText(err)}; } }
+  lkFail(); left=lkLeft(); if(left>0) return {error:lkMsg(left)};
   return {error:errText(err)};
 }
 async function signUp(id, pw, nick){
@@ -364,44 +378,44 @@ var CSS='.ffa-btn{display:inline-flex;align-items:center;gap:6px;background:line
  '#ffaModal .sw a{font-weight:800}#ffaModal .ffa-oa{transition:border-color .15s,transform .15s}#ffaModal .ffa-oa:hover{transform:translateY(-1px)}'+
  '@media(prefers-reduced-motion:reduce){#ffaModal .b,#ffaSetup .b,#ffaFriends .b,#ffaDM .b,#ffaRep .b{animation:none}}'+
  '@media(max-width:620px){[data-ff-account] .ffa-btn,.ffa-chip{width:104px;max-width:104px}}';
-/* rich look: every window shares the front-page style (gold line, left bar, short underline, gold pills, flat var(--bg)) */
+/* rich look: every window shares the front-page style (gold line, left bar, short underline, gold pills, flat var(--bg,#0e0e0e)) */
 var W='html[data-ff-theme] ', WB=W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct:not(.inl)) .b';
 CSS+=
- W+'.ffa-btn{background:var(--fry);color:var(--bg);border-radius:99px;font-family:"Oswald","Noto Sans KR",sans-serif;font-weight:600;letter-spacing:.04em;filter:none}'+
- W+'.ffa-chip,'+W+'.ffa-hub,'+W+'.ffa-set{background:transparent;color:var(--text);border:1px solid var(--fry);border-radius:99px}'+
- W+'.ffa-menu{background:var(--bg);border:1px solid var(--fry);border-left:8px solid var(--fry);border-radius:16px;box-shadow:none}'+
- W+'.ffa-menu button:hover{background:var(--fry);color:var(--bg)}'+
+ W+'.ffa-btn{background:var(--fry,#d9b45f);color:var(--bg,#0e0e0e);border-radius:99px;font-family:"Oswald","Noto Sans KR",sans-serif;font-weight:600;letter-spacing:.04em;filter:none}'+
+ W+'.ffa-chip,'+W+'.ffa-hub,'+W+'.ffa-set{background:transparent;color:var(--text,#ece6d8);border:1px solid var(--fry,#d9b45f);border-radius:99px}'+
+ W+'.ffa-menu{background:var(--bg,#0e0e0e);border:1px solid var(--fry,#d9b45f);border-left:8px solid var(--fry,#d9b45f);border-radius:16px;box-shadow:none}'+
+ W+'.ffa-menu button:hover{background:var(--fry,#d9b45f);color:var(--bg,#0e0e0e)}'+
  W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct,#ffaWelcome){background:var(--ffw-ov,rgba(5,6,10,.78))}'+
  WB+'{background:var(--bg,var(--ffw-bg,#0e0e0e))!important;border:1px solid var(--fry,#d9b45f);border-left:8px solid var(--fry,#d9b45f)}'+
  W+'#ffaWelcome .w{background:var(--bg,var(--ffw-bg,#0e0e0e))!important}'+
  W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct,#ffaWelcome){font-family:"Oswald","Noto Sans KR",sans-serif;-webkit-backdrop-filter:none;backdrop-filter:none}'+
- WB+'{background:var(--bg);border:1px solid var(--fry);border-left:8px solid var(--fry);border-radius:16px;box-shadow:none;padding-bottom:30px}'+
- W+'#ffaWelcome .w{background:var(--bg);border:1px solid var(--fry);border-left:8px solid var(--fry);border-radius:16px;box-shadow:none}'+
+ WB+'{background:var(--bg,#0e0e0e);border:1px solid var(--fry,#d9b45f);border-left:8px solid var(--fry,#d9b45f);border-radius:16px;box-shadow:none;padding-bottom:30px}'+
+ W+'#ffaWelcome .w{background:var(--bg,#0e0e0e);border:1px solid var(--fry,#d9b45f);border-left:8px solid var(--fry,#d9b45f);border-radius:16px;box-shadow:none}'+
  WB+':before{background:none;height:0}'+
  WB+':after{display:none!important}'+
- W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) h3{font-family:"Oswald","Noto Sans KR",sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--fry);font-size:22px}'+
+ W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) h3{font-family:"Oswald","Noto Sans KR",sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--fry,#d9b45f);font-size:22px}'+
  W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) h3:after{display:none!important}'+
- W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) :is(h4,h5){color:var(--fry)}'+
- W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) :is(input,textarea,select){background:transparent;color:var(--text);border:1px solid var(--fry);border-radius:12px}'+
- W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) :is(input,textarea)::placeholder{color:var(--dim)}'+
- W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) :is(input,textarea):focus{box-shadow:0 0 0 1px var(--fry)}'+
+ W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) :is(h4,h5){color:var(--fry,#d9b45f)}'+
+ W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) :is(input,textarea,select){background:transparent;color:var(--text,#ece6d8);border:1px solid var(--fry,#d9b45f);border-radius:12px}'+
+ W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) :is(input,textarea)::placeholder{color:var(--dim,#a39c8c)}'+
+ W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) :is(input,textarea):focus{box-shadow:0 0 0 1px var(--fry,#d9b45f)}'+
  W+'#ffaModal .ffa-btn,'+W+'#ffaSetup .ffa-btn{padding:12px;font-size:16px}'+
- W+'.ffa-oa,'+W+'.ffa-lk{background:transparent;color:var(--text);border:1px solid var(--fry);border-radius:99px}'+
+ W+'.ffa-oa,'+W+'.ffa-lk{background:transparent;color:var(--text,#ece6d8);border:1px solid var(--fry,#d9b45f);border-radius:99px}'+
  W+'.ffa-oa:hover{background:var(--ffw-hv)}'+
  W+':is(#ffaModal,#ffaSetup) .sw{border:0!important;background:none!important;border-radius:0!important;box-shadow:none!important;display:block!important}'+
- W+':is(#ffaModal,#ffaSetup) .sw span{color:var(--dim)}'+
- W+':is(#ffaModal,#ffaSetup) .sw a{color:var(--fry)!important;background:none!important;font-weight:700;text-transform:uppercase;letter-spacing:.04em}'+
- W+':is(#ffaModal,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) .x,'+W+'#ffaModal .x:hover{color:var(--fry);background:transparent}'+
- W+'#ffaModal a.more,'+W+'#ffaSetup a.more{color:var(--fry)}'+
+ W+':is(#ffaModal,#ffaSetup) .sw span{color:var(--dim,#a39c8c)}'+
+ W+':is(#ffaModal,#ffaSetup) .sw a{color:var(--fry,#d9b45f)!important;background:none!important;font-weight:700;text-transform:uppercase;letter-spacing:.04em}'+
+ W+':is(#ffaModal,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) .x,'+W+'#ffaModal .x:hover{color:var(--fry,#d9b45f);background:transparent}'+
+ W+'#ffaModal a.more,'+W+'#ffaSetup a.more{color:var(--fry,#d9b45f)}'+
  W+'#ffaFriends .row,'+W+'#ffaDM :is(.row,.msg){background:transparent;border:1px solid var(--ffw-ln);border-radius:12px}'+
- W+':is(#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) :is(button.p,.nk button){background:var(--fry);color:var(--bg);border-radius:99px}'+
- W+':is(#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) .row button:not(.p){background:transparent;color:var(--text);border:1px solid var(--fry);border-radius:99px}'+
- W+'#ffaDM .m{background:transparent;border-color:var(--ffw-ln)}'+W+'#ffaDM .m.me{background:var(--ffw-hv);border-color:var(--fry)}'+
- W+':is(#ffaDM form button,#ffaRep .go){background:var(--fry);color:var(--bg);border-radius:99px}'+
- W+'#ffaDM .hd b{color:var(--fry);font-family:"Oswald","Noto Sans KR",sans-serif;text-transform:uppercase;letter-spacing:.05em}'+
- W+'#ffaAcct .pv{background:transparent;border-color:var(--fry)}'+
- W+'#ffaToast{background:var(--bg);border:1px solid var(--fry);border-left:8px solid var(--fry);border-radius:16px;box-shadow:none}'+
- W+'#ffaToast button{background:var(--fry);color:var(--bg);border-radius:99px}';
+ W+':is(#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) :is(button.p,.nk button){background:var(--fry,#d9b45f);color:var(--bg,#0e0e0e);border-radius:99px}'+
+ W+':is(#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) .row button:not(.p){background:transparent;color:var(--text,#ece6d8);border:1px solid var(--fry,#d9b45f);border-radius:99px}'+
+ W+'#ffaDM .m{background:transparent;border-color:var(--ffw-ln)}'+W+'#ffaDM .m.me{background:var(--ffw-hv);border-color:var(--fry,#d9b45f)}'+
+ W+':is(#ffaDM form button,#ffaRep .go){background:var(--fry,#d9b45f);color:var(--bg,#0e0e0e);border-radius:99px}'+
+ W+'#ffaDM .hd b{color:var(--fry,#d9b45f);font-family:"Oswald","Noto Sans KR",sans-serif;text-transform:uppercase;letter-spacing:.05em}'+
+ W+'#ffaAcct .pv{background:transparent;border-color:var(--fry,#d9b45f)}'+
+ W+'#ffaToast{background:var(--bg,#0e0e0e);border:1px solid var(--fry,#d9b45f);border-left:8px solid var(--fry,#d9b45f);border-radius:16px;box-shadow:none}'+
+ W+'#ffaToast button{background:var(--fry,#d9b45f);color:var(--bg,#0e0e0e);border-radius:99px}';
 function css(){ if(document.getElementById('ffaCss')) return; var s=document.createElement('style'); s.id='ffaCss'; s.textContent=CSS; document.head.appendChild(s); }
 
 var mode='in';
@@ -879,12 +893,12 @@ function setFill(p){
 }
 
 var NL={
- ko:{blist:'차단한 사람',bell:'알림',none:'새 알림이 없어요.',friendpost:'{0}님이 새 글을 올렸어요',mention:'{0}님이 나를 언급했어요',mentionc:'{0}님이 채팅에서 나를 불렀어요',coin:'{0}님이 Hub Coin을 보냈어요 🎁',comment:'{0}님이 내 글에 댓글을 남겼어요',like:'{0}님이 내 글을 좋아해요',friend:'{0}님이 친구 요청을 보냈어요',dm:'{0}님이 메시지를 보냈어요',invite:'{0}님이 {1} 방에 초대했어요 (코드 {2})',inviteOld:'{0}님의 초대가 지났어요',invBtn:'➕ 초대',invDone:'초대를 보냈어요',invFail:'초대를 보내지 못했어요. 잠시 뒤 다시 해 주세요.',
+ ko:{blist:'차단한 사람',bell:'알림',none:'새 알림이 없어요.',chat:'{0}님이 채팅을 보냈어요 💬',friendpost:'{0}님이 새 글을 올렸어요',mention:'{0}님이 나를 언급했어요',mentionc:'{0}님이 채팅에서 나를 불렀어요',coin:'{0}님이 Hub Coin을 보냈어요 🎁',comment:'{0}님이 내 글에 댓글을 남겼어요',like:'{0}님이 내 글을 좋아해요',friend:'{0}님이 친구 요청을 보냈어요',dm:'{0}님이 메시지를 보냈어요',invite:'{0}님이 {1} 방에 초대했어요 (코드 {2})',inviteOld:'{0}님의 초대가 지났어요',invBtn:'➕ 초대',invDone:'초대를 보냈어요',invFail:'초대를 보내지 못했어요. 잠시 뒤 다시 해 주세요.',
      feedback:'보낸 피드백을 관리자가 확인했어요',report:'보낸 신고를 관리자가 처리했어요',clear:'모두 지우기',msg:'💬 메시지',dmPh:'메시지 보내기',send:'보내기',dmEmpty:'아직 나눈 메시지가 없어요.',
      dmOnly:'친구끼리만 메시지를 보낼 수 있어요.',block:'🚫 차단',unblock:'차단 풀기',blocked:'차단한 사람이에요. 이 사람의 글과 채팅은 보이지 않아요.',report_:'🚩 신고',
      rTitle:'신고하기',rWhy:'이유',r1:'스팸 · 광고',r2:'욕설 · 괴롭힘',r3:'부적절한 사진',r4:'기타',rMore:'자세히 (선택)',rBlock:'이 사람도 차단하기',rSend:'신고 보내기',rDone:'신고했어요. 관리자가 확인할게요.',
      sureBlock:'정말 차단할까요?',blockedT:'차단했어요',err:'처리하지 못했어요. 잠시 뒤 다시 해 주세요.',notReady:'아직 준비 중이에요.'},
- en:{blist:'Blocked',bell:'Notifications',none:'No new notifications.',friendpost:'{0} posted something new',mention:'{0} mentioned you',mentionc:'{0} mentioned you in chat',coin:'{0} sent you Hub Coin 🎁',comment:'{0} commented on your post',like:'{0} liked your post',friend:'{0} sent you a friend request',dm:'{0} sent you a message',invite:'{0} invited you to a {1} room (code {2})',inviteOld:'{0}’s invite has expired',invBtn:'➕ Invite',invDone:'Invite sent',invFail:'Couldn’t send the invite. Try again soon.',
+ en:{blist:'Blocked',bell:'Notifications',none:'No new notifications.',chat:'{0} sent you a chat message 💬',friendpost:'{0} posted something new',mention:'{0} mentioned you',mentionc:'{0} mentioned you in chat',coin:'{0} sent you Hub Coin 🎁',comment:'{0} commented on your post',like:'{0} liked your post',friend:'{0} sent you a friend request',dm:'{0} sent you a message',invite:'{0} invited you to a {1} room (code {2})',inviteOld:'{0}’s invite has expired',invBtn:'➕ Invite',invDone:'Invite sent',invFail:'Couldn’t send the invite. Try again soon.',
      feedback:'The admin has seen your feedback',report:'The admin has handled your report',clear:'Clear all',msg:'💬 Message',dmPh:'Send a message',send:'Send',dmEmpty:'No messages yet.',
      dmOnly:'Only friends can message each other.',block:'🚫 Block',unblock:'Unblock',blocked:'You blocked this person. Their posts and chat are hidden.',report_:'🚩 Report',
      rTitle:'Report',rWhy:'Reason',r1:'Spam · ads',r2:'Abuse · harassment',r3:'Inappropriate photo',r4:'Other',rMore:'Details (optional)',rBlock:'Also block this person',rSend:'Send report',rDone:'Reported. The admin will take a look.',
@@ -983,6 +997,7 @@ function goNote(n){
   if(n.kind==='friend') return openFriends();
   if(n.kind==='invite'){ var v=invMap[n.ref]; if(v&&inviteLive(v)&&/^[a-z0-9_.\/-]+\.html$/i.test(v.path)&&v.path.indexOf('..')<0) window.open(inviteUrl(v),'_blank'); else toast(noteText(n)); return; }
   if(n.kind==='dm') return openDM(n.actor_id);
+  if(n.kind==='chat'){ location.href='https://frenchfries777.com/chat/?msg='+encodeURIComponent(n.ref); return; }
   if(n.kind==='coin'){ if(onHub&&window.FFHub&&FFHub.coin) return FFHub.coin(); location.href=hubUrl+'#coin'; return; }
   if(n.kind==='mentionc'){ if(onHub&&window.FFHub) return FFHub.tab('chat'); location.href=hubUrl+'#chat'; return; }
   if(n.kind==='comment'||n.kind==='like'||n.kind==='mention'||n.kind==='friendpost'){ if(onHub&&window.FFHub) return FFHub.openPost(n.ref); location.href=hubUrl+'?post='+encodeURIComponent(n.ref)+'#community'; return; }
