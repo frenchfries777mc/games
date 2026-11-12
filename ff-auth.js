@@ -165,12 +165,26 @@ function errText(e){ var m=String((e&&e.message)||''), c=String((e&&(e.code||e.e
   if(s===429||/rate limit|too many/i.test(m)) return T.rate;
   if(!s||/fetch|network|timeout|failed to|load failed/i.test(m)) return T.net;
   return T.fail; }
+/* 입력칸에서 글자를 드래그하다가 창 밖에서 마우스를 떼면 바깥을 누른 것으로 처리돼 창이 닫히던 문제: 입력칸에서 시작한 클릭은 바깥 클릭으로 보지 않아요 */
+if(!window.__ffDragGuard){ window.__ffDragGuard=1; var dgDown=null;
+  document.addEventListener('mousedown',function(e){ dgDown=e.target; },true);
+  document.addEventListener('click',function(e){ var d=dgDown; dgDown=null; if(d&&d!==e.target&&d.tagName&&/^(INPUT|TEXTAREA|SELECT)$/.test(d.tagName)&&e.target.contains&&e.target.contains(d)) e.stopImmediatePropagation(); },true); }
+/* 5분 안에 5번 틀리면 5분 동안 로그인을 막아요 (이 기기 기준) */
+var LK_KEY='ffLoginLock', LK_WIN=300000, LK_MAX=5;
+var LK_MSG={ko:'로그인을 너무 많이 틀렸어요. {0} 뒤에 다시 해 주세요.',en:'Too many failed sign-ins. Try again in {0}.'};
+function lkGet(){ try{ var o=JSON.parse(localStorage.getItem(LK_KEY)||'null'); if(o&&Array.isArray(o.f)) return o; }catch(e){} return {f:[],u:0}; }
+function lkSet(o){ try{ localStorage.setItem(LK_KEY,JSON.stringify(o)); }catch(e){} }
+function lkLeft(){ var o=lkGet(), n=Date.now(); return o.u>n?o.u-n:0; }
+function lkFail(){ var o=lkGet(), n=Date.now(); o.f=o.f.filter(function(t){ return n-t<LK_WIN; }); o.f.push(n); if(o.f.length>=LK_MAX){ o.u=n+LK_WIN; o.f=[]; } lkSet(o); }
+function lkMsg(ms){ var m=Math.max(1,Math.ceil(ms/1000)), t=m>=60?Math.ceil(m/60)+(lang()==='ko'?'분':' min'):m+(lang()==='ko'?'초':' s'); return (LK_MSG[lang()]||LK_MSG.en).replace('{0}',t); }
 async function signIn(id, pw){
+  var left=lkLeft(); if(left>0) return {error:lkMsg(left)};
   var emails=emailsFor(String(id||'').trim()), err=null, vs=pwVariants(pw);
   for(var j=0;j<emails.length;j++){
     for(var i=0;i<vs.length;i++){ var r; try{ r=await sb.auth.signInWithPassword({email:emails[j], password:vs[i]}); }catch(e){ r={error:{message:String(e&&e.message||e)}}; }
-      if(!r.error){ pwSave(id,vs[i]); await setUser(r.data.user); return {ok:true}; }
+      if(!r.error){ lkSet({f:[],u:0}); pwSave(id,vs[i]); await setUser(r.data.user); return {ok:true}; }
       err=r.error; if(errText(err)!==T.cred) return {error:errText(err)}; } }
+  lkFail(); left=lkLeft(); if(left>0) return {error:lkMsg(left)};
   return {error:errText(err)};
 }
 async function signUp(id, pw, nick){
