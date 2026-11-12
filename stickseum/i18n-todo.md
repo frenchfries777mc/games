@@ -102,3 +102,72 @@ patchnotes.json | v757 items[1] | 새 캐릭터 카다스 추가 (암흑총, 암
 patchnotes.json | v757 items[2] | 네온·카다스 스킨 6종 추가 (200·1200·3600 sC) | build 757 | 2026-11-09
 patchnotes.json | v757 items[3] | 네온 도시 인트로·로비·방 매칭 배경과 새 로고 | build 757 | 2026-11-09
 patchnotes.json | v757 items[4] | 폐허도시에서 점프로 갈 수 없던 발판 조정 | build 757 | 2026-11-09
+patchnotes.json | v758 title | 카다스 암흑 덩어리 조정 | build 758 | 2026-11-09
+patchnotes.json | v758 items[0] | 카다스 암흑 덩어리 최대 반지름 170에서 540으로 변경 | build 758 | 2026-11-09
+patchnotes.json | v759 title | 1111킬 챌린지 추가 | build 759 | 2026-11-09
+patchnotes.json | v759 items[0] | 1111킬 챌린지 추가 (11/15까지 모든 플레이어의 킬을 합쳐 1111킬을 넘기면 특별 보상) | build 759 | 2026-11-09
+patchnotes.json | v759 items[1] | 온라인 게임의 킬만 집계 (일일 모드와 실험적 모드 포함, 연습·친선·유저 맵 제외) | build 759 | 2026-11-09
+patchnotes.json | v759 items[2] | 메인 화면에 전체 킬 수와 내 킬 수 표시 | build 759 | 2026-11-09
+Stickseum-v1.0.1.html | 1111킬 챌린지 배너 | 🔥 1111킬 챌린지 · 로그인하면 참여할 수 있어요 | build 759 | 2026-11-09
+Stickseum-v1.0.1.html | 1111킬 챌린지 배너 | 🎉 1111킬 챌린지 달성! ( | build 759 | 2026-11-09
+Stickseum-v1.0.1.html | 1111킬 챌린지 배너 | 킬) · 내  | build 759 | 2026-11-09
+Stickseum-v1.0.1.html | 1111킬 챌린지 배너 | 🔥 1111킬 챌린지 · 모두 합쳐  | build 759 | 2026-11-09
+Stickseum-v1.0.1.html | 1111킬 챌린지 배너 | 일 남음 | build 759 | 2026-11-09
+patchnotes.json | v760 title | 네온 시티 로비 곡 추가 | build 760 | 2026-11-10
+patchnotes.json | v760 items[0] | 로비 곡을 네온 시티 곡으로 교체 | build 760 | 2026-11-10
+patchnotes.json | v762 title | 1111킬 챌린지 표시 수정 | build 762 | 2026-11-10
+patchnotes.json | v762 items[0] | 1111킬 챌린지 표시가 안 뜨는 문제 수정 (표시 위치를 아래로 옮기고, 서버 연결이 늦어도 계속 표시) | build 762 | 2026-11-10
+Stickseum-v1.0.1.html | 1111킬 챌린지 배너 | 🔥 1111킬 챌린지 · 11/15까지 · 불러오는 중 | build 762 | 2026-11-10
+patchnotes.json | v762 items[1] | 메인 화면 로고를 새 로고로 교체 | build 762 | 2026-11-10
+patchnotes.json | v763 title | 카다스 암흑 덩어리 조정 | build 763 | 2026-11-10
+patchnotes.json | v763 items[0] | 카다스 암흑 덩어리 처음 크기 60에서 150으로, 최대 크기 540에서 600으로 변경 | build 763 | 2026-11-10
+patchnotes.json | v764 title | 카다스 암흑 덩어리 조정 | build 764 | 2026-11-10
+patchnotes.json | v764 items[0] | 카다스 암흑 덩어리가 줄어드는 속도를 절반으로 줄임 | build 764 | 2026-11-10
+patchnotes.json | v764 items[1] | 카다스 암흑 덩어리가 줄어드는 동안 안에 있는 적의 이동속도 25% 감소 | build 764 | 2026-11-10
+Stickseum-v1.0.1.html | 카다스 궁극기 설명 | 안에 있는 적은 이동속도 10% 감소, 1초마다 8 피해 · 피해를 줄 때마다 덩어리가 커지고, 아무에게도 못 주면 천천히 작아져 사라짐 (작아지는 동안은 이동속도 25% 감소) | build 764 | 2026-11-10
+patchnotes.json | v765 title | 카다스 암흑 덩어리 감속 조정 | build 765 | 2026-11-10
+patchnotes.json | v765 items[0] | 카다스 암흑 덩어리 안의 적 이동속도 감소를 10%에서 25%로 변경 (줄어드는 중에도 같음) | build 765 | 2026-11-10
+Stickseum-v1.0.1.html | 카다스 궁극기 설명 | 안에 있는 적은 이동속도 25% 감소, 1초마다 8 피해 · 피해를 줄 때마다 덩어리가 커지고, 아무에게도 못 주면 천천히 작아져 사라짐 | build 765 | 2026-11-10
+patchnotes.json | v766 title | 카다스 암흑 덩어리 지속 조정 | build 766 | 2026-11-10
+patchnotes.json | v766 items[0] | 카다스 암흑 덩어리가 시간 제한 없이 소멸할 때까지 계속 유지 | build 766 | 2026-11-10
+patchnotes.json | v766 items[1] | 금고 약탈에서 암흑 덩어리가 금고에 피해는 주지만, 금고만 때리면 커지지 않고 줄어듦 (캐릭터를 때려야 유지) | build 766 | 2026-11-10
+patchnotes.json | v767 title | 황금 쟁탈·금고 약탈 무승부 오류 수정 | build 767 | 2026-11-10
+patchnotes.json | v767 items[0] | 황금 쟁탈·금고 약탈에서 다른 탭을 갔다 오거나 방을 나갔다 들어오면 캐릭터 선택 중에 무승부 처리되던 오류 수정 | build 767 | 2026-11-10
+patchnotes.json | v768 title | 카다스 암흑 덩어리 시야 효과 | build 768 | 2026-11-10
+patchnotes.json | v768 items[0] | 카다스 암흑 덩어리에 갇히면 주변이 어두워지고, 갇힌 플레이어 화면에서만 덩어리가 반투명하게 보여 내 위치를 알 수 있음 | build 768 | 2026-11-10
+patchnotes.json | v769 title | 카다스 암흑 덩어리 아군 표시 | build 769 | 2026-11-10
+patchnotes.json | v769 items[0] | 아군(본인 포함)의 암흑 덩어리 안에서는 주변이 어두워지지 않고, 덩어리만 반투명하게 보임 (아군에게는 디버프도 없음) | build 769 | 2026-11-10
+patchnotes.json | v770 title | 봇이 적 카다스 암흑 덩어리에서 벗어남 | build 770 | 2026-11-10
+patchnotes.json | v770 items[0] | 봇이 적 카다스 암흑 덩어리에 갇히면 잠깐 뒤(약 0.5~1초) 가까운 가장자리로 빠져나옴 (미리 피하지는 않음) | build 770 | 2026-11-10
+patchnotes.json | v771 title | 온라인 경기는 모두 서버가 방장 | build 771 | 2026-11-10
+patchnotes.json | v771 items[0] | 사람이 함께하는 온라인 경기는 컴퓨터 성능과 상관없이 모두 서버가 방장을 맡음 (봇과만 하는 경기는 전과 같이 내 컴퓨터) | build 771 | 2026-11-10
+patchnotes.json | v772 title | 파티 경기도 서버 방장 · 자체 중계 서버 | build 772 | 2026-11-10
+patchnotes.json | v772 items[0] | 파티로 하는 온라인 경기도 서버가 방장을 맡음 (파티장이 서버 방에 들어가면 파티원이 같은 방으로 들어옴) | build 772 | 2026-11-10
+patchnotes.json | v772 items[1] | 온라인 연결이 막힐 때 쓰는 중계를 자체 서버로 우선 사용해 렉 감소 | build 772 | 2026-11-10
+patchnotes.json | v773 title | 카다스 패시브 공격 가속 변경 | build 773 | 2026-11-11
+patchnotes.json | v773 items[0] | 카다스 패시브 공격 가속: 상대를 맞힐 때마다 이동속도 +1% (중첩 가능), 12%가 되면 모든 쿨타임이 1초씩 차고 1초 동안 공격력이 25% 감소한 뒤 초기화됨 | build 773 | 2026-11-11
+patchnotes.json | v774 title | 큰 맵에서 용살자 용이 안 보이던 문제 수정 | build 774 | 2026-11-11
+patchnotes.json | v774 items[0] | 깃발 뺏기 같은 큰 맵에서 용살자의 용(만화가 스킨은 종이비행기)이 맵 맨 위를 날아 화면에 안 보이던 문제를 고침: 큰 맵에서는 용이 용살자 근처 위쪽을 날아다님 | build 774 | 2026-11-11
+patchnotes.json | v775 title | 제국 수호전 숙련도 변경 | build 775 | 2026-11-11
+patchnotes.json | v775 items[0] | 제국 수호전 캐릭터 숙련도: 처치·어시스트·승리 대신 방어한 웨이브당 8, 경기를 끝까지 하면 3 | build 775 | 2026-11-11
+patchnotes.json | v776 title | 카다스 총이 왼쪽을 볼 때 뒤집히던 문제 수정 | build 776 | 2026-11-11
+patchnotes.json | v776 items[0] | 카다스가 왼쪽을 바라볼 때 암흑총이 위아래로 뒤집혀 보이던 문제를 고침 | build 776 | 2026-11-11
+patchnotes.json | v777 title | 제국 수호전 숙련도 웨이브당 5로 조정 | build 777 | 2026-11-11
+patchnotes.json | v777 items[0] | 제국 수호전 캐릭터 숙련도: 방어한 웨이브당 8 → 5 (완주 3은 그대로) | build 777 | 2026-11-11
+patchnotes.json | v778 title | 제국 수호전 마스터리 포인트 변경 | build 778 | 2026-11-11
+patchnotes.json | v778 items[0] | 제국 수호전 마스터리 포인트: 처치·어시스트·승리 대신 방어한 웨이브당 5, 경기를 끝까지 하면 3 | build 778 | 2026-11-11
+patchnotes.json | v778 items[1] | 제국 수호전 캐릭터 숙련도는 v777 이전처럼 다른 모드와 같은 방식으로 되돌림 | build 778 | 2026-11-11
+patchnotes.json | v779 title | 마스터리 점수 모드 배율 적용 | build 779 | 2026-11-11
+patchnotes.json | v779 items[0] | 마스터리 점수: 모든 모드가 같은 기본값(처치 3, 어시스트 1, 완주 1, 승리 3)에 모드 배율을 곱해 계산 (듀얼은 어시스트 없음, 연승 보너스는 배율 밖에서 그대로 더함) | build 779 | 2026-11-11
+patchnotes.json | v779 items[1] | 모드 배율: 하이퍼 배틀로얄 ×3.25, 토너먼트 ×3, 황금 쟁탈 ×1.75, 배틀로얄·배틀로얄 듀오·보스 레이드 ×1.5, 무한 대쉬 배틀로얄·듀얼·금고 약탈·깃발 뺏기 ×1.25, 점령전·색칠 전쟁·팀전 ×1, 보물 약탈·데스매치·데스매치 더블·언덕의 왕·왕관 잡기·현상금 사냥·왕 지키기 ×0.75, 무궁화 꽃이 피었습니다·얼음땡·저중력 난투 ×0.5 (제국 수호전은 웨이브당 5·완주 3 그대로) | build 779 | 2026-11-11
+patchnotes.json | v780 title | 킬 캠 보강 | build 780 | 2026-11-11
+patchnotes.json | v780 items[0] | 킬 캠: 캐릭터가 걷는 모습과 공격 동작이 그대로 움직여요 | build 780 | 2026-11-11
+patchnotes.json | v780 items[1] | 킬 캠: 제국 수호전에서는 반란군과 제국의 수정, 폐광 맵에서는 광산열차(광차)와 움직이는 발판이 그 순간 모습 그대로 보여요 | build 780 | 2026-11-11
+patchnotes.json | v781 title | 크레온 1세 스킬 쿨타임 증가 | build 781 | 2026-11-11
+patchnotes.json | v781 items[0] | 크레온 1세 근위병 소환 쿨타임 10.5초 → 18.5초 | build 781 | 2026-11-11
+patchnotes.json | v782 title | 버그 수정과 밸런스 조정 | build 782 | 2026-11-11
+patchnotes.json | v782 items[0] | 버그 수정: 특수요원 궁극기 방벽과 입냄새 학살자 궁극기 방패를 맵 끝에 세우면 벽과 맵 끝 사이에 낀 사람이 빠져나오지 못하던 문제 (벽은 맵 끝에서 조금 떨어져 서고, 좁은 틈으로는 밀려나지 않아요) | build 782 | 2026-11-11
+patchnotes.json | v782 items[1] | 크레온 1세: 황제의 홀 데미지 14 → 19 | build 782 | 2026-11-11
+patchnotes.json | v782 items[2] | 카다스 암흑 덩어리: 피해를 줄 때마다 커지는 양 14 → 10, 최대 크기 600 → 450 | build 782 | 2026-11-11
+patchnotes.json | v783 title | 카다스 암흑 덩어리 조정 | build 783 | 2026-11-11
+patchnotes.json | v783 items[0] | 카다스 암흑 덩어리: 최대 크기 450 → 540, 아무에게도 피해를 못 줄 때 줄어드는 속도 1.25배 | build 783 | 2026-11-11
