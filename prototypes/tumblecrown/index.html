@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
 <!-- 새 빌드마다 아래 ?v=271 숫자를 BUILD와 같게 올려요 (브라우저가 옛 파일을 쓰지 않게) -->
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=312","./js/main.js":"./js/main.js?v=312","./js/map.js":"./js/map.js?v=310","./js/music.js":"./js/music.js?v=310","./js/render.js":"./js/render.js?v=310","./js/sfx.js":"./js/sfx.js?v=310","./js/sim.js":"./js/sim.js?v=310","./js/tr.js":"./js/tr.js?v=310"}}</script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=315","./js/main.js":"./js/main.js?v=315","./js/map.js":"./js/map.js?v=310","./js/music.js":"./js/music.js?v=310","./js/render.js":"./js/render.js?v=310","./js/sfx.js":"./js/sfx.js?v=310","./js/sim.js":"./js/sim.js?v=310","./js/tr.js":"./js/tr.js?v=310"}}</script>
 <script src="../../ff-presence.js" async></script>
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script src="https://frenchfries777.com/games/ff-lang.js"></script>
@@ -88,7 +88,7 @@ html:not(.tcReady) #sLobby{visibility:hidden}
 #inv .in{position:relative;width:min(440px,92vw);max-height:80vh;overflow:auto;background:var(--panel);border:3px solid var(--line);box-shadow:0 0 0 3px #1a1420,0 12px 40px rgba(0,0,0,.6);padding:18px 18px 14px}
 #inv .x{position:absolute;right:10px;top:6px;background:none;border:0;font-size:26px;color:var(--dim)}#inv h2{margin:0 0 6px}
 #inv h4{margin:14px 0 6px;font-size:13px;color:var(--dim)}#inv .r{display:flex;align-items:center;gap:8px;padding:7px 10px;background:#221b28;border:2px solid #3a2f44;margin-top:6px}
-#guestAsk{display:none;position:fixed;inset:0;z-index:70;background:rgba(10,8,14,.78);align-items:center;justify-content:center}#guestAsk.on{display:flex}#guestAsk .ga{position:relative;width:min(340px,90vw);padding:18px;background:#1a1420;border:2px solid #6b5a3a;display:flex;flex-direction:column;gap:10px;text-align:center}#guestAsk .ga .x{position:absolute;right:6px;top:4px}#guestAsk .btn{padding:10px 12px;font-size:15px}#rpList .r{display:flex;gap:6px;align-items:center;margin:7px 0}#rpList .r b{flex:1;min-width:0;display:block}#rpList .r small{display:block;color:var(--dim);font-size:12px}#rpList .r .btn,#rpBar .btn,label.btn{padding:5px 10px;font-size:13px;cursor:pointer}#inv .r b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#inv .r small{color:var(--dim);font-size:12px;white-space:nowrap}#inv .r.on small{color:#7dff9b}#inv .r .btn{padding:5px 12px;font-size:13px}
+#devAsk{display:none;position:fixed;inset:0;z-index:71;background:rgba(10,8,14,.82);align-items:center;justify-content:center}#devAsk.on{display:flex}#devAsk .ga{width:min(340px,90vw);padding:18px;background:#1a1420;border:2px solid #6b5a3a;display:flex;flex-direction:column;gap:10px;text-align:center}#devAsk .btn{padding:12px;font-size:16px}#guestAsk{display:none;position:fixed;inset:0;z-index:70;background:rgba(10,8,14,.78);align-items:center;justify-content:center}#guestAsk.on{display:flex}#guestAsk .ga{position:relative;width:min(340px,90vw);padding:18px;background:#1a1420;border:2px solid #6b5a3a;display:flex;flex-direction:column;gap:10px;text-align:center}#guestAsk .ga .x{position:absolute;right:6px;top:4px}#guestAsk .btn{padding:10px 12px;font-size:15px}#rpList .r{display:flex;gap:6px;align-items:center;margin:7px 0}#rpList .r b{flex:1;min-width:0;display:block}#rpList .r small{display:block;color:var(--dim);font-size:12px}#rpList .r .btn,#rpBar .btn,label.btn{padding:5px 10px;font-size:13px;cursor:pointer}#inv .r b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#inv .r small{color:var(--dim);font-size:12px;white-space:nowrap}#inv .r.on small{color:#7dff9b}#inv .r .btn{padding:5px 12px;font-size:13px}
 .note{color:var(--dim);font-size:13px;line-height:1.5}
 .set{display:grid;grid-template-columns:140px 1fr;gap:12px 14px;align-items:center;font-size:15px}
 .seg{display:flex;gap:6px;flex-wrap:wrap}.seg button{background:#2a2230;border:2px solid var(--line);padding:6px 12px;font-size:14px}.seg button.on{border-color:var(--gold);color:var(--gold)}
@@ -212,7 +212,7 @@ body.touch #talk{bottom:228px}
 .pf .st{font-size:11px;color:#ff9c94;height:14px;margin-top:2px}
 #skills{position:absolute;right:14px;bottom:14px;display:flex;gap:8px}
 .sk{width:74px;height:66px;background:var(--panel);border:3px solid var(--line);position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;font-size:14px;overflow:hidden}
-.sk small{font-size:11px;color:var(--dim)}
+.sk .nm{display:block;max-width:100%;padding:0 3px;text-align:center;line-height:1.15;word-break:keep-all;overflow-wrap:normal}.sk small{font-size:11px;color:var(--dim)}
 .sk .cd{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.65)}
 .sk .cn{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff}
 .sk.cool .nm,.sk.cool small{opacity:.15}
@@ -263,7 +263,7 @@ body.touch #prompt.up{bottom:324px}
 #tbtns{position:absolute;right:12px;bottom:12px;width:230px;height:230px;pointer-events:auto}
 #tbtns button{position:absolute;border-radius:50%;background:rgba(14,10,18,.7);border:3px solid var(--line);font-weight:800;font-size:13px;color:var(--ink);padding:0;overflow:hidden}
 #tbtns button .cd{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.6)}
-#tbtns button span{position:relative}
+#tbtns button span{position:relative;display:block;padding:0 4px;text-align:center;line-height:1.1;word-break:keep-all;overflow-wrap:normal}
 #tA{width:96px;height:96px;right:0;bottom:0;font-size:16px!important}
 #tQ{width:60px;height:60px;right:108px;bottom:4px}#tE{width:60px;height:60px;right:100px;bottom:74px}#tR{width:60px;height:60px;right:36px;bottom:110px}
 #tRoll{width:54px;height:54px;right:168px;bottom:66px}#tF{width:54px;height:54px;right:160px;bottom:136px}
@@ -359,6 +359,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
     <span>빛 번짐</span><div class="seg" id="setBloom"><button data-v="1">켜기</button><button data-v="0">끄기</button></div>
     <span>화면 흔들림</span><div class="seg" id="setShake"><button data-v="1">켜기</button><button data-v="0">끄기</button></div>
     <span>FPS 표시</span><div class="seg" id="setFps"><button data-v="1">켜기</button><button data-v="0">끄기</button></div>
+    <span>기기</span><div class="seg" id="setDev"><button data-v="0">컴퓨터</button><button data-v="1">모바일</button></div>
     <span>최적화</span><div class="seg" id="setOpt"><button data-v="1">켜기</button><button data-v="0">끄기</button></div>
     <span>이동 방식</span><div class="seg" id="setMv"><button data-v="wasd">WASD</button><button data-v="arrows">화살표</button><button data-v="click">우클릭 · 터치</button></div>
     <span>기술 키</span><div class="seg" id="setKeys"></div>
@@ -378,6 +379,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
 
 <!-- 전투 화면 -->
 <div id="rpBar" style="display:none;position:fixed;left:10px;bottom:10px;z-index:58;gap:6px;align-items:center;padding:6px 8px;background:rgba(20,15,24,.8);border:1px solid #6b5a3a;border-radius:8px"><button class="btn" id="rpPrev">◀</button><span id="rpWho" style="min-width:90px;text-align:center;font:bold 13px Galmuri,system-ui;color:#efe3c8"></span><button class="btn" id="rpNext">▶</button><button class="btn gold" id="rpPlay">일시정지</button><button class="btn" id="rpSpd">×1</button></div>
+<div id="devAsk"><div class="ga"><h2>어떤 기기로 하나요?</h2><p>기기에 맞게 화면을 맞춰 줄게요. 나중에 설정에서 바꿀 수 있어요.</p><button class="btn gold" data-d="pc">컴퓨터</button><button class="btn gold" data-d="m">모바일</button><p class="note">모바일은 그림자와 빛 번짐을 끄고 화면을 더 크게 그려서 훨씬 부드럽게 돌아가요.</p></div></div>
 <div id="guestAsk"><div class="ga"><button class="x" id="gaX">×</button><h2>온라인 대전</h2><p>로그인하면 친구와 프로필, 허브 기록을 쓸 수 있어요.</p><button class="btn gold" id="gaLogin">로그인</button><button class="btn" id="gaGuest">게스트 모드로 하기</button><p class="note">게스트 모드에서는 온라인 게임은 할 수 있지만 친구·프로필·허브 기록은 쓸 수 없어요.</p></div></div>
 <div id="fpsBox" style="display:none;position:fixed;top:6px;right:8px;z-index:60;padding:2px 7px;font:bold 13px Galmuri,system-ui;color:#9af0a8;background:rgba(20,15,24,.65);border-radius:4px;pointer-events:none"></div><div id="hud"><div id="lbT" class="lb"></div><div id="lbB" class="lb"></div><div id="wflash"></div><div id="talk"><img class="face" alt="" id="talkFace"><b class="who" id="talkWho"></b><p id="talkText"></p></div>
   <div id="roomTag"></div>
@@ -398,7 +400,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
 <div id="touch"><div id="joy"><div id="joyBase"><div id="joyKnob"></div></div></div>
   <div id="tbtns"><button id="tA"><span>공격</span></button><button id="tQ"><i class="cd"></i><span>Q</span></button><button id="tE"><i class="cd"></i><span>E</span></button><button id="tR"><i class="cd"></i><span>R</span></button><button id="tRoll"><i class="cd"></i><span>구르기</span></button><button id="tF"><i class="cd"></i><span>귀환</span></button></div>
 </div>
-<script type="module" src="js/main.js?v=312"></script>
+<script type="module" src="js/main.js?v=315"></script>
 <div id="findBlock" style="position:fixed;inset:0;z-index:60;display:none;cursor:wait"></div>
 </body>
 </html>

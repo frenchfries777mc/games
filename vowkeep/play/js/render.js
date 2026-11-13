@@ -343,6 +343,8 @@ export class View {
     if (this.pp) this.pp.setPixelSize(P);
   }
   setPixel(ps) { this.ps = ps; this.resize(); }
+  // 모바일: 효과 조각을 더 줄여요 (최적화와 같이 켜져요)
+  setUltra(on) { this.ultra = !!on; }
   setBloom(on) { this.bloomOn = on; if (this.bloom) this.bloom.enabled = on && !this.low; }
   // 최적화: 그림자와 빛 번짐을 끄고 효과 조각을 절반으로 줄여요 (화면은 1초에 30번만 그려요, main.js)
   setLow(on) {
@@ -1145,6 +1147,7 @@ export class View {
   /* ----- 효과 ----- */
   burst(x, y, z, col, n = 8, sp = 4, life = 0.5, size = 0.12) {
     if (this.low) n = Math.ceil(n / 2);
+    if (this.ultra) n = Math.ceil(n / 2);
     for (let i = 0; i < n; i++) {
       const m = box(size, size, size, M(col, { e: col, ei: 2 }), x, y, z, this.scene); m.castShadow = false;
       const vx = (Math.random() - .5) * sp, vy = Math.random() * sp, vz = (Math.random() - .5) * sp;

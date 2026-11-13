@@ -537,6 +537,15 @@
     /* 로그인 없이 온라인 테스트 */
     "닉네임 (저장되지 않아요)": ["Nickname (not saved)", "Apodo (no se guarda)", "Pseudo (non enregistré)", "Spitzname (wird nicht gespeichert)", "ニックネーム(保存されません)"],
     "닉네임을 적어 주세요.": ["Please enter a nickname.", "Escribe un apodo.", "Saisis un pseudo.", "Bitte gib einen Spitznamen ein.", "ニックネームを入力してください。"],
+    "어떤 기기로 하세요?": ["Which device are you on?", "¿Con qué dispositivo juegas?", "Tu joues sur quel appareil ?", "Auf welchem Gerät spielst du?", "どの端末で遊びますか？"],
+    "나중에 첫 화면이나 대기실의 기기 버튼에서 바꿀 수 있어요.": ["You can change this later with the device button on the home screen or lobby.", "Puedes cambiarlo luego con el botón de dispositivo en el inicio o la sala.", "Tu pourras le changer plus tard avec le bouton d'appareil de l'accueil ou du salon.", "Das kannst du später mit der Geräte-Taste auf dem Startbildschirm oder in der Lobby ändern.", "あとでホーム画面やロビーの端末ボタンから変えられます。"],
+    "컴퓨터로 하기": ["Computer", "Ordenador", "Ordinateur", "Computer", "パソコン"],
+    "모바일로 하기": ["Mobile", "Móvil", "Mobile", "Handy", "モバイル"],
+    "기기: 컴퓨터": ["Device: Computer", "Dispositivo: ordenador", "Appareil : ordinateur", "Gerät: Computer", "端末：パソコン"],
+    "기기: 모바일": ["Device: Mobile", "Dispositivo: móvil", "Appareil : mobile", "Gerät: Handy", "端末：モバイル"],
+    "모바일로 맞췄어요. 아주 가볍게 돌아가요.": ["Set to mobile. It runs extra light now.", "Configurado para móvil. Va muy ligero.", "Réglé sur mobile. Ça tourne très léger.", "Auf Handy gestellt. Läuft jetzt extra leicht.", "モバイルにしました。とても軽く動きます。"],
+    "컴퓨터로 맞췄어요.": ["Set to computer.", "Configurado para ordenador.", "Réglé sur ordinateur.", "Auf Computer gestellt.", "パソコンにしました。"],
+    "화면이 느려서 최적화를 자동으로 켰어요. 「최적화」 버튼으로 끌 수 있어요.": ["The screen was slow, so Optimize was turned on automatically. Use the Optimize button to turn it off.", "La pantalla iba lenta, así que se activó Optimizar. Puedes apagarlo con el botón Optimizar.", "L'écran était lent, l'optimisation a été activée automatiquement. Tu peux la couper avec le bouton Optimiser.", "Das Bild war langsam, deshalb wurde Optimieren automatisch eingeschaltet. Mit der Optimieren-Taste kannst du es ausschalten.", "画面が重いので最適化を自動でオンにしました。「最適化」ボタンでオフにできます。"],
     "게스트 모드로 하기": ["Play as guest", "Jugar como invitado", "Jouer en invité", "Als Gast spielen", "ゲストで遊ぶ"],
     "로그인하거나 게스트 모드로 하기를 눌러 주세요.": ["Please log in or choose Play as guest.", "Inicia sesión o elige Jugar como invitado.", "Connecte-toi ou choisis Jouer en invité.", "Bitte melde dich an oder wähle Als Gast spielen.", "ログインするか「ゲストで遊ぶ」を押してください。"],
     "게스트 모드 · 저장은 안 돼요": ["Guest mode · nothing is saved", "Modo invitado · no se guarda nada", "Mode invité · rien n'est enregistré", "Gastmodus · nichts wird gespeichert", "ゲストモード・保存されません"],
@@ -1764,6 +1773,7 @@ body.playing #emoBar{display:flex}
    <button class="pb ghost" id="loginBtn" style="display:none">Frenchfries777 계정으로 로그인</button>
    <button class="pb ghost" id="offBtn" style="display:none">게스트 모드로 하기</button>
    <input id="nameIn" type="hidden">
+   <button class="pb ghost" id="devHomeBtn" type="button">기기: 컴퓨터</button>
    <button class="pb gold" id="hostBtn">방 만들기</button>
    <div class="seg" id="pubSeg"><button type="button" data-p="1">공개방</button><button type="button" data-p="0" class="on">비공개방</button></div>
    <button class="pb" id="soloBtn">혼자 하기</button>
@@ -1777,7 +1787,11 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b101)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b103)</summary>
+   <b>2026-11-13 · v0.1 · b103 · 저사양 자동 감지</b>
+   <ul><li>켠 뒤 처음 몇 초 동안 화면이 계속 느리면 최적화를 자동으로 켜 줘요. 한 번만 켜지고, 「최적화」 버튼으로 끌 수 있어요</li></ul>
+   <b>2026-11-13 · v0.1 · b102 · 기기 선택</b>
+   <ul><li>처음 들어오면 컴퓨터와 모바일 중 고르는 창이 떠요. 첫 화면과 대기실, 게임 화면의 기기 버튼으로 나중에 바꿀 수 있어요</li><li>컴퓨터는 지금처럼 그대로예요</li><li>모바일은 화질을 낮추고 30프레임으로 제한하고, 배경 연출과 관객·색종이·화면 흔들림을 빼서 아주 가볍게 돌아가요</li></ul>
    <b>2026-11-09 · v0.1 · b101 · 게스트 이름</b>
    <ul><li>게스트 모드의 이름은 "게스트"와 무작위 숫자 6개로 정해져요. 직접 적지 않아도 돼요</li></ul>
    <b>2026-11-09 · v0.1 · b100 · 게스트 모드</b>
@@ -1976,7 +1990,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 · b1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 42개 미니게임 중 7개 · v0.1 b101 · <a href="../">← Dummy Party 사이트로</a></p>
+  <p class="foot">2~8명 · 판마다 42개 미니게임 중 7개 · v0.1 b103 · <a href="../">← Dummy Party 사이트로</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -1997,7 +2011,7 @@ body.playing #emoBar{display:flex}
    <div class="lobSet" id="lobHost">
     <div id="botRow" style="display:none"><span>봇</span><button class="pb" id="botMinus" type="button">−</button><b id="botN"></b><button class="pb" id="botPlus" type="button">+</button></div>
     <div id="rulesRow"><span>판 수</span><button class="pb" id="rnMinus" type="button">−</button><b id="rnN"></b><button class="pb" id="rnPlus" type="button">+</button></div>
-    <button class="pb" id="rulesBtn" type="button">미니게임 고르기</button> <button class="pb" id="optLobBtn" type="button">최적화</button>
+    <button class="pb" id="rulesBtn" type="button">미니게임 고르기</button> <button class="pb" id="optLobBtn" type="button">최적화</button> <button class="pb" id="devLobBtn" type="button">기기: 컴퓨터</button>
     <button class="pb gold" id="startBtn">시작하기</button>
     <div id="startHint"></div>
    </div>
@@ -2009,7 +2023,7 @@ body.playing #emoBar{display:flex}
 
 <section class="screen" id="sGame">
  <canvas id="cv"></canvas>
- <div class="hud"><button class="hb" id="quitBtn">나가기</button><span id="hudRound"></span><button class="hb" id="sfxBtn">소리</button><button class="hb" id="optBtn">최적화</button><span id="hudScore"></span></div>
+ <div class="hud"><button class="hb" id="quitBtn">나가기</button><span id="hudRound"></span><button class="hb" id="sfxBtn">소리</button><button class="hb" id="optBtn">최적화</button><button class="hb" id="devBtn">기기: 컴퓨터</button><span id="hudScore"></span></div>
  <div id="touch"><div id="joyZone"></div><div id="joyBase"><div id="joyKnob"></div></div><button class="tbtn" id="btnB">B</button><button class="tbtn" id="btnA">A</button></div>
  <div id="emoBar"></div>
  <div class="ov" id="ov"></div>
@@ -2021,6 +2035,7 @@ body.playing #emoBar{display:flex}
   <div class="shopMain"><canvas id="decoPrev" width="168" height="208"></canvas><div class="shopGrid" id="shopGrid"></div></div>
   <div class="shopBar"><div class="sbInfo"><b id="sbName"></b><span id="sbSub"></span></div><button class="pb gold" id="sbBtn"></button></div>
 </div></div>
+<div class="dlg" id="devModal"><div class="dlgBox"><h3>어떤 기기로 하세요?</h3><p>나중에 첫 화면이나 대기실의 기기 버튼에서 바꿀 수 있어요.</p><div class="dlgBtns"><button class="pb gold" id="devPc" type="button">컴퓨터로 하기</button><button class="pb" id="devMob" type="button">모바일로 하기</button></div></div></div>
 <div class="dlg" id="rulesModal"><div class="dlgBox rulesBox"><h3>미니게임 고르기</h3><input id="rulesSearch" type="search" placeholder="미니게임 검색" autocomplete="off"><div id="rulesHint"></div><div id="rulesGrid"></div><div class="dlgBtns"><button class="pb" id="rulesAll" type="button">모두 켜기</button><button class="pb" id="rulesNone" type="button">모두 끄기</button><button class="pb gold" id="rulesClose" type="button">닫기</button></div></div></div>
 <div class="dlg" id="pracModal"><div class="dlgBox rulesBox"><h3>연습장</h3><p class="pracInfo">하나를 골라 혼자 3번 해 봐요. 봇이 한 명 같이 하고, 점수 · 코인 · 업적 · 랭킹에는 들어가지 않아요.</p><input id="pracSearch" type="search" placeholder="미니게임 검색" autocomplete="off"><div id="pracGrid" class="ruleGrid"></div><div class="dlgBtns"><button class="pb dark" id="pracClose" type="button">닫기</button></div></div></div>
 <div class="dlg" id="invModal"><div class="dlgBox rulesBox"><h3>친구 초대</h3><p class="pracInfo">초대를 받으면 허브 알림으로 가고, 누르면 이 방으로 들어와요. 30분 안에 안 들어오면 저절로 없어져요.</p><div id="invList"></div><div class="dlgBtns"><button class="pb dark" id="invClose" type="button">닫기</button></div></div></div>
@@ -2585,7 +2600,7 @@ var DANCES = [null,
 /* ===== 효과(파티클, 화면 흔들림)와 그림 아이콘 =====
    글자 대신 화면으로 알려 주기 위한 공용 도구. 아이콘은 (x, y)가 가운데, s가 한 변 크기. */
 var CAMX = 0, CAMY = 0, SHAKE = 0, PARTS = [];
-function addP(p) { if (PARTS.length < 420) PARTS.push(p); }
+function addP(p) { if (PARTS.length < (MOBX ? 50 : 420)) PARTS.push(p); }
 function burst(name, x, y) {
   var i, n, a, sp;
   function ring(c, r, life) { addP({ k: 'ring', x: x, y: y, vx: 0, vy: 0, g: 0, life: life || 0.4, max: life || 0.4, c: c, r: r || 8 }); }
@@ -8431,7 +8446,7 @@ var BGD = (function () {
   }
   function frame(now) {
     requestAnimationFrame(frame);
-    if (dead || !document.body.classList.contains('onhome')) { last = 0; return; }
+    if (dead || MOBX || !document.body.classList.contains('onhome')) { last = 0; return; }
     if (!cv) { cv = document.getElementById('homeBg'); if (!cv) return; cx = cv.getContext('2d'); }
     if (!last) last = now; var dt = Math.min(0.05, (now - last) / 1000); last = now;
     if (!st || t0 > 9) begin(); if (!st) return;
@@ -8456,7 +8471,7 @@ var PREFIX = 'ff-dummyparty-', CODE_CH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', MAX
 var PTS = [5, 3, 2, 1];
 var T_INTRO = 6, T_COUNT = 3, T_END = 4.0, T_RESULT = 6;
 // 게임 버전(0.x)과 빌드. 버전이 다르면 같은 방에 못 들어와요 (빌드가 달라도 괜찮아요). dp_config 의 min_build 보다 낮은 빌드는 dC를 못 받아요
-var DP_VER = '0.1', DP_BUILD = 101;
+var DP_VER = '0.1', DP_BUILD = 103;
 function dpNotice(msg) { dpAsk(msg, '확인', function () { }); }
 var BOT_NAMES = ['방귀쟁이', '홀쭉이', '바보1', '멍청이', '10급 공무원', '교무실 단골', '벌점부자', '말썽이', '김개똥'];
 var qs = new URLSearchParams(location.search);
@@ -9042,10 +9057,12 @@ function isTouch() { return ('ontouchstart' in window) || navigator.maxTouchPoin
 /* 최적화: 사이트 공용 설정 FFPerf(ff_perf = {low, fx, fps})를 따라요. 공용 설정이 없으면(오프라인 등) 이 게임 안의 값을 써요.
    low 또는 fx 'low' = 해상도 1배, 관객·색종이 빼기 / fx 'mid' = 색종이만 빼기 / fps 30·60 = 그 프레임으로 제한 */
 var OPT = false, OPTMID = false, FPSCAP = 0;
+/* 기기 선택: 처음에 모바일/컴퓨터를 고르고(설정에서 바꿔요), 모든 게임이 같은 키 ff_device를 읽어요. 컴퓨터는 기존 그대로, 모바일은 극단적으로 가볍게 */
+var MOBX = lsGet('ff_device') === 'mobile';
 function perfRead() {
   var p = window.FFPerf ? FFPerf.get() : { low: lsGet('dummyparty.opt') === '1' }, low = !!p.low;
   var fx = p.fx || (low ? 'low' : 'high'), fps = p.fps != null ? p.fps : (low ? 30 : 0);
-  OPT = low || fx === 'low'; OPTMID = OPT || fx === 'mid'; FPSCAP = fps === 30 || fps === 60 ? fps : 0;
+  OPT = low || fx === 'low' || MOBX; OPTMID = OPT || fx === 'mid'; FPSCAP = MOBX ? 30 : (fps === 30 || fps === 60 ? fps : 0);
 }
 perfRead();
 /* 느린 화면 안내: 최적화가 꺼져 있는데 경기 중 화면이 계속 느리면, 이 기기에서 한 번만 켜 보라고 알려 줘요 */
@@ -9055,9 +9072,31 @@ function lowHintTick(gap) {
   lhAvg = lhAvg * 0.97 + Math.min(gap, 100) * 0.03; lhN = lhAvg > 40 ? lhN + 1 : 0;
   if (lhN > 240) { lhDone = true; lsSet('dummyparty.lowHint', '1'); toast('화면이 느려요. 「최적화」 버튼을 누르면 화질과 효과를 줄여 더 부드러워져요.'); }
 }
+/* 저사양 자동 감지: 켜고 처음 몇 초의 프레임 간격을 재서 계속 느리면(평균 약 25fps 이하) 최적화를 자동으로 켜요. 한 번만, 안내는 작은 토스트로만 */
+(function () {
+  if (lsGet('dummyparty.autoLow') === '1') return;
+  var t0 = 0, n = 0, sum = 0, last = 0;
+  function f(now) {
+    if (OPT || lsGet('dummyparty.autoLow') === '1') return;
+    if (!t0) t0 = now;
+    if (last && !document.hidden) { var g = now - last; if (g < 250 && now - t0 > 1500) { n++; sum += g; } }
+    last = document.hidden ? 0 : now;
+    if (n >= 150) {
+      if (sum / n > 40) {
+        lsSet('dummyparty.autoLow', '1');
+        if (window.FFPerf) FFPerf.set({ low: true, fx: 'low', fps: 30 }); else { lsSet('dummyparty.opt', '1'); perfRead(); }
+        if (window.resize && CV) resize();
+        try { toast('화면이 느려서 최적화를 자동으로 켰어요. 「최적화」 버튼으로 끌 수 있어요.'); } catch (e) { }
+      }
+      return;
+    }
+    requestAnimationFrame(f);
+  }
+  requestAnimationFrame(f);
+})();
 var CV, CX, SCALE = 1, CSSS = 1, OFFX = 0, OFFY = 0, BTNS = [], MOUSE = { x: -1, y: -1, on: false };
 function resize() {
-  var dpr = OPT ? 1 : Math.min(window.devicePixelRatio || 1, isTouch() ? 1.5 : 2), w = innerWidth, h = innerHeight;
+  var dpr = MOBX ? 0.7 : OPT ? 1 : Math.min(window.devicePixelRatio || 1, isTouch() ? 1.5 : 2), w = innerWidth, h = innerHeight;
   CV.width = Math.round(w * dpr); CV.height = Math.round(h * dpr); CV.style.width = w + 'px'; CV.style.height = h + 'px';
   SCALE = Math.min(w / W, h / H) * dpr; CSSS = Math.min(w / W, h / H); OFFX = (CV.width - W * SCALE) / 2; OFFY = (CV.height - H * SCALE) / 2;
 }
@@ -9101,7 +9140,7 @@ function frame() {
     if ((m.phase === 'end' && !rep) || m.phase === 'result') POSEO = G.poseSaved || {};
     if (m.mg === 'uno' && s.ev && s.ev.n && s.ev.n !== G.unoN) { G.unoN = s.ev.n; flyCards(s.ev, now); }
     CX.save(); CX.beginPath(); CX.rect(0, 0, W, H); CX.clip(); CAMX = CAMY = 0; updParts(dt);
-    if (SHAKE > 0.2) CX.translate((Math.random() - 0.5) * SHAKE, (Math.random() - 0.5) * SHAKE);
+    if (SHAKE > 0.2 && !MOBX) CX.translate((Math.random() - 0.5) * SHAKE, (Math.random() - 0.5) * SHAKE);
     screenXform(CX, now, m, evl);
     var v = {
       me: G.me, t: now / 1000, dt: dt, phase: rep ? 'replay' : m.phase, players: plMap(m.players),
@@ -9437,7 +9476,8 @@ function lobDraw() {
   lobBanner(c, cw, ch, sc, '골!', LOB.gt, t, '#ffd23f'); lobBanner(c, cw, ch, sc, '스트라이크!', LOB.snT, t, '#ff7a7a');
 }
 (function () {
-  function loop() { requestAnimationFrame(loop); if ($('sLobby').classList.contains('on') && G.phase === 'lobby') lobDraw(); }
+  var lbf = 0;
+  function loop() { requestAnimationFrame(loop); if (MOBX && (lbf = (lbf + 1) % 2)) return; if ($('sLobby').classList.contains('on') && G.phase === 'lobby') lobDraw(); }
   requestAnimationFrame(loop);
 })();
 
@@ -9870,11 +9910,23 @@ function dpAsk(msg, okLabel, onOk) {
   $('optBtn').onclick = optToggle; $('optLobBtn').onclick = optToggle;
   window.addEventListener('ffperf', function () { perfRead(); optLabel(); resize(); });   // 허브 설정에서 바꿔도 바로 따라가요
   optLabel();
+  // 기기 선택 (첫 실행에 한 번 묻고, 「기기」 버튼으로 바꿔요)
+  function devLabel() { var t = MOBX ? '기기: 모바일' : '기기: 컴퓨터'; $('devHomeBtn').textContent = t; $('devBtn').textContent = t; $('devLobBtn').textContent = t; }
+  function devSet(v) {
+    var was = MOBX; lsSet('ff_device', v); MOBX = v === 'mobile';
+    if (window.FFPerf && (MOBX || was)) FFPerf.set(MOBX ? { low: true, fx: 'low', fps: 30 } : { low: false, fx: 'high', fps: 0 });
+    perfRead(); optLabel(); devLabel(); resize(); $('devModal').classList.remove('on');
+    toast(MOBX ? '모바일로 맞췄어요. 아주 가볍게 돌아가요.' : '컴퓨터로 맞췄어요.');
+  }
+  function devAsk() { $('devModal').classList.add('on'); }
+  $('devPc').onclick = function () { devSet('pc'); }; $('devMob').onclick = function () { devSet('mobile'); };
+  $('devBtn').onclick = $('devHomeBtn').onclick = $('devLobBtn').onclick = devAsk;
+  devLabel(); if (!lsGet('ff_device')) devAsk();
   // 첫 화면 마네킹 셋
   (function () {
-    var c = $('heroCv').getContext('2d'), t0 = performance.now();
+    var c = $('heroCv').getContext('2d'), t0 = performance.now(), hf = 0;
     function f() {
-      requestAnimationFrame(f); if (!$('sHome').classList.contains('on')) return;
+      requestAnimationFrame(f); if (!$('sHome').classList.contains('on')) return; if (MOBX && (hf = (hf + 1) % 4)) return;
       var t = (performance.now() - t0) / 1000; c.setTransform(2, 0, 0, 2, 0, 0); c.clearRect(0, 0, 260, 150);
       var poses = ['up', 'stand', 'push', 'stand', 'up'];
       for (var i = 0; i < 5; i++) { var bob = Math.abs(Math.sin(t * 3 + i)) * 5; drawDummy(c, 28 + i * 51, 138 - bob, { s: 1.05, color: COLORS[i], pose: poses[i], z: 0, face: i % 2 ? -1 : 1 }); }
@@ -9950,7 +10002,7 @@ function dpAsk(msg, okLabel, onOk) {
     DECO[col] = { h: d.h, g: d.g, f: d.f }; DANCE[col] = dn;
     drawDummy(pv, 42, 100, { s: (dn || (shopOn && SHOP.k === 'd')) ? 0.95 : 1.25, color: col, pose: (dn || (shopOn && SHOP.k === 'd')) ? 'dance' : 'up' });
   }
-  (function loop() { if ($('sHome').classList.contains('on')) drawPrev(); requestAnimationFrame(loop); })();
+  var pvf = 0; (function loop() { if ($('sHome').classList.contains('on') && !(MOBX && (pvf = (pvf + 1) % 4))) drawPrev(); requestAnimationFrame(loop); })();
   function fillStats() {
     var st = myStats(), box = $('stats'); box.innerHTML = '';
     [['crown', st.wins, '경기 우승'], ['flame', st.rwins, '라운드 1등'], ['go', st.matches, '경기 수']].forEach(function (x) {

@@ -285,6 +285,7 @@ function drawFx(x, fx) {
 
 /* 건물 밖 풍경 (카메라보다 천천히 움직여요) */
 function drawBackdrop(x, W, t, cx, cy, vw) {
+  if (MOBILE) { x.fillStyle = MAPS[W.id].sky[1]; x.fillRect(0, 0, vw + 2, VH + 2); return; }   // 모바일: 창밖 풍경 없이 한 가지 색
   const sk = MAPS[W.id].sky, g = x.createLinearGradient(0, 0, 0, VH); g.addColorStop(0, sk[0]); g.addColorStop(1, sk[1]); x.fillStyle = g; x.fillRect(0, 0, vw + 2, VH + 2);
   if (W.id === 'airport') { x.fillStyle = '#ffe8b0'; x.beginPath(); x.arc(vw * .78, 52 - cy * .02, 22, 0, 7); x.fill(); }
   for (let i = 0; i < 7; i++) { const px = ((i * 173 - cx * .08 - t * (3 + i)) % (vw + 160) + vw + 160) % (vw + 160) - 80; R(x, 'rgba(255,255,255,.7)', px, 26 + (i * 41) % 70, 46 + (i * 13) % 30, 7); R(x, 'rgba(255,255,255,.5)', px + 10, 20 + (i * 41) % 70, 28, 6); }
@@ -304,6 +305,7 @@ function drawBackdrop(x, W, t, cx, cy, vw) {
 }
 /* 은은한 조명과 가장자리 어둡힘 */
 function drawShade(x, W, cx, cy, vw) {
+  if (MOBILE) return;   // 모바일: 조명과 가장자리 어둡힘 없음
   x.save(); x.translate(-Math.round(cx), -Math.round(cy));
   for (const rm of W.rooms) { const X = rm.x0 * TS, Y = rm.y0 * TS, w = (rm.x1 - rm.x0 + 1) * TS, h = (rm.y1 - rm.y0 + 1) * TS;
     for (let a = X + 58; a < X + w - 20; a += 120) { if (a < cx - 80 || a > cx + vw + 80) continue; const g = x.createRadialGradient(a, Y + 4, 2, a, Y + 4, 70); g.addColorStop(0, 'rgba(255,248,210,.28)'); g.addColorStop(1, 'rgba(255,248,210,0)'); x.fillStyle = g; x.fillRect(a - 70, Y, 140, Math.min(h, 100)); } }

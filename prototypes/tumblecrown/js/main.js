@@ -54,17 +54,32 @@ function seasonId() { const d = new Date(Date.now() + 9 * 36e5); return d.getUTC
 function seasonDaysLeft() { const d = new Date(Date.now() + 9 * 36e5), end = Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1); return Math.max(1, Math.ceil((end - d.getTime()) / 864e5)); }
 const RANK_WIN = 30, RANK_LOSS = 20;   // 랭크전: 이기면 +30점, 지면 -20점 (0점 아래로는 내려가지 않아요)
 const SAVE = Object.assign({ honor: 0, xp: {}, ach: {}, clears: {}, role: 'knight', cos: { own: {}, on: {} }, set: { vol: 70, px: 3, bloom: 1, shake: 1 } }, lsGet('tumblecrown.save', {}));
+const SET0 = lsGet('tumblecrown.save', {}).set || {};   // 이 기기에서 처음 실행인지(기기 고르기) 알려고 원래 값을 기억해 둬요
 SAVE.set = Object.assign({ mv: 'wasd', keys: {}, vol: 70, px: 3, bloom: 1, shake: 1, fps: 0, opt: matchMedia('(pointer: coarse)').matches ? 1 : 0 }, SAVE.set || {});
 // 최적화: 허브 설정의 공용 값(ff_perf)이 있으면 그걸 따르고, 여기서 바꾸면 공용 값도 같이 바꿔요
 let FPS_CAP = 0;
 function perfApply() {
   let has = false; try { has = !!localStorage.getItem('ff_perf'); } catch (e) { }
-  const P = window.FFPerf && has ? FFPerf.get() : null;
+  const P = window.FFPerf && has ? FFPerf.get() : null, mob = SAVE.set.dev === 'm';   // 기기를 모바일로 고르면 최적화는 항상 켜져요
   if (P) SAVE.set.opt = P.low || P.fx === 'low' ? 1 : 0;
-  FPS_CAP = P && P.fps ? P.fps : SAVE.set.opt ? 30 : 0;
-  try { view.setLow(!!SAVE.set.opt); } catch (e) { }   // 처음 부를 때는 아직 화면(view)이 없어요
+  if (mob) SAVE.set.opt = 1;
+  FPS_CAP = mob ? 30 : P && P.fps ? P.fps : SAVE.set.opt ? 30 : 0;
+  try { view.setLow(!!SAVE.set.opt); view.setMobile(mob); view.shakeOn = mob ? false : !!SAVE.set.shake; } catch (e) { }   // 처음 부를 때는 아직 화면(view)이 없어요
 }
 perfApply();
+// 기기 고르기: 처음 한 번 묻고, 나중에는 설정에서 바꿔요. 컴퓨터는 지금 성능 그대로, 모바일은 극단적으로 줄여요
+function setDevice(d) {
+  SAVE.set.dev = d;
+  if (d === 'pc' && SET0.opt === undefined) SAVE.set.opt = 0;   // 새 기기에서 컴퓨터를 고르면 기본 화질 (이미 직접 정해 둔 값은 그대로)
+  if (d === 'm') SAVE.set.opt = 1;
+  try { if (window.FFPerf && (d === 'm' || SAVE.set.opt === 0)) FFPerf.set({ low: !!SAVE.set.opt, fx: SAVE.set.opt ? 'low' : 'high', fps: SAVE.set.opt ? 30 : 0 }); } catch (e) { }
+  save(); perfApply();
+}
+function askDevice() {
+  if (SAVE.set.dev || S.srv || S.net || qs.get('test') || qs.get('dedicated') || qs.get('auto')) return;
+  const m = $('devAsk'); m.classList.add('on');
+  m.querySelectorAll('button[data-d]').forEach(b => b.onclick = () => { SFX.play('click'); setDevice(b.dataset.d); m.classList.remove('on'); if (S.scr === 'sSettings') paintSettings(); });
+}
 addEventListener('ffperf', () => { perfApply(); if (S.scr === 'sSettings') paintSettings(); });
 // 저사양 안내는 이 기기에서 한 번만 해요 (설정의 「최적화」는 사용자가 직접 켭니다)
 let lowHintDone = false; try { lowHintDone = !!localStorage.getItem('tc_lowHint'); } catch (e) { }
@@ -86,17 +101,17 @@ const S = {
 };
 S.chSel = chOpen();
 const view = new View($('gl'));
-view.lobbyFlags = SAVE.flags; view.cos = {}; view.setLow(!!SAVE.set.opt); view.setPixel(SAVE.set.px); view.setBloom(!!SAVE.set.bloom); view.shakeOn = !!SAVE.set.shake; SFX.setVol(SAVE.set.vol / 100); MUS.setVol((SAVE.set.mus != null ? SAVE.set.mus : SAVE.set.vol) / 100);
+view.lobbyFlags = SAVE.flags; view.cos = {}; view.setLow(!!SAVE.set.opt); view.setPixel(SAVE.set.px); view.setBloom(!!SAVE.set.bloom); view.shakeOn = !!SAVE.set.shake; perfApply(); SFX.setVol(SAVE.set.vol / 100); MUS.setVol((SAVE.set.mus != null ? SAVE.set.mus : SAVE.set.vol) / 100);
 // 처음 인트로: 글자 두 장면(Made by / With). 건너뛸 수 없어요 (끝까지 재생). 뒤에는 로비 장면이 깔려 있어요
 let INTRO = !(qs.get('test') && /^(localhost|127\.0\.0\.1)$/.test(location.hostname));
 window.__introSongDone = INTRO ? 0 : 1;
 view.buildLobby(false);   // 인트로 배경은 진짜 봇 경기를 찍은 영상 (intro-battle). 영상이 안 나오면 직접 그린 싸움 장면으로 대신해요
 if (INTRO) { const tv = $('tcVid'); if (tv) { const bad = () => { if (INTRO) view.buildLobby(true); tv.remove(); }; tv.addEventListener('error', bad, true); tv.play && tv.play().catch(() => { }); } }
-if (INTRO) MUS.sting(() => setTimeout(() => { view.buildLobby(false); INTRO = false; window.__introSongDone = 1; document.documentElement.classList.add('tcReady'); $('tcIntro').classList.add('out'); setTimeout(() => $('tcIntro').remove(), 900); }, 6200), h => {
+if (INTRO) MUS.sting(() => setTimeout(() => { view.buildLobby(false); INTRO = false; window.__introSongDone = 1; document.documentElement.classList.add('tcReady'); $('tcIntro').classList.add('out'); setTimeout(askDevice, 900); setTimeout(() => $('tcIntro').remove(), 900); }, 6200), h => {
   const el = $('tcIntro'); el.classList.toggle('hold', h);
   if (h) { const t = document.createElement('div'); t.id = 'tcHold'; t.textContent = T('화면을 누르면 시작해요'); el.appendChild(t); } else { const t = $('tcHold'); if (t) t.remove(); }
 });
-else { document.documentElement.classList.add('tcReady'); $('tcIntro').remove(); }
+else { document.documentElement.classList.add('tcReady'); $('tcIntro').remove(); setTimeout(askDevice, 900); }
 addEventListener('resize', () => { view.resize(); sizeOv(); });
 const ov = $('ov'), oc = ov.getContext('2d');
 function sizeOv() { const d = Math.min(2, devicePixelRatio || 1); ov.width = innerWidth * d; ov.height = innerHeight * d; oc.setTransform(d, 0, 0, d, 0, 0); }
@@ -358,6 +373,7 @@ function paintSettings() {
   seg('setBloom', SAVE.set.bloom, v => { SAVE.set.bloom = v; view.setBloom(!!v); });
   seg('setShake', SAVE.set.shake, v => { SAVE.set.shake = v; view.shakeOn = !!v; });
   seg('setFps', SAVE.set.fps, v => { SAVE.set.fps = v; });
+  seg('setDev', SAVE.set.dev === 'm' ? 1 : 0, v => setDevice(v ? 'm' : 'pc'));
   seg('setOpt', SAVE.set.opt, v => { SAVE.set.opt = v; try { if (window.FFPerf) FFPerf.set({ low: !!v, fx: v ? 'low' : 'high', fps: v ? 30 : 0 }); } catch (e) { } perfApply(); });
 }
 $('setVol').oninput = e => { SAVE.set.vol = +e.target.value; SFX.setVol(SAVE.set.vol / 100); save(); };
@@ -805,6 +821,7 @@ function beginGame(prevG) {
   if (!prevG && !(DEV_CH)) S.chSel = (S.net === 'solo' || S.priv) && !S.range && S.mapSel >= 0 ? S.mapSel : Math.random() * CHAPTERS.length | 0;   // 지도는 판마다 무작위 (온라인은 방장이 골라 모두에게 알려요)
   const seed = (Math.random() * 4e9) >>> 0; S.G = createGame(sl, seed, S.chSel, pmode());
   if (S.range) { S.G.range = true; setupRange(S.G); toast(T('연습장이에요. 허수아비를 쳐 보세요. 나가기를 누르면 직업을 바꿀 수 있어요.'), 6000); }
+  if (SAVE.set.dev === 'm' && !S.range && !prevG) S.lite = true;   // 모바일은 봇 판단과 전송도 가볍게
   S.G.lite = !!S.lite; 
   RP.recDrop(); if (!prevG && !S.range && !S.info && !S.srv && S.G.pvp) RP.recStart(S.G, sl.map(q => { const o = Object.assign({}, q); delete o.uid; return o; }), S.G.ch, (sl.find(q => q.uid === UID) || {}).id, seed);   // 경기를 다시 볼 수 있게 시작 조건을 적어 둬요
   S.G.players.forEach((p, i) => { p.uid = sl[i].uid; });
@@ -891,6 +908,8 @@ $('rpPrev').onclick = () => rpCycle(-1); $('rpNext').onclick = () => rpCycle(1);
 function goBots(G, tm, x, z) { RP.recOp(G, 'c', tm, x, z); callBots(G, tm, x, z); }
 function sur(G, p) { RP.recOp(G, 's', p.id); surVote(G, p); }
 function bless(G, pid, id) { RP.recOp(G, 'z', pid, id); chooseBless(G, pid, id); }
+// 스킬 이름이 길면 글자를 줄여서 이상하게 끊기지 않게 해요 (띄어쓰기에서만 줄을 바꿔요, CSS word-break: keep-all)
+function skFs(n, base) { const l = String(n).replace(/\s/g, '').length; return l <= 3 ? base : l <= 5 ? base - 2 : l <= 7 ? base - 3 : base - 4; }
 function myP() { return S.snap && S.snap.pl.find(p => p.id === S.me); }
 function awardHonor() {
   if (S.saved || !S.snap || !S.me) return; S.saved = true;
@@ -1465,7 +1484,7 @@ function paintHud() {
   // 기술 칸
   if (me) {
     const R = ROLES[me.role], sk = $('skills');
-    const kbs = JSON.stringify(KB()); if (sk.dataset.role !== me.role || sk.dataset.kb !== kbs) { sk.dataset.role = me.role; sk.dataset.kb = kbs; sk.innerHTML = ''; [{ key: 'f', name: T('귀환'), cd: 25 }].concat(R.skills, [{ key: 'roll', name: T('구르기'), cd: 1.2 }]).forEach((s, i) => { const kk = i === 0 ? 'F' : keyLabel(KB()[['q', 'e', 'r', 'roll'][i - 1]]); const d = document.createElement('div'); d.className = 'sk'; d.innerHTML = `<i class="cd"></i><span class="nm">${s.name}</span><small>${kk}</small><b class="cn"></b>`; sk.appendChild(d); }); ['tQ', 'tE', 'tR'].forEach((id, i) => $(id).querySelector('span').textContent = R.skills[i].name); }
+    const kbs = JSON.stringify(KB()); if (sk.dataset.role !== me.role || sk.dataset.kb !== kbs) { sk.dataset.role = me.role; sk.dataset.kb = kbs; sk.innerHTML = ''; [{ key: 'f', name: T('귀환'), cd: 25 }].concat(R.skills, [{ key: 'roll', name: T('구르기'), cd: 1.2 }]).forEach((s, i) => { const kk = i === 0 ? 'F' : keyLabel(KB()[['q', 'e', 'r', 'roll'][i - 1]]); const d = document.createElement('div'); d.className = 'sk'; d.innerHTML = `<i class="cd"></i><span class="nm" style="font-size:${skFs(s.name, 14)}px">${s.name}</span><small>${kk}</small><b class="cn"></b>`; sk.appendChild(d); }); ['tQ', 'tE', 'tR'].forEach((id, i) => { const sp = $(id).querySelector('span'); sp.textContent = R.skills[i].name; sp.style.fontSize = skFs(R.skills[i].name, 13) + 'px'; }); }
     const cds = me.cd.concat([me.rc]), maxs = R.skills.map(s => s.cd).concat([1.2]), cds1 = [me.rcc || 0].concat(cds), maxs1 = [25].concat(maxs);
     [...sk.children].forEach((d, i) => { const c = Math.max(0, cds1[i]); d.querySelector('.cd').style.height = Math.min(100, c / maxs1[i] * 100) + '%'; d.querySelector('.cn').textContent = c > 0.05 ? Math.ceil(c) : ''; d.classList.toggle('cool', c > 0.05); });
     ['tQ', 'tE', 'tR', 'tRoll'].forEach((id, i) => { const c = Math.max(0, cds[i]); $(id).querySelector('.cd').style.height = Math.min(100, c / maxs[i] * 100) + '%'; });
@@ -1888,7 +1907,7 @@ function frame(now) {
   // 방장 컴퓨터가 느리면(화면 간격이 길게 이어지면) 스스로 가벼운 모드로 바꿔요: 전송 줄이기, 봇 판단 줄이기, 가벼운 화질 (규칙은 그대로)
   if (S.G && S.net === 'host' && S.scr === '' && !S.lite) { S.fAvg = (S.fAvg || 16) * 0.95 + Math.min(raw, 100) * 0.05; if (S.fAvg > 38) { S.slowN = (S.slowN | 0) + 1; if (S.slowN > 180) { S.lite = true; S.G.lite = true; try { view.setLow(true); } catch (e) { } toast('컴퓨터가 느려서 가벼운 모드로 바꿨어요. 친구 화면은 그대로예요.', 3600); } } else S.slowN = 0; }
   // 모든 기기: 화면이 계속 느리면 설정의 「최적화」를 한 번만 권해요
-  if (!lowHintDone && inGame() && S.scr === '' && !SAVE.set.opt) { S.hintAvg = (S.hintAvg || 16) * 0.97 + Math.min(raw, 100) * 0.03; S.hintN = S.hintAvg > 40 ? (S.hintN | 0) + 1 : 0; if (S.hintN > 240) { lowHintDone = true; try { localStorage.setItem('tc_lowHint', '1'); } catch (e) { } toast(T('화면이 느려요. 설정의 「최적화」를 켜면 그림자와 빛 번짐을 줄여 더 부드러워져요.'), 5000); } }
+  if (!lowHintDone && inGame() && S.scr === '' && !SAVE.set.opt) { S.hintAvg = (S.hintAvg || 16) * 0.95 + Math.min(raw, 100) * 0.05; S.hintN = S.hintAvg > 45 ? (S.hintN | 0) + 1 : 0; if (S.hintN > 90) { lowHintDone = true; try { localStorage.setItem('tc_lowHint', '1'); } catch (e) { } SAVE.set.opt = 1; try { if (window.FFPerf) FFPerf.set({ low: true, fx: 'low', fps: 30 }); } catch (e) { } save(); perfApply(); toast(T('화면이 느려서 낮은 사양 설정으로 바꿨어요. 설정의 「최적화」에서 되돌릴 수 있어요.'), 5000); } }   // 처음 몇 초의 화면 간격을 재서 느리면 스스로 낮춰요 (기기당 한 번)
  const t = (now - S.t0) / 1000;
   if (S.replay) { hlFrame(dt, t); view.tick(dt, t); view.render(); oc.clearRect(0, 0, innerWidth, innerHeight); return; }
   musicTick(dt, now); talkTick(dt, !!S.snap && S.scr === '' && (S.snap.ph === 'play' || S.snap.ph === 'bossIntro'));
