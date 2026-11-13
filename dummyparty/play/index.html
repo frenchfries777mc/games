@@ -545,6 +545,7 @@
     "기기: 모바일": ["Device: Mobile", "Dispositivo: móvil", "Appareil : mobile", "Gerät: Handy", "端末：モバイル"],
     "모바일로 맞췄어요. 아주 가볍게 돌아가요.": ["Set to mobile. It runs extra light now.", "Configurado para móvil. Va muy ligero.", "Réglé sur mobile. Ça tourne très léger.", "Auf Handy gestellt. Läuft jetzt extra leicht.", "モバイルにしました。とても軽く動きます。"],
     "컴퓨터로 맞췄어요.": ["Set to computer.", "Configurado para ordenador.", "Réglé sur ordinateur.", "Auf Computer gestellt.", "パソコンにしました。"],
+    "화면이 느려서 최적화를 자동으로 켰어요. 「최적화」 버튼으로 끌 수 있어요.": ["The screen was slow, so Optimize was turned on automatically. Use the Optimize button to turn it off.", "La pantalla iba lenta, así que se activó Optimizar. Puedes apagarlo con el botón Optimizar.", "L'écran était lent, l'optimisation a été activée automatiquement. Tu peux la couper avec le bouton Optimiser.", "Das Bild war langsam, deshalb wurde Optimieren automatisch eingeschaltet. Mit der Optimieren-Taste kannst du es ausschalten.", "画面が重いので最適化を自動でオンにしました。「最適化」ボタンでオフにできます。"],
     "게스트 모드로 하기": ["Play as guest", "Jugar como invitado", "Jouer en invité", "Als Gast spielen", "ゲストで遊ぶ"],
     "로그인하거나 게스트 모드로 하기를 눌러 주세요.": ["Please log in or choose Play as guest.", "Inicia sesión o elige Jugar como invitado.", "Connecte-toi ou choisis Jouer en invité.", "Bitte melde dich an oder wähle Als Gast spielen.", "ログインするか「ゲストで遊ぶ」を押してください。"],
     "게스트 모드 · 저장은 안 돼요": ["Guest mode · nothing is saved", "Modo invitado · no se guarda nada", "Mode invité · rien n'est enregistré", "Gastmodus · nichts wird gespeichert", "ゲストモード・保存されません"],
@@ -1786,7 +1787,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b102)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b103)</summary>
+   <b>2026-11-13 · v0.1 · b103 · 저사양 자동 감지</b>
+   <ul><li>켠 뒤 처음 몇 초 동안 화면이 계속 느리면 최적화를 자동으로 켜 줘요. 한 번만 켜지고, 「최적화」 버튼으로 끌 수 있어요</li></ul>
    <b>2026-11-13 · v0.1 · b102 · 기기 선택</b>
    <ul><li>처음 들어오면 컴퓨터와 모바일 중 고르는 창이 떠요. 첫 화면과 대기실, 게임 화면의 기기 버튼으로 나중에 바꿀 수 있어요</li><li>컴퓨터는 지금처럼 그대로예요</li><li>모바일은 화질을 낮추고 30프레임으로 제한하고, 배경 연출과 관객·색종이·화면 흔들림을 빼서 아주 가볍게 돌아가요</li></ul>
    <b>2026-11-09 · v0.1 · b101 · 게스트 이름</b>
@@ -1987,7 +1990,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 · b1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 42개 미니게임 중 7개 · v0.1 b102 · <a href="../">← Dummy Party 사이트로</a></p>
+  <p class="foot">2~8명 · 판마다 42개 미니게임 중 7개 · v0.1 b103 · <a href="../">← Dummy Party 사이트로</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -8468,7 +8471,7 @@ var PREFIX = 'ff-dummyparty-', CODE_CH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', MAX
 var PTS = [5, 3, 2, 1];
 var T_INTRO = 6, T_COUNT = 3, T_END = 4.0, T_RESULT = 6;
 // 게임 버전(0.x)과 빌드. 버전이 다르면 같은 방에 못 들어와요 (빌드가 달라도 괜찮아요). dp_config 의 min_build 보다 낮은 빌드는 dC를 못 받아요
-var DP_VER = '0.1', DP_BUILD = 102;
+var DP_VER = '0.1', DP_BUILD = 103;
 function dpNotice(msg) { dpAsk(msg, '확인', function () { }); }
 var BOT_NAMES = ['방귀쟁이', '홀쭉이', '바보1', '멍청이', '10급 공무원', '교무실 단골', '벌점부자', '말썽이', '김개똥'];
 var qs = new URLSearchParams(location.search);
@@ -9069,6 +9072,28 @@ function lowHintTick(gap) {
   lhAvg = lhAvg * 0.97 + Math.min(gap, 100) * 0.03; lhN = lhAvg > 40 ? lhN + 1 : 0;
   if (lhN > 240) { lhDone = true; lsSet('dummyparty.lowHint', '1'); toast('화면이 느려요. 「최적화」 버튼을 누르면 화질과 효과를 줄여 더 부드러워져요.'); }
 }
+/* 저사양 자동 감지: 켜고 처음 몇 초의 프레임 간격을 재서 계속 느리면(평균 약 25fps 이하) 최적화를 자동으로 켜요. 한 번만, 안내는 작은 토스트로만 */
+(function () {
+  if (lsGet('dummyparty.autoLow') === '1') return;
+  var t0 = 0, n = 0, sum = 0, last = 0;
+  function f(now) {
+    if (OPT || lsGet('dummyparty.autoLow') === '1') return;
+    if (!t0) t0 = now;
+    if (last && !document.hidden) { var g = now - last; if (g < 250 && now - t0 > 1500) { n++; sum += g; } }
+    last = document.hidden ? 0 : now;
+    if (n >= 150) {
+      if (sum / n > 40) {
+        lsSet('dummyparty.autoLow', '1');
+        if (window.FFPerf) FFPerf.set({ low: true, fx: 'low', fps: 30 }); else { lsSet('dummyparty.opt', '1'); perfRead(); }
+        if (window.resize && CV) resize();
+        try { toast('화면이 느려서 최적화를 자동으로 켰어요. 「최적화」 버튼으로 끌 수 있어요.'); } catch (e) { }
+      }
+      return;
+    }
+    requestAnimationFrame(f);
+  }
+  requestAnimationFrame(f);
+})();
 var CV, CX, SCALE = 1, CSSS = 1, OFFX = 0, OFFY = 0, BTNS = [], MOUSE = { x: -1, y: -1, on: false };
 function resize() {
   var dpr = MOBX ? 0.7 : OPT ? 1 : Math.min(window.devicePixelRatio || 1, isTouch() ? 1.5 : 2), w = innerWidth, h = innerHeight;
