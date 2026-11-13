@@ -2,6 +2,114 @@
  "notes": [
   {
    "date": "2026-11-13",
+   "build": "v0.2 build 97",
+   "title": "오류 수정",
+   "items": [
+    "비밀 섬에서 물건을 사면 금화가 망가지던 오류를 고쳤어요",
+    "닫히면 안 되는 창이 Esc나 바깥을 눌러 닫히던 오류를 고쳤어요",
+    "온라인에서 잘못된 선물·거래 값이 들어와도 금화와 짐이 망가지지 않게 했어요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Bug fixes",
+     "items": [
+      "Fixed gold breaking when buying goods on a secret island",
+      "Fixed windows that should stay open closing with Esc or an outside click",
+      "Online, bad gift or trade values can no longer break your gold or cargo"
+     ]
+    },
+    "ja": {
+     "title": "Bug fixes",
+     "items": [
+      "Fixed gold breaking when buying goods on a secret island",
+      "Fixed windows that should stay open closing with Esc or an outside click",
+      "Online, bad gift or trade values can no longer break your gold or cargo"
+     ]
+    },
+    "es": {
+     "title": "Bug fixes",
+     "items": [
+      "Fixed gold breaking when buying goods on a secret island",
+      "Fixed windows that should stay open closing with Esc or an outside click",
+      "Online, bad gift or trade values can no longer break your gold or cargo"
+     ]
+    },
+    "fr": {
+     "title": "Bug fixes",
+     "items": [
+      "Fixed gold breaking when buying goods on a secret island",
+      "Fixed windows that should stay open closing with Esc or an outside click",
+      "Online, bad gift or trade values can no longer break your gold or cargo"
+     ]
+    },
+    "de": {
+     "title": "Bug fixes",
+     "items": [
+      "Fixed gold breaking when buying goods on a secret island",
+      "Fixed windows that should stay open closing with Esc or an outside click",
+      "Online, bad gift or trade values can no longer break your gold or cargo"
+     ]
+    },
+    "zh": {
+     "title": "Bug fixes",
+     "items": [
+      "Fixed gold breaking when buying goods on a secret island",
+      "Fixed windows that should stay open closing with Esc or an outside click",
+      "Online, bad gift or trade values can no longer break your gold or cargo"
+     ]
+    },
+    "pt": {
+     "title": "Bug fixes",
+     "items": [
+      "Fixed gold breaking when buying goods on a secret island",
+      "Fixed windows that should stay open closing with Esc or an outside click",
+      "Online, bad gift or trade values can no longer break your gold or cargo"
+     ]
+    },
+    "ru": {
+     "title": "Bug fixes",
+     "items": [
+      "Fixed gold breaking when buying goods on a secret island",
+      "Fixed windows that should stay open closing with Esc or an outside click",
+      "Online, bad gift or trade values can no longer break your gold or cargo"
+     ]
+    },
+    "tr": {
+     "title": "Bug fixes",
+     "items": [
+      "Fixed gold breaking when buying goods on a secret island",
+      "Fixed windows that should stay open closing with Esc or an outside click",
+      "Online, bad gift or trade values can no longer break your gold or cargo"
+     ]
+    },
+    "it": {
+     "title": "Bug fixes",
+     "items": [
+      "Fixed gold breaking when buying goods on a secret island",
+      "Fixed windows that should stay open closing with Esc or an outside click",
+      "Online, bad gift or trade values can no longer break your gold or cargo"
+     ]
+    },
+    "pl": {
+     "title": "Bug fixes",
+     "items": [
+      "Fixed gold breaking when buying goods on a secret island",
+      "Fixed windows that should stay open closing with Esc or an outside click",
+      "Online, bad gift or trade values can no longer break your gold or cargo"
+     ]
+    },
+    "ar": {
+     "title": "Bug fixes",
+     "items": [
+      "Fixed gold breaking when buying goods on a secret island",
+      "Fixed windows that should stay open closing with Esc or an outside click",
+      "Online, bad gift or trade values can no longer break your gold or cargo"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-11-13",
    "build": "v0.2 build 96",
    "title": "느린 컴퓨터 자동 감지",
    "items": [
