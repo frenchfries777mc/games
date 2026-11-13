@@ -1,5 +1,5 @@
 (function(){try{var h=location.hash,i=h.indexOf('ffsync=');if(i<0||window.__ffSyncIn||location.hostname!=='frenchfries777mc.github.io')return;window.__ffSyncIn=1;var raw=h.slice(i+7),rest=h.slice(0,i).replace(/[#&]+$/,'');history.replaceState(null,'',location.pathname+location.search+rest);if(!/^https:\/\/frenchfries777\.com\//.test(document.referrer||''))return;var o=JSON.parse(decodeURIComponent(escape(atob(raw.replace(/-/g,'+').replace(/_/g,'/'))))),ok=function(k){return !/^(sb-|ffSso|ffSync|ffLoginLock)/.test(k)},k;for(k in (o.s||{}))if(Object.prototype.hasOwnProperty.call(o.s,k)&&ok(k)){try{localStorage.setItem(k,String(o.s[k]))}catch(e){}}(o.d||[]).forEach(function(k){if(ok(k))localStorage.removeItem(k)});localStorage.setItem('ffSyncBase',JSON.stringify(o.b||{}));}catch(e){}})();   /* github.io: frenchfries777.com 과 맞춘 기기 저장값을 받아요 (ff-auth.js 의 저장 맞추기) */
-try{if(!/^\/log-in\//.test(location.pathname))addEventListener('pagehide',function(){try{localStorage.setItem('ffSyncT',String(Date.now()))}catch(e){}})}catch(e){}   /* 이 주소를 마지막으로 쓴 때 (두 주소의 저장이 서로 다를 때 더 최근 것을 고르는 데 써요) */
+try{if(!/^\/(hub\/)?log-in\//.test(location.pathname))addEventListener('pagehide',function(){try{if(!window.__ffPull)localStorage.setItem('ffSyncT',String(Date.now()))}catch(e){}})}catch(e){}   /* 이 주소를 마지막으로 쓴 때 (두 주소의 저장이 서로 다를 때 더 최근 것을 고르는 데 써요) */
 if(location.hostname==='frenchfries777mc.github.io'&&!window.__ffRedir){var s=document.createElement('script');s.src='https://frenchfries777.com/games/ff-redirect.js';(document.head||document.documentElement).appendChild(s);}
 /* Frenchfries777 계정 로그인 (허브 · 게임 사이트 공용)
    쓰는 법 (사이트 HTML에):
@@ -96,14 +96,23 @@ function syncMerge(o){ var G=o.d||{}, B=o.b||{}, X=o.x||[], C=syncAll(), out={s:
   for(k in G) one(k); for(k in C) one(k);
   return syncEnc(out); }
 var lpSyncIn=null; if(onLP){ try{ var hm=/[#&]ffsync=([^&]*)/.exec(location.hash||''); if(hm&&/^https:\/\/frenchfries777mc\.github\.io\//.test(document.referrer||'')) lpSyncIn=syncDec(hm[1]); }catch(e){ lpSyncIn=null; } }
+/* frenchfries777.com 에 처음 들어온 브라우저는 한 번 github.io 를 다녀와서 거기 있던 저장을 가져와요 (github.io/hub/log-in/?pull=1 이 자기 저장을 들고 로그인 페이지로 와요) */
+var ffPull=false;
+try{ if(location.hostname===GH&&/^\/hub\/log-in\//.test(location.pathname)&&/[?&]pull=1(&|$)/.test(location.search)&&/^https:\/\/frenchfries777\.com\//.test(document.referrer||'')){ ffPull=true;
+    location.replace(LOGIN_URL+'?sso=1&tok=0&next='+encodeURIComponent(new URLSearchParams(location.search).get('next')||'https://frenchfries777.com/')+'#ffsync='+syncPack()); }
+  else if(location.hostname==='frenchfries777.com'&&!onLP&&window.top===window&&!navigator.webdriver&&!/bot|crawl|spider|lighthouse|headless/i.test(navigator.userAgent||'')&&!localStorage.getItem('ffSyncPull')){
+    localStorage.setItem('ffSyncPull','1'); ffPull=true; window.__ffPull=1;
+    location.replace('https://'+GH+'/hub/log-in/?pull=1&next='+encodeURIComponent(location.href.replace(/#.*$/,''))); } }catch(e){}
 async function lpGo(){ if(lpGoing) return; lpGoing=true; var n=lpNext();
-  try{ var nh=new URL(n).hostname; if(SSO_HOSTS.indexOf(nh)>=0){ var t='', sy='';
+  try{ var nh=new URL(n).hostname; if(lpSyncIn&&/(^|\.)frenchfries777\.com$/.test(nh)){ try{ syncMerge(lpSyncIn); }catch(e){} }
+    if(SSO_HOSTS.indexOf(nh)>=0){ var t='', sy='';
     if(nh===GH&&lpSyncIn){ try{ sy='&ffsync='+syncMerge(lpSyncIn); }catch(e){ sy=''; } }
     try{ if(user&&sb&&!/[?&]tok=0(&|$)/.test(location.search)){ var s=(await sb.auth.getSession()).data.session, r=await fetch(SB_URL+'/functions/v1/dynamic-action',{method:'POST',headers:{Authorization:'Bearer '+s.access_token,apikey:SB_KEY}}), j=r.ok?await r.json():null; t=(j&&j.t)||''; } }catch(e){}
     n=n.replace(/#.*$/,'')+'#ffsso='+(t||0)+sy; } }catch(e){}
   location.replace(n); }
 async function ssoIn(u){ var m=/^#ffsso=([^&]*)/.exec(location.hash||''), gh=location.hostname===GH, auto=false, off=false;
   try{ auto=sessionStorage.getItem('ffSsoAuto')==='1'; sessionStorage.removeItem('ffSsoAuto'); off=!!localStorage.getItem('ffSsoOff'); }catch(e){}
+  if(ffPull) return u||null;
   if(m){ try{ history.replaceState(null,'',location.pathname+location.search); sessionStorage.setItem('ffSsoTried','1'); }catch(e){} }
   if(u&&(m||!gh)) return u;
   if(m){ if(m[1]&&m[1]!=='0'&&!(auto&&off)){ try{ var r=await sb.auth.verifyOtp({token_hash:m[1],type:'magiclink'}); if(r.error) r=await sb.auth.verifyOtp({token_hash:m[1],type:'email'});
@@ -496,7 +505,7 @@ function fill(){ var el=modal(); el.querySelector('h3').textContent=mode==='in'?
   el.querySelector('.sw span').textContent=mode==='in'?T.noAcc:T.hasAcc; el.querySelector('.sw a').textContent=mode==='in'?T.signup:T.login;
   el.querySelector('input[name=password]').setAttribute('autocomplete',mode==='in'?'current-password':'new-password'); el.querySelector('.m').textContent='';
   el.querySelector('form').classList.toggle('ffa-in',mode==='in'); }
-function openLogin(m){ if(lpMine()){ location.href=LOGIN_URL+'?next='+encodeURIComponent(location.href)+(m==='up'?'&m=up':''); return; }
+function openLogin(m){ if(ffPull) return; if(lpMine()){ location.href=LOGIN_URL+'?next='+encodeURIComponent(location.href)+(m==='up'?'&m=up':''); return; }
   mode=m==='up'?'up':'in'; fill(); var el=modal(); el.style.display='flex'; setTimeout(function(){ try{ el.querySelector('input').focus(); }catch(e){} },30); }
 function close(){ if(onLP){ lpGo(); return; } var el=document.getElementById('ffaModal'); if(el) el.style.display='none'; }
 
