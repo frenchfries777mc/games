@@ -28,12 +28,19 @@ function perfRead() {
 }
 perfRead();
 window.addEventListener('ffperf', perfRead);
-/* 느린 화면 안내: 최적화가 꺼져 있는데 달리는 동안 화면이 계속 느리면, 다음에 로비로 돌아왔을 때 이 기기에서 한 번만 알려 줘요 */
-let lhDone = !!SAVE.lowHint, lhPend = false, lhAvg = 16, lhN = 0;
+/* 느린 화면 자동 감지: 경기 시작 뒤 처음 몇 초의 프레임 시간을 재서, 느리면(초당 26번 미만) 최적화를 자동으로 켜요.
+   이 기기에서 한 번만 하고, 로비로 돌아오면 작은 안내 글을 띄워요 (끄고 싶으면 더보기의 「최적화」) */
+let lhDone = !!SAVE.lowHint, lhPend = false, lhT = 0, lhSum = 0, lhN = 0;
 function lowHintTick(gap) {
   if (lhDone || lhPend || OPT) return;
-  lhAvg = lhAvg * 0.97 + Math.min(gap, 100) * 0.03; lhN = lhAvg > 40 ? lhN + 1 : 0;
-  if (lhN > 240) lhPend = true;
+  lhT += Math.min(gap, 200); if (lhT < 800) return;                  // 처음 0.8초는 준비 시간이라 빼요
+  lhSum += Math.min(gap, 200); lhN++;
+  if (lhT < 5000 || lhN < 20) return;
+  if (lhSum / lhN > 38) {
+    lhPend = true;
+    if (window.FFPerf) { try { FFPerf.set({ low: true, fx: 'low', fps: 30 }); } catch (e) { } } else { SAVE.opt = 1; save(); }
+    perfRead();
+  } else { lhDone = true; SAVE.lowHint = 1; save(); }   // 충분히 빠르면 다시 재지 않아요
 }
 
 /* ---------- 모달 (브라우저 팝업 대신) ---------- */
@@ -80,7 +87,7 @@ function homeMsg(t) { $('homeMsg').textContent = t || ''; }
 
 /* ---------- 화면 ---------- */
 let scr = 'sLobby';
-function show(id) { document.querySelectorAll('.scr').forEach(s => s.classList.toggle('on', s.id === id)); scr = id; $('hud').classList.toggle('on', id === 'game'); if (id === 'sLobby' && lhPend && !lhDone) { lhDone = true; SAVE.lowHint = 1; save(); homeMsg('화면이 느렸어요. 「최적화」 버튼을 누르면 화질과 효과를 줄여 더 부드러워져요.'); } }
+function show(id) { document.querySelectorAll('.scr').forEach(s => s.classList.toggle('on', s.id === id)); scr = id; $('hud').classList.toggle('on', id === 'game'); if (id === 'sLobby' && lhPend && !lhDone) { lhDone = true; SAVE.lowHint = 1; save(); homeMsg('화면이 느려서 최적화를 켰어요. 끄고 싶으면 더보기의 「최적화」를 눌러요.'); } }
 document.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', () => { if (scr === 'sRoom' || scr === 'sMap') leaveNet(); show('sLobby'); paintWho(); }));
 document.querySelectorAll('#menu .btn').forEach(b => b.addEventListener('click', () => menu(b.dataset.go)));
 function pickMap(cb) {
