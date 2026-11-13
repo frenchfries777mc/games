@@ -1,4 +1,5 @@
-(function(){try{var h=location.hash;if(h.indexOf('#ffmig=')!==0||window.__ffMig||location.hostname==='frenchfries777mc.github.io')return;window.__ffMig=1;var o=JSON.parse(decodeURIComponent(escape(atob(h.slice(7).replace(/-/g,'+').replace(/_/g,'/')))));var d=o.d||{};for(var k in d){if(Object.prototype.hasOwnProperty.call(d,k)&&localStorage.getItem(k)===null){try{localStorage.setItem(k,String(d[k]))}catch(e){}}}history.replaceState(null,'',location.pathname+location.search+(o.h||''));}catch(e){}})();
+(function(){try{var h=location.hash,i=h.indexOf('ffsync=');if(i<0||window.__ffSyncIn||location.hostname!=='frenchfries777mc.github.io')return;window.__ffSyncIn=1;var raw=h.slice(i+7),rest=h.slice(0,i).replace(/[#&]+$/,'');history.replaceState(null,'',location.pathname+location.search+rest);if(!/^https:\/\/frenchfries777\.com\//.test(document.referrer||''))return;var o=JSON.parse(decodeURIComponent(escape(atob(raw.replace(/-/g,'+').replace(/_/g,'/'))))),ok=function(k){return !/^(sb-|ffSso|ffSync|ffLoginLock)/.test(k)},k;for(k in (o.s||{}))if(Object.prototype.hasOwnProperty.call(o.s,k)&&ok(k)){try{localStorage.setItem(k,String(o.s[k]))}catch(e){}}(o.d||[]).forEach(function(k){if(ok(k))localStorage.removeItem(k)});localStorage.setItem('ffSyncBase',JSON.stringify(o.b||{}));}catch(e){}})();   /* github.io: frenchfries777.com 과 맞춘 기기 저장값을 받아요 (ff-auth.js 의 저장 맞추기) */
+try{if(!/^\/log-in\//.test(location.pathname))addEventListener('pagehide',function(){try{localStorage.setItem('ffSyncT',String(Date.now()))}catch(e){}})}catch(e){}   /* 이 주소를 마지막으로 쓴 때 (두 주소의 저장이 서로 다를 때 더 최근 것을 고르는 데 써요) */
 if(location.hostname==='frenchfries777mc.github.io'&&!window.__ffRedir){var s=document.createElement('script');s.src='https://frenchfries777.com/games/ff-redirect.js';(document.head||document.documentElement).appendChild(s);}
 /* Frenchfries777 계정 로그인 (허브 · 게임 사이트 공용)
    쓰는 법 (사이트 HTML에):
@@ -67,19 +68,51 @@ var LOGIN_URL='https://frenchfries777.com/log-in/', onLP=/^\/log-in\/?/.test(loc
 function lpNext(){ try{ var n=new URLSearchParams(location.search).get('next'), u=new URL(n,location.href); if(/^https:$/.test(u.protocol)&&(/(^|\.)frenchfries777\.com$/.test(u.hostname)||u.hostname==='frenchfries777mc.github.io')&&!/^\/(hub\/)?log-in\//.test(u.pathname)) return u.href; }catch(e){} return 'https://frenchfries777.com/'; }
 /* 서브도메인(chat.frenchfries777.com)은 저장소가 따로라서, 로그인 페이지가 한 번만 쓰는 표를 받아 넘겨주고 서브도메인이 그 표로 자기 세션을 만들어요 */
 var SSO_HOSTS=['chat.frenchfries777.com','frenchfries777mc.github.io'], ssoSub=SSO_HOSTS.indexOf(location.hostname)>=0, lpSso=onLP&&/[?&]sso=1(&|$)/.test(location.search), lpGoing=false;
+/* 기기 저장 맞추기: github.io 와 frenchfries777.com 은 브라우저 저장소가 따로라서, github.io 가 로그인 페이지를 다녀올 때 두 쪽의 저장값을 주고받아 같게 만들어요.
+   마지막으로 맞춘 뒤 한쪽만 바뀐 값은 그쪽 것을, 둘 다 바뀐 값은 더 최근에 쓴 주소의 것을 써요. 로그인 정보(sb-...)와 400KB 를 넘는 부분은 빼요. */
+var GH='frenchfries777mc.github.io', SYNC_MAX=400000;
+function syncOk(k){ return !/^(sb-|ffSso|ffSync|ffLoginLock)/.test(k); }
+function syncH(s){ var h=2166136261; for(var i=0;i<s.length;i++) h=Math.imul(h^s.charCodeAt(i),16777619)>>>0; return s.length+':'+h; }
+function syncEnc(o){ return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_'); }
+function syncDec(t){ return JSON.parse(decodeURIComponent(escape(atob(String(t).replace(/-/g,'+').replace(/_/g,'/'))))); }
+function syncAll(){ var d={}; for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i), v=localStorage.getItem(k); if(syncOk(k)&&v!==null) d[k]=v; } return d; }
+function syncPack(){ var d=syncAll(), n=0, x=[], b={}, k; for(k in d) n+=k.length+d[k].length;
+  var ks=Object.keys(d).sort(function(a,c){ return d[c].length-d[a].length; });
+  for(var i=0;n>SYNC_MAX&&i<ks.length;i++){ n-=ks[i].length+d[ks[i]].length; delete d[ks[i]]; x.push(ks[i]); }
+  try{ b=JSON.parse(localStorage.getItem('ffSyncBase')||'{}')||{}; }catch(e){ b={}; }
+  return syncEnc({d:d,x:x,b:b,t:+localStorage.getItem('ffSyncT')||0}); }
+function syncMerge(o){ var G=o.d||{}, B=o.b||{}, X=o.x||[], C=syncAll(), out={s:{},d:[],b:{}}, n=0, seen={}, k;
+  var gNew=(+o.t||0)>=(+localStorage.getItem('ffSyncT')||0);
+  X.forEach(function(k){ seen[k]=1; if(B[k]!==undefined) out.b[k]=B[k]; });
+  function one(k){ if(seen[k]||!syncOk(k)) return; seen[k]=1;
+    var g=Object.prototype.hasOwnProperty.call(G,k)?String(G[k]):undefined, c=Object.prototype.hasOwnProperty.call(C,k)?C[k]:undefined;
+    if(g===c){ out.b[k]=syncH(g); return; }
+    var hg=g===undefined?null:syncH(g), hc=c===undefined?null:syncH(c), hb=B[k]===undefined?null:B[k];
+    var useG=hc===hb?true:(hg===hb?false:(g===undefined?false:(c===undefined?true:gNew)));
+    if(useG){ try{ if(g===undefined) localStorage.removeItem(k); else{ localStorage.setItem(k,g); out.b[k]=hg; } }catch(e){ if(hb!==null) out.b[k]=hb; } }
+    else if(c===undefined) out.d.push(k);
+    else if(n+k.length+c.length<=SYNC_MAX){ n+=k.length+c.length; out.s[k]=c; out.b[k]=hc; }
+    else if(hb!==null) out.b[k]=hb; }
+  for(k in G) one(k); for(k in C) one(k);
+  return syncEnc(out); }
+var lpSyncIn=null; if(onLP){ try{ var hm=/[#&]ffsync=([^&]*)/.exec(location.hash||''); if(hm&&/^https:\/\/frenchfries777mc\.github\.io\//.test(document.referrer||'')) lpSyncIn=syncDec(hm[1]); }catch(e){ lpSyncIn=null; } }
 async function lpGo(){ if(lpGoing) return; lpGoing=true; var n=lpNext();
-  try{ if(SSO_HOSTS.indexOf(new URL(n).hostname)>=0){ var t='';
-    try{ if(user&&sb){ var s=(await sb.auth.getSession()).data.session, r=await fetch(SB_URL+'/functions/v1/dynamic-action',{method:'POST',headers:{Authorization:'Bearer '+s.access_token,apikey:SB_KEY}}), j=r.ok?await r.json():null; t=(j&&j.t)||''; } }catch(e){}
-    n=n.replace(/#.*$/,'')+'#ffsso='+(t||0); } }catch(e){}
+  try{ var nh=new URL(n).hostname; if(SSO_HOSTS.indexOf(nh)>=0){ var t='', sy='';
+    if(nh===GH&&lpSyncIn){ try{ sy='&ffsync='+syncMerge(lpSyncIn); }catch(e){ sy=''; } }
+    try{ if(user&&sb&&!/[?&]tok=0(&|$)/.test(location.search)){ var s=(await sb.auth.getSession()).data.session, r=await fetch(SB_URL+'/functions/v1/dynamic-action',{method:'POST',headers:{Authorization:'Bearer '+s.access_token,apikey:SB_KEY}}), j=r.ok?await r.json():null; t=(j&&j.t)||''; } }catch(e){}
+    n=n.replace(/#.*$/,'')+'#ffsso='+(t||0)+sy; } }catch(e){}
   location.replace(n); }
-async function ssoIn(u){ var m=/^#ffsso=(.*)$/.exec(location.hash||'');
+async function ssoIn(u){ var m=/^#ffsso=([^&]*)/.exec(location.hash||''), gh=location.hostname===GH, auto=false, off=false;
+  try{ auto=sessionStorage.getItem('ffSsoAuto')==='1'; sessionStorage.removeItem('ffSsoAuto'); off=!!localStorage.getItem('ffSsoOff'); }catch(e){}
   if(m){ try{ history.replaceState(null,'',location.pathname+location.search); sessionStorage.setItem('ffSsoTried','1'); }catch(e){} }
-  if(u) return u;
-  if(m){ if(m[1]&&m[1]!=='0'){ try{ var r=await sb.auth.verifyOtp({token_hash:m[1],type:'magiclink'}); if(r.error) r=await sb.auth.verifyOtp({token_hash:m[1],type:'email'});
+  if(u&&(m||!gh)) return u;
+  if(m){ if(m[1]&&m[1]!=='0'&&!(auto&&off)){ try{ var r=await sb.auth.verifyOtp({token_hash:m[1],type:'magiclink'}); if(r.error) r=await sb.auth.verifyOtp({token_hash:m[1],type:'email'});
       if(r.data&&r.data.session){ try{ localStorage.removeItem('ffSsoOff'); }catch(e){} return r.data.session.user; } }catch(e){} }
     return null; }
-  try{ if(sessionStorage.getItem('ffSsoTried')||localStorage.getItem('ffSsoOff')) return null; sessionStorage.setItem('ffSsoTried','1'); }catch(e){ return null; }
-  location.replace(LOGIN_URL+'?sso=1&next='+encodeURIComponent(location.href)); return null; }
+  /* github.io 는 로그인돼 있거나 일부러 로그아웃했어도 탭마다 한 번은 다녀와요 (기기 저장 맞추기). 그때는 로그인 표를 새로 받지 않거나, 받아도 쓰지 않아요 */
+  try{ if(sessionStorage.getItem('ffSsoTried')||(off&&!gh)) return u||null; sessionStorage.setItem('ffSsoTried','1'); sessionStorage.setItem('ffSsoAuto','1'); }catch(e){ return u||null; }
+  var sy=''; if(gh){ try{ sy='#ffsync='+syncPack(); }catch(e){ sy=''; } }
+  location.replace(LOGIN_URL+'?sso=1'+(u||off?'&tok=0':'')+'&next='+encodeURIComponent(location.href.replace(/#.*$/,''))+sy); return u||null; }
 function lpMine(){ return !onLP&&(/(^|\.)frenchfries777\.com$/.test(location.hostname)||location.hostname==='frenchfries777mc.github.io'); }
 var ACHL={es:'🏆 Logros',fr:'🏆 Succès',de:'🏆 Erfolge',ja:'🏆 実績',zh:'🏆 成就',pt:'🏆 Conquistas',ru:'🏆 Достижения',tr:'🏆 Başarımlar',it:'🏆 Obiettivi',pl:'🏆 Osiągnięcia',ar:'🏆 الإنجازات',nw:'🏆 Plusdoings',gk:'🏆 업적'};   // 도전과제 버튼 이름 (ko/en은 위 사전에 있어요)
 /* the shared language setting (ff-lang.js): pages that load only this script still keep the games' language keys in step */
