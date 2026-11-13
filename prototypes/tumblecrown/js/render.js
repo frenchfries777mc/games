@@ -528,7 +528,7 @@ export class View {
   }
   resize() {
     // 화면 픽셀 칸이 고르게 나오도록 캔버스를 기기 픽셀 단위로, 픽셀 크기의 배수로 맞춰요 (지글거림 방지)
-    const dpr = devicePixelRatio || 1, sc = Math.max(0.45, Math.min(1, Math.min(innerWidth, innerHeight) / 720)), P = Math.max(1, Math.round(this.ps * sc * dpr)); this.P = P;   // 작은 화면은 픽셀을 더 잘게
+    const dpr = (devicePixelRatio || 1) * (this.mobile ? 0.5 : 1), sc = Math.max(0.45, Math.min(1, Math.min(innerWidth, innerHeight) / 720)), P = Math.max(1, Math.round(this.ps * sc * dpr * (this.mobile ? 1.6 : 1))); this.P = P;   // 모바일은 픽셀 칸을 더 크게(그리는 점 수를 크게 줄여요)   // 작은 화면은 픽셀을 더 잘게
     const w = Math.ceil(innerWidth * dpr / P) * P, h = Math.ceil(innerHeight * dpr / P) * P; this.W = w; this.H = h;
     this.r.setPixelRatio(1); this.r.setSize(w, h, false);
     this.cw = w / dpr; this.ch = h / dpr; this.r.domElement.style.width = (w / dpr) + 'px'; this.r.domElement.style.height = (h / dpr) + 'px';
@@ -539,6 +539,13 @@ export class View {
   }
   setPixel(ps) { this.ps = ps; this.resize(); }
   setBloom(on) { this.bloomOn = on; if (this.bloom) this.bloom.enabled = on && !this.low; }
+  // 모바일 극단 최적화: 그리는 점 수 줄이기(resize), 횃불 빛 끄기, 효과 조각 1/4로 (컴퓨터는 그대로)
+  setMobile(on) {
+    this.mobile = !!on; this.r.domElement.style.imageRendering = this.mobile ? 'pixelated' : '';   // 모바일은 캔버스 해상도를 절반으로 (화면에는 그대로 늘려 보여요)
+    this.resize();
+    if (this.scene) this.scene.traverse(o => { if (o.isPointLight && o !== this.fxL) o.visible = !this.mobile; });
+    this.setLow(this.low);
+  }
   // 최적화: 그림자와 빛 번짐을 끄고 효과 조각을 절반으로 줄여요 (화면은 1초에 30번만 그려요, main.js)
   setLow(on) {
     this.low = !!on; this.r.shadowMap.enabled = !this.low; if (this.bloom) this.bloom.enabled = this.bloomOn && !this.low;
@@ -563,7 +570,7 @@ export class View {
   flame(p, x, y, z, k = 1, light = true, col) {
     cone(0.32 * k, 0.9 * k, 6, col && col !== 0xff9a48 ? M(col, { e: col, ei: 3 }) : M(0xff9a3a, { e: 0xff7a20, ei: 3 }), x, y, z, p);
     cone(0.18 * k, 0.6 * k, 6, M(0xffe08a, { e: 0xfff0b0, ei: 4 }), x, y - 0.1 * k, z, p);
-    if (light) { const L = new THREE.PointLight(0xff9a48, 55 * k, 24, 1.6); L.position.set(x, y + 0.4, z + 0.8); p.add(L); this.flick.push({ L, b: 55 * k, ph: R() * 9 }); }
+    if (light) { const L = new THREE.PointLight(0xff9a48, 55 * k, 24, 1.6); L.position.set(x, y + 0.4, z + 0.8); p.add(L); L.visible = !this.mobile; this.flick.push({ L, b: 55 * k, ph: R() * 9 }); }
   }
 
   /* ----- 로비: 보랏빛 노을 아래 돌 투기장, 가운데 떠도는 왕관 ----- */
@@ -1538,6 +1545,7 @@ export class View {
   /* ----- 효과 ----- */
   burst(x, y, z, col, n = 8, sp = 4, life = 0.5, size = 0.12) {
     if (this.low) n = Math.ceil(n / 2);
+    if (this.mobile) { n = Math.ceil(n / 2); if (this.fx.length > 60) return; }
     for (let i = 0; i < n; i++) {
       const m = box(size, size, size, M(col, { e: col, ei: 2 }), x, y, z, this.scene); m.castShadow = false;
       const vx = (Math.random() - .5) * sp, vy = Math.random() * sp, vz = (Math.random() - .5) * sp;
