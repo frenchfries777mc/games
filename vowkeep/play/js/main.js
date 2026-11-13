@@ -256,6 +256,7 @@ function devPick() { const el = $('dev'); if (el) el.classList.toggle('on', !SAV
   document.querySelectorAll('#dev [data-d]').forEach(x => x.onclick = () => { applyDevice(x.dataset.d, false); devPick(); if (S.scr === 'sSettings') paintSettings(); }); }
 devPick();
 function paintSettings() {
+  { let n = false; try { n = !!localStorage.getItem('vk_autoNote'); } catch (e) { } $('lowNote').style.display = n ? '' : 'none'; }
   document.querySelectorAll('#setDev button').forEach(b => { b.classList.toggle('on', b.dataset.d === (SAVE.set.dev || (TOUCH ? 'mobile' : 'pc'))); b.onclick = () => { applyDevice(b.dataset.d, true); paintSettings(); }; });
   $('setVol').value = SAVE.set.vol;
   const seg = (id, v, f) => { const el = $(id); el.querySelectorAll('button').forEach(b => { b.classList.toggle('on', +b.dataset.v === +v); b.onclick = () => { f(+b.dataset.v); save(); paintSettings(); }; }); };
@@ -1103,11 +1104,28 @@ function musicTick(dt, now) {
 addEventListener('pointerdown', () => MUS.kick()); addEventListener('keydown', () => MUS.kick());
 let lastT = performance.now();
 let lastF = 0;
+/* 저사양 자동 맞춤: 처음 몇 초의 화면 간격을 재서 느리면(초당 25번 아래) 알아서 낮춰요. 1단계 최적화 켜기, 그래도 느리면 2단계 가장 큰 픽셀. 한 번 정하면 이 기기에서 다시 하지 않아요 (팝업 없음, 설정 화면에 작은 안내만) */
+const AL = { n: 0, sum: 0, stage: 0, done: false };
+try { AL.done = !!localStorage.getItem('vk_autoDone'); } catch (e) { }
+function autoLowTick(raw) {
+  if (AL.done || document.hidden || raw > 1000) return;
+  if (++AL.n <= 40) return;                       // 처음 몇 장면은 불러오느라 느려서 건너뛰어요
+  AL.sum += Math.min(raw, 100);
+  if (AL.n - 40 < 120) return;
+  const avg = AL.sum / 120; AL.n = 40; AL.sum = 0;
+  if (avg <= 40) { AL.done = true; try { localStorage.setItem('vk_autoDone', '1'); } catch (e) { } return; }
+  AL.stage++;
+  if (AL.stage === 1 && !SAVE.set.opt) { SAVE.set.opt = 1; try { if (window.FFPerf) FFPerf.set({ low: true, fx: 'low', fps: 30 }); } catch (e) { } perfApply(); }
+  else { SAVE.set.px = 4; view.setPixel(4); AL.done = true; try { localStorage.setItem('vk_autoDone', '1'); } catch (e) { } }
+  save(); try { localStorage.setItem('vk_autoNote', '1'); } catch (e) { }
+  if (S.scr === 'sSettings') paintSettings();
+}
 function frame(now) {
   requestAnimationFrame(frame);
   // 최적화를 켜면 1초에 30번만 그려요 (휴대폰 발열·배터리)
   if (FPS_CAP && now - lastF < 1000 / FPS_CAP - 2) return; lastF = now;
   const raw = now - lastT; lastT = now; const dt = Math.min(0.05, raw / 1000);
+  autoLowTick(raw);
   // 방장 컴퓨터가 느리면(화면 간격이 길게 이어지면) 스스로 가벼운 모드로 바꿔요: 전송 줄이기, 봇 판단 줄이기, 가벼운 화질 (규칙은 그대로)
   if (S.G && S.net === 'host' && S.scr === '' && !S.lite) { S.fAvg = (S.fAvg || 16) * 0.95 + Math.min(raw, 100) * 0.05; if (S.fAvg > 38) { S.slowN = (S.slowN | 0) + 1; if (S.slowN > 180) { S.lite = true; S.G.lite = true; try { view.setLow(true); } catch (e) { } toast(T('컴퓨터가 느려서 가벼운 모드로 바꿨어요. 친구 화면은 그대로예요.'), 3600); } } else S.slowN = 0; }
   // 모든 기기: 화면이 계속 느리면 설정의 「최적화」를 한 번만 권해요
