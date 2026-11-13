@@ -1,0 +1,26 @@
+{
+  "name": "BEACONFALL",
+  "short_name": "BEACONFALL",
+  "description": "불시착한 고대 행성에서 나무를 캐고, 자원을 얻어서 오랜 친구를 만나세요! 여러 모드와 리소스팩이 있습니다!",
+  "lang": "ko",
+  "id": "/games/beaconfall/",
+  "start_url": "/games/beaconfall/",
+  "scope": "/games/beaconfall/",
+  "display": "standalone",
+  "background_color": "#0e0e0e",
+  "theme_color": "#0e0e0e",
+  "icons": [
+    {
+      "src": "/games/pwa/icons/beaconfall-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/games/pwa/icons/beaconfall-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

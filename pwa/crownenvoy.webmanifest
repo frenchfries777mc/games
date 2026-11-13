@@ -1,0 +1,26 @@
+{
+  "name": "Crown Envoy",
+  "short_name": "Crown Envoy",
+  "description": "나라도, 지도도, 시대도 모두 당신의 것입니다! 여러 기능들로 영토를 정복하고 당신의 발 아래에 놓으세요!",
+  "lang": "ko",
+  "id": "/games/crownenvoy/",
+  "start_url": "/games/crownenvoy/",
+  "scope": "/games/crownenvoy/",
+  "display": "standalone",
+  "background_color": "#0e0e0e",
+  "theme_color": "#0e0e0e",
+  "icons": [
+    {
+      "src": "/games/pwa/icons/crownenvoy-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/games/pwa/icons/crownenvoy-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

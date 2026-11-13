@@ -1,0 +1,26 @@
+{
+  "name": "GATECRASH",
+  "short_name": "GATECRASH",
+  "description": "여러 맵에서 도착지점까지 수단과 방법을 가리지 않고 누구보다 빠르게 도착하세요!",
+  "lang": "ko",
+  "id": "/games/gatecrash/",
+  "start_url": "/games/gatecrash/",
+  "scope": "/games/gatecrash/",
+  "display": "standalone",
+  "background_color": "#0e0e0e",
+  "theme_color": "#0e0e0e",
+  "icons": [
+    {
+      "src": "/games/pwa/icons/gatecrash-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/games/pwa/icons/gatecrash-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

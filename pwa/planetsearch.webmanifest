@@ -1,0 +1,26 @@
+{
+  "name": "행성 탐사",
+  "short_name": "행성 탐사",
+  "description": "여러 행성을 여행해 정보를 수집하고, 집이 절실한 외계인들을 알맞은 행성에 옮겨주세요!",
+  "lang": "ko",
+  "id": "/educations/planetsearch/",
+  "start_url": "/educations/planetsearch/",
+  "scope": "/educations/planetsearch/",
+  "display": "standalone",
+  "background_color": "#0e0e0e",
+  "theme_color": "#0e0e0e",
+  "icons": [
+    {
+      "src": "/games/pwa/icons/planetsearch-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/games/pwa/icons/planetsearch-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

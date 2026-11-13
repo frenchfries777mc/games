@@ -1,0 +1,26 @@
+{
+  "name": "FRY LAB",
+  "short_name": "FRY LAB",
+  "description": "여러 과학 · 수학적 실험을 수치를 조정하며 직접 해보세요! 물론 그렇다고 공부를 안 해서 부모님의 인내심을 실험하는 건 좋지 않은 생각입니다!",
+  "lang": "ko",
+  "id": "/tools/lab/",
+  "start_url": "/tools/lab/",
+  "scope": "/tools/lab/",
+  "display": "standalone",
+  "background_color": "#0e0e0e",
+  "theme_color": "#0e0e0e",
+  "icons": [
+    {
+      "src": "/games/pwa/icons/lab-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/games/pwa/icons/lab-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

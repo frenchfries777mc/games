@@ -3,7 +3,11 @@
   if(window.FFInstall) return;
   var host=location.hostname; if(host!=='frenchfries777.com'&&host!=='www.frenchfries777.com') return;
   var standalone=false; try{ standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true; }catch(e){}
-  if(!document.querySelector('link[rel=manifest]')){ var l=document.createElement('link'); l.rel='manifest'; l.href='https://frenchfries777.com/manifest.webmanifest'; document.head.appendChild(l); }
+  /* 프로그램 페이지는 그 프로그램만의 앱으로 설치돼요 (games/pwa/이름.webmanifest). 그 밖의 페이지는 사이트 전체 앱 */
+  var pm=/^\/games\/(?:prototypes\/)?(stickseum|crownenvoy|beaconfall|isleport|vowkeep|tumblecrown|dummyparty|gatecrash)\//.exec(location.pathname)||/^\/educations\/(planetsearch|speedcode|timeline|munjang|balance|proverb)\//.exec(location.pathname)||/^\/tools\/(code|blocks|sheet|docs|slides|lab|draw|score|video)\//.exec(location.pathname);
+  var ml=document.querySelector('link[rel=manifest]');
+  if(pm){ if(!ml){ ml=document.createElement('link'); ml.rel='manifest'; document.head.appendChild(ml); } ml.href='/games/pwa/'+pm[1]+'.webmanifest'; }
+  else if(!ml){ var l=document.createElement('link'); l.rel='manifest'; l.href='https://frenchfries777.com/manifest.webmanifest'; document.head.appendChild(l); }
   if('serviceWorker' in navigator && !/^\/tools\//.test(location.pathname)){ try{ navigator.serviceWorker.register('/sw.js',{scope:'/'}).catch(function(){}); }catch(e){} }
   window.FFInstall={};
   if(standalone) return;
@@ -33,5 +37,19 @@
   function show(){ paint(); wire(); }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',show); else show();
   addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); ev=e; });
-  addEventListener('appinstalled',function(){ ev=null; paint(); });
+  addEventListener('appinstalled',function(){ ev=null; paint(); var x=document.getElementById('ffInstBar'); if(x) x.remove(); });
+  /* 앱 스토어의 "설치"로 들어왔을 때(?ffinstall=1)만 화면 아래에 설치 줄을 보여요 */
+  if(pm&&/[?&]ffinstall=1(&|$)/.test(location.search)){
+    try{ history.replaceState(null,'',location.pathname+location.search.replace(/([?&])ffinstall=1(&|$)/,function(m,a,b){ return b?a:''; })+location.hash); }catch(e){}
+    var bar=function(){ if(document.getElementById('ffInstBar')) return;
+      var d=document.createElement('div'); d.id='ffInstBar'; d.setAttribute('data-notr',''); d.style.cssText='position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:2147483000;display:flex;align-items:center;gap:10px;max-width:calc(100vw - 24px);padding:8px 10px 8px 14px;border-radius:999px;background:#171717;color:#ece6d8;border:1px solid #d9b45f;font:500 14px/1.3 system-ui,sans-serif;box-shadow:0 6px 24px rgba(0,0,0,.45)';
+      var t=document.createElement('span'), b=document.createElement('button'), x=document.createElement('button');
+      b.type=x.type='button'; b.textContent='⬇ '+label; x.textContent='✕'; x.setAttribute('aria-label','close');
+      b.style.cssText='border:0;border-radius:999px;padding:7px 16px;background:#d9b45f;color:#111;font:700 14px system-ui,sans-serif;cursor:pointer'; x.style.cssText='border:0;background:none;color:#a39c8c;font-size:16px;cursor:pointer;padding:4px 6px';
+      b.onclick=function(){ var e=ev; if(e){ ev=null; e.prompt(); e.userChoice.then(function(c){ if(c&&c.outcome==='accepted') d.remove(); }); return; }
+        t.textContent=/iphone|ipad|ipod/i.test(navigator.userAgent)?'공유 버튼 → 홈 화면에 추가':'브라우저 메뉴(⋮) → 앱 설치'; };
+      x.onclick=function(){ d.remove(); };
+      d.appendChild(t); d.appendChild(b); d.appendChild(x); (document.body||document.documentElement).appendChild(d); };
+    if(document.body) bar(); else document.addEventListener('DOMContentLoaded',bar);
+  }
 })();

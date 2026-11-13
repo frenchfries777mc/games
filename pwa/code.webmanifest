@@ -1,0 +1,26 @@
+{
+  "name": "FRY CODE",
+  "short_name": "FRY CODE",
+  "description": "Java, Python, Beaconscript같은 여러 언어로 당신만의 독보적인 프로그램을 작성하세요!",
+  "lang": "ko",
+  "id": "/tools/code/",
+  "start_url": "/tools/code/",
+  "scope": "/tools/code/",
+  "display": "standalone",
+  "background_color": "#0e0e0e",
+  "theme_color": "#0e0e0e",
+  "icons": [
+    {
+      "src": "/games/pwa/icons/code-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/games/pwa/icons/code-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
