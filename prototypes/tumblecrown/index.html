@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
 <!-- 새 빌드마다 아래 ?v=271 숫자를 BUILD와 같게 올려요 (브라우저가 옛 파일을 쓰지 않게) -->
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=313","./js/main.js":"./js/main.js?v=313","./js/map.js":"./js/map.js?v=310","./js/music.js":"./js/music.js?v=310","./js/render.js":"./js/render.js?v=310","./js/sfx.js":"./js/sfx.js?v=310","./js/sim.js":"./js/sim.js?v=310","./js/tr.js":"./js/tr.js?v=310"}}</script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=314","./js/main.js":"./js/main.js?v=314","./js/map.js":"./js/map.js?v=310","./js/music.js":"./js/music.js?v=310","./js/render.js":"./js/render.js?v=310","./js/sfx.js":"./js/sfx.js?v=310","./js/sim.js":"./js/sim.js?v=310","./js/tr.js":"./js/tr.js?v=310"}}</script>
 <script src="../../ff-presence.js" async></script>
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script src="https://frenchfries777.com/games/ff-lang.js"></script>
@@ -212,7 +212,7 @@ body.touch #talk{bottom:228px}
 .pf .st{font-size:11px;color:#ff9c94;height:14px;margin-top:2px}
 #skills{position:absolute;right:14px;bottom:14px;display:flex;gap:8px}
 .sk{width:74px;height:66px;background:var(--panel);border:3px solid var(--line);position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;font-size:14px;overflow:hidden}
-.sk small{font-size:11px;color:var(--dim)}
+.sk .nm{display:block;max-width:100%;padding:0 3px;text-align:center;line-height:1.15;word-break:keep-all;overflow-wrap:normal}.sk small{font-size:11px;color:var(--dim)}
 .sk .cd{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.65)}
 .sk .cn{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff}
 .sk.cool .nm,.sk.cool small{opacity:.15}
@@ -263,7 +263,7 @@ body.touch #prompt.up{bottom:324px}
 #tbtns{position:absolute;right:12px;bottom:12px;width:230px;height:230px;pointer-events:auto}
 #tbtns button{position:absolute;border-radius:50%;background:rgba(14,10,18,.7);border:3px solid var(--line);font-weight:800;font-size:13px;color:var(--ink);padding:0;overflow:hidden}
 #tbtns button .cd{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.6)}
-#tbtns button span{position:relative}
+#tbtns button span{position:relative;display:block;padding:0 4px;text-align:center;line-height:1.1;word-break:keep-all;overflow-wrap:normal}
 #tA{width:96px;height:96px;right:0;bottom:0;font-size:16px!important}
 #tQ{width:60px;height:60px;right:108px;bottom:4px}#tE{width:60px;height:60px;right:100px;bottom:74px}#tR{width:60px;height:60px;right:36px;bottom:110px}
 #tRoll{width:54px;height:54px;right:168px;bottom:66px}#tF{width:54px;height:54px;right:160px;bottom:136px}
@@ -400,7 +400,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
 <div id="touch"><div id="joy"><div id="joyBase"><div id="joyKnob"></div></div></div>
   <div id="tbtns"><button id="tA"><span>공격</span></button><button id="tQ"><i class="cd"></i><span>Q</span></button><button id="tE"><i class="cd"></i><span>E</span></button><button id="tR"><i class="cd"></i><span>R</span></button><button id="tRoll"><i class="cd"></i><span>구르기</span></button><button id="tF"><i class="cd"></i><span>귀환</span></button></div>
 </div>
-<script type="module" src="js/main.js?v=313"></script>
+<script type="module" src="js/main.js?v=314"></script>
 <div id="findBlock" style="position:fixed;inset:0;z-index:60;display:none;cursor:wait"></div>
 </body>
 </html>

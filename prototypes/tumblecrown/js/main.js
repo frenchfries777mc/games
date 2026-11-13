@@ -908,6 +908,8 @@ $('rpPrev').onclick = () => rpCycle(-1); $('rpNext').onclick = () => rpCycle(1);
 function goBots(G, tm, x, z) { RP.recOp(G, 'c', tm, x, z); callBots(G, tm, x, z); }
 function sur(G, p) { RP.recOp(G, 's', p.id); surVote(G, p); }
 function bless(G, pid, id) { RP.recOp(G, 'z', pid, id); chooseBless(G, pid, id); }
+// 스킬 이름이 길면 글자를 줄여서 이상하게 끊기지 않게 해요 (띄어쓰기에서만 줄을 바꿔요, CSS word-break: keep-all)
+function skFs(n, base) { const l = String(n).replace(/\s/g, '').length; return l <= 3 ? base : l <= 5 ? base - 2 : l <= 7 ? base - 3 : base - 4; }
 function myP() { return S.snap && S.snap.pl.find(p => p.id === S.me); }
 function awardHonor() {
   if (S.saved || !S.snap || !S.me) return; S.saved = true;
@@ -1482,7 +1484,7 @@ function paintHud() {
   // 기술 칸
   if (me) {
     const R = ROLES[me.role], sk = $('skills');
-    const kbs = JSON.stringify(KB()); if (sk.dataset.role !== me.role || sk.dataset.kb !== kbs) { sk.dataset.role = me.role; sk.dataset.kb = kbs; sk.innerHTML = ''; [{ key: 'f', name: T('귀환'), cd: 25 }].concat(R.skills, [{ key: 'roll', name: T('구르기'), cd: 1.2 }]).forEach((s, i) => { const kk = i === 0 ? 'F' : keyLabel(KB()[['q', 'e', 'r', 'roll'][i - 1]]); const d = document.createElement('div'); d.className = 'sk'; d.innerHTML = `<i class="cd"></i><span class="nm">${s.name}</span><small>${kk}</small><b class="cn"></b>`; sk.appendChild(d); }); ['tQ', 'tE', 'tR'].forEach((id, i) => $(id).querySelector('span').textContent = R.skills[i].name); }
+    const kbs = JSON.stringify(KB()); if (sk.dataset.role !== me.role || sk.dataset.kb !== kbs) { sk.dataset.role = me.role; sk.dataset.kb = kbs; sk.innerHTML = ''; [{ key: 'f', name: T('귀환'), cd: 25 }].concat(R.skills, [{ key: 'roll', name: T('구르기'), cd: 1.2 }]).forEach((s, i) => { const kk = i === 0 ? 'F' : keyLabel(KB()[['q', 'e', 'r', 'roll'][i - 1]]); const d = document.createElement('div'); d.className = 'sk'; d.innerHTML = `<i class="cd"></i><span class="nm" style="font-size:${skFs(s.name, 14)}px">${s.name}</span><small>${kk}</small><b class="cn"></b>`; sk.appendChild(d); }); ['tQ', 'tE', 'tR'].forEach((id, i) => { const sp = $(id).querySelector('span'); sp.textContent = R.skills[i].name; sp.style.fontSize = skFs(R.skills[i].name, 13) + 'px'; }); }
     const cds = me.cd.concat([me.rc]), maxs = R.skills.map(s => s.cd).concat([1.2]), cds1 = [me.rcc || 0].concat(cds), maxs1 = [25].concat(maxs);
     [...sk.children].forEach((d, i) => { const c = Math.max(0, cds1[i]); d.querySelector('.cd').style.height = Math.min(100, c / maxs1[i] * 100) + '%'; d.querySelector('.cn').textContent = c > 0.05 ? Math.ceil(c) : ''; d.classList.toggle('cool', c > 0.05); });
     ['tQ', 'tE', 'tR', 'tRoll'].forEach((id, i) => { const c = Math.max(0, cds[i]); $(id).querySelector('.cd').style.height = Math.min(100, c / maxs[i] * 100) + '%'; });
