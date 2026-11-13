@@ -2270,10 +2270,11 @@ function showAchievementToast(a, heading){
 }
 function setWeaponLabel(wid){        // the character next to "체력" in the HUD (survival, parkour and hide and seek have no characters, so nothing is shown there)
   const el=document.getElementById('weaponLabel'), sep=document.getElementById('weaponSep'), w=WEAPONS[wid]; if(!el) return;
-  if(gameMode==='survival' || gameMode==='parkour' || gameMode==='hotpotato'){ el.textContent=''; if(sep) sep.style.display='none'; return; }
+  if(gameMode==='survival' || gameMode==='parkour' || gameMode==='hotpotato'){ el.textContent=''; el.__h=''; if(sep) sep.style.display='none'; return; }
   if(sep) sep.style.display='';
-  { const me=players[myId]; if(me && me.kit){ const nmK=x=>escapeHtmlText((WEAPON_PERSONA_NAME[x]||(WEAPONS[x]&&WEAPONS[x].name)||x)); el.innerHTML='🎲 외형 '+nmK(me.kit.lk)+' · 공격 '+nmK(wid)+' · 스킬 '+nmK(me.kit.sk)+' · 궁극기 '+nmK(me.kit.ul); return; } }
-  if(w) el.innerHTML=charLogo(wid,16)+' '+escapeHtmlText(w.name)+charTierTagHtml(wid);
+  const put=h=>{ if(el.__h!==h || !el.firstChild){ el.__h=h; el.innerHTML=h; } };      // (called every frame: the label is rebuilt only when it changes)
+  { const me=players[myId]; if(me && me.kit){ const nmK=x=>escapeHtmlText((WEAPON_PERSONA_NAME[x]||(WEAPONS[x]&&WEAPONS[x].name)||x)); put('🎲 외형 '+nmK(me.kit.lk)+' · 공격 '+nmK(wid)+' · 스킬 '+nmK(me.kit.sk)+' · 궁극기 '+nmK(me.kit.ul)); return; } }
+  if(w) put(charLogo(wid,16)+' '+escapeHtmlText(w.name)+charTierTagHtml(wid));
 }
 function updateGoldUI(){ const el=document.getElementById('goldAmt'); if(el) el.textContent=gold; updateSoulUI(); }
 function updateSoulUI(){ const el=document.getElementById('soulAmt'); if(el) el.textContent=saveData.souls||0; }
@@ -6093,7 +6094,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-13-v785';
+const GAME_BUILD='build 2026-11-13-v786';
 const GAME_VERSION='1.0.1', GAME_VERSION_NAME='네온 시티';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -10845,7 +10846,7 @@ function uiDlgNext(){
 function uiAlert(msg){ return uiDialog(String(msg)); }
 function uiConfirm(msg){ return uiDialog(String(msg),{cancel:true}); }
 function uiPrompt(msg,def,max){ return uiDialog(String(msg),{cancel:true,input:true,def:def,max:max}); }
-function showErrorAndReturnToMenu(msg){ roomLoading(false);
+function showErrorAndReturnToMenu(msg){ roomLoading(false); netStateAt=0; netStallShow(false);
   stkRoomSync(null);
   if(peer){ try{peer.destroy();}catch(e){} peer=null; }
   window.__versionNoted=false; chatPending=[];
@@ -11165,6 +11166,12 @@ function migAsked(){                  // someone asks me to be the host: only wh
   if(++migAskN>8){ migAskN=0; migAnswerPending(false); return; }                   // the host is still there for me: that player's own link to it broke
   migAskTimer=setTimeout(migAsked, 1000);
 }
+let netStateAt=0;      // (guest) when the last snapshot of the match arrived
+function netStallShow(on){      // a small line while nothing arrives from the room: the match goes on by itself when the connection is back
+  let el=document.getElementById('netStall');
+  if(!el){ if(!on) return; el=document.createElement('div'); el.id='netStall'; el.style.cssText='display:none; position:fixed; top:64px; left:50%; transform:translateX(-50%); z-index:21; background:rgba(14,18,26,.9); border:1px solid #ffb84d; color:#ffb84d; font-weight:700; font-size:13px; padding:6px 14px; border-radius:10px; pointer-events:none; text-align:center;'; el.textContent='📶 연결이 불안정해요 · 다시 연결되는 중…'; document.body.appendChild(el); }
+  const d=on?'':'none'; if(el.style.display!==d) el.style.display=d;
+}
 function hostLostMsg(){ return currentMode==='online' ? '연결이 끊어졌습니다.' : '호스트와 연결이 끊어졌습니다.'; }
 function hostClosedMsg(){ return currentMode==='online' ? '방이 닫혔습니다.' : '호스트가 나가 방이 닫혔습니다.'; }
 function migBanner(on){
@@ -11366,10 +11373,11 @@ function onHostData(conn, data){
 setInterval(()=>{
   if(!isHost || !MAP) return;
   const now=Date.now();
-  const timeout = started ? 4000 : 8000; // resolve dead connections faster once a match is actually running
+  const timeout = started ? 12000 : 8000; // a phone that loses its signal for a few seconds stays in the match (it was 4 s: every short drop threw the player out)
   const stale=[];
   for(const id in players){
     if(id===myId || players[id].isBot) continue; // bots have no connection that could go stale
+    if(started && now-(players[id].lastSeen||now)>1500){ const ip=players[id].input; if(ip){ ip.left=ip.right=ip.jump=ip.shoot=ip.dash=ip.down=ip.up=false; } }      // silent for a moment: the character stops instead of running / firing on with its last input
     if(now-(players[id].lastSeen||now) > timeout) stale.push(id);
   }
   stale.forEach(handlePlayerDisconnect);
@@ -11914,7 +11922,7 @@ function onClientData(data, mode, code){
   else if(data.t==='weaponState'){ applyWeaponState(data); }
   else if(data.t==='weaponReveal'){ showWeaponReveal(data.list, data.endsAt); }
   else if(data.t==='begin'){ started=true; noteMapPlayed(); finalizeGameplayStart(data.matchTimerEndsAt); } // THE root cause of the long-standing survival black-screen reports: a client only ever set started=true upon receiving 'weaponPhase', but noWeapon modes (hotpotato/survival/parkour) never send that message at all - so on any CLIENT (never the host, which is why host-side testing never caught it), started stayed false forever and render()'s "if(!started||!MAP) return" permanently blacked out the canvas, with the HUD's static "1" placeholder never getting overwritten. No exception was ever thrown, which is also why no error banner or diagnostic line ever caught it.
-  else if(data.t==='state'){
+  else if(data.t==='state'){ netStateAt=performance.now();
     { const lf=(netLastFull=netLastFull||{}); data.players=data.players.map(sp=>{ const m=Object.assign(lf[sp.id]||{}, sp); lf[sp.id]=m; return Object.assign({}, m); }); for(const id in lf) if(!data.players.some(sp=>sp.id===id)) delete lf[id]; }      // (the host sends only what changed: put the full player back together)
     if(!isHost) rpRecAdd(data);
     lastStateReceivedAt=performance.now(); // feeds the staleness watchdog below - a client that stops receiving these needs to know, instead of silently sitting on stale/default data forever
@@ -17448,7 +17456,7 @@ function hostTickCore(dt,t){
   hostTickCore._acc+=dt;
   if(effects.length) effects = effects.filter(e => t/1000 - e.born < 1.6);
   if(hostTickCore._acc >= 1/(Object.keys(players).length<=8?30:SNAPSHOT_HZ)){
-    if(hostTickCore._acc < 0.4 && snapshotBacklogged()) return;           // a client's connection still has the last snapshots waiting: sending more only makes the lag grow, so wait (never longer than 0.4 s)
+    /* (one guest with a slow link used to hold the snapshots back for EVERYBODY: now only that guest gets fewer, see the send below) */           // a client's connection still has the last snapshots waiting: sending more only makes the lag grow, so wait (never longer than 0.4 s)
     hostTickCore._acc=0;
     const snap={t:'state',
       players:Object.values(players).map(p=>({id:p.id,name:p.name,color:p.color,x:snapR(p.x,10),y:snapR(p.y,10),vx:snapR(p.vx,10),angle:snapR(p.angle,1000),grounded:p.grounded,
@@ -17490,7 +17498,13 @@ function hostTickCore(dt,t){
     };
     { const now=Date.now(); chatOutbox=chatOutbox.filter(m=>now-m.at<CHAT_CARRY_MS); if(chatOutbox.length) snap.chat=chatOutbox.map(m=>({cid:m.cid, from:m.from, text:m.text, fromId:m.fromId})); }
     rpRecAdd(snap);
-    broadcastAll(snapDeltaFor(snap));
+    { let any=false; for(const id in conns){ any=true; break; }
+      if(!any) snapLastIds='';
+      else { const delta=snapDeltaFor(snap), nowMs=performance.now();
+        for(const id in conns){ const c=conns[id], dc=c && c.dataChannel;
+          if(dc && dc.bufferedAmount>49152){ c.__lag=true; if(nowMs-(c.__lagAt||0)>=400){ c.__lagAt=nowMs; safeSend(c, snap); } continue; }      // a guest whose link is clogged: a FULL snapshot now and then (it misses the small ones in between), the others are not slowed down
+          if(c.__lag){ c.__lag=false; safeSend(c, snap); continue; }                                                                              // its link is clear again: one full snapshot, then the small ones as usual
+          safeSend(c, delta); } } }      // nobody to send to (practice, a room of bots): the delta is not built; the next one that is sent is a full one
   }
 }
 /* The snapshot is about 10 KB with 9 players, nearly all of it fields that did not change since the last one (flags that stay false, counters, names ...). Every player is sent as ONLY what changed (a client does
@@ -18979,6 +18993,14 @@ function isTouchDevice(){
   try{ return window.matchMedia('(pointer: coarse)').matches && !window.matchMedia('(any-pointer: fine)').matches; }      // a laptop/desktop (mouse or trackpad present) is never treated as a phone, even with a touch screen
   catch(e){ return ('ontouchstart' in window) && (navigator.maxTouchPoints||0)>0; }
 }
+let TOUCH_ON=false;      // (kept fresh by the touch-controls timer: the HUD reads it every frame)
+function tkh(s){ return TOUCH_ON ? s.replace(/ \([^)]*\)/, '') : s; }      // on a touch screen the HUD does not name keyboard keys
+/* writing the SAME text into an element again (the HUD does it every frame) used to rebuild its text node each time, which also woke the translation / logo observers: now it is skipped */
+(function(){ try{ const d=Object.getOwnPropertyDescriptor(Node.prototype,'textContent'); if(d && d.set) Object.defineProperty(Node.prototype,'textContent',{configurable:true, enumerable:d.enumerable, get:d.get, set:function(v){
+  if(this.nodeType===1){ const s=(v===null||v===undefined)?'':String(v), f=this.firstChild;
+    if(f ? (f===this.lastChild && f.nodeType===3 && (f.data===s || (this.__tcN===f && this.__tcS===s))) : s==='') return;
+    d.set.call(this, v); this.__tcS=s; this.__tcN=this.firstChild; return; }
+  d.set.call(this, v); }}); }catch(e){} })();
 function touchModeOn(){ const c=otherSettings.controls; return c==='touch' || (c!=='kbm' && isTouchDevice()); }
 let touchUiBuilt=false, touchAimActive=false;
 function ensureTouchUi(){
@@ -19070,17 +19092,20 @@ function ensureTouchUi(){
   return ui;
 }
 setInterval(()=>{
-  const on=touchModeOn();
+  const on=touchModeOn(); TOUCH_ON=on;
   document.body.classList.toggle('touchOn', on);
   if(!on){ const u=document.getElementById('touchUi'); if(u) u.style.display='none'; const r=document.getElementById('touchRotate'); if(r) r.style.display='none'; return; }
   const ui=ensureTouchUi(), playing=started && !matchEnded && !highlightViewing && document.getElementById('hud').style.display!=='none';
   const picking=!!(document.getElementById('weaponScreen').classList.contains('active') && document.getElementById('lobby').style.display!=='none');
   ui.style.display=(playing && !picking)?'block':'none';
+  if(playing){ const bs=document.getElementById('tBtns').children, rdy=id=>{ const e=document.getElementById(id); return !e || !(parseFloat(e.style.width)<99.5); };      // a button whose ability is still cooling down is dimmed
+    if(bs[0]) bs[0].style.opacity=rdy('skillFill')?'':'0.3'; if(bs[1]) bs[1].style.opacity=rdy('ultFill')?'':'0.3'; if(bs[3]) bs[3].style.opacity=rdy('dashFill')?'':'0.3'; }
   const portrait=window.innerHeight>window.innerWidth*1.05;
   document.getElementById('touchRotate').style.display=(playing && portrait)?'flex':'none';
 }, 250);
 setInterval(()=>{
   if(!started) return;
+  if(!isHost){ if(!started || matchEnded) netStateAt=0; netStallShow(!!hostConn && started && !matchEnded && !migState && netStateAt>0 && performance.now()-netStateAt>1500); }
   if(isHost){ players[myId] && (players[myId].input=localInput); }
   else if(hostConn && hostConn.open && !spectatorMode){
     const now=Date.now(); chatCarry=chatCarry.filter(m=>now-m.at<CHAT_CARRY_MS);
@@ -21747,11 +21772,11 @@ function render(fxDt){
     const dashRemain = isHost ? Math.max(0, dashCd-(performance.now()/1000-(me.lastDash===undefined?-9999:me.lastDash))) : (me.dashCdRemain||0);
     const dashFrac = clamp(1-dashRemain/dashCd, 0, 1);
     document.getElementById('dashFill').style.width=(dashFrac*100)+'%';
-    document.getElementById('dashLabel').textContent = dashRemain>0.05 ? ('대쉬 (Q) '+dashRemain.toFixed(1)+'초') : '대쉬 (Q) 준비됨';
+    document.getElementById('dashLabel').textContent = tkh(dashRemain>0.05 ? ('대쉬 (Q) '+dashRemain.toFixed(1)+'초') : '대쉬 (Q) 준비됨');
     const tpRemain = isHost ? Math.max(0, TELEPORT_CD-(performance.now()/1000-(me.lastTeleport===undefined?-9999:me.lastTeleport))) : (me.teleportCdRemain||0);
     const tpFrac = clamp(1-tpRemain/TELEPORT_CD, 0, 1);
     document.getElementById('teleportFill').style.width=(tpFrac*100)+'%';
-    document.getElementById('teleportLabel').textContent = tpRemain>0.05 ? ('순간이동 ('+codeToLabel(keyBindings.teleport)+') '+tpRemain.toFixed(1)+'초') : '순간이동 ('+codeToLabel(keyBindings.teleport)+') 준비됨';
+    document.getElementById('teleportLabel').textContent = tkh(tpRemain>0.05 ? ('순간이동 ('+codeToLabel(keyBindings.teleport)+') '+tpRemain.toFixed(1)+'초') : '순간이동 ('+codeToLabel(keyBindings.teleport)+') 준비됨');
     { // unlike teleport (a whole-match mode setting), whether THIS player has an ultimate depends on their
       // current weapon, which can change mid-match even within a noWeapon mode (hide and seek's seeker
       // goes bare-handed -> pistol) - so this has to be re-checked every frame, not set once at match start
@@ -21762,7 +21787,7 @@ function render(fxDt){
         const uRemain = me.darkSub ? 0 : (isHost ? Math.max(0, ultCdOf(me)-(performance.now()/1000-(me.lastUlt===undefined?-9999:me.lastUlt))) : (me.ultCdRemain||0));
         const uFrac = clamp(1-uRemain/ultCdOf(me), 0, 1);
         document.getElementById('ultFill').style.width=(uFrac*100)+'%';
-        document.getElementById('ultLabel').textContent = uRemain>0.05 ? ('궁극기 '+ud.name+' '+uRemain.toFixed(1)+'초') : ('궁극기 (R) '+ud.name+' 준비됨');
+        document.getElementById('ultLabel').textContent = tkh(uRemain>0.05 ? ('궁극기 '+ud.name+' '+uRemain.toFixed(1)+'초') : ('궁극기 (R) '+ud.name+' 준비됨'));
         document.getElementById('ultWrap').classList.toggle('ready', uRemain<=0.05);
       }
     }
@@ -21774,7 +21799,7 @@ function render(fxDt){
         const sRemain = dsAs ? (isHost ? dsAssistCdLeft(me, performance.now()/1000) : (me.dsC||0)) : (isHost ? Math.max(0, skillCdOf(me)-(performance.now()/1000-(me.lastSkill===undefined?-9999:me.lastSkill))) : (me.skillCdRemain||0));
         document.getElementById('skillFill').style.width=(clamp(1-sRemain/(dsAs?DS_ASSIST_CD:skillCdOf(me)),0,1)*100)+'%';
         const sdName=dsAs ? '지원 발사' : (skW(me)==='puppeteer' && me.sw) ? SEW_PULL_NAME : ((skW(me)==='tionis' && me.tioStage==='morph') ? '변신' : sd.name);
-        document.getElementById('skillLabel').textContent = sRemain>0.05 ? ('스킬 '+sdName+' '+sRemain.toFixed(1)) : ('스킬 ('+codeToLabel(keyBindings.skill)+') '+sdName);
+        document.getElementById('skillLabel').textContent = tkh(sRemain>0.05 ? ('스킬 '+sdName+' '+sRemain.toFixed(1)) : ('스킬 ('+codeToLabel(keyBindings.skill)+') '+sdName));
         sw.classList.toggle('ready', sRemain<=0.05);
       }
     }
@@ -21789,12 +21814,12 @@ function render(fxDt){
       // an explicit sentinel for exactly this case, so clients must check that instead of respawnAt.
       const neverRespawning = isHost ? (me.respawnAt===Infinity) : (me.respawnIn===-1);
       if(neverRespawning){
-        document.getElementById('respawnTimer').textContent = (gameMode==='duel') ? ' 다음 라운드 대기 중...' : (gameMode==='tournament' ? ' 관전 중' : (gameMode==='freeze' ? ' 🧊 얼어붙음 - 아군이 닿아서 녹여줄 때까지 기다려요' : ' 탈락'));
+        document.getElementById('respawnTimer').__t = (gameMode==='duel') ? ' 다음 라운드 대기 중...' : (gameMode==='tournament' ? ' 관전 중' : (gameMode==='freeze' ? ' 🧊 얼어붙음 - 아군이 닿아서 녹여줄 때까지 기다려요' : ' 탈락'));
       } else {
         const secs = isHost ? Math.max(0, Math.ceil(me.respawnAt-performance.now()/1000)) : Math.max(0, Math.ceil(me.respawnIn||0));
-        document.getElementById('respawnTimer').textContent=secs+'초 후 부활';
+        document.getElementById('respawnTimer').__t=secs+'초 후 부활';
       }
-      { const st=spectateTarget(); if(st){ const rt=document.getElementById('respawnTimer'); rt.textContent += ' · 👁 '+st.name+' (← → 전환)'; } }
+      { const rt=document.getElementById('respawnTimer'), st=spectateTarget(); rt.textContent=rt.__t+(st ? ' · 👁 '+st.name+(TOUCH_ON?'':' (← → 전환)') : ''); }
     } else rmsg.style.display='none';
     elimTick(me);
     if(gameMode==='conquest' && cq){

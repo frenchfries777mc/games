@@ -25,3 +25,10 @@ patchnotes.json | v784 items[1] | 컴퓨터는 기존 그대로예요 | build 78
 patchnotes.json | v784 items[2] | 모바일은 글로우·스킨 연출·화면 흔들림을 끄고 파티클을 줄이고 30프레임으로 제한해서 훨씬 가벼워요 | build 784 | 2026-11-13
 patchnotes.json | v785 title | 친선과 연습 화면이 모바일 가로에서 잘리는 문제 수정 | build 785 | 2026-11-13
 patchnotes.json | v785 items[0] | 모바일 가로 화면에서 친선과 연습의 모드 카드 아래쪽이 잘리던 문제를 고쳤어요 (카드가 보이는 화면 높이에 맞춰져요) | build 785 | 2026-11-13
+patchnotes.json | v786 title | 모바일 조작 화면 정리와 끊김 완화, 불안정한 인터넷 대응 | build 786 | 2026-11-13
+patchnotes.json | v786 items[0] | 모바일에서 아래쪽 표시에 키보드 키 안내가 더 이상 나오지 않아요 | build 786 | 2026-11-13
+patchnotes.json | v786 items[1] | 모바일 버튼(스킬·궁극기·대시)이 재사용 대기 중일 때 흐리게 보여요 | build 786 | 2026-11-13
+patchnotes.json | v786 items[2] | 경기 중 화면 표시를 바뀔 때만 다시 그려서 모바일에서 더 가벼워요 | build 786 | 2026-11-13
+patchnotes.json | v786 items[3] | 한 명의 인터넷이 느려도 다른 사람들의 화면은 느려지지 않아요 | build 786 | 2026-11-13
+patchnotes.json | v786 items[4] | 인터넷이 잠깐 끊겨도 바로 방에서 나가지지 않고 12초까지 기다려요 (그동안 캐릭터는 멈춰 있어요) | build 786 | 2026-11-13
+patchnotes.json | v786 items[5] | 연결이 불안정하면 화면 위에 작은 안내가 나오고, 돌아오면 바로 이어져요 | build 786 | 2026-11-13
