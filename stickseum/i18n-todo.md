@@ -36,3 +36,6 @@ patchnotes.json | v787 title | 모바일 최적화 | build 787 | 2026-11-13
 patchnotes.json | v787 items[0] | 모바일에서 아래쪽 막대와 글자 표시를 덜 자주 갱신해서 더 가벼워요 | build 787 | 2026-11-13
 patchnotes.json | v787 items[1] | 모바일에서 배경 분위기 효과를 끄고 효과 조각 수를 더 줄였어요 | build 787 | 2026-11-13
 patchnotes.json | v787 items[2] | 모바일에서 게임 화면을 불투명하게 그려서 화면 합치는 부담을 줄였어요 | build 787 | 2026-11-13
+patchnotes.json | v788 title | 저사양 컴퓨터 자동 감지 | build 788 | 2026-11-13
+patchnotes.json | v788 items[0] | 매치 첫 몇 초의 프레임 시간을 재서 느린 컴퓨터면 효과를 줄여 가볍게 바꿔요 (한 번 느리다고 판단하면 기억해서 다음부터 처음부터 가볍게 시작) | build 788 | 2026-11-13
+patchnotes.json | v788 items[1] | 설정의 「저사양 자동 감지」에서 자동, 항상 가볍게, 끔을 고를 수 있고, 느려서 줄였다는 안내는 설정 화면에만 나와요 | build 788 | 2026-11-13
