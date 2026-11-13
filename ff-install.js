@@ -5,6 +5,8 @@
   var standalone=false; try{ standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true; }catch(e){}
   /* 프로그램 페이지는 그 프로그램만의 앱으로 설치돼요 (games/pwa/이름.webmanifest). 그 밖의 페이지는 사이트 전체 앱 */
   var pm=/^\/games\/(?:prototypes\/)?(stickseum|crownenvoy|beaconfall|isleport|vowkeep|tumblecrown|dummyparty|gatecrash)\//.exec(location.pathname)||/^\/educations\/(planetsearch|speedcode|timeline|munjang|balance|proverb)\//.exec(location.pathname)||/^\/tools\/(code|blocks|sheet|docs|slides|lab|draw|score|video)\//.exec(location.pathname);
+  /* Tumble Crown 은 게임 화면만 앱이에요: 소개 사이트에서 설치를 누르면 게임 화면으로 보내요 */
+  if(pm&&pm[1]==='tumblecrown'&&!/^\/games\/prototypes\//.test(location.pathname)){ if(/[?&]ffinstall=1(&|$)/.test(location.search)){ location.replace('/games/prototypes/tumblecrown/?ffinstall=1'); return; } pm=null; }
   var ml=document.querySelector('link[rel=manifest]');
   if(pm){ if(!ml){ ml=document.createElement('link'); ml.rel='manifest'; document.head.appendChild(ml); } ml.href='/games/pwa/'+pm[1]+'.webmanifest'; }
   else if(!ml){ var l=document.createElement('link'); l.rel='manifest'; l.href='https://frenchfries777.com/manifest.webmanifest'; document.head.appendChild(l); }

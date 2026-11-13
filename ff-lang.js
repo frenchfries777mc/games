@@ -52,7 +52,7 @@ try{ var me=document.currentScript, base=(me&&me.src)?me.src.replace(/[^\/]*$/,'
 /* 즐겨찾기(ff-fav.js): 카드 목록(#games)이 있는 첫 화면에서만 동작해요 */
 try{ if(!window.FFFav&&document.getElementById&&/^\/(games|tools|educations)\/?$/.test(location.pathname)){ var fs=document.createElement('script'); fs.src=base+'ff-fav.js?v=20261109c'; fs.async=true; (document.head||document.documentElement).appendChild(fs); } }catch(e){}
 /* 설치 버튼(ff-install.js): frenchfries777.com 에서만 동작해요 */
-try{ if(!window.FFInstall){ var is=document.createElement('script'); is.src=base+'ff-install.js?v=20261113a'; is.async=true; (document.head||document.documentElement).appendChild(is); } }catch(e){}
+try{ if(!window.FFInstall){ var is=document.createElement('script'); is.src=base+'ff-install.js?v=20261113b'; is.async=true; (document.head||document.documentElement).appendChild(is); } }catch(e){}
 /* 테마(다크 · 라이트)와 글자 크기: 허브나 게임 사이트의 ⚙️ 에서 고르면 모두 같이 바뀌어요.
    <html> 에 data-ff-theme="dark|light" 와 data-ff-size="s|m|l|xl" 를 붙이고, 허브와 게임 사이트(게임 화면은 빼고)는 크기만큼 확대해요.
    라이트 색은 각 페이지 CSS 가 html[data-ff-theme=light] 로 정해요. */
