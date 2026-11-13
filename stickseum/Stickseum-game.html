@@ -1986,11 +1986,12 @@ function bgmUpdate(){
   bgmCur={kind:want, src, g};
 }
 function bgmStart(){
-  if(!bgmCtx){ const AC=window.AudioContext||window.webkitAudioContext; if(!AC) return; try{ bgmCtx=new AC(); }catch(e){ return; } bgmLoad('lobby'); }
-  if(bgmCtx.state==='suspended') bgmCtx.resume().catch(()=>{});
+  if(!bgmCtx){ const AC=window.AudioContext||window.webkitAudioContext; if(!AC) return; try{ if(navigator.audioSession) navigator.audioSession.type='playback'; }catch(e){} try{ bgmCtx=new AC(); }catch(e){ return; } bgmLoad('lobby'); }
+  if(bgmCtx.state!=='running') bgmCtx.resume().catch(()=>{});
   bgmUpdate();
 }
-['pointerdown','keydown','touchend'].forEach(ev=>addEventListener(ev, bgmStart, {passive:true}));   // browsers only allow sound after a tap or key
+['pointerdown','pointerup','keydown','touchstart','touchend','click'].forEach(ev=>addEventListener(ev, bgmStart, {passive:true, capture:true}));   // browsers only allow sound after a tap or key (a phone counts the lift of the finger, and the touch buttons stop the event, so it is caught on the way down)
+document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible' && bgmCtx && bgmCtx.state!=='running') bgmCtx.resume().catch(()=>{}); });
 setInterval(bgmUpdate, 1000);
 loadOtherSettings(); if(perfFromShared()){ persistOtherSettings(); loadOtherSettings(); }
 
@@ -6121,7 +6122,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-13-v788';
+const GAME_BUILD='build 2026-11-13-v789';
 const GAME_VERSION='1.0.1', GAME_VERSION_NAME='네온 시티';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -19085,19 +19086,23 @@ function ensureTouchUi(){
     for(const o of enemiesOf(me)){ if(o.invis) continue; const dx=o.x-me.x, dy=(o.y-35)-(me.y-40), d=Math.hypot(dx,dy); if(d<bd){ bd=d; best=Math.atan2(dy,dx); } }
     return best;
   }
-  let aimDown=0, aimMoved=false, aimTapX=0, aimTapY=0;
+  let aimDown=0, aimMoved=false, aimTapX=0, aimTapY=0, aimHeld=false, aimAuto=false;
   bindStick(document.getElementById('tsAim'), (v,e)=>{
       const m=Math.hypot(v.dx,v.dy);
       if(m>0.2){ localInput.angle=assistAngle(Math.atan2(v.dy,v.dx)); touchAimActive=true;
         if(!aimMoved){ aimMoved=true; localInput.shoot=true; const me=players[myId]; if(!me || me.weapon!=='bat') fireInstant(); } }
       trackBatSwing(e.clientY); },
-    ()=>{ const quick=!aimMoved && performance.now()-aimDown<350;
-      localInput.shoot=false; touchAimActive=false; batSwingY=null; aimMoved=false;
+    ()=>{ const quick=!aimMoved && !aimAuto && performance.now()-aimDown<350; aimHeld=false;
+      localInput.shoot=false; touchAimActive=false; batSwingY=null; aimMoved=false; aimAuto=false;
       if(quick){
         let a=null; { const me=players[myId]; if(me){ const cam=getCamera(), dx=aimTapX+cam.x-me.x, dy=aimTapY+cam.y-(me.y-40); if(Math.hypot(dx,dy)>40) a=assistAngle(Math.atan2(dy,dx)); } }       // a tap on an empty spot fires toward that spot (snapping onto a foe close to that line)
         if(a===null) a=nearestFoeAngle();
         if(a!==null){ localInput.angle=a; localInput.shoot=true; const me=players[myId]; if(!me || me.weapon!=='bat') fireInstant(); setTimeout(()=>{ localInput.shoot=false; },90); } } },
-    e=>{ aimDown=performance.now(); aimMoved=false; aimTapX=e.clientX; aimTapY=e.clientY; }, 60);
+    e=>{ aimDown=performance.now(); aimMoved=false; aimAuto=false; aimHeld=true; aimTapX=e.clientX; aimTapY=e.clientY; }, 60);
+  /* pressing the aim stick and holding it without dragging aims by itself: it keeps pointing at the nearest enemy and fires (dragging takes over at once) */
+  setInterval(()=>{ if(!aimHeld || aimMoved || !started || matchEnded) return; if(performance.now()-aimDown<130) return;
+    const me=players[myId]; if(!me || !me.alive || me.weapon==='bat') return; const a=nearestFoeAngle(); if(a===null) return;
+    localInput.angle=a; touchAimActive=true; if(!aimAuto){ aimAuto=true; localInput.shoot=true; fireInstant(); } }, 40);
   const bx=document.getElementById('tBtns');
   const mk=(txt,cls,fn,up)=>{ const b=document.createElement('button'); b.className='tbtn '+(cls||''); b.textContent=txt; b.addEventListener('pointerdown', e=>{ e.preventDefault(); e.stopPropagation(); b.classList.add('on'); fn(); });
     const u=()=>{ b.classList.remove('on'); if(up) up(); }; b.addEventListener('pointerup',u); b.addEventListener('pointercancel',u); b.addEventListener('pointerleave',u); bx.appendChild(b); return b; };
