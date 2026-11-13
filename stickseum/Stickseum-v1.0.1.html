@@ -875,6 +875,14 @@ h1,h2{ text-shadow:0 0 10px rgba(63,224,197,.55), 0 0 26px rgba(63,224,197,.25);
   #dashBar, #teleportBar, #ultBar, #skillBar{ height:7px; } #healthBar{ height:12px; }
   #topBar{ top:6px; padding:4px 10px; font-size:10.5px; gap:6px; border-radius:8px; }
   #lobby{ padding:8px 0; }
+  /* 친선과 연습 (모드 카드): 가로 폰에서는 안내 글을 숨기고 카드를 남는 높이에 맞춰서 아래가 안 잘려요 (iOS 주소창이 있어도 보이는 높이 기준 dvh) */
+  #friendlyScreen{ max-height:100vh !important; max-height:100dvh !important; padding-top:2px !important; padding-bottom:4px !important; }
+  #friendlySub{ display:none; }
+  #friendlyScreen .backlink{ margin-bottom:0 !important; padding:3px 10px !important; font-size:11px !important; }
+  #friendlyScreen h2{ font-size:15px; margin:0 0 2px; }
+  .fCar .fStage{ height:calc(100vh - 118px); height:calc(100dvh - 118px); min-height:110px; }
+  #friendlyCnt{ margin-top:0 !important; margin-bottom:0 !important; font-size:10px; }
+  #friendlyGrid > .btn-secondary{ margin:2px auto 0 !important; padding:3px 14px !important; font-size:11px !important; }
   .card{ padding:12px 16px 10px; border-radius:10px; width:min(420px, 92vw); }
   h2{ font-size:16px; margin:0 0 2px; } label{ font-size:11px; margin:8px 0 4px; } .tag{ font-size:12px; margin:0 0 8px; }
   .hint{ font-size:10.5px; margin:0 0 6px; }
@@ -1198,7 +1206,7 @@ sting();})();</script>
     <div id="onlineBar"><div id="onlineBarFill"></div></div>
   </div>
 
-  <div class="card" id="friendlyScreen" style="width:min(780px,96vw); max-height:94vh; overflow-y:auto;">
+  <div class="card" id="friendlyScreen" style="width:min(780px,96vw); max-height:94vh; max-height:94dvh; overflow-y:auto;">
     <button class="backlink" id="friendlyBackBtn">&larr; 뒤로가기</button>
     <h2 id="friendlyTitle">친선과 연습</h2>
     <div class="hint" id="friendlySub"></div>
@@ -6085,7 +6093,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-13-v784';
+const GAME_BUILD='build 2026-11-13-v785';
 const GAME_VERSION='1.0.1', GAME_VERSION_NAME='네온 시티';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
