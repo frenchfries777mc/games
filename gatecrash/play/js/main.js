@@ -12,22 +12,35 @@ const UID = SAVE.uid;
 
 /* ---------- 최적화: 사이트 공용 설정 FFPerf(ff_perf = {low, fx, fps})를 따라요. 공용 설정이 없으면 이 게임 안의 값을 써요.
    켜면 화면을 1배 해상도로 그리고 초당 30번만 그려요 (게임 규칙과 속도는 그대로) ---------- */
+/* 기기: 처음 한 번 컴퓨터/모바일을 고르고, 더보기의 '기기'에서 바꿔요. 컴퓨터는 그대로, 모바일은 최적화를 극단적으로 해요
+   (30프레임, 그림 세로 270px 이하, 창밖 풍경·조명·그림자 없음, 로비 배경 느리게) */
+let MOBILE = SAVE.dev === 'mobile';
 let OPT = false, FPSCAP = 0;
+function rdpr(c) { return MOBILE ? Math.min(1, 270 / Math.max(1, c.clientHeight)) : Math.min(OPT ? 1 : 2, devicePixelRatio || 1); }
 function perfRead() {
   let p = null; try { p = window.FFPerf ? FFPerf.get() : null; } catch (e) { }
   if (!p) p = { low: SAVE.opt === 1 };
   const low = !!p.low, fx = p.fx || (low ? 'low' : 'high'), fps = p.fps != null ? p.fps : (low ? 30 : 0);
   OPT = low || fx === 'low'; FPSCAP = fps === 30 || fps === 60 ? fps : 0;
+  MOBILE = SAVE.dev === 'mobile'; if (MOBILE) { OPT = true; FPSCAP = 30; }
   const b = document.querySelector('#menu [data-go="opt"]'); if (b) b.textContent = OPT ? '최적화 켬' : '최적화 끔';
+  const d = document.querySelector('#menu [data-go="dev"]'); if (d) d.textContent = '기기: ' + (MOBILE ? '모바일' : '컴퓨터');
 }
 perfRead();
 window.addEventListener('ffperf', perfRead);
-/* 느린 화면 안내: 최적화가 꺼져 있는데 달리는 동안 화면이 계속 느리면, 다음에 로비로 돌아왔을 때 이 기기에서 한 번만 알려 줘요 */
-let lhDone = !!SAVE.lowHint, lhPend = false, lhAvg = 16, lhN = 0;
+/* 느린 화면 자동 감지: 경기 시작 뒤 처음 몇 초의 프레임 시간을 재서, 느리면(초당 26번 미만) 최적화를 자동으로 켜요.
+   이 기기에서 한 번만 하고, 로비로 돌아오면 작은 안내 글을 띄워요 (끄고 싶으면 더보기의 「최적화」) */
+let lhDone = !!SAVE.lowHint, lhPend = false, lhT = 0, lhSum = 0, lhN = 0;
 function lowHintTick(gap) {
   if (lhDone || lhPend || OPT) return;
-  lhAvg = lhAvg * 0.97 + Math.min(gap, 100) * 0.03; lhN = lhAvg > 40 ? lhN + 1 : 0;
-  if (lhN > 240) lhPend = true;
+  lhT += Math.min(gap, 200); if (lhT < 800) return;                  // 처음 0.8초는 준비 시간이라 빼요
+  lhSum += Math.min(gap, 200); lhN++;
+  if (lhT < 5000 || lhN < 20) return;
+  if (lhSum / lhN > 38) {
+    lhPend = true;
+    if (window.FFPerf) { try { FFPerf.set({ low: true, fx: 'low', fps: 30 }); } catch (e) { } } else { SAVE.opt = 1; save(); }
+    perfRead();
+  } else { lhDone = true; SAVE.lowHint = 1; save(); }   // 충분히 빠르면 다시 재지 않아요
 }
 
 /* ---------- 모달 (브라우저 팝업 대신) ---------- */
@@ -74,7 +87,7 @@ function homeMsg(t) { $('homeMsg').textContent = t || ''; }
 
 /* ---------- 화면 ---------- */
 let scr = 'sLobby';
-function show(id) { document.querySelectorAll('.scr').forEach(s => s.classList.toggle('on', s.id === id)); scr = id; $('hud').classList.toggle('on', id === 'game'); if (id === 'sLobby' && lhPend && !lhDone) { lhDone = true; SAVE.lowHint = 1; save(); homeMsg('화면이 느렸어요. 「최적화」 버튼을 누르면 화질과 효과를 줄여 더 부드러워져요.'); } }
+function show(id) { document.querySelectorAll('.scr').forEach(s => s.classList.toggle('on', s.id === id)); scr = id; $('hud').classList.toggle('on', id === 'game'); if (id === 'sLobby' && lhPend && !lhDone) { lhDone = true; SAVE.lowHint = 1; save(); homeMsg('화면이 느려서 최적화를 켰어요. 끄고 싶으면 더보기의 「최적화」를 눌러요.'); } }
 document.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', () => { if (scr === 'sRoom' || scr === 'sMap') leaveNet(); show('sLobby'); paintWho(); }));
 document.querySelectorAll('#menu .btn').forEach(b => b.addEventListener('click', () => menu(b.dataset.go)));
 function pickMap(cb) {
@@ -94,6 +107,7 @@ function menu(go) {
   else if (go === 'join') { const j = () => { $('joinMsg').textContent = ''; $('joinCode').value = ''; show('sJoin'); setTimeout(() => $('joinCode').focus(), 50); }; if (needLogin(j)) return; j(); }
   else if (go === 'help') { $('wl').innerHTML = WEP_IDS.concat('boots').map(k => { const w = WEAPONS[k]; return '<div><b>' + w.name + '</b><small>' + ({ melee: '가까이 휘둘러요', shot: '멀리 쏴요', spray: '뿌리는 동안 뒤로 밀려요', rocket: '터지면 주변이 다 날아가요', boost: '꼴찌일 때만 나와요, 3초 동안 빨라져요', trap: '바닥에 놓으면 밟은 사람이 걸려요' })[w.kind] + ' · ' + w.uses + '번</small></div>'; }).join(''); show('sHelp'); }
   else if (go === 'notes') { loadNotes(); show('sNotes'); }
+  else if (go === 'dev') { SAVE.dev = SAVE.dev === 'mobile' ? 'pc' : 'mobile'; save(); perfRead(); homeMsg(SAVE.dev === 'mobile' ? '모바일로 바꿨어요. 화면을 가볍게 그려요.' : '컴퓨터로 바꿨어요.'); }
   else if (go === 'opt') {
     const on = !OPT;
     if (window.FFPerf) { try { FFPerf.set({ low: on, fx: on ? 'low' : 'high', fps: on ? 30 : 0 }); } catch (e) { } }   // 사이트 설정과 같은 값
@@ -409,7 +423,7 @@ function render(t, G, op) {
 function render0(t, G, op) {
   op = op || {};
   const rdt = Math.min(.1, Math.max(0, t - (render0.lt || t))); render0.lt = t;
-  const c = gl, dpr = Math.min(OPT ? 1 : 2, devicePixelRatio || 1), w = Math.round(c.clientWidth * dpr), h = Math.round(c.clientHeight * dpr);
+  const c = gl, dpr = rdpr(c), w = Math.round(c.clientWidth * dpr), h = Math.round(c.clientHeight * dpr);
   if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
   const x = c.getContext('2d'); x.imageSmoothingEnabled = false;
   const sc = h / VH, vw = w / sc, me = G.racers.find(r => r.id === (op.focus || UID)) || G.racers[0];
@@ -497,8 +511,8 @@ function showResult() {
 (function () {
   const c = $('bgv'), x = c.getContext('2d'); let T = 0, last = 0;
   function f(now) {
-    if (scr === 'sLobby' && !document.getElementById('intro')) {
-      const dpr = Math.min(OPT ? 1 : 2, devicePixelRatio || 1), w = Math.round(c.clientWidth * dpr), h = Math.round(c.clientHeight * dpr);
+    if (scr === 'sLobby' && !document.getElementById('intro') && !(MOBILE && now - last < 60)) {
+      const dpr = rdpr(c), w = Math.round(c.clientWidth * dpr), h = Math.round(c.clientHeight * dpr);
       if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
       T += Math.min(.05, (now - last) / 1000 || .016);
       const sc = h / VH; x.setTransform(sc, 0, 0, sc, 0, 0); x.imageSmoothingEnabled = false;
@@ -516,3 +530,16 @@ function FFAuthJoin() {
   if (window.FFAuth) FFAuth.ready.then(go); else go();
 }
 if (qs.get('test')) { if (qs.get('auto') === 'solo') { setTimeout(() => { menu('solo'); setTimeout(beginGame, 200); }, 300); } }
+
+// 처음 한 번: 컴퓨터/모바일 고르기 (인트로가 끝난 뒤)
+(function () {
+  if (SAVE.dev) return;
+  const t = setInterval(() => {
+    if (document.getElementById('intro') || scr !== 'sLobby') return; clearInterval(t);
+    const w = document.createElement('div'); w.id = 'devWin';
+    w.style.cssText = 'position:fixed;inset:0;z-index:99;background:rgba(5,6,10,.78);display:flex;align-items:center;justify-content:center;padding:16px';
+    w.innerHTML = '<div style="width:100%;max-width:340px;background:#14203d;border:2px solid #ffd9a0;border-radius:12px;padding:20px;text-align:center"><h2 style="margin:0 0 6px">어떤 기기로 하나요?</h2><div class="note" style="margin-bottom:14px">나중에 더보기의 \'기기\'에서 바꿀 수 있어요</div><button class="btn go" data-d="pc" style="width:100%;text-align:center">컴퓨터</button><button class="btn" data-d="mobile" style="width:100%;text-align:center;margin-top:10px">모바일</button></div>';
+    document.body.appendChild(w);
+    w.querySelectorAll('[data-d]').forEach(b => b.onclick = () => { SAVE.dev = b.dataset.d; save(); w.remove(); perfRead(); });
+  }, 300);
+})();

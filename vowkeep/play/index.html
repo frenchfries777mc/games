@@ -70,6 +70,8 @@ html:not(.vkReady) #sLobby{visibility:hidden}
 .btn:hover{border-color:var(--gold)}
 .btn.gold{background:#5a4420;border-color:#d9b75a;color:#fff3cf}
 .btn:disabled{opacity:.45;cursor:default}
+#dev{position:fixed;inset:0;z-index:100002;display:none;align-items:center;justify-content:center;background:rgba(5,4,8,.88)}#dev.on{display:flex}
+#dev .in{width:min(380px,92vw);background:var(--panel);border:3px solid var(--line);box-shadow:0 0 0 3px #1a1420,0 12px 40px rgba(0,0,0,.6);padding:20px;display:flex;flex-direction:column;gap:10px;text-align:center}#dev h2{margin:0}#dev p{margin:0 0 4px;color:var(--dim);font-size:14px}#dev .btn{padding:14px;font-size:18px}#dev .btn.rec::after{content:" · 추천";font-size:13px;color:#ffe9b0}
 #gate,#jn{position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;background:rgba(5,4,8,.82)}#gate.on,#jn.on{display:flex}
 #gate .in,#jn .in{position:relative;width:min(380px,92vw);background:var(--panel);border:3px solid var(--line);box-shadow:0 0 0 3px #1a1420,0 12px 40px rgba(0,0,0,.6);padding:20px 20px 16px;display:flex;flex-direction:column;gap:10px;text-align:center}
 #gate h2,#jn h2{margin:0}#gate p{margin:0;color:var(--dim);font-size:14px}#gate small{color:var(--dim);font-size:12px;line-height:1.5}
@@ -264,11 +266,13 @@ body.touch #prompt.up,#prompt.up{bottom:262px}
 <!-- 설정 -->
 <section class="scr" data-noemo id="sSettings"><div class="pan" style="width:min(600px,94vw)"><button class="x" data-back>×</button>
   <h2>설정</h2>
+  <p class="note" id="lowNote" style="display:none;color:#ffd36b">화면이 느려서 알아서 낮은 사양 설정으로 바꿨어요. 아래에서 다시 바꿀 수 있어요.</p>
   <div class="set">
     <span>효과음 크기</span><input type="range" id="setVol" min="0" max="100">
     <span>화질</span><div class="seg" id="setPx"><button data-v="2">선명하게</button><button data-v="3">보통</button><button data-v="4">가볍게</button></div>
     <span>빛 번짐</span><div class="seg" id="setBloom"><button data-v="1">켜기</button><button data-v="0">끄기</button></div>
     <span>화면 흔들림</span><div class="seg" id="setShake"><button data-v="1">켜기</button><button data-v="0">끄기</button></div>
+    <span>기기</span><div class="seg" id="setDev"><button data-d="pc">컴퓨터</button><button data-d="mobile">모바일</button></div>
     <span>최적화</span><div class="seg" id="setOpt"><button data-v="1">켜기</button><button data-v="0">끄기</button></div>
   </div>
   <h2 style="margin-top:22px;font-size:18px">조작</h2>
@@ -295,6 +299,7 @@ body.touch #prompt.up,#prompt.up{bottom:262px}
 </div>
 <!-- 초대 창: 친구(접속과 상관없이)가 맨 위, 그 아래 지금 접속 중인 다른 플레이어 -->
 <div id="guide"><div class="gbox"><h3 id="gT"></h3><div id="gB"></div><button id="gOk"></button></div></div>
+<div id="dev" data-noemo><div class="in"><h2>어떤 기기로 하세요?</h2><p>컴퓨터는 지금 그대로, 모바일은 가장 가볍게 맞춰요. 설정에서 언제든 바꿀 수 있어요.</p><button class="btn gold big" data-d="pc">컴퓨터</button><button class="btn gold big" data-d="mobile">모바일</button></div></div>
 <div id="gate" data-noemo><div class="in"><h2>로그인</h2><p>Frenchfries777 계정으로 로그인하면 프로필·업적·퀘스트·친구 초대를 쓸 수 있어요.</p><button class="btn gold" id="gLogin">로그인</button><button class="btn" id="gGuest">게스트 모드로 하기</button><small>게스트는 방 코드나 링크로 온라인 원정은 할 수 있지만, 서버에 저장되는 기능(프로필·업적 올리기·퀘스트·친구·초대)은 쓸 수 없어요.</small></div></div>
 <div id="jn" data-noemo><div class="in"><button class="x" id="jnX">×</button><h2>코드로 참가</h2><input id="jnIn" maxlength="6" placeholder="방 코드 6자리" autocomplete="off" autocapitalize="characters" spellcheck="false"><button class="btn gold" id="jnGo">참가</button><p class="note" id="jnMsg"></p></div></div>
 <div id="inv" data-noemo><div class="in"><button class="x" id="invX">×</button><h2>초대하기</h2><div id="invList"></div></div></div>
@@ -307,6 +312,6 @@ body.touch #prompt.up,#prompt.up{bottom:262px}
 <script>["gesturestart","gesturechange","gestureend"].forEach(function(e){document.addEventListener(e,function(x){x.preventDefault()})});</script>
 <script>/* 옛 빌드가 캐시에서 뜨면: 사이트에 더 새 빌드가 있을 때 그 빌드 번호를 주소에 넣어 한 번만 다시 불러와요 (새 주소는 캐시에서 나오지 않아요) */
 (function(){try{var m=document.querySelector('script[src*="js/main.js"]').src.match(/v=(\d+)/),cur=m?+m[1]:0;fetch('../versions.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){var v=(j.versions||[]).find(function(x){return x.version==='0.2'}),n=v?+String(v.build||'').replace(/\D/g,''):0,u=new URL(location.href);if(n>cur&&u.searchParams.get('b')!==String(n)){u.searchParams.set('b',n);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();</script>
-<script type="module" src="js/main.js?v=73"></script>
+<script type="module" src="js/main.js?v=75"></script>
 </body>
 </html>
