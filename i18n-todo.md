@@ -984,3 +984,5 @@
 - 새 문구(한국어만, prototypes/kitchendefense/index.html): 플레이 환경, 컴퓨터, 모바일, 기기(설정)
 
 - [tumblecrown b314] 스킬 버튼 이름 글자 크기 자동 조절 (번역 영향 없음)
+
+- [tumblecrown b315] js/main.js 토스트: T('화면이 느려서 낮은 사양 설정으로 바꿨어요. 설정의 「최적화」에서 되돌릴 수 있어요.')
