@@ -69,7 +69,7 @@ function lpNext(){ try{ var n=new URLSearchParams(location.search).get('next'), 
 var SSO_HOSTS=['chat.frenchfries777.com'], ssoSub=SSO_HOSTS.indexOf(location.hostname)>=0, lpSso=onLP&&/[?&]sso=1(&|$)/.test(location.search), lpGoing=false;
 async function lpGo(){ if(lpGoing) return; lpGoing=true; var n=lpNext();
   try{ if(SSO_HOSTS.indexOf(new URL(n).hostname)>=0){ var t='';
-    try{ if(user&&sb){ var s=(await sb.auth.getSession()).data.session, r=await fetch(SB_URL+'/functions/v1/ff-sso',{method:'POST',headers:{Authorization:'Bearer '+s.access_token,apikey:SB_KEY}}), j=r.ok?await r.json():null; t=(j&&j.t)||''; } }catch(e){}
+    try{ if(user&&sb){ var s=(await sb.auth.getSession()).data.session, r=await fetch(SB_URL+'/functions/v1/dynamic-action',{method:'POST',headers:{Authorization:'Bearer '+s.access_token,apikey:SB_KEY}}), j=r.ok?await r.json():null; t=(j&&j.t)||''; } }catch(e){}
     n=n.replace(/#.*$/,'')+'#ffsso='+(t||0); } }catch(e){}
   location.replace(n); }
 async function ssoIn(u){ var m=/^#ffsso=(.*)$/.exec(location.hash||'');
