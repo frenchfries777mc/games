@@ -6,7 +6,7 @@
   /* 프로그램 페이지는 그 프로그램만의 앱으로 설치돼요 (games/pwa/이름.webmanifest). 그 밖의 페이지는 사이트 전체 앱 */
   var pm=/^\/games\/(?:prototypes\/)?(stickseum|crownenvoy|beaconfall|isleport|vowkeep|tumblecrown|dummyparty|gatecrash)\//.exec(location.pathname)||/^\/educations\/(planetsearch|speedcode|timeline|munjang|balance|proverb)\//.exec(location.pathname)||/^\/tools\/(code|blocks|sheet|docs|slides|lab|draw|score|video)\//.exec(location.pathname);
   /* Tumble Crown 은 게임 화면만 앱이에요: 소개 사이트에서 설치를 누르면 게임 화면으로 보내요 */
-  if(pm&&pm[1]==='tumblecrown'&&!/^\/games\/prototypes\//.test(location.pathname)){ if(/[?&]ffinstall=1(&|$)/.test(location.search)){ location.replace('/games/prototypes/tumblecrown/?ffinstall=1'); return; } pm=null; }
+  if(pm&&pm[1]==='tumblecrown'&&!/^\/games\/prototypes\//.test(location.pathname)){ if(/[?&]ffinstall=1(&|$)/.test(location.search)){ try{ sessionStorage.setItem('ffInstall','1'); }catch(e){} location.replace('/games/prototypes/tumblecrown/'); return; } pm=null; }
   var ml=document.querySelector('link[rel=manifest]');
   if(pm){ if(!ml){ ml=document.createElement('link'); ml.rel='manifest'; document.head.appendChild(ml); } ml.href='/games/pwa/'+pm[1]+'.webmanifest'; }
   else if(!ml){ var l=document.createElement('link'); l.rel='manifest'; l.href='https://frenchfries777.com/manifest.webmanifest'; document.head.appendChild(l); }
@@ -41,7 +41,8 @@
   addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); ev=e; });
   addEventListener('appinstalled',function(){ ev=null; paint(); var x=document.getElementById('ffInstBar'); if(x) x.remove(); });
   /* 앱 스토어의 "설치"로 들어왔을 때(?ffinstall=1)만 화면 아래에 설치 줄을 보여요 */
-  if(pm&&/[?&]ffinstall=1(&|$)/.test(location.search)){
+  var want=/[?&]ffinstall=1(&|$)/.test(location.search); try{ if(pm&&sessionStorage.getItem('ffInstall')==='1'){ sessionStorage.removeItem('ffInstall'); want=true; } }catch(e){}   // 게임 화면이 주소를 바꿔 다시 열어도 설치 줄이 남게
+  if(pm&&want){
     try{ history.replaceState(null,'',location.pathname+location.search.replace(/([?&])ffinstall=1(&|$)/,function(m,a,b){ return b?a:''; })+location.hash); }catch(e){}
     var bar=function(){ if(document.getElementById('ffInstBar')) return;
       var d=document.createElement('div'); d.id='ffInstBar'; d.setAttribute('data-notr',''); d.style.cssText='position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:2147483000;display:flex;align-items:center;gap:10px;max-width:calc(100vw - 24px);padding:8px 10px 8px 14px;border-radius:999px;background:#171717;color:#ece6d8;border:1px solid #d9b45f;font:500 14px/1.3 system-ui,sans-serif;box-shadow:0 6px 24px rgba(0,0,0,.45)';
