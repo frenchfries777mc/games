@@ -50,12 +50,12 @@ export function createGame(slots, seed, ch = 0) {
   };
   slots.forEach((s, i) => {
     const R = ROLES[s.role], lv = s.lv || 1, gear = s.gear || { weapon: 0, armor: 0 };
-    const maxhp = Math.round(R.hp * (1 + 0.03 * (lv - 1)) + GEAR_BONUS.armor[gear.armor | 0]);
+    const maxhp = Math.round(R.hp * (1 + 0.03 * (lv - 1)) + (GEAR_BONUS.armor[gear.armor | 0] || 0));
     G.players.push({
       id: s.id, role: s.role, cos: s.cos || null, name: s.name, bot: !!s.bot, slot: i, x: 0, z: 0, vx: 0, vz: 0, a: -Math.PI / 2,
       hp: maxhp, maxhp, baseHp: maxhp, down: false, dead: false, bleed: 0, revT: 0, respT: 0, roll: 0, rollCd: 0, inv: 0,
       cd: { atk: 0, s0: 0, s1: 0, s2: 0 }, block: 0, taunt: 0, rally: 0, shield: 0, shieldT: 0,
-      dmgMul: 1 + 0.03 * (lv - 1) + GEAR_BONUS.weapon[gear.weapon | 0], bl: [], anim: '', animT: 0, hitT: 0,
+      dmgMul: 1 + 0.03 * (lv - 1) + (GEAR_BONUS.weapon[gear.weapon | 0] || 0), bl: [], anim: '', animT: 0, hitT: 0,
       ai: { t: 0, tx: 0, tz: 0, target: 0 }, everDown: false
     });
     G.honor[s.id] = 0;

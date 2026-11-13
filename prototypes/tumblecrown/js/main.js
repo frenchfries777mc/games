@@ -721,12 +721,23 @@ function hostMsg(c, d) {
   if (d.t === 'rdy' && !S.G && S.ph === 'pick') { S.rdy[uid] = !S.rdy[uid]; hostLobby(); if (S.scr === 'sRoom') paintRoom(); }
   else if (d.t === 'ping' && S.G) { const p = S.G.players.find(q => q.uid === uid); if (p && !p.dead && (p.pgT || 0) < S.G.t && isFinite(d.x) && isFinite(d.z)) { p.pgT = S.G.t + 2; S.G.ev.push({ k: 'ping', id: p.id, tm: p.team, x: +d.x, z: +d.z, pk: PINGK[d.pk] ? d.pk : 'go' }); if (!PINGK[d.pk] || d.pk === 'go') goBots(S.G, p.team, +d.x, +d.z); } }
   else if (d.t === 'pick' && !S.G && S.ph === 'pick') { c._mp = Math.max(0, Math.min(99999, d.mp | 0)); c._rl = Math.max(0, Math.min(10, d.rl | 0)); const sl = S.slots.find(s => s.uid === uid); if (sl) { if (ROLES[d.role]) sl.role = d.role; const col = +d.col | 0; if (COLORS[col] && !S.slots.some(s => s !== sl && s.col === col)) sl.col = col; hostLobby(); if (S.scr === 'sRoom') paintRoom(); } }
-  else if (d.t === 'i' && S.G) { const pid = c._pid; if (!pid) return; const r = S.rin[pid] || (S.rin[pid] = {}); const once = { q: r.q || d.q, e: r.e || d.e, r: r.r || d.r, roll: r.roll || d.roll, skip: r.skip || d.skip, atkR: r.atkR || d.atkR, rcl: r.rcl || d.rcl }; Object.assign(r, d, once); }
+  else if (d.t === 'i' && S.G) { const pid = c._pid; if (!pid) return; const r = S.rin[pid] || (S.rin[pid] = {}); d = cleanInp(d); const once = { q: r.q || d.q, e: r.e || d.e, r: r.r || d.r, roll: r.roll || d.roll, skip: r.skip || d.skip, atkR: r.atkR || d.atkR, rcl: r.rcl || d.rcl }; Object.assign(r, d, once); }
   else if (d.t === 'b' && S.G) { if (c._pid) bless(S.G, c._pid, d.id); }
   else if (d.t === 'chat' && S.G) { hostChat(uid, d.m); }
   else if (d.t === 'emo' && S.G) { hostEmo(uid, d.i); }
   else if (d.t === 'ban' && !S.G && S.ph === 'pick' && S.bans) { const t = capOf(uid); if (t >= 0) setBan(t, d.role); }
   else if (d.t === 'sur' && S.G) { const p = S.G.players.find(q => q.uid === uid && !q.bot); if (p) sur(S.G, p); }
+}
+// 손님이 보낸 입력은 정해진 칸만, 올바른 값만 받아요 (숫자가 아닌 값이 규칙에 들어가면 판 전체가 망가져요)
+function cleanInp(d) {
+  const o = {}, num = k => typeof d[k] === 'number' && isFinite(d[k]) && Math.abs(d[k]) < 1e5;
+  if (num('px') && num('pz')) { o.px = d.px; o.pz = d.pz; }
+  if (num('ax') && num('az')) { o.ax = d.ax; o.az = d.az; }
+  if (num('aim')) o.aim = d.aim;
+  o.rsp = num('rsp') ? d.rsp | 0 : 0;
+  for (const k of ['atk', 'f']) o[k] = !!d[k];
+  for (const k of ['q', 'e', 'r', 'roll', 'skip', 'atkR', 'rcl']) o[k] = d[k] ? 1 : 0;
+  return o;
 }
 function dropConn(c) {
   const uid = c._uid; if (!uid || S.conns[uid] !== c) return; delete S.conns[uid];
@@ -1142,7 +1153,8 @@ function skillFx(e) {
     case 'quakeline': for (let i = 1; i <= 6; i++) setTimeout(() => { const x = e.x + c * i * 1.8, z = e.z + s * i * 1.8; view.shock(x, z, 3.6, 0xffb060, 0.45); view.burst(x, 0.4, z, 0xbcae94, 12, 7, 0.6, 0.16); view.rise(x, z, 0xff9a40, 6, 1.2, 0.7, 6); if (i % 2) view.column(x, z, 0xff9a40, 0.5); if (mine && i < 4) view.shake = Math.max(view.shake, 0.8); }, i * 55); view.flash(e.x + c * 6, e.z + s * 6, 0xffb060, 140); SFX.play('slam'); break;
     case 'flurryfx': view.burst(e.x + c * 2, 1.4, e.z + s * 2, 0xffe0c0, 10, 7, 0.3, 0.1); view.flash(e.x + c * 2, e.z + s * 2, 0xffe0c0, 90); break;
     case 'chainfx': { const L = e.l || 10; view.streak(e.x + c * 0.8, e.z + s * 0.8, e.a, L - 0.6, 0xc8ccd4, 0.4, 0.8); view.streak(e.x + c * 0.8, e.z + s * 0.8, e.a, (L - 0.6) * 0.8, 0xffffff, 0.3, 0.35); view.burst(e.x + c * L, 1.3, e.z + s * L, 0xd8dce4, e.n ? 16 : 6, 7, 0.35, 0.1); if (e.n) { view.shock(e.x + c * L, e.z + s * L, 3, 0xd8dce4, 0.35); view.flash(e.x + c * L, e.z + s * L, 0xd8dce4, 90); } SFX.play(e.n ? 'clang' : 'swing'); break; }   // 사슬 당기기: 사슬이 쭉 뻗어요 (맞으면 불꽃)
-    case 'slamfx': view.shock(e.x, e.z, 7, 0xd8c8a8, 0.55); view.ring(e.x, e.z, 3.2, 0xffd0a0, 0.5); view.burst(e.x, 0.4, e.z, 0xbcae94, 28, 9, 0.7, 0.18); view.rise(e.x, e.z, 0xe0c090, 14, 3, 0.8, 6); view.flash(e.x, e.z, 0xffd0a0, 120); if (S.snap && Math.hypot((view.entPos('p' + S.me) || { x: 1e9, z: 1e9 }).x - e.x, (view.entPos('p' + S.me) || { x: 1e9, z: 1e9 }).z - e.z) < 6) view.shake = Math.max(view.shake, 0.9); SFX.play('slam'); break;   // 철퇴 내려치기: 땅에 쾅
+    case 'slamfx': if (((S.snap && S.snap.pl.find(q => q.id === e.id)) || {}).role === 'telaris') { view.shock(e.x, e.z, 4.2, 0xffd36b, 0.5); view.shock(e.x, e.z, 2.4, 0xfff0c0, 0.35); view.burst(e.x, 0.8, e.z, 0xd8c8a8, 30, 8, 0.5, 0.16); view.flash(e.x, e.z, 0xfff0c0, 120); if (mine) view.shake = Math.max(view.shake, 0.9); SFX.play('slam'); break; }   // 텔라리스 방패 내려찍기 (같은 이름을 쓰는 철퇴 내려치기에 가려져 있었어요)
+      view.shock(e.x, e.z, 7, 0xd8c8a8, 0.55); view.ring(e.x, e.z, 3.2, 0xffd0a0, 0.5); view.burst(e.x, 0.4, e.z, 0xbcae94, 28, 9, 0.7, 0.18); view.rise(e.x, e.z, 0xe0c090, 14, 3, 0.8, 6); view.flash(e.x, e.z, 0xffd0a0, 120); if (S.snap && Math.hypot((view.entPos('p' + S.me) || { x: 1e9, z: 1e9 }).x - e.x, (view.entPos('p' + S.me) || { x: 1e9, z: 1e9 }).z - e.z) < 6) view.shake = Math.max(view.shake, 0.9); SFX.play('slam'); break;   // 철퇴 내려치기: 땅에 쾅
     case 'maceswirlfx': view.arc(e.x, e.z, (e.a || 0) + (e.n || 0) * 2.3, 4.2, 0xc8ccd4); view.ring(e.x, e.z, 4.6, 0xc8ccd4, 0.35); view.shock(e.x, e.z, 5, 0xd8dce4, 0.3); view.burst(e.x, 1.3, e.z, 0xd8dce4, 12, 8, 0.4, 0.12); SFX.play('swing'); break;   // 회오리 철퇴: 도는 동안 0.5초마다 둘레를 쓸어요
     case 'stabfx': { const o = (e.n % 2 ? 1 : -1) * 0.5, aa = e.a + (e.n % 2 ? 0.25 : -0.25); view.streak(e.x, e.z + o * 0.4, aa, 3.6, e.n % 2 ? 0xffe0c0 : 0xfff6e0, 0.2, 0.5); view.arc(e.x, e.z, aa, 3.0, 0xfff0d8); view.burst(e.x + c * 2.6, 1.4, e.z + s * 2.6, 0xffe0c0, 6, 6, 0.25, 0.09); SFX.play('swing'); break; }
     case 'blinkend': view.column(e.x, e.z, 0xb06aff, 0.55); view.burst(e.x, 1.2, e.z, 0xb06aff, 22, 7, 0.5, 0.14); view.shock(e.x, e.z, 3.4, 0xb06aff, 0.4); view.arc(e.x, e.z, e.a, 3.2, 0xe0c0ff); view.flash(e.x, e.z, 0xb06aff, 130); SFX.play('swing'); break;
@@ -1153,7 +1165,6 @@ function skillFx(e) {
     case 'smite': case 'curse': view.rune(e.x + c * 2, e.z + s * 2, 1.4, e.s === 'smite' ? 0xfff0b0 : 0xb06aff, 0.6, 3); view.rise(e.x, e.z, e.s === 'smite' ? 0xfff0b0 : 0xb06aff, 8, 1, 0.6, 6); break;
     case 'wallfx': view.shock(e.x, e.z, 5, 0xc8b890, 0.45); view.burst(e.x, 0.3, e.z, 0xbcae94, 28, 8, 0.7, 0.18); view.rise(e.x, e.z, 0xe0d0a0, 12, 2.4, 0.9, 6); view.flash(e.x, e.z, 0xffe08a, 100); if (mine) view.shake = Math.max(view.shake, 0.7); SFX.play('slam'); break;
     case 'aegisfx': view.ring(e.x, e.z, 2.2, 0x6af0d0, 0.9); view.column(e.x, e.z, 0x6af0d0, 0.8); view.rise(e.x, e.z, 0xb8fff0, 12, 1.4, 0.9, 6); view.flash(e.x, e.z, 0x6af0d0, 90); SFX.play('bless'); break;
-    case 'slamfx': view.shock(e.x, e.z, 4.2, 0xffd36b, 0.5); view.shock(e.x, e.z, 2.4, 0xfff0c0, 0.35); view.burst(e.x, 0.8, e.z, 0xd8c8a8, 30, 8, 0.5, 0.16); view.flash(e.x, e.z, 0xfff0c0, 120); if (mine) view.shake = Math.max(view.shake, 0.9); SFX.play('slam'); break;
     case 'rush': view.streak(e.x, e.z, e.a, 10, 0x6af0d0, 0.5, 2); view.burst(e.x, 0.4, e.z, 0xbcae94, 16, 5, 0.6, 0.16); SFX.play('roll'); break;
     case 'rushhit': view.burst(e.x, 1.2, e.z, 0xfff0c0, 44, 12, 0.6, 0.16); view.burst(e.x, 0.8, e.z, 0x6af0d0, 28, 9, 0.7, 0.2); view.shock(e.x, e.z, 4, 0x6af0d0, 0.45); view.shock(e.x, e.z, 8, 0xfff0c0, 0.6); view.flash(e.x, e.z, 0xffffff, 170); view.shake = Math.max(view.shake, 1.3); SFX.play('slam'); SFX.play('clang'); break;
     case 'rushbump': view.burst(e.x + Math.cos(e.a) * 1.2, 1, e.z + Math.sin(e.a) * 1.2, 0xd8c8a8, 20, 7, 0.5, 0.14); view.shock(e.x, e.z, 3, 0xd8c8a8, 0.4); view.shake = Math.max(view.shake, 0.6); SFX.play('clang'); break;
@@ -1896,6 +1907,25 @@ function musicTick(dt, now) {
 }
 addEventListener('pointerdown', () => MUS.kick()); addEventListener('keydown', () => MUS.kick());
 let lastT = performance.now();
+// 방장이 다른 탭을 보거나 창을 내려도 친구들의 판이 멈추지 않게, 화면이 가려진 동안에는 따로 도는 시계로 규칙만 돌려요 (그리기는 쉬어요)
+let bgW = null, bgLast = 0;
+function hostBgTick() {
+  if (!document.hidden || !S.G || S.net !== 'host' || S.rpl || !S.snap || S.snap.ph === 'won') { bgLast = 0; return; }
+  const now = performance.now(), dt = bgLast ? Math.min(1, (now - bgLast) / 1000) : 0, h = 1 / 30; bgLast = now;
+  if (S.rin[S.me]) S.rin[S.me] = {};   // 방장 본인은 화면을 안 보는 동안 가만히 서 있어요
+  S.acc += dt; let st = false;
+  while (S.acc >= h) {
+    S.acc -= h; st = true; RP.recPre(S.G, S.rin); step(S.G, h, S.rin);
+    for (const pid in S.rin) { const r = S.rin[pid]; r.q = r.e = r.r = r.roll = r.skip = r.atkR = r.rcl = 0; }
+    for (const e of S.G.ev) (S.netEv || (S.netEv = [])).push(e); S.G.ev.length = 0;
+  }
+  if (st) { S.prevPos = posMap(S.G); S.snap = snapshot(S.G); bcast({ t: 's', S: S.snap, ev: S.netEv || [] }); S.netEv = []; }
+}
+document.addEventListener('visibilitychange', () => {
+  if (bgW) { try { bgW.terminate ? bgW.terminate() : clearInterval(bgW); } catch (e) { } bgW = null; } bgLast = 0;
+  if (!document.hidden || !S.G || S.net !== 'host') return;
+  try { bgW = new Worker(URL.createObjectURL(new Blob(['setInterval(()=>postMessage(0),33)'], { type: 'text/javascript' }))); bgW.onmessage = hostBgTick; } catch (e) { bgW = setInterval(hostBgTick, 250); }
+});
 let lastF = 0, fpsN = 0, fpsT = 0;
 function frame(now) {
   requestAnimationFrame(frame);
