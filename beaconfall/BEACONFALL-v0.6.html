@@ -413,7 +413,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.6<br>build 210</p>
+    <p class="foot">v0.6<br>build 211</p>
   </nav>
 </div>
 
@@ -1233,20 +1233,20 @@ let world=null, base=null, clouds=[], cloudSprites=[], dk=null, dkc=null;
 /* 최적화: 허브 설정(ff_perf)과 같은 값을 읽고 써요. 저사양이면 화면을 더 크게 그리고, 효과 단계와 프레임 제한을 따라가요 */
 let PERF={low:false,fx:'high',fps:0};
 const perfLoad=()=>{PERF={low:false,fx:'high',fps:0};try{if(window.FFPerf)PERF=FFPerf.get();}catch(e){}
-  try{if(typeof settings!=='undefined'&&settings&&settings.device==='mobile')PERF=Object.assign({},PERF,{low:true,fx:'low',fps:30,mob:true});}catch(e){}};   // 모바일: 최저 효과·30프레임·더 거친 화면 (허브 공용 설정은 건드리지 않아요)
+  try{if(typeof settings!=='undefined'&&settings&&settings.device==='mobile')PERF=Object.assign({},PERF,{low:true,fx:'low',fps:30,mob:true});else if(typeof settings!=='undefined'&&settings&&settings.autoLow&&!PERF.low)PERF=Object.assign({},PERF,{low:true,fx:'low',auto:true});}catch(e){}};   // 모바일: 최저 효과·30프레임·더 거친 화면 (허브 공용 설정은 건드리지 않아요)
 perfLoad();
 window.addEventListener('ffperf',()=>{perfLoad();if(world){resize();clampCam();}});
-/* 느린 화면 안내: 저사양 모드가 꺼져 있는데 플레이 중 화면이 계속 느리면, 이 기기에서 한 번만 켜 보라고 물어요 */
-let lhDone=false,lhAvg=16,lhN=0;try{lhDone=!!localStorage.getItem('bf_lowHint');}catch(e){}
+/* 느린 화면 자동 낮춤: 플레이 처음 몇 초의 프레임 시간을 재서 느리면 이 게임의 효과를 낮춰요 (창은 띄우지 않고, 설정 「자동 낮춤」에서 끌 수 있어요) */
+let lhDone=!!settings.perfChk,lhT=0,lhSum=0,lhN=0;
 function lowHintTick(gap){
-  if(lhDone||PERF.low||mode!=='play'||!$('#modal').hidden)return;
-  lhAvg=lhAvg*0.97+Math.min(gap,100)*0.03;lhN=lhAvg>40?lhN+1:0;
-  if(lhN<240)return;
-  lhDone=true;try{localStorage.setItem('bf_lowHint','1');}catch(e){}
-  openModal(`<h2>화면이 느려요</h2><p class="hint">저사양 모드를 켜면 화면을 더 크게 그리고 효과와 프레임을 줄여서 더 부드러워져요. 설정에서 언제든 바꿀 수 있어요.</p><div class="actions"><button class="btn sm" data-lowon>저사양 모드 켜기</button><button class="btn sm ghost" data-close>괜찮아요</button></div>`,m=>{
-    m.querySelector('[data-lowon]').onclick=()=>{try{FFPerf.set({low:true,fx:'low',fps:30});}catch(e){}perfLoad();if(world){resize();clampCam();}closeModal();};
-    m.querySelector('[data-close]').onclick=closeModal;
-  },'lowhint');
+  if(lhDone||settings.device==='mobile'||PERF.low||mode!=='play'||!$('#modal').hidden)return;
+  lhT+=Math.min(gap,100)/1000;
+  if(lhT<3)return;   // 처음 3초는 월드를 불러오느라 느려서 재지 않아요
+  if(gap<250){lhSum+=gap;lhN++;}
+  if(lhT<8||!lhN)return;
+  lhDone=true;settings.perfChk=1;
+  if(lhSum/lhN>40){settings.autoLow=true;perfLoad();if(world){resize();clampCam();}}
+  saveSettings();
 }
 const optOn=()=>PERF.low;
 let S=4,VW=0,VH=0,panelW=0;
@@ -14290,7 +14290,8 @@ function showSettings(){
     <div class="row"><span>언어</span><div class="seg" style="flex-wrap:wrap">${I18N_LANGS.filter(v=>!I18N_VIRT[v]).map(v=>`<button data-lang="${v}" aria-pressed="${i18nPick()===v}">${I18N_NAMES[v]}</button>`).join('')}</div></div>
     <div class="row"><span>가상 언어</span><div class="seg" style="flex-wrap:wrap">${['nw','gk','au','sg','em'].map(v=>`<button data-lang="${v}" aria-pressed="${i18nPick()===v}"${v==='au'?` style="font-family:'FF Aurebesh',system-ui"`:v==='sg'?` style="font-family:'FF Galactic',system-ui"`:''}>${I18N_NAMES[v]}</button>`).join('')}</div></div>
     <div class="row"><span>기기</span><div class="seg">${[['pc','컴퓨터'],['mobile','모바일']].map(([v,t])=>`<button data-device="${v}" aria-pressed="${(settings.device||'pc')===v}">${t}</button>`).join('')}</div></div>
-    ${settings.device==='mobile'?'<div style="font-size:11px;opacity:.75;margin:-2px 0 6px">모바일은 효과·프레임·화면 크기가 항상 최저로 고정돼요.</div>':`<div class="row"><span>저사양 모드</span><div class="seg">${[['1','켜짐'],['0','꺼짐']].map(([v,t])=>`<button data-perf="low" data-v="${v}" aria-pressed="${PERF.low===(v==='1')}">${t}</button>`).join('')}</div></div>
+    ${settings.device==='mobile'?'<div style="font-size:11px;opacity:.75;margin:-2px 0 6px">모바일은 효과·프레임·화면 크기가 항상 최저로 고정돼요.</div>':`<div class="row"><span>자동 낮춤</span><div class="seg">${[['1','켜짐'],['0','꺼짐']].map(([v,t])=>`<button data-autolow="${v}" aria-pressed="${!!settings.autoLow===(v==='1')}">${t}</button>`).join('')}</div></div>
+    ${settings.autoLow?'<div style="font-size:11px;opacity:.75;margin:-2px 0 6px">화면이 느려서 효과를 낮춘 상태예요.</div>':''}<div class="row"><span>저사양 모드</span><div class="seg">${[['1','켜짐'],['0','꺼짐']].map(([v,t])=>`<button data-perf="low" data-v="${v}" aria-pressed="${PERF.low===(v==='1')}">${t}</button>`).join('')}</div></div>
     <div class="row"><span>효과</span><div class="seg">${[['high','높음'],['mid','중간'],['low','낮음']].map(([v,t])=>`<button data-perf="fx" data-v="${v}" aria-pressed="${PERF.fx===v}">${t}</button>`).join('')}</div></div>
     <div class="row"><span>프레임</span><div class="seg">${[['0','제한 없음'],['60','60'],['30','30']].map(([v,t])=>`<button data-perf="fps" data-v="${v}" aria-pressed="${String(PERF.fps)===v}">${t}</button>`).join('')}</div></div>
     <div style="font-size:11px;opacity:.75;margin:-2px 0 6px">허브·교육·도구 사이트와 같은 설정이에요. 저사양 모드를 켜면 화면을 더 크게 그리고 효과와 프레임을 줄여요.</div>`}
@@ -14304,8 +14305,10 @@ function showSettings(){
       setLang(v);if(was){location.reload();return;}m.querySelectorAll('[data-lang]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));});
     m.querySelectorAll('[data-perf]').forEach(b=>b.onclick=()=>{const k=b.dataset.perf,v=b.dataset.v;let o;
       if(k==='low')o={low:v==='1',fx:v==='1'?'low':'high',fps:v==='1'?30:0};else if(k==='fx')o={fx:v};else o={fps:+v};
+      if(settings.autoLow){settings.autoLow=false;saveSettings();}   // 직접 고르면 자동 낮춤은 해제
       try{FFPerf.set(o);}catch(e){}perfLoad();if(world){resize();clampCam();}
       m.querySelectorAll('[data-perf]').forEach(x=>{const kk=x.dataset.perf,vv=x.dataset.v;x.setAttribute('aria-pressed',String(kk==='low'?PERF.low===(vv==='1'):String(PERF[kk])===vv));});});
+    m.querySelectorAll('[data-autolow]').forEach(b=>b.onclick=()=>{settings.autoLow=b.dataset.autolow==='1';settings.perfChk=1;saveSettings();perfLoad();if(world){resize();clampCam();}showSettings();});
     m.querySelectorAll('[data-device]').forEach(b=>b.onclick=()=>{setDevice(b.dataset.device);showSettings();});
     m.querySelectorAll('[data-touch]').forEach(b=>b.onclick=()=>{settings.touch=b.dataset.touch;saveSettings();applyTouch();m.querySelectorAll('[data-touch]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));});},'settings');
 }
