@@ -8,7 +8,7 @@ function save() { try { localStorage.setItem('gatecrash.save', JSON.stringify(SA
 SAVE.gc = SAVE.gc | 0; if (!SAVE.skins || !Array.isArray(SAVE.skins.own)) SAVE.skins = { own: [], on: '' };
 function skinOf() { return SKINS[SAVE.skins.on] && SAVE.skins.own.includes(SAVE.skins.on) ? SAVE.skins.on : ''; }
 if (!SAVE.uid) { SAVE.uid = Math.random().toString(36).slice(2, 10); SAVE.col = (Math.random() * COLORS.length) | 0; save(); }
-const UID = SAVE.uid;
+const UID = SAVE.uid + '-' + Math.random().toString(36).slice(2, 6);   // 같은 브라우저의 다른 탭과 겹치지 않게 탭마다 꼬리표를 붙여요
 
 /* ---------- 최적화: 사이트 공용 설정 FFPerf(ff_perf = {low, fx, fps})를 따라요. 공용 설정이 없으면 이 게임 안의 값을 써요.
    켜면 화면을 1배 해상도로 그리고 초당 30번만 그려요 (게임 규칙과 속도는 그대로) ---------- */
@@ -157,7 +157,7 @@ function peerOpts() {
   return o;
 }
 function leaveNet() {
-  N.gen++; N.mg++; try { N.peer && N.peer.destroy(); } catch (e) { } N.peer = null; N.conns = []; N.host = null; N.mode = ''; N.pub = false; N.G = null; N.code = ''; clearTimeout(N.autoT);
+  N.gen++; N.mg++; try { N.peer && N.peer.destroy(); } catch (e) { } N.peer = null; N.conns = []; N.host = null; N.mode = ''; N.pub = false; N.G = null; N.code = ''; N.joined = false; N.gid = 0; clearInterval(N.helloT); clearTimeout(N.autoT);
   try { if (loggedIn() && FFAuth.setRoom) FFAuth.setRoom(null); } catch (e) { }
 }
 function send(c, m) { try { c.open && c.send(m); } catch (e) { } }
@@ -181,6 +181,7 @@ function paintSlots() {
 function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
 document.addEventListener('click', e => { const t = e.target.closest && e.target.closest('.slot.pn'); if (t) openProf(t.dataset.aid); });
 function pushRoom() { if (N.mode === 'host') bcast({ t: 'room', players: N.players }); }
+setInterval(() => { if (N.mode === 'host' && !N.G && N.conns.length) pushRoom(); }, 2000);      // 방 명단을 가끔 다시 보내요
 $('startBtn').onclick = () => { if (N.mode === 'solo' || N.mode === 'host') beginGame(); else if (N.mode === 'guest' && N.pub) send(N.host, { t: 'go' }); };
 
 function hostHandlers(p) {
@@ -188,12 +189,18 @@ function hostHandlers(p) {
     c.on('data', d => {
       if (!d) return;
       if (d.t === 'hello') {
+        if (c.gid) { send(c, { t: 'welcome', id: c.gid, players: N.players }); return; }      // 같은 연결의 인사가 또 오면 답만 다시 보내요
         if (d.v !== VERSION) { send(c, { t: 'no', why: '버전이 달라요 (v' + VERSION + ')' }); setTimeout(() => c.close(), 300); return; }
         if (N.G || N.players.length >= MAXP) { send(c, { t: 'no', why: '가득 찼거나 이미 시작했어요' }); setTimeout(() => c.close(), 300); return; }
+        if (typeof d.id !== 'string' || !d.id || d.id.length > 40 || /^bot\d+$/.test(d.id) || N.players.some(p => p.id === d.id)) { send(c, { t: 'no', why: '들어올 수 없어요' }); setTimeout(() => c.close(), 300); return; }
         const pl = { id: d.id, aid: /^[0-9a-f-]{36}$/i.test(String(d.aid || '')) ? String(d.aid) : '', name: String(d.name || '손님').slice(0, 15), col: pickCol(d.col), skin: SKINS[d.skin] ? d.skin : '' }; c.gid = d.id; N.players.push(pl); N.conns.push(c);
         send(c, { t: 'welcome', id: d.id, players: N.players }); pushRoom(); paintSlots();
       } else if (d.t === 'go') { if (N.pub && !N.G && N.mode === 'host') beginGame();
-      } else if (d.t === 'i') { N.inputs[c.gid] = Object.assign(N.inputs[c.gid] || {}, d.i, { jp: (N.inputs[c.gid] || {}).jp || d.i.jp, swap: (N.inputs[c.gid] || {}).swap || d.i.swap, emo: d.i.emo || (N.inputs[c.gid] || {}).emo, spr: (N.inputs[c.gid] || {}).spr || d.i.spr }); }
+      } else if (d.t === 'i' && c.gid && d.i && typeof d.i === 'object') {
+        // 받은 입력은 정해진 값만 써요 (속도를 부풀린 입력 같은 것을 막아요)
+        const q = d.i, o = N.inputs[c.gid] || {}, aim = +q.aim, emo = q.emo | 0;
+        N.inputs[c.gid] = { d: q.d > 0 ? 1 : q.d < 0 ? -1 : 0, j: !!q.j, atk: !!q.atk, aim: isFinite(aim) ? aim : 0, jp: !!(o.jp || q.jp), swap: !!(o.swap || q.swap), emo: (emo >= 1 && emo <= 4 ? emo : 0) || o.emo || 0, spr: !!(o.spr || q.spr) };
+      }
     });
     const drop = () => { N.conns = N.conns.filter(x => x !== c); if (!N.G) { N.players = N.players.filter(p => p.id !== c.gid); pushRoom(); if (scr === 'sRoom') paintSlots(); } else { const r = N.G.racers.find(r => r.id === c.gid); if (r) { r.bot = true; r.ai = { plan: null, stuck: 0, best: Infinity, wait: 0, noise: .3, aimT: 0, react: .35 }; } } };
     c.on('close', drop); c.on('error', drop);
@@ -214,9 +221,15 @@ function startGuest(code) {
   p.on('error', () => fail('방을 찾지 못했어요.'));
   p.on('open', () => {
     const c = p.connect(PREFIX + code, { reliable: false }); N.host = c; setTimeout(() => { if (!c.open) fail('방을 찾지 못했어요.'); }, 6000);
-    c.on('open', () => send(c, { t: 'hello', v: VERSION, id: UID, aid: myAid(), name: myName(), col: COLORS[SAVE.col % COLORS.length], skin: skinOf() }));
-    c.on('data', d => guestMsg(d, fail, () => { done = true; })); c.on('close', () => { if (!done || N.mode === 'guest') { if (N.G) { endToLobby('연결이 끊겼어요.'); } else fail('방과 연결이 끊겼어요.'); } });
+    c.on('open', () => hello(c, gen));
+    c.on('data', d => guestMsg(d, fail, () => { done = true; })); c.on('close', () => { if (N.gen !== gen || N.host !== c) return; if (N.joined) hostGone(); else fail('방과 연결이 끊겼어요.'); });
   });
+}
+/* 인사는 답(welcome/no)이 올 때까지 다시 보내요. 빠른 연결은 가끔 메시지가 사라져요 */
+function hello(c, gen) {
+  const m = { t: 'hello', v: VERSION, id: UID, aid: myAid(), name: myName(), col: COLORS[SAVE.col % COLORS.length], skin: skinOf() };
+  let n = 0; send(c, m); clearInterval(N.helloT);
+  N.helloT = setInterval(() => { if (N.gen !== gen || N.joined || N.host !== c || !c.open || ++n > 8) { clearInterval(N.helloT); return; } send(c, m); }, 700);
 }
 function doJoin() {
   const c = $('joinCode').value.toUpperCase().replace(/[^A-Z0-9]/g, '');
@@ -224,14 +237,20 @@ function doJoin() {
   startGuest(c);
 }
 $('joinBtn').onclick = doJoin; $('joinCode').addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') doJoin(); });
+/* 방을 연 사람이 나갔을 때: 경기가 끝난 뒤라면 결과 화면은 그대로 두고, 아니면 로비로 돌아가요 */
+function hostGone() {
+  if (N.G && N.G.phase === 'end') return;
+  loop.on = false; RP = null; $('res').classList.remove('on'); endToLobby(N.G ? '연결이 끊겼어요.' : '방이 닫혔어요.');
+}
 function endToLobby(msg) {
   BGM.play('top-of-the-leaderboard'); leaveNet(); show('sLobby'); paintWho(); homeMsg(msg || ''); }
+function cleanPl(list) { return (Array.isArray(list) ? list : []).slice(0, MAXP).map(p => ({ id: String(p && p.id), aid: /^[0-9a-f-]{36}$/i.test(String(p && p.aid || '')) ? String(p.aid) : '', name: String(p && p.name || '손님').slice(0, 15), col: COLORS.includes(p && p.col) ? p.col : COLORS[0], skin: p && SKINS[p.skin] ? p.skin : '', bot: !!(p && p.bot) })); }
 function guestMsg(d, fail, ok) {
   if (!d) return;
   if (d.t === 'no') fail(d.why);
-  else if (d.t === 'welcome') { ok(); homeMsg(''); N.players = d.players; N.code = 'guest'; openRoom(); }
-  else if (d.t === 'room') { N.players = d.players; if (scr === 'sRoom') openRoom(); }
-  else if (d.t === 'start') { playGame(d.map, d.pl); }
+  else if (d.t === 'welcome') { ok(); if (N.joined) return; N.joined = true; homeMsg(''); N.players = cleanPl(d.players); N.code = 'guest'; openRoom(); }
+  else if (d.t === 'room') { N.players = cleanPl(d.players); if (scr === 'sRoom') openRoom(); }
+  else if (d.t === 'start') { if (!MAPS[d.map] || (d.g && N.gid === d.g)) return; N.gid = d.g; playGame(d.map, cleanPl(d.pl)); }      // 시작 신호는 여러 번 와요 (한 번만 받아요)
   else if (d.t === 's' && N.G) applySnap(d);
 }
 /* 온라인 대전: 열려 있는 빠른 방을 찾아 들어가고, 없으면 내가 방을 열어요 */
@@ -245,9 +264,9 @@ function startMatch() {
     p.on('error', next);
     p.on('open', () => {
       const c = p.connect(PREFIX + 'q' + n, { reliable: false }); N.host = c; N.mode = 'guest'; N.pub = true; const to = setTimeout(next, 3500);
-      c.on('open', () => { clearTimeout(to); send(c, { t: 'hello', v: VERSION, id: UID, aid: myAid(), name: myName(), col: COLORS[SAVE.col % COLORS.length], skin: skinOf() }); });
+      c.on('open', () => { clearTimeout(to); hello(c, gen); });
       c.on('data', d => { if (d && d.t === 'no') { clearTimeout(to); next(); } else if (d && d.t === 'welcome') { ended = true; homeMsg(''); guestMsg(d, () => { }, () => { }); } else guestMsg(d, () => { }, () => { }); });
-      c.on('close', () => { if (ended) { if (N.G) endToLobby('연결이 끊겼어요.'); } else next(); });
+      c.on('close', () => { if (ended) { if (N.host === c) hostGone(); } else next(); });
     });
   };
   tryJoin();
@@ -269,7 +288,9 @@ function beginGame() {
   const map = N.mode === 'solo' && N.pick ? N.pick : MAP_IDS[(Math.random() * MAP_IDS.length) | 0], pl = N.players.map(p => ({ id: p.id, name: p.name, col: p.col, skin: p.skin || '', bot: false }));
   const names = ['토끼', '여우', '고양이', '펭귄', '곰'];
   while (pl.length < MAXP) { const c = COLORS.find(c => !pl.some(p => p.col === c)); pl.push({ id: 'bot' + pl.length, name: '봇 ' + names[pl.length], col: c, bot: true }); }
-  bcast({ t: 'start', map, pl }); playGame(map, pl);
+  const g = (Math.random() * 1e9) | 0, gen = N.gen, st = { t: 'start', map, pl, g };
+  bcast(st); playGame(map, pl);
+  for (const ms of [300, 900]) setTimeout(() => { if (N.gen === gen && N.G && N.conns.length) bcast(st); }, ms);      // 시작 신호가 사라졌을 때를 대비해 두 번 더 보내요
 }
 function playGame(map, pl) {
   N.G = G = newGame(map, pl.map((p, i) => ({ id: p.id, name: p.name, col: p.col, skin: SKINS[p.skin] ? p.skin : '', bot: p.bot, own: p.id === UID })));
@@ -345,7 +366,7 @@ function applySnap(d) {
     const r = G.racers.find(r => r.id === a[0]); if (!r) continue;
     if (r.id === UID) { a[8] = r.aim; a[7] = r.face; const dx = a[1] - r.x, dy = a[2] - r.y; if (Math.hypot(dx, dy) > 40) { r.x = a[1]; r.y = a[2]; } else { r.x += dx * .12; r.y += dy * .12; } }
     else { r.tx = a[1]; r.ty = a[2]; if (Math.hypot(a[1] - r.x, a[2] - r.y) > 60) { r.x = a[1]; r.y = a[2]; } }
-    if (r.id !== UID || G.phase !== 'race') { r.vx = a[3]; r.vy = a[4]; } r.hp = a[5]; r.wep = a[6] ? { k: a[6], u: 1 } : null; r.face = a[7]; r.aim = a[8]; r.swing = a[9] ? .1 : 0; r.fin = !!a[10]; r.inv = a[11] ? 1 : 0; r.flash = a[12] ? .1 : 0; r.stun = a[13] ? .1 : 0; r.ground = !!a[14]; r.ko = a[15]; r.prog = +a[16]; r.emo = a[17] | 0; r.emoT = r.emo ? 1 : 0; r.boost = a[18] ? .3 : 0; r.slow = a[19] ? .3 : 0;
+    if (r.id !== UID || G.phase !== 'race') { r.vx = a[3]; r.vy = a[4]; } r.hp = a[5]; r.wep = a[6] && WEAPONS[a[6]] ? { k: a[6], u: 1 } : null; r.face = a[7]; r.aim = a[8]; r.swing = a[9] ? .1 : 0; r.fin = !!a[10]; r.inv = a[11] ? 1 : 0; r.flash = a[12] ? .1 : 0; r.stun = a[13] ? .1 : 0; r.ground = !!a[14]; r.ko = a[15]; r.prog = +a[16]; r.emo = a[17] | 0; r.emoT = r.emo ? 1 : 0; r.boost = a[18] ? .3 : 0; r.slow = a[19] ? .3 : 0;
   }
   d.it.forEach((a, i) => { if (G.items[i]) { G.items[i].on = !!a[0]; G.items[i].k = a[1]; } });
   G.traps = (d.tr || []).map(a => ({ x: a[0], y: a[1], t: 1, k: a[2] })); G.sprays = (d.sp || []).map(a => ({ x: a[0], y: a[1], e: a[2], t: a[3] }));
@@ -395,7 +416,7 @@ function recFrame(dt) {
   REC.push({ r: G.racers.map(r => ({ id: r.id, name: r.name, col: r.col, skin: r.skin, slot: r.slot, x: r.x, y: r.y, vx: r.vx, face: r.face, aim: r.aim, swing: r.swing > 0 ? .1 : 0, wep: r.wep ? { k: r.wep.k, u: 1 } : null, hp: r.hp, fin: r.fin, inv: r.inv > 0 ? 1 : 0, flash: r.flash > 0 ? .1 : 0, stun: r.stun > 0 ? .1 : 0, boost: r.boost > 0 ? .1 : 0, slow: r.slow > 0 ? .1 : 0, ground: r.ground, anim: r.anim, prog: 1 })), it: G.items.map(i => [i.on, i.k]), sh: G.shots.map(s => ({ k: s.k, x: s.x, y: s.y, vx: s.vx, vy: s.vy })), tr: G.traps.map(t => [t.x, t.y, t.k]) });
   if (REC.length > REC_MAX) REC.shift();
 }
-function startReplay() { if (REC.length < 20) return; RP = { t: 0, frames: REC.slice(), focus: G.rank[0] || UID }; }
+function startReplay() { if (REC.length < 20) { showResult(); return; } RP = { t: 0, frames: REC.slice(), focus: G.rank[0] || UID }; }
 function replayAt(t) {
   const f = RP.frames, p = t * REC_HZ, i = Math.floor(p); if (i >= f.length - 1) return null;
   const a = f[i], b = f[i + 1], k = p - i, L = (u, v) => u + (v - u) * k;
