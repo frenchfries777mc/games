@@ -1,0 +1,26 @@
+{
+  "name": "ISLEPORT",
+  "short_name": "ISLEPORT",
+  "description": "할아버지 유품을 찾아 농장을 꾸리고 항해하세요! 23가지의 작물을 골라 키울 수 있습니다.",
+  "lang": "ko",
+  "id": "/games/isleport/",
+  "start_url": "/games/isleport/",
+  "scope": "/games/isleport/",
+  "display": "standalone",
+  "background_color": "#0e0e0e",
+  "theme_color": "#0e0e0e",
+  "icons": [
+    {
+      "src": "/games/pwa/icons/isleport-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/games/pwa/icons/isleport-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

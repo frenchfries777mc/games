@@ -1,0 +1,26 @@
+{
+  "name": "FRY SCORE",
+  "short_name": "FRY SCORE",
+  "description": "갑자기 당신의 꿈에 모차르트가 모짜렐라 치즈를 먹었다면, 이게 가장 효과적입니다!(저도 뭔 소리인지 잘 모르겠습니다.)",
+  "lang": "ko",
+  "id": "/tools/score/",
+  "start_url": "/tools/score/",
+  "scope": "/tools/score/",
+  "display": "standalone",
+  "background_color": "#0e0e0e",
+  "theme_color": "#0e0e0e",
+  "icons": [
+    {
+      "src": "/games/pwa/icons/score-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/games/pwa/icons/score-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "name": "속담 탐정",
+  "short_name": "속담 탐정",
+  "description": "흠, 이 속담이 수상하군! 의심 많은 사람이 탈도 많다더니 이 게임은 안 하는 걸로 하겠습니다.",
+  "lang": "ko",
+  "id": "/educations/proverb/",
+  "start_url": "/educations/proverb/",
+  "scope": "/educations/proverb/",
+  "display": "standalone",
+  "background_color": "#0e0e0e",
+  "theme_color": "#0e0e0e",
+  "icons": [
+    {
+      "src": "/games/pwa/icons/proverb-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/games/pwa/icons/proverb-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

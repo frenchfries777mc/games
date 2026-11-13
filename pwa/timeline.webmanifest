@@ -1,0 +1,26 @@
+{
+  "name": "Timeline Battle",
+  "short_name": "Timeline Battle",
+  "description": "역사에서 가장 끔찍한 \"세계사와 한국사 합치기\"를 체험해 보세요! 수원화성이 지어질 때 로베스피에르는 목이 잘렸습니다!",
+  "lang": "ko",
+  "id": "/educations/timeline/",
+  "start_url": "/educations/timeline/",
+  "scope": "/educations/timeline/",
+  "display": "standalone",
+  "background_color": "#0e0e0e",
+  "theme_color": "#0e0e0e",
+  "icons": [
+    {
+      "src": "/games/pwa/icons/timeline-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/games/pwa/icons/timeline-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

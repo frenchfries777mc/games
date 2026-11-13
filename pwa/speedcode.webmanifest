@@ -1,0 +1,26 @@
+{
+  "name": "SPEEDCODE",
+  "short_name": "SPEEDCODE",
+  "description": "이진수를 얼마나 잘 아시나요? 누구보다 빠르게 이진수 암호를 해독하세요!",
+  "lang": "ko",
+  "id": "/educations/speedcode/",
+  "start_url": "/educations/speedcode/",
+  "scope": "/educations/speedcode/",
+  "display": "standalone",
+  "background_color": "#0e0e0e",
+  "theme_color": "#0e0e0e",
+  "icons": [
+    {
+      "src": "/games/pwa/icons/speedcode-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/games/pwa/icons/speedcode-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
