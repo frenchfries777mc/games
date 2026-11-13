@@ -28,7 +28,7 @@ function perfApply() {
   const P = window.FFPerf && has ? FFPerf.get() : null;
   if (P) SAVE.set.opt = P.low || P.fx === 'low' ? 1 : 0;
   FPS_CAP = P && P.fps ? P.fps : SAVE.set.opt ? 30 : 0;
-  try { view.setLow(!!SAVE.set.opt); } catch (e) { }   // 처음 부를 때는 아직 화면(view)이 없어요
+  try { view.setLow(!!SAVE.set.opt); view.setUltra(SAVE.set.dev === 'mobile'); } catch (e) { }   // 처음 부를 때는 아직 화면(view)이 없어요
 }
 perfApply();
 addEventListener('ffperf', () => { perfApply(); if (S.scr === 'sSettings') paintSettings(); });
@@ -243,7 +243,20 @@ function paintRoles() {
 }
 function paintAchs() { const b = $('achList'); b.innerHTML = ''; ACHIEVEMENTS.forEach(a => { const d = document.createElement('div'); d.className = 'ach' + (SAVE.ach[a.id] ? ' on' : ''); d.innerHTML = `<img src="ach/${a.id}.svg" alt="" width="44" height="44" onerror="this.remove()"><div><b>${SAVE.ach[a.id] ? '★ ' : ''}${a.name}</b><span>${a.desc}</span></div>`; b.appendChild(d); }); }
 function unlock(id) { if (SAVE.ach[id]) return; const a = ACHIEVEMENTS.find(x => x.id === id); if (!a) return; SAVE.ach[id] = Date.now(); save(); ffSync(); toast(T('업적: {0}', a.name), 3000); }
+/* 기기: 처음 한 번 고르고, 그 뒤엔 설정에서 바꿔요. 컴퓨터는 지금 성능 그대로, 모바일은 가장 가볍게(최적화 켜기·가장 큰 픽셀·빛 번짐 끄기·효과 조각 1/4·초당 30번) */
+function applyDevice(d, fromSettings) {
+  SAVE.set.dev = d;
+  if (d === 'mobile') { SAVE.set.opt = 1; SAVE.set.px = 4; SAVE.set.bloom = 0; }
+  else if (fromSettings) { SAVE.set.opt = 0; SAVE.set.px = 3; SAVE.set.bloom = 1; }
+  if (d === 'mobile' || fromSettings) { try { if (window.FFPerf) FFPerf.set({ low: !!SAVE.set.opt, fx: SAVE.set.opt ? 'low' : 'high', fps: SAVE.set.opt ? 30 : 0 }); } catch (e) { } }
+  perfApply(); view.setUltra(d === 'mobile'); view.setPixel(SAVE.set.px); view.setBloom(!!SAVE.set.bloom); save();
+}
+function devPick() { const el = $('dev'); if (el) el.classList.toggle('on', !SAVE.set.dev); }
+{ const rec = TOUCH ? 'mobile' : 'pc'; const b = document.querySelector('#dev [data-d="' + rec + '"]'); if (b) b.classList.add('rec');
+  document.querySelectorAll('#dev [data-d]').forEach(x => x.onclick = () => { applyDevice(x.dataset.d, false); devPick(); if (S.scr === 'sSettings') paintSettings(); }); }
+devPick();
 function paintSettings() {
+  document.querySelectorAll('#setDev button').forEach(b => { b.classList.toggle('on', b.dataset.d === (SAVE.set.dev || (TOUCH ? 'mobile' : 'pc'))); b.onclick = () => { applyDevice(b.dataset.d, true); paintSettings(); }; });
   $('setVol').value = SAVE.set.vol;
   const seg = (id, v, f) => { const el = $(id); el.querySelectorAll('button').forEach(b => { b.classList.toggle('on', +b.dataset.v === +v); b.onclick = () => { f(+b.dataset.v); save(); paintSettings(); }; }); };
   seg('setPx', SAVE.set.px, v => { SAVE.set.px = v; view.setPixel(v); });

@@ -122,6 +122,15 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
     padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
   }
   #game{position:fixed; top:0; left:0; width:100%; height:calc(100% - 68px); display:block; background:#0a0b0f;}
+  /* 모바일 모드(기기 선택): 화면 효과를 거의 다 끄고 가볍게 */
+  html.stk-mobile *, html.stk-mobile *::before, html.stk-mobile *::after{ animation-duration:.001s !important; animation-iteration-count:1 !important; animation-delay:0s !important; transition-duration:.001s !important; transition-delay:0s !important; backdrop-filter:none !important; -webkit-backdrop-filter:none !important; box-shadow:none !important; filter:none !important; }
+  #deviceChoose{position:fixed; inset:0; z-index:2147483000; background:rgba(8,10,16,.97); display:flex; align-items:center; justify-content:center; padding:20px; font-family:inherit; color:#eef2ff;}
+  #deviceChoose .dcBox{max-width:520px; width:100%; text-align:center;}
+  #deviceChoose h2{margin:0 0 8px; font-size:26px;} #deviceChoose p{margin:0 0 22px; color:#9aa4c4; font-size:14px;}
+  #deviceChoose .dcRow{display:flex; gap:14px; flex-wrap:wrap; justify-content:center;}
+  #deviceChoose button{flex:1 1 200px; min-width:180px; padding:20px 14px; border-radius:14px; border:2px solid #38425f; background:#161b2b; color:#eef2ff; font:inherit; cursor:pointer;}
+  #deviceChoose button.rec{border-color:#7fffd4;}
+  #deviceChoose button b{display:block; font-size:22px; margin-bottom:6px;} #deviceChoose button span{display:block; font-size:13px; color:#9aa4c4;}
   #lobby{
     position:fixed; inset:0; z-index:10; display:flex; align-items:center; justify-content:center;
     background:radial-gradient(circle at 50% 20%, #191d28 0%, #0c0e13 70%);
@@ -1139,6 +1148,7 @@ sting();})();</script>
     <div class="profRow"><span class="k">배경음악</span><span class="v"><button id="settingsBgmToggle" class="btn-secondary" style="padding:4px 12px;"></button></span></div>
     <div class="profRow"><span class="k">배경음악 소리</span><span class="v"><input type="range" id="settingsBgmVol" min="0" max="100" step="5" style="width:130px; vertical-align:middle;"></span></div>
     <div class="profRow"><span class="k">화면 흔들림</span><span class="v"><button id="settingsShakeToggle" class="btn-secondary" style="padding:4px 12px;"></button></span></div>
+    <div class="profRow"><span class="k">기기 (모바일 / 컴퓨터)</span><span class="v"><button id="settingsDeviceToggle" class="btn-secondary" style="padding:4px 12px;"></button></span></div>
     <div class="profRow"><span class="k">그래픽 효과 (스킨 연출 등)</span><span class="v"><button id="settingsQualityToggle" class="btn-secondary" style="padding:4px 12px;"></button></span></div>
     <div class="profRow"><span class="k">조작 방식 (모바일 / 컴퓨터)</span><span class="v"><button id="settingsCtrlToggle" class="btn-secondary" style="padding:4px 12px;"></button></span></div>
     <div class="profRow"><span class="k">터치 버튼 크기 (모바일)</span><span class="v"><button id="settingsTouchScaleToggle" class="btn-secondary" style="padding:4px 12px;"></button></span></div>
@@ -1904,6 +1914,7 @@ function persistKeyBindings(){ try{ localStorage.setItem('arenaClashKeybinds', J
 loadKeyBindings();
 
 let otherSettings={screenShake:true, damageNumbers:true, sfx:true, bgm:true, bgmVol:0.4, quality:'auto', controls:'auto', fpsLimit:0, showFps:false, abilityMode:'hold', saver:true, colorBlind:false, touchScale:1, touchLift:0};       // fpsLimit: 0 = no limit, 30 or 60 // abilityMode: 'hold' (held to aim, used on release), 'instant', 'confirm' (press once to aim, press again to use)
+var MOB={on:false};       // 기기 선택이 모바일이면 true: 글로우·스킨 연출·화면 흔들림을 끄고 파티클을 줄임
 let fpsN=0, fpsT=0, fpsBoxEl=null;       // quality: 'auto' (follows the speed of the game), 'high', 'mid' or 'low'
 function loadOtherSettings(){
   try{
@@ -2051,6 +2062,8 @@ function renderSettingsScreen(){
     shakeBtn.textContent=otherSettings.screenShake?'켜짐':'꺼짐';
     shakeBtn.onclick=()=>{ otherSettings.screenShake=!otherSettings.screenShake; persistOtherSettings(); shakeBtn.textContent=otherSettings.screenShake?'켜짐':'꺼짐'; };
   }
+  const dvBtn=document.getElementById('settingsDeviceToggle');
+  if(dvBtn){ dvBtn.textContent=deviceLabel(); dvBtn.onclick=()=>{ deviceSet(MOB.on?'pc':'mobile'); renderSettingsScreen(); }; }
   const qBtn=document.getElementById('settingsQualityToggle');
   if(qBtn){
     const QL={auto:'자동', high:'높음', mid:'중간', low:'낮음'}, order=['auto','high','mid','low'];
@@ -3739,7 +3752,8 @@ function drawCape(c,id,backDir,sway,sy){
   if(id==='cape_gold'){ c.strokeStyle='#fff3b0'; c.lineWidth=1.5; c.stroke(); }
   c.restore();
 }
-function drawSkinFx(c, fx, tint, hx, hy, r, now){      // a little effect around the head for the newer / tier skins
+function drawSkinFx(c, fx, tint, hx, hy, r, now){
+  if(MOB.on) return;      // a little effect around the head for the newer / tier skins
   if(!fx) return;
   const t=(now||0)/1000, col=tint||'#ffffff';
   c.save(); c.lineCap='round'; c.lineJoin='round';
@@ -3873,6 +3887,7 @@ function auroraHex(t, i){
   return '#'+[f(0),f(8),f(4)].map(v=>Math.round(Math.max(0,Math.min(1,v))*255).toString(16).padStart(2,'0')).join('');
 }
 function drawSkinLux(c, lux, tint, now, seed, layer){
+  if(MOB.on) return;
   if(!lux) return;
   if(tint===STAR_TINT){ drawStarlightShow(c, (now||0)/1000+(seed||0)*0.37, layer); return; }      // 별빛 사과
   if(lux>=4){ drawAuroraShow(c, (now||0)/1000+(seed||0)*0.37, layer, fxQuality); return; }
@@ -6023,6 +6038,43 @@ const HUD_BAR_H=68;
 function resize(){ canvas.width=innerWidth; canvas.height=Math.max(200, innerHeight-HUD_BAR_H); }
 window.addEventListener('resize', resize); resize();
 
+/* ================= 기기 선택 (모바일 / 컴퓨터) =================
+   처음 한 번 물어보고(localStorage stk_device), 그 뒤에는 설정의 「기기」에서 바꿔요.
+   컴퓨터: 아무것도 바꾸지 않아요 (기존 성능 그대로).
+   모바일: 화질 낮음 · 30프레임 · 화면 흔들림 끔을 켜고, 글로우(shadowBlur)와 스킨 연출을 그리지 않고, 파티클을 줄이고, 화면 꾸밈(애니메이션·그림자·블러)을 끔.
+   컴퓨터로 돌아오면 모바일을 고르기 전의 설정(화질·프레임·화면 흔들림)으로 되돌려요. */
+(function(){ try{ const d=Object.getOwnPropertyDescriptor(CanvasRenderingContext2D.prototype,'shadowBlur'); if(d && d.set) Object.defineProperty(CanvasRenderingContext2D.prototype,'shadowBlur',{configurable:true, enumerable:d.enumerable, get:d.get, set:function(v){ d.set.call(this, MOB.on?0:v); }}); }catch(e){} })();
+function deviceKind(){ try{ const v=localStorage.getItem('stk_device'); return (v==='mobile'||v==='pc')?v:null; }catch(e){ return null; } }
+function deviceLabel(){ return MOB.on?'모바일 (가볍게)':'컴퓨터 (기존 성능)'; }
+function deviceApplyClass(){ try{ document.documentElement.classList.toggle('stk-mobile', !!MOB.on); }catch(e){} }
+function deviceSet(kind){
+  const was=MOB.on;
+  try{ localStorage.setItem('stk_device', kind); }catch(e){}
+  if(kind==='mobile'){
+    if(!was){ try{ localStorage.setItem('stk_perfPCBackup', JSON.stringify({quality:otherSettings.quality, fpsLimit:otherSettings.fpsLimit, screenShake:otherSettings.screenShake})); }catch(e){} }
+    MOB.on=true; otherSettings.quality='low'; otherSettings.fpsLimit=30; otherSettings.screenShake=false; otherSettings.saver=true;
+  } else {
+    MOB.on=false;
+    if(was){ let b=null; try{ b=JSON.parse(localStorage.getItem('stk_perfPCBackup')||'null'); localStorage.removeItem('stk_perfPCBackup'); }catch(e){}
+      b=b||{quality:'auto', fpsLimit:0, screenShake:true};
+      if(['auto','high','mid','low'].includes(b.quality)) otherSettings.quality=b.quality; if([0,30,60].includes(b.fpsLimit)) otherSettings.fpsLimit=b.fpsLimit; if(typeof b.screenShake==='boolean') otherSettings.screenShake=b.screenShake;
+      try{ if(window.FFPerf){ const fx=(otherSettings.quality==='auto')?'high':otherSettings.quality; if(otherSettings.quality==='auto') perfLastFx=fx; FFPerf.set({fx:fx, fps:otherSettings.fpsLimit}); } }catch(e){} }      // (the shared setting of the hub and the other games goes back too)
+  }
+  deviceApplyClass(); persistOtherSettings(); fxFrames=0; fxSumDt=0; fxGoodStreak=0; try{ applyFxQualityNow(); }catch(e){}
+  if(MOB.on && typeof particles!=='undefined' && particles.length>120) particles.splice(0, particles.length-120);
+}
+function deviceChoosePanel(){
+  if(document.getElementById('deviceChoose')) return;
+  const rec=isTouchDevice()?'mobile':'pc';
+  const el=document.createElement('div'); el.id='deviceChoose';
+  el.innerHTML='<div class="dcBox"><h2>어떤 기기로 하고 있어요?</h2><p>처음 한 번만 물어봐요. 나중에 설정의 「기기」에서 바꿀 수 있어요.</p><div class="dcRow">'+
+    '<button type="button" data-k="mobile"'+(rec==='mobile'?' class="rec"':'')+'><b>📱 모바일</b><span>효과를 줄여서 가볍게 (30프레임)</span></button>'+
+    '<button type="button" data-k="pc"'+(rec==='pc'?' class="rec"':'')+'><b>🖥️ 컴퓨터</b><span>기존 그대로</span></button></div></div>';
+  el.querySelectorAll('button').forEach(b=>{ b.onclick=()=>{ deviceSet(b.getAttribute('data-k')); el.remove(); try{ renderSettingsScreen(); }catch(e){} }; });
+  document.body.appendChild(el);
+}
+(function deviceBoot(){ const k=deviceKind(); MOB.on=(k==='mobile'); deviceApplyClass(); if(!k) deviceChoosePanel(); })();
+
 /* ================= HELPERS ================= */
 function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
 function rid(){ let s=''; const L='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; for(let i=0;i<6;i++) s+=L[Math.floor(Math.random()*L.length)]; return s; }
@@ -6033,7 +6085,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-11-v783';
+const GAME_BUILD='build 2026-11-13-v784';
 const GAME_VERSION='1.0.1', GAME_VERSION_NAME='네온 시티';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -19377,7 +19429,8 @@ function hexA(col,a){
 const RND=(a,b)=>a+Math.random()*(b-a);
 function addP(o){
   if(tnVisSet && gameMode==='tournament' && o.x!==undefined && !tnFxNear(o)) return;      // tournament: nothing of the other fights is ever drawn
-  if(particles.length>(fxQuality>=2?600:(fxQuality===1?450:300))) particles.splice(0,150);
+  if(MOB.on){ if(particles.length>120) particles.splice(0,60); }
+  else if(particles.length>(fxQuality>=2?600:(fxQuality===1?450:300))) particles.splice(0,150);
   particles.push(Object.assign({x:0,y:0,vx:0,vy:0,grav:0,drag:0,size:3,shape:'dot',add:true,rot:0,vr:0,color:'#fff'}, o, {max:o.life, au:AURA_SPAWN}));
 }
 function burst(x,y,n,o){

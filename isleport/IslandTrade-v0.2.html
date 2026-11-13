@@ -500,7 +500,7 @@ const TUT=[
  [P('다 자라면 ▼ 표시의 밭을 눌러 수확해요','When it is grown, tap the field with the ▼ to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=94;
+const OUTMAX=12,BUILD=95;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const CASTLE_T=[
  {n:P('망루','Watchtower'),d:P('돌로 쌓은 망루를 세워요. 세금이 걷히기 시작해요','A stone watchtower. Taxes start to come in'),cost:6000,rank:1},
@@ -645,6 +645,7 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-11-13',build:'v0.2 build 95',title:P('컴퓨터 · 모바일 고르기','Computer or mobile'),items:[P('처음 열면 컴퓨터인지 모바일인지 고르는 창이 떠요. 설정에서 언제든 바꿀 수 있어요','On first launch you pick computer or mobile. You can change it any time in Settings'),P('컴퓨터는 지금과 똑같고, 모바일은 효과와 섬 꾸밈을 줄이고 프레임을 낮추고 창이 떠 있을 땐 화면을 다시 그리지 않아요','Computer stays as it is. Mobile cuts effects and island decor, lowers the frame rate, and stops redrawing while a window is open')]},
  {date:'2026-11-09',build:'v0.2 build 94',title:P('게스트 이름','Guest names'),items:[P('로그인하지 않으면 이름이 게스트와 숫자 6개로 나와요','Without logging in, your name shows as Guest followed by 6 digits')]},
  {date:'2026-11-09',build:'v0.2 build 93',title:P('게스트 모드','Guest mode'),items:[P('로그인하지 않고 들어가면 로그인 창이 뜨고, 그 아래에 게스트 모드로 하기 버튼이 있어요','If you are not logged in, a login window appears with a Play as guest button under it'),P('게스트는 온라인 게임은 할 수 있고, 업적과 랭킹처럼 계정이 필요한 기능만 꺼져요','Guests can play online; only account features like goals and ranking are off')]},
  {date:'2026-11-09',build:'v0.2 build 92',title:P('섬 건설 허가증','Island building permits'),items:[P('섬마다 건설 터가 3곳 생겼어요. 허가증을 사면 시설을 6칸씩 더 지을 수 있어요','Each island now has 3 building lots. Buy a permit to get 6 more facility slots each'),P('허가증 값은 20,000, 80,000, 250,000 금화예요','Permits cost 20,000, 80,000 and 250,000 gold')]},
@@ -1539,7 +1540,7 @@ const tabStore={getItem:k=>{try{return sessionStorage.getItem(k);}catch(e){retur
 async function initAuth(){try{if(!window.supabase)return;if(sessionStorage.getItem('it.guest'))return;
   try{if(!sessionStorage.getItem(TABK)&&!sessionStorage.getItem('it.guest')){const t=localStorage.getItem(SHK);if(t)sessionStorage.setItem(TABK,t);}}catch(e){}
   sb=window.supabase.createClient('https://kebsbuvuutilitwlvxzv.supabase.co','sb_publishable_4Egu0zm3p6cxWGvP_-GlIw_mlCpO1Nf',{auth:{storage:tabStore,storageKey:TABK,persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
-  const {data}=await sb.auth.getSession();const u=data&&data.session&&data.session.user;if(!u){if(!S&&(!MOD||MOD.type!=='login'))openModal('login',{noclose:1,entry:1});return;}if(S){save();if(MP.on)mpLeave();S=null;}UID=u.id;
+  const {data}=await sb.auth.getSession();const u=data&&data.session&&data.session.user;if(!u){if(!DEV)window.__loginPending=1;else if(!S&&(!MOD||MOD.type!=='login'))openModal('login',{noclose:1,entry:1});return;}if(S){save();if(MP.on)mpLeave();S=null;}UID=u.id;
   const q=await sb.from('profiles').select('display_name,username').eq('id',UID).maybeSingle();UNAME=q.data&&(q.data.display_name||q.data.username)||null;
   applyStatic();showTitle();}catch(e){}}
 let STALE=false;
@@ -1875,7 +1876,9 @@ function ltAbort(){if(LT.on){ltRefund();LT.on=false;}LT.out=null;if(MOD&&MOD.typ
 /* ================= 소리와 음악 ================= */
 const AU={ctx:null,sfx:true,mus:true,vol:.6,step:0,next:0,timer:0,seed:1};
 try{const s=JSON.parse(localStorage.getItem('islandtrade.set'));if(s){AU.sfx=s.sfx!==false;AU.mus=s.mus!==false;AU.vol=typeof s.vol==='number'?s.vol:.6;}}catch(e){}
-const perf=()=>window.FFPerf?FFPerf.get():{low:false,fx:'high',fps:0};
+const DEVK='islandtrade.device';let DEV='';try{DEV=localStorage.getItem(DEVK)||'';}catch(e){}
+/* 기기: 컴퓨터는 기존 성능 그대로, 모바일은 최적화를 끝까지 (xlow) */
+const perf=()=>DEV==='mobile'?{low:true,fx:'low',fps:30,xlow:true}:(window.FFPerf?FFPerf.get():{low:false,fx:'high',fps:0});
 try{if(window.FFPerf&&localStorage.getItem('ff_perf')===null&&matchMedia('(pointer:coarse)').matches&&((navigator.hardwareConcurrency||8)<=4||(navigator.deviceMemory||8)<=3))FFPerf.set({low:true,fx:'low',fps:30});}catch(e){}
 function saveSet(){try{localStorage.setItem('islandtrade.set',JSON.stringify({sfx:AU.sfx,mus:AU.mus,vol:AU.vol}));}catch(e){}}
 function auCtx(){if(!AU.ctx){try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;AU.ctx=new C();AU.master=AU.ctx.createGain();AU.master.gain.value=AU.vol;AU.master.connect(AU.ctx.destination);AU.mg=AU.ctx.createGain();AU.mg.gain.value=.32;AU.mg.connect(AU.master);}catch(e){return null;}}
@@ -2637,7 +2640,7 @@ function renderTitle(){const sv=loadSave();
    <button class="tb sm" data-act="m:help">${T('하는 법','How to play')}</button><button class="tb sm" data-act="m:notes">${T('패치노트','Patch notes')}</button>
    <select id="langSel" class="tb sm" onchange="setLang(this.value);renderTitle()">${langOpts()}</select></div>
    <div class="tfoot">v0.2 build ${BUILD}<br>© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener" style="color:inherit">CC BY-NC-ND 4.0</a><br>${UNAME?esc(UNAME)+' ('+T('Frenchfries777 계정','Frenchfries777 account')+')':T('Frenchfries777 계정으로 로그인하면 프로필 카드에 업적이 올라가요','Log in with your Frenchfries777 account to show goals on your profile card')}</div>`;}
-function showTitle(){$('title').hidden=false;$('modal').hidden=true;closePop();renderTitle();$('backBtn')&&($('backBtn').hidden=true);}
+function showTitle(){$('title').hidden=false;$('modal').hidden=true;closePop();renderTitle();$('backBtn')&&($('backBtn').hidden=true);if(!DEV)openModal('device',{noclose:1});}
 ACT.newgame=(a,b)=>{if(b.dataset.arm){try{localStorage.removeItem(SAVEK());}catch(e){}startSingle(false);}else{b.dataset.arm=1;b.textContent=T('정말 지울까요? 한 번 더','Really delete? Press again');}};
 ACT.single=()=>startSingle(true);
 ACT.tutskip=()=>{if(S){S.tut=-1;updateHud();}};
@@ -3344,6 +3347,10 @@ MODS.login=m=>{if(UID)return `<h2>${T('Frenchfries777 계정','Frenchfries777 ac
    <label class="muted">${T('아이디','ID')}</label><input id="lgId" type="text" maxlength="30" autocomplete="username" autocapitalize="none"><label class="muted">${T('비밀번호','Password')}</label><input id="lgPw" type="password" maxlength="60" autocomplete="current-password"><div class="btns" style="margin-top:10px"><button class="pb gold" data-act="dologin">${T('로그인','Log in')}</button></div><div class="muted" id="lgMsg" style="margin-top:6px"></div>${m&&m.entry?`<div class="btns" style="margin-top:14px"><button class="pb dark" data-act="guestgo">${T('게스트 모드로 하기','Play as guest')}</button></div><div class="muted" style="margin-top:6px">${T('게스트는 온라인 게임은 되지만 계정 기능(업적, 랭킹)은 쓸 수 없어요','Guests can play online, but account features (goals, ranking) are off')}</div>`:''}`;};
 const EMAIL_DOM='@frenchfries777.com',EMAIL_DOM2='@arenaclash.local'; // 새 주소 우선, 옛 주소는 안전망
 const emailFor=(u,dom)=>u.toLowerCase().replace(/[^a-z0-9_]/g,'')+(dom||EMAIL_DOM);
+MODS.device=()=>{const co=(()=>{try{return matchMedia('(pointer:coarse)').matches;}catch(e){return false;}})();return `<h2>${T('어떤 기기로 하세요?','Which device are you on?')}</h2><div class="muted">${T('컴퓨터는 지금 그대로, 모바일은 가볍게 돌아가도록 맞춰요. 나중에 설정에서 바꿀 수 있어요.','Computer keeps the current look. Mobile runs as light as possible. You can change it later in Settings.')}</div><div class="btns" style="margin-top:12px"><button class="pb gold" data-act="devpick:pc">${T('컴퓨터','Computer')}${co?'':' ★'}</button><button class="pb gold" data-act="devpick:mobile">${T('모바일','Mobile')}${co?' ★':''}</button></div>`;};
+function setDevice(d){try{localStorage.setItem(DEVK,d);}catch(e){}DEV=d;PF=perf();if(VIEW!=='isl')devSync();else toast(T('섬에서 나가면 적용돼요','Applies after you leave the island'));}
+ACT.devpick=a=>{setDevice(a);closeModal();if(window.__loginPending){window.__loginPending=0;if(!UID&&!S)openModal('login',{noclose:1,entry:1});}};
+ACT.devset=a=>{setDevice(a);renderModal();};
 ACT.guestgo=()=>{try{sessionStorage.setItem('it.guest','1');}catch(e){}closeModal();};
 ACT.dologin=async()=>{const u=($('lgId')||{}).value||'',p=($('lgPw')||{}).value||'',m=$('lgMsg');if(!u||!p){if(m)m.textContent=T('아이디와 비밀번호를 적어 주세요','Enter your ID and password');return;}
   try{if(!sb){try{sessionStorage.removeItem('it.guest');}catch(e){}await initAuth();}if(!sb){if(m)m.textContent=T('로그인 서버에 연결하지 못했어요','Could not reach the login server');return;}
@@ -3420,10 +3427,12 @@ MODS.settings=()=>`<h2>${T('설정','Settings')}</h2>
  <label class="muted">${T('언어','Language')}</label><select id="setLang">${langOpts()}</select>
  <div class="row" style="margin-top:8px"><label>${T('효과음','Sound effects')}</label><button class="pb sm ${AU.sfx?'gold':''}" data-act="tsfx">${AU.sfx?T('켜짐','On'):T('꺼짐','Off')}</button></div>
  <div class="row" style="margin-top:6px"><label>${T('음악','Music')}</label><button class="pb sm ${AU.mus?'gold':''}" data-act="tmus">${AU.mus?T('켜짐','On'):T('꺼짐','Off')}</button></div>
+ <div class="row" style="margin-top:6px"><label>${T('기기','Device')}</label><span><button class="pb sm ${DEV!=='mobile'?'gold':''}" data-act="devset:pc">${T('컴퓨터','Computer')}</button> <button class="pb sm ${DEV==='mobile'?'gold':''}" data-act="devset:mobile">${T('모바일','Mobile')}</button></span></div>
+ ${DEV==='mobile'?`<div class="muted" style="font-size:12px;margin-top:4px">${T('모바일 모드: 효과를 줄이고 프레임을 낮추고 섬 꾸밈을 줄여 가장 가볍게 돌아가요','Mobile mode: fewer effects, a lower frame rate and lighter islands for the smoothest play')}</div><div style="display:none">`:'<div>'}
  <div class="row" style="margin-top:6px"><label>${T('최적화','Optimize')}</label><button class="pb sm ${perf().low?'gold':''}" data-act="topt">${perf().low?T('켜짐','On'):T('꺼짐','Off')}</button></div>
  <div class="row" style="margin-top:4px"><label class="muted">${T('효과','Effects')}</label><span>${['high','mid','low'].map((k,i)=>`<button class="pb sm ${perf().fx===k?'gold':''}" data-act="pfx:${k}">${[T('높음','High'),T('중간','Mid'),T('낮음','Low')][i]}</button>`).join(' ')}</span></div>
  <div class="row" style="margin-top:4px"><label class="muted">${T('프레임','Frame rate')}</label><span>${[[0,T('자동','Auto')],[30,'30'],[60,'60']].map(f=>`<button class="pb sm ${perf().fps===f[0]?'gold':''}" data-act="pfps:${f[0]}">${f[1]}</button>`).join(' ')}</span></div>
- <div class="muted" style="font-size:12px">${T('최적화를 켜면 30프레임으로 그리고 비·눈 효과를 꺼서 폰이 덜 뜨거워져요. 모든 사이트와 게임에 같이 적용돼요','Optimize draws at 30 fps and turns off rain and snow so phones run cooler. Shared by all sites and games')}</div>
+ <div class="muted" style="font-size:12px">${T('최적화를 켜면 30프레임으로 그리고 비·눈 효과를 꺼서 폰이 덜 뜨거워져요. 모든 사이트와 게임에 같이 적용돼요','Optimize draws at 30 fps and turns off rain and snow so phones run cooler. Shared by all sites and games')}</div></div>
  <label class="muted">${T('소리 크기','Volume')}</label><input id="setVol" type="range" min="0" max="100" value="${Math.round(AU.vol*100)}">
  <div class="muted" style="margin-top:10px">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener" style="color:inherit">CC BY-NC-ND 4.0</a></div><div class="btns" style="margin-top:10px"><button class="pb sm" data-act="exitGame">${T('나가기','Exit')}</button></div>
  ${S&&!MP.on?`<h5>${T('저장 내보내기 · 불러오기','Export / import save')}</h5><textarea id="saveTxt" rows="3" placeholder="${T('여기에 저장 글자를 붙여 넣어요','Paste save text here')}"></textarea><div class="btns"><button class="pb sm" data-act="saveExp">${T('내보내기','Export')}</button><button class="pb sm" data-act="saveImp">${T('불러오기','Import')}</button></div>`:''}`;
@@ -3516,7 +3525,8 @@ function diceRoll(bet){const D=diceDay();if(D.n>=DICE_MAX||S.money<bet||DICE_BET
 ACT.dice=a=>{if(!diceRoll(+a))toast(T('지금은 할 수 없어요','You cannot play right now'));updateHud();renderModal();};
 
 /* ================= 섬 상륙 맵: 섬마다 모양과 풍경이 달라요 ================= */
-const ISC=perf().low?3.5:4.6,IW=Math.round(520*ISC),IH=Math.round(340*ISC),ICNT=perf().low?6:11;let SPOTR=0;
+let ISC=perf().low?3.5:4.6,IW=Math.round(520*ISC),IH=Math.round(340*ISC),ICNT=perf().xlow?4:perf().low?6:11;let SPOTR=0;
+function devSync(){const c=perf().low?3.5:4.6;if(c===ISC)return;ISC=c;IW=Math.round(520*ISC);IH=Math.round(340*ISC);ICNT=perf().xlow?4:perf().low?6:11;ISL.cache={};}
 const ISL={on:false,k:-1,x:0,y:0,dir:1,mv:0,walk:0,goal:null,near:null,img:null,mask:null,objs:[],obs:[],fg:[],lab:[],th:null,fx:[],t0:0};
 const ISLES=[
  /* 0 황금항: 곡창 */{seed:11,sea:'#2a7aa8',grass:['#8fae45','#7f9e3a'],beach:'#e6d08a',amp:[.10,.07,.05],ph:[.4,1.7,2.9],ax:1,ay:.82,
@@ -3726,14 +3736,14 @@ function buildIsl(k){const th=ISLES[k],rnd=islRng(th.seed),c=document.createElem
     }};
   th.feat.forEach(([type,n])=>place(type,n*ICNT));
   /* 화려한 마을 꾸밈: 모든 섬에 저택, 탑, 분수, 집, 가판, 등불, 꽃밭 */
-  (k===9||k===13?[['manor',6],['tower',4],['villa',12],['hut',14],['stall',8],['lantern',24],['flag',10]]:[['manor',20],['tower',8],['fountain',5],['villa',24],['hut',16],['stall',14],['flag',14],['lantern',40],['flower',40]]).forEach(([type,n])=>place(type,Math.round(n*(perf().low?.6:1)*(k>=6?1.6:1))));
+  (k===9||k===13?[['manor',6],['tower',4],['villa',12],['hut',14],['stall',8],['lantern',24],['flag',10]]:[['manor',20],['tower',8],['fountain',5],['villa',24],['hut',16],['stall',14],['flag',14],['lantern',40],['flower',40]]).forEach(([type,n])=>place(type,Math.round(n*(perf().xlow?.3:perf().low?.6:1)*(k>=6?1.6:1))));
   opTmp.forEach(t=>obs.splice(obs.indexOf(t),1));objs.filter(o=>o.k==='opb').forEach(o=>obs.push({x:o.x,y:o.y+4,w:o.w,h:o.h-4}));
   /* 바닷가 장식 */
   for(let i=0;i<480;i++){const x=Math.floor(rnd()*IW),y=Math.floor(rnd()*IH),q=islQ(th,x,y);if(q>.76&&q<.88){IR(x,y,2,1,'rgba(255,255,255,.35)');}}
   if(th.ruin){for(let i=0;i<42;i++){const a=i*.15,x=IW/2+Math.cos(a)*IW*.4*th.ax*1.02,y=IH/2+Math.sin(a)*IH*.4*th.ay*1.02;if(mask[Math.round(y)*IW+Math.round(x)]===1)IR(x,y,5,3,'rgba(200,210,200,.5)');}}
   return {img:c,mask,objs,obs,lab,fx};}
 /* 풀숲과 바위는 흩뿌려서 심심하지 않게 */
-function enterIsl(id,arrive){const k=isI(id),th=ISLES[k];if(!ISL.cache)ISL.cache={};if(!ISL.cache[k])ISL.cache[k]=buildIsl(k);const b=ISL.cache[k];
+function enterIsl(id,arrive){devSync();const k=isI(id),th=ISLES[k];if(!ISL.cache)ISL.cache={};if(!ISL.cache[k])ISL.cache[k]=buildIsl(k);const b=ISL.cache[k];
   Object.assign(ISL,{on:true,k,th,img:b.img,mask:b.mask,objs:b.objs,obs:b.obs,lab:b.lab,fx:b.fx,goal:null,near:null,mv:0,dir:1,walk:0,id});
   const d=b.objs.find(o=>o.k==='dock');ISL.x=d.x+d.w+8;ISL.y=d.y+d.h/2+2;
   ISL.tr=null;ISL.arr=false;ISL.dep=false;if(th.inland){const px=d.x+34,py=d.y+4;ISL.tr={x:-180,y:py-5,tx:px+12-156};if(arrive){ISL.arr=true;ISL.at=0;ISL.x=px;ISL.y=py-6;}else ISL.tr.x=ISL.tr.tx;}
@@ -3824,6 +3834,7 @@ function drawIsl(t){const th=ISL.th;g.fillStyle=th.sea;g.fillRect(0,0,VW,VH);
   if(ISL.nodes)ISL.nodes.forEach(n=>{const sh=performance.now()-n.fl<160?(Math.floor(performance.now()/40)%2?1:-1):0,x=n.x+sh,y=n.y,fc={stone:'#c8c8c0',iron:'#b87a4a',copper:'#e08a3a',gem:'#5ae0e8',obsidian:'#9a8ad0',sulfur:'#f0e040',ruby:'#ff4a5a'}[n.t];R(x,y+7,11,2,'rgba(0,0,0,.25)');R(x+1,y+2,9,6,'#7a7a76');R(x+2,y,7,3,'#8a8a86');R(x+3,y+3,2,2,fc);R(x+7,y+4,2,2,fc);if(n.t==='gem'||n.t==='copper')R(x+5,y+1,2,2,fc);if(n.hp)R(x+1,y+6,9,1,'#4a4a48');});
   /* 움직임 */
   ISL.fx.forEach(e=>{
+    if(PF.xlow&&(e.t==='bee'||e.t==='twink'||e.t==='glow'||e.t==='smoke'))return;
     if(e.t==='mill'){const a=t*1.2;for(let k=0;k<4;k++){const aa=a+k*Math.PI/2;g.strokeStyle='#e8dcc0';g.lineWidth=1.5;g.beginPath();g.moveTo(e.x,e.y);g.lineTo(e.x+Math.cos(aa)*13,e.y+Math.sin(aa)*13);g.stroke();}R(e.x-1,e.y-1,3,3,'#5a3414');}
     else if(e.t==='smoke'){for(let q=0;q<5;q++){const p=((t*.6+q*.2)%1);g.fillStyle='rgba(220,220,220,'+(.55*(1-p)).toFixed(2)+')';g.fillRect(Math.round(e.x+Math.sin(p*6+q)*2),Math.round(e.y-p*18),3,3);}}
     else if(e.t==='sheep'){e.x=e.ox+Math.sin(t*e.sp+e.ph)*7;e.y=e.oy+Math.cos(t*e.sp*.8+e.ph)*3;R(e.x,e.y+2,7,5,'#f4f1ea');R(e.x+5,e.y+3,3,3,'#3a2e28');R(e.x+1,e.y+7,1,2,'#3a2e28');R(e.x+5,e.y+7,1,2,'#3a2e28');R(e.x+1,e.y+1,5,2,'#fffefa');}
@@ -3864,8 +3875,8 @@ new ResizeObserver(()=>fit()).observe($('stage'));
 let PF=perf(),lastDraw=0;window.addEventListener('ffperf',()=>{PF=perf();if(MOD&&MOD.type==='settings')renderModal();});
 let last=performance.now(),lastSave=0,lastSide=0,lastWealth=0;
 function loop(now){const dt=Math.min(1,(now-last)/1000);last=now;
-  if(VW&&(PF.fps!==30||now-lastDraw>=30)){lastDraw=now;draw();}
-  if(S&&!LOCKLOST){movePlayer(dt);updateJoy();updateCam(dt);tickAcc+=dt;tick(dt);updateHud();if(now-lastSide>400&&!POPOPEN){lastSide=now;renderSide(false);renderChat();}if(now-lastSave>4000){lastSave=now;save();}if(now>lastWealth&&UID&&VIEW!=='visit'&&!VIS.on){lastWealth=now+15000;pushWealth();}}
+  if(VW&&(PF.xlow?(now-lastDraw>=45&&(!S||$('modal').hidden)):(PF.fps!==30||now-lastDraw>=30))){lastDraw=now;draw();}
+  if(S&&!LOCKLOST){movePlayer(dt);updateJoy();updateCam(dt);tickAcc+=dt;tick(dt);updateHud();if(now-lastSide>(PF.xlow?1500:400)&&!POPOPEN){lastSide=now;renderSide(false);renderChat();}if(now-lastSave>4000){lastSave=now;save();}if(now>lastWealth&&UID&&VIEW!=='visit'&&!VIS.on){lastWealth=now+15000;pushWealth();}}
   requestAnimationFrame(loop);}
 document.addEventListener('pointerdown',()=>{if(S){auCtx();if(AU.mus)musicStart();}},{once:false});
 try{if(window.FFProfile)FFProfile.gameStats('isleport',function(box,ctx){if(!ctx.own)return '';const v=S||(loadSave()||{}).S;if(!v||!v.stats)return '';const st=v.stats,row=(k,x)=>'<div class="gr"><span>'+ctx.esc(k)+'</span><b>'+ctx.esc(String(x))+'</b></div>';
