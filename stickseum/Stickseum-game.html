@@ -6122,7 +6122,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-13-v789';
+const GAME_BUILD='build 2026-11-13-v790';
 const GAME_VERSION='1.0.1', GAME_VERSION_NAME='네온 시티';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -12388,15 +12388,17 @@ function attemptJoinCandidate(p, roomId, timeoutMs, cb, seats){
     cb(result);
   }
   p.on('error', onErr);
+  let joined=false;
   const timer=setTimeout(()=>{ try{ if(conn) conn.close(); }catch(e){} finish({status:'timeout'}); }, timeoutMs);
   try{ conn=p.connect(roomId, {reliable:true}); }catch(e){ finish({status:'error'}); return; }
   const joinMsg=()=>({t:'join', ver:GAME_VERSION, build:GAME_BUILD, name:myName, cos:getEquippedCos(), sbId:(sbUser?sbUser.id:null), sbUsername:(sbUser?sbUser.username:null), clan:clanMyTag(), clanId:clanMyId(), ce:(myClan?myClan.emblem:''), cc:(myClan?myClan.color:''), cn:(myClan?myClan.name:''), level:levelFromXp(saveData.xp||0), streak:saveData.winStreak||0, party:partyJoinTag()});
   conn.on('open', ()=>{ conn.send((seats||1)>1 ? {t:'probe', ver:GAME_VERSION, build:GAME_BUILD} : joinMsg()); });          // a party leader first asks whether the whole party fits
   conn.on('data', data=>{
+    if(done && joined && conn.__buf && data && data.t!=='probeReply' && data.t!=='full' && data.t!=='sameAcc' && data.t!=='verNo' && data.t!=='started') conn.__buf.push(data);      // (the room went on while the other rooms were still being asked: the start must not be lost)
     if(data.t==='probeReply'){ if(!data.started && (+data.max||0)-(+data.count||0)>=seats) conn.send(joinMsg()); else { try{conn.close();}catch(e){} finish({status:'full'}); } return; }
     if(data.t==='full' || data.t==='sameAcc' || data.t==='verNo'){ try{conn.close();}catch(e){} finish({status:'full'}); }
     else if(data.t==='started'){ try{conn.close();}catch(e){} finish({status:'started'}); }
-    else if(data.t==='lobby'){ finish({status:'joined', conn, initialLobby:data}); }
+    else if(data.t==='lobby'){ if(!done){ joined=true; conn.__buf=[]; } finish({status:'joined', conn, initialLobby:data}); }
   });
   conn.on('error', ()=>{ finish({status:'error'}); });
 }
@@ -12413,6 +12415,7 @@ function finalizeAsOnlineClient(p, conn, mapId, initialLobby){
   botFillShowAt = (typeof initialLobby.botFillIn==='number') ? Date.now()+initialLobby.botFillIn : ((initialLobby.botFillAt===undefined) ? null : initialLobby.botFillAt);
   updatePlayerListUI();
   conn.on('data', data=>{ if(hostConn!==conn) return; onClientData(data, 'online', null); });
+  { const buf=conn.__buf; conn.__buf=null; if(buf) for(const d of buf){ if(hostConn!==conn) break; try{ onClientData(d, 'online', null); }catch(e){ console.error('[replay]', e); } } }      // (what the room sent while this player was still searching, in order)
   conn.on('close', ()=>{ if(hostConn!==conn) return; if(!started) showErrorAndReturnToMenu(hostLostMsg()); else if(!matchEnded && !migLost()) showErrorAndReturnToMenu(hostLostMsg()); });
   migArmPeer(p);
   p.on('error', err=>{ migPeerError(err); });
@@ -12433,6 +12436,7 @@ function scanSequential(p, mapIds, idx, slot, freeSlots, held){
   if(!onlineMatchActive){ try{ p.destroy(); }catch(e){} if(held&&held.conn){ try{ held.conn.close(); }catch(e){} } return; }
   if(idx >= mapIds.length){
     if(slot < 2){ scanSequential(p, mapIds, 0, slot+1, freeSlots, held); return; }
+    if(held && held.conn.open===false){ held=null; }          // (the room closed while the others were asked: not entered)
     if(held){
       setOnlineProgress(1, MAP_TEMPLATES[held.mapId].name+' 방에 참가합니다...');
       finalizeAsOnlineClient(p, held.conn, held.mapId, held.initialLobby);
