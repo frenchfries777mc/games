@@ -10,6 +10,7 @@ for(i=0;i<localStorage.length;i++){k=localStorage.key(i);v=localStorage.getItem(
 var ks=Object.keys(d).sort(function(a,b){return d[b].length-d[a].length});
 for(i=0;n>600000&&i<ks.length;i++){n-=ks[i].length+d[ks[i]].length;delete d[ks[i]]}
 if(Object.keys(d).length)mig='#ffmig='+btoa(unescape(encodeURIComponent(JSON.stringify({d:d,h:h})))).replace(/\+/g,'-').replace(/\//g,'_');
+if(mig)for(k in d)if(/^sb-.*-auth-token$/.test(k))localStorage.removeItem(k);   /* 로그인은 복사가 아니라 옮겨요: 로그인 상태는 frenchfries777.com 한 곳에만 남아요 */
 }catch(e){mig=''}
 location.replace(NEW+p+location.search+(mig||h));
 })();
