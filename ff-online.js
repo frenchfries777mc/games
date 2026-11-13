@@ -15,7 +15,7 @@ var names={}, sb=null, T=null;
 var AV={}; async function loadAv(ids){ AV={}; if(!ids.length) return; try{ var r=await sb.from('ff_avatar').select('user_id,pick').in('user_id',ids); ((r&&!r.error&&r.data)||[]).forEach(function(x){ AV[x.user_id]=x.pick; }); }catch(e){} }
 
 /* 표시줄 글자: 페이지 언어(ff-lang.js)를 따라요. 표에 없는 언어는 영어 */
-var LT={ko:['지금 {0}명 접속 중','친구','허브'],en:['{0} online now','Friends','Hub'],es:['{0} conectados ahora','Amigos','Portal'],fr:['{0} en ligne','Amis','Portail'],de:['{0} jetzt online','Freunde','Hub'],ja:['今{0}人がオンライン','フレンド','ハブ'],zh:['当前 {0} 人在线','好友','主页'],pt:['{0} online agora','Amigos','Início'],ru:['Сейчас онлайн: {0}','Друзья','Хаб'],tr:['Şu an {0} çevrimiçi','Arkadaşlar','Merkez'],it:['{0} online ora','Amici','Hub'],pl:['Teraz online: {0}','Znajomi','Hub'],ar:['{0} متصل الآن','الأصدقاء','المركز'],nw:['{0} telescreened now','Comrades','Hub'],gk:['{0} 선 위에 지금','친구들','바퀴통']};
+var LT={ko:['지금 {0}명 접속 중','친구','허브','손님'],en:['{0} online now','Friends','Hub','Guests'],es:['{0} conectados ahora','Amigos','Portal','Invitados'],fr:['{0} en ligne','Amis','Portail','Invités'],de:['{0} jetzt online','Freunde','Hub','Gäste'],ja:['今{0}人がオンライン','フレンド','ハブ','ゲスト'],zh:['当前 {0} 人在线','好友','主页','游客'],pt:['{0} online agora','Amigos','Início','Visitantes'],ru:['Сейчас онлайн: {0}','Друзья','Хаб','Гости'],tr:['Şu an {0} çevrimiçi','Arkadaşlar','Merkez','Misafir'],it:['{0} online ora','Amici','Hub','Ospiti'],pl:['Teraz online: {0}','Znajomi','Hub','Goście'],ar:['{0} متصل الآن','الأصدقاء','المركز','ضيوف'],nw:['{0} telescreened now','Comrades','Hub','Guests'],gk:['{0} 선 위에 지금','친구들','바퀴통','손님들']};
 function L(){ var l='ko'; try{ l=(window.FFLang&&FFLang.get())||(document.documentElement.lang||'ko'); }catch(e){} return LT[l]||LT.en; }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 function gname(id){ var l=(window.FF_REG||[]).concat(window.FF_SITES||[]); for(var i=0;i<l.length;i++) if(l[i].id===id) return l[i].name; if(window.FF_PLACES&&FF_PLACES[id]) return FF_PLACES[id]; return id==='hub'?L()[2]:id; }
@@ -26,7 +26,7 @@ async function loadNames(ids){
 async function paint(){
   var r=await sb.rpc('ff_online'); if(r.error){ bar.innerHTML=''; return; }
   var c={}; (r.data||[]).forEach(function(x){ c[x.place]=x.people; });
-  var html='<span class="on-dot"></span><b>'+esc(L()[0].replace('{0}',c.all||0))+'</b>';
+  var html='<span class="on-dot"></span><b class="on-n" role="button" tabindex="0" style="cursor:pointer">'+esc(L()[0].replace('{0}',c.all||0))+'</b>';
   var order=['hub','games'].concat((window.FF_REG||[]).map(function(e){ return e.id; }).filter(function(id){ return id!=='hub'; }),(window.FF_SITES||[]).map(function(e){ return e.id; }));
   Object.keys(c).sort().forEach(function(g){ if(g!=='all'&&order.indexOf(g)<0) order.push(g); });
   order.forEach(function(g){ if(c[g]) html+='<span class="on-c"><span>'+esc(gname(g))+'</span> <b>'+c[g]+'</b></span>'; });
@@ -34,8 +34,14 @@ async function paint(){
   if(u){ var f=await sb.rpc('ff_online_friends'), rows=((f&&!f.error&&f.data)||[]).filter(function(x){ return !(FFAuth.isBlocked&&FFAuth.isBlocked(x.user_id)); });
     if(rows.length){ await loadNames(rows.map(function(x){ return x.user_id; })); await loadAv(rows.slice(0,8).map(function(x){ return x.user_id; }));
       html+='<span class="on-f"><span>'+esc(L()[1])+'</span> '+rows.slice(0,8).map(function(x){ return '<span class="on-p">'+'<img class="on-i" src="https://frenchfries777.com/games/avatars/'+encodeURIComponent(/^[a-z0-9_-]{2,30}$/.test(AV[x.user_id]||'')?AV[x.user_id]:'account')+(/^(stk|ce|bf|ip|dp|vk)_/.test(AV[x.user_id]||'')?'.png':'.svg')+'" alt="" width="20" height="20" onerror="this.style.display=\'none\'">'+esc(names[x.user_id]||'???')+'<small>'+esc(gname(x.place))+'</small></span>'; }).join('')+(rows.length>8?'<span>+'+(rows.length-8)+'</span>':'')+'</span>'; } }
+  if(who){ var w=await sb.rpc('ff_online_who'), wr=((w&&!w.error&&w.data)||[]).filter(function(x){ return !(FFAuth.isBlocked&&FFAuth.isBlocked(x.user_id)); });   // 접속자 수를 누르면 누가 있는지 펼쳐요
+    if(w&&!w.error){ var gs=Math.max(0,(c.all||0)-((w.data||[]).length));
+      html+='<span class="on-f" style="flex-basis:100%">'+wr.map(function(x){ return '<span class="on-p">'+esc(x.name||'???')+'<small>'+esc(gname(x.place))+'</small></span>'; }).join('')+(gs?'<span class="on-c"><span>'+esc(L()[3]||'Guests')+'</span> <b>'+gs+'</b></span>':'')+'</span>'; } }
   bar.innerHTML=html;
 }
+var who=false;
+function tap(e){ var t=e.target&&e.target.closest&&e.target.closest('.on-n'); if(!t||(e.type==='keydown'&&e.key!=='Enter'&&e.key!==' ')) return; e.preventDefault(); who=!who; paint(); }
+bar.addEventListener('click',tap); bar.addEventListener('keydown',tap);
 function start(){ sb=FFAuth.client&&FFAuth.client(); if(!sb) return; paint(); setInterval(function(){ if(document.visibilityState==='visible') paint(); },20000);
   document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible') paint(); });
   window.addEventListener('ffpresence',function(){ setTimeout(paint,600); }); setTimeout(paint,4000); }
