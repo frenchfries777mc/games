@@ -984,3 +984,6 @@
 - 새 문구(한국어만, prototypes/kitchendefense/index.html): 플레이 환경, 컴퓨터, 모바일, 기기(설정)
 
 - [tumblecrown b314] 스킬 버튼 이름 글자 크기 자동 조절 (번역 영향 없음)
+
+## Kitchen Defense b7 (2026-11-13)
+- 새 문구(한국어만, prototypes/kitchendefense/index.html): 컴퓨터 · 가볍게, 느려서 자동으로 바꿨어요(설정)
