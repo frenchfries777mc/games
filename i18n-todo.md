@@ -995,3 +995,6 @@
 - [tumblecrown b315] js/main.js 토스트: T('화면이 느려서 낮은 사양 설정으로 바꿨어요. 설정의 「최적화」에서 되돌릴 수 있어요.')
 ## Kitchen Defense b7 (2026-11-13)
 - 새 문구(한국어만, prototypes/kitchendefense/index.html): 컴퓨터 · 가볍게, 느려서 자동으로 바꿨어요(설정)
+
+## Crown Envoy b198 (2026-11-13)
+- 새 문구(한국어만): 패치노트 b198
