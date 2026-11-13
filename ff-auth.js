@@ -88,7 +88,7 @@ function syncMerge(o){ var G=o.d||{}, B=o.b||{}, X=o.x||[], C=syncAll(), out={s:
     var g=Object.prototype.hasOwnProperty.call(G,k)?String(G[k]):undefined, c=Object.prototype.hasOwnProperty.call(C,k)?C[k]:undefined;
     if(g===c){ out.b[k]=syncH(g); return; }
     var hg=g===undefined?null:syncH(g), hc=c===undefined?null:syncH(c), hb=B[k]===undefined?null:B[k];
-    var useG=hc===hb?true:(hg===hb?false:(g===undefined?false:(c===undefined?true:gNew)));
+    var useG=g===undefined?false:(c===undefined?true:(hc===hb?true:(hg===hb?false:gNew)));   /* 한쪽에만 있는 값은 지우지 않고 없는 쪽으로 가져와요 */
     if(useG){ try{ if(g===undefined) localStorage.removeItem(k); else{ localStorage.setItem(k,g); out.b[k]=hg; } }catch(e){ if(hb!==null) out.b[k]=hb; } }
     else if(c===undefined) out.d.push(k);
     else if(n+k.length+c.length<=SYNC_MAX){ n+=k.length+c.length; out.s[k]=c; out.b[k]=hc; }
@@ -98,13 +98,15 @@ function syncMerge(o){ var G=o.d||{}, B=o.b||{}, X=o.x||[], C=syncAll(), out={s:
 var lpSyncIn=null; if(onLP){ try{ var hm=/[#&]ffsync=([^&]*)/.exec(location.hash||''); if(hm&&/^https:\/\/frenchfries777mc\.github\.io\//.test(document.referrer||'')) lpSyncIn=syncDec(hm[1]); }catch(e){ lpSyncIn=null; } }
 /* frenchfries777.com 에 처음 들어온 브라우저는 한 번 github.io 를 다녀와서 거기 있던 저장을 가져와요 (github.io/hub/log-in/?pull=1 이 자기 저장을 들고 로그인 페이지로 와요) */
 var ffPull=false;
+/* github.io 를 쓴 적이 있는 브라우저(ffSyncPull=2)는 탭을 새로 열 때마다, 아니면 한 번만 다녀와요 */
+function ffPullDue(){ var f=localStorage.getItem('ffSyncPull'); return f==='2'?!sessionStorage.getItem('ffSyncPulled'):f!=='3'; }
 try{ if(location.hostname===GH&&/^\/hub\/log-in\//.test(location.pathname)&&/[?&]pull=1(&|$)/.test(location.search)&&/^https:\/\/frenchfries777\.com\//.test(document.referrer||'')){ ffPull=true;
     location.replace(LOGIN_URL+'?sso=1&tok=0&next='+encodeURIComponent(new URLSearchParams(location.search).get('next')||'https://frenchfries777.com/')+'#ffsync='+syncPack()); }
-  else if(location.hostname==='frenchfries777.com'&&!onLP&&window.top===window&&!navigator.webdriver&&!/bot|crawl|spider|lighthouse|headless/i.test(navigator.userAgent||'')&&!localStorage.getItem('ffSyncPull')){
-    localStorage.setItem('ffSyncPull','1'); ffPull=true; window.__ffPull=1;
+  else if(location.hostname==='frenchfries777.com'&&!onLP&&window.top===window&&!navigator.webdriver&&!/bot|crawl|spider|lighthouse|headless/i.test(navigator.userAgent||'')&&ffPullDue()){
+    localStorage.setItem('ffSyncPull','3'); sessionStorage.setItem('ffSyncPulled','1'); ffPull=true; window.__ffPull=1;
     location.replace('https://'+GH+'/hub/log-in/?pull=1&next='+encodeURIComponent(location.href.replace(/#.*$/,''))); } }catch(e){}
 async function lpGo(){ if(lpGoing) return; lpGoing=true; var n=lpNext();
-  try{ var nh=new URL(n).hostname; if(lpSyncIn&&/(^|\.)frenchfries777\.com$/.test(nh)){ try{ syncMerge(lpSyncIn); }catch(e){} }
+  try{ var nh=new URL(n).hostname; if(lpSyncIn&&/(^|\.)frenchfries777\.com$/.test(nh)){ try{ syncMerge(lpSyncIn); if(+lpSyncIn.t>0) localStorage.setItem('ffSyncPull','2'); }catch(e){} }
     if(SSO_HOSTS.indexOf(nh)>=0){ var t='', sy='';
     if(nh===GH&&lpSyncIn){ try{ sy='&ffsync='+syncMerge(lpSyncIn); }catch(e){ sy=''; } }
     try{ if(user&&sb&&!/[?&]tok=0(&|$)/.test(location.search)){ var s=(await sb.auth.getSession()).data.session, r=await fetch(SB_URL+'/functions/v1/dynamic-action',{method:'POST',headers:{Authorization:'Bearer '+s.access_token,apikey:SB_KEY}}), j=r.ok?await r.json():null; t=(j&&j.t)||''; } }catch(e){}
