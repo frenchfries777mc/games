@@ -27,13 +27,23 @@ const M = (c, o = {}) => {
     // 쇠붙이는 반짝임 대신 조금 밝게
     const col = new THREE.Color(c); if (o.m) col.multiplyScalar(1.12);
     const m = new THREE.MeshToonMaterial({ color: col, gradientMap: toonGrad(), emissive: o.e ?? 0, emissiveIntensity: o.ei ?? 1, side: o.ds ? THREE.DoubleSide : THREE.FrontSide });
-    if (!o.uniq) MC.set(key, m); return m;
+    if (!o.uniq) { MC.set(key, m); m.userData.keep = 1; } return m;
   }
   const m = new THREE.MeshStandardMaterial({ color: c, roughness: o.r ?? 0.85, metalness: o.m ?? 0, emissive: o.e ?? 0, emissiveIntensity: o.ei ?? 1, flatShading: true, transparent: !!o.op, opacity: o.op ?? 1, depthWrite: o.op ? false : true, side: o.ds ? THREE.DoubleSide : THREE.FrontSide });
-  if (!o.uniq) MC.set(key, m); return m;
+  if (!o.uniq) { MC.set(key, m); m.userData.keep = 1; } return m;
 };
 const GC = new Map();
-const geo = (k, f) => { if (!GC.has(k)) GC.set(k, f()); return GC.get(k); };
+const geo = (k, f) => { if (!GC.has(k)) { const g = f(); g.userData.keep = 1; GC.set(k, g); } return GC.get(k); };
+// 화면에서 뺀 물체가 쓰던 그래픽 메모리를 돌려줘요. 여럿이 같이 쓰는 모양·재질(keep)은 두고, 그 물체만 쓰던 것만 지워요.
+// 재질은 장면을 통째로 바꿀 때만 지워요 (싸우는 중에 지우면 다음 효과 때 셰이더를 다시 만드느라 끊겨요)
+function freeObj(o, mats) {
+  if (!o) return;
+  o.traverse(n => {
+    if (n.geometry && !n.geometry.userData.keep) n.geometry.dispose();
+    const ms = mats && n.material ? (Array.isArray(n.material) ? n.material : [n.material]) : [];
+    for (const m of ms) if (m && !m.userData.keep) { if (m.map && !m.map.userData.keep) m.map.dispose(); m.dispose(); }
+  });
+}
 function mesh(g, m, x, y, z, p, shadow = true) { const o = new THREE.Mesh(g, m); o.position.set(x, y, z); o.castShadow = o.receiveShadow = shadow; if (p) p.add(o); return o; }
 const box = (w, h, d, m, x, y, z, p) => mesh(geo('b' + w + ',' + h + ',' + d, () => new THREE.BoxGeometry(w, h, d)), m, x, y, z, p);
 const cyl = (rt, rb, h, s, m, x, y, z, p) => mesh(geo('c' + [rt, rb, h, s], () => new THREE.CylinderGeometry(rt, rb, h, s)), m, x, y, z, p);
@@ -352,7 +362,9 @@ export class View {
     if (this.scene) this.scene.traverse(o => { if (o.material) (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => m.needsUpdate = true); });
   }
   newScene(bg, fog) {
-    if (this.scene) this.scene.traverse(o => { if (o.isLight && o.shadow && o.shadow.map) o.shadow.map.dispose(); });
+    if (this.scene) { this.scene.traverse(o => { if (o.isLight && o.shadow && o.shadow.map) o.shadow.map.dispose(); }); freeObj(this.scene, true); }
+    // 앞 장면의 후처리 그림판도 지워요 (장·층을 넘길 때마다 쌓이지 않게)
+    if (this.comp) { for (const p of this.comp.passes) if (p.dispose) p.dispose(); if (this.comp.dispose) this.comp.dispose(); else { this.comp.renderTarget1.dispose(); this.comp.renderTarget2.dispose(); } }
     const s = new THREE.Scene(); s.background = new THREE.Color(bg); s.fog = new THREE.Fog(fog, 45, 90);
     this.scene = s; this.ents.clear(); this.fx = []; this.nums = [];
     // 기술 번쩍임용 빛 하나 (빛 개수가 바뀌면 셰이더를 다시 만들어서 미리 넣어 둬요)
@@ -1027,7 +1039,7 @@ export class View {
       if (!E) { E = { m: zoneMesh(z) }; s.add(E.m); this.ents.set(key, E); E.m.position.set(z.x, 0.14, z.z); }
       zoneAnim(E, z, t);
     }
-    for (const [key, E] of this.ents) if (!seen.has(key)) { s.remove(E.m); if (E.ring) s.remove(E.ring); this.ents.delete(key); }
+    for (const [key, E] of this.ents) if (!seen.has(key)) { s.remove(E.m); freeObj(E.m); if (E.ring) { s.remove(E.ring); freeObj(E.ring); } this.ents.delete(key); }
     // 함정, 상자, 제단, 모닥불
     const W = S.w;
     if (W && this.trapM) {
@@ -1133,7 +1145,7 @@ export class View {
     if (this.lobbyHeroes) this.lobbyHeroes.forEach((h, i) => { if (h.userData.cosAnim) h.userData.cosAnim(t); h.userData.body.position.y = Math.sin(t * 1.5 + i) * 0.03; h.userData.head.rotation.y = Math.sin(t * 0.6 + i * 2) * 0.3; });
     if (this.fxL && this.fxLI > 0) { this.fxLI = Math.max(0, this.fxLI - dt * this.fxLI * 5 - dt * 10); this.fxL.intensity = this.fxLI; }
     for (const f of this.fx) { f.t += dt; f.up(f, dt); }
-    this.fx = this.fx.filter(f => { if (f.t >= f.T) { this.scene.remove(f.m); return false; } return true; });
+    this.fx = this.fx.filter(f => { if (f.t >= f.T) { this.scene.remove(f.m); freeObj(f.m); return false; } return true; });
   }
   render() { if (this.comp) this.comp.render(); }
   // 카메라를 픽셀 칸에 딱 맞춰 움직여요. 반 칸씩 밀리면 화면 전체가 지글거려요.
