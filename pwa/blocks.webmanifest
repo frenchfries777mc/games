@@ -1,0 +1,26 @@
+{
+  "name": "FRY BLOCKS",
+  "short_name": "FRY BLOCKS",
+  "description": "블록 코딩으로 HTML파일을 만들고, 다운로드 받으세요! 알맞은 블록이 없다면, 직접 쓸 수도 있습니다.(근데 그러면 이걸 왜 쓰는 거죠?)",
+  "lang": "ko",
+  "id": "/tools/blocks/",
+  "start_url": "/tools/blocks/",
+  "scope": "/tools/blocks/",
+  "display": "standalone",
+  "background_color": "#0e0e0e",
+  "theme_color": "#0e0e0e",
+  "icons": [
+    {
+      "src": "/games/pwa/icons/blocks-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/games/pwa/icons/blocks-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

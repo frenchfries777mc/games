@@ -1,0 +1,26 @@
+{
+  "name": "TUMBLECROWN",
+  "short_name": "TUMBLECROWN",
+  "description": "여러 모드를 선택하고, 캐릭터를 고르고, 팀을 꾸리고 중세 속 전장에서 상대와 맞서 모든 깃발을 점령하세요!",
+  "lang": "ko",
+  "id": "/games/tumblecrown/",
+  "start_url": "/games/tumblecrown/",
+  "scope": "/games/",
+  "display": "standalone",
+  "background_color": "#0e0e0e",
+  "theme_color": "#0e0e0e",
+  "icons": [
+    {
+      "src": "/games/pwa/icons/tumblecrown-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/games/pwa/icons/tumblecrown-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

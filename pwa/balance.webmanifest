@@ -1,0 +1,26 @@
+{
+  "name": "평형 설계실",
+  "short_name": "평형 설계실",
+  "description": "힘끼리 평형을 이루게 하세요! 하지만 밤 늦게 이걸 한다면 엄마가 뚜껑 열리는 힘의 평형을 맞추는데 67,000N은 필요할 겁니다!",
+  "lang": "ko",
+  "id": "/educations/balance/",
+  "start_url": "/educations/balance/",
+  "scope": "/educations/balance/",
+  "display": "standalone",
+  "background_color": "#0e0e0e",
+  "theme_color": "#0e0e0e",
+  "icons": [
+    {
+      "src": "/games/pwa/icons/balance-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/games/pwa/icons/balance-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

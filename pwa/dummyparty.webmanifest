@@ -1,0 +1,26 @@
+{
+  "name": "DUMMY PARTY",
+  "short_name": "DUMMY PARTY",
+  "description": "마네킹으로 때리고, 밀고, 춤을 춰서 다른 마네킹과 어딘가 바보같은 해설자를 이기세요!",
+  "lang": "ko",
+  "id": "/games/dummyparty/",
+  "start_url": "/games/dummyparty/",
+  "scope": "/games/dummyparty/",
+  "display": "standalone",
+  "background_color": "#0e0e0e",
+  "theme_color": "#0e0e0e",
+  "icons": [
+    {
+      "src": "/games/pwa/icons/dummyparty-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/games/pwa/icons/dummyparty-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

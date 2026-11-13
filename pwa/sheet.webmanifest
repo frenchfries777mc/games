@@ -1,0 +1,26 @@
+{
+  "name": "FRY SHEET",
+  "short_name": "FRY SHEET",
+  "description": "여러 데이터를 효율적으로 정리하세요! AI수식으로 힘든 일을 대신 AI에게 시키세요!",
+  "lang": "ko",
+  "id": "/tools/sheet/",
+  "start_url": "/tools/sheet/",
+  "scope": "/tools/sheet/",
+  "display": "standalone",
+  "background_color": "#0e0e0e",
+  "theme_color": "#0e0e0e",
+  "icons": [
+    {
+      "src": "/games/pwa/icons/sheet-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/games/pwa/icons/sheet-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
