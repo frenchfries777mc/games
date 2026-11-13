@@ -32,3 +32,7 @@ patchnotes.json | v786 items[2] | 경기 중 화면 표시를 바뀔 때만 다�
 patchnotes.json | v786 items[3] | 한 명의 인터넷이 느려도 다른 사람들의 화면은 느려지지 않아요 | build 786 | 2026-11-13
 patchnotes.json | v786 items[4] | 인터넷이 잠깐 끊겨도 바로 방에서 나가지지 않고 12초까지 기다려요 (그동안 캐릭터는 멈춰 있어요) | build 786 | 2026-11-13
 patchnotes.json | v786 items[5] | 연결이 불안정하면 화면 위에 작은 안내가 나오고, 돌아오면 바로 이어져요 | build 786 | 2026-11-13
+patchnotes.json | v787 title | 모바일 최적화 | build 787 | 2026-11-13
+patchnotes.json | v787 items[0] | 모바일에서 아래쪽 막대와 글자 표시를 덜 자주 갱신해서 더 가벼워요 | build 787 | 2026-11-13
+patchnotes.json | v787 items[1] | 모바일에서 배경 분위기 효과를 끄고 효과 조각 수를 더 줄였어요 | build 787 | 2026-11-13
+patchnotes.json | v787 items[2] | 모바일에서 게임 화면을 불투명하게 그려서 화면 합치는 부담을 줄였어요 | build 787 | 2026-11-13
