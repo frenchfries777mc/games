@@ -65,7 +65,21 @@ var T=L[lang()];
 /* 로그인은 frenchfries777.com/log-in/ 한 곳에서 해요. 사이트의 로그인 버튼은 그 페이지로 보냈다가, 끝나면 원래 있던 곳으로 돌려보내요 */
 var LOGIN_URL='https://frenchfries777.com/log-in/', onLP=/^\/log-in\/?/.test(location.pathname||'')&&/(^|\.)frenchfries777\.com$/.test(location.hostname), lpBusy=false;
 function lpNext(){ try{ var n=new URLSearchParams(location.search).get('next'), u=new URL(n,location.href); if(/^https:$/.test(u.protocol)&&/(^|\.)frenchfries777\.com$/.test(u.hostname)&&!/^\/log-in\//.test(u.pathname)) return u.href; }catch(e){} return 'https://frenchfries777.com/'; }
-function lpGo(){ location.replace(lpNext()); }
+/* 서브도메인(chat.frenchfries777.com)은 저장소가 따로라서, 로그인 페이지가 한 번만 쓰는 표를 받아 넘겨주고 서브도메인이 그 표로 자기 세션을 만들어요 */
+var SSO_HOSTS=['chat.frenchfries777.com'], ssoSub=SSO_HOSTS.indexOf(location.hostname)>=0, lpSso=onLP&&/[?&]sso=1(&|$)/.test(location.search), lpGoing=false;
+async function lpGo(){ if(lpGoing) return; lpGoing=true; var n=lpNext();
+  try{ if(SSO_HOSTS.indexOf(new URL(n).hostname)>=0){ var t='';
+    try{ if(user&&sb){ var s=(await sb.auth.getSession()).data.session, r=await fetch(SB_URL+'/functions/v1/ff-sso',{method:'POST',headers:{Authorization:'Bearer '+s.access_token,apikey:SB_KEY}}), j=r.ok?await r.json():null; t=(j&&j.t)||''; } }catch(e){}
+    n=n.replace(/#.*$/,'')+'#ffsso='+(t||0); } }catch(e){}
+  location.replace(n); }
+async function ssoIn(u){ var m=/^#ffsso=(.*)$/.exec(location.hash||'');
+  if(m){ try{ history.replaceState(null,'',location.pathname+location.search); sessionStorage.setItem('ffSsoTried','1'); }catch(e){} }
+  if(u) return u;
+  if(m){ if(m[1]&&m[1]!=='0'){ try{ var r=await sb.auth.verifyOtp({token_hash:m[1],type:'magiclink'}); if(r.error) r=await sb.auth.verifyOtp({token_hash:m[1],type:'email'});
+      if(r.data&&r.data.session){ try{ localStorage.removeItem('ffSsoOff'); }catch(e){} return r.data.session.user; } }catch(e){} }
+    return null; }
+  try{ if(sessionStorage.getItem('ffSsoTried')||localStorage.getItem('ffSsoOff')) return null; sessionStorage.setItem('ffSsoTried','1'); }catch(e){ return null; }
+  location.replace(LOGIN_URL+'?sso=1&next='+encodeURIComponent(location.href)); return null; }
 function lpMine(){ return !onLP&&/(^|\.)frenchfries777\.com$/.test(location.hostname); }
 var ACHL={es:'🏆 Logros',fr:'🏆 Succès',de:'🏆 Erfolge',ja:'🏆 実績',zh:'🏆 成就',pt:'🏆 Conquistas',ru:'🏆 Достижения',tr:'🏆 Başarımlar',it:'🏆 Obiettivi',pl:'🏆 Osiągnięcia',ar:'🏆 الإنجازات',nw:'🏆 Plusdoings',gk:'🏆 업적'};   // 도전과제 버튼 이름 (ko/en은 위 사전에 있어요)
 /* the shared language setting (ff-lang.js): pages that load only this script still keep the games' language keys in step */
@@ -82,7 +96,7 @@ var ready=(async function(){
     else if(await loadScript(SB_LIB, function(){ return !!(window.supabase&&window.supabase.createClient); })) sb=window.supabase.createClient(SB_URL, SB_KEY);
   }catch(e){ sb=null; }
   if(!sb){ paint(); return null; }
-  try{ var r=await sb.auth.getSession(); await setUser(r&&r.data&&r.data.session&&r.data.session.user); }catch(e){ await setUser(null); }
+  try{ var r=await sb.auth.getSession(), u0=r&&r.data&&r.data.session&&r.data.session.user; if(ssoSub) u0=await ssoIn(u0); await setUser(u0); }catch(e){ await setUser(null); }
   sb.auth.onAuthStateChange(function(ev, session){ var u=session&&session.user; if((u&&u.id)!==(user&&user.id)) setTimeout(function(){ setUser(u); },0); });   // never await Supabase calls inside this callback (it can lock up)
   return sb;
 })();
@@ -92,7 +106,7 @@ async function setUser(u){
   if(user){ try{ var r=await sb.from('profiles').select('username,display_name').eq('id',user.id).single(); prof=(r&&r.data)||null; }catch(e){} }
   paint(); subs.forEach(function(f){ try{ f(user, prof); }catch(e){} });
   nickEmit();
-  if(onLP){ if(user&&!lpBusy) setTimeout(lpGo,0); return; }   // 로그인 페이지: 이미 로그인돼 있거나 GitHub/Google에서 돌아왔으면 바로 원래 사이트로
+  if(onLP){ if((user||lpSso)&&!lpBusy) setTimeout(lpGo,0); return; }   // 로그인 페이지: 이미 로그인돼 있거나 GitHub/Google에서 돌아왔으면 바로 원래 사이트로
   if(user&&!prof&&!isIdAcct(user)) setTimeout(openSetup,0);
   setTimeout(noticeAck,300);
   try{ if(user&&prof&&localStorage.getItem('ff.welcomePending')==='1'){ localStorage.removeItem('ff.welcomePending'); setTimeout(welcome,500); } }catch(e){}   // log-in 페이지에서 새로 가입하고 돌아왔을 때
@@ -335,7 +349,7 @@ function welcome(skipNick){
     body.querySelector('.bk').onclick=s2; body.querySelector('.go').onclick=done; }
   if(skipNick) s2(); else s1();
 }
-async function signOut(){ pwClear(); try{ if(sb) await sb.auth.signOut({scope:'local'}); }catch(e){} await setUser(null); }   // 'local': only this browser, other devices stay logged in
+async function signOut(){ pwClear(); if(ssoSub){ try{ localStorage.setItem('ffSsoOff','1'); }catch(e){} } try{ if(sb) await sb.auth.signOut({scope:'local'}); }catch(e){} await setUser(null); }   // 'local': only this browser, other devices stay logged in
 
 /* ---- UI ---- */
 /* 창 공용 색: 다크/라이트 두 테마 (html[data-ff-theme]) */
