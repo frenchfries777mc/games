@@ -500,7 +500,7 @@ const TUT=[
  [P('다 자라면 ▼ 표시의 밭을 눌러 수확해요','When it is grown, tap the field with the ▼ to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=96;
+const OUTMAX=12,BUILD=97;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const CASTLE_T=[
  {n:P('망루','Watchtower'),d:P('돌로 쌓은 망루를 세워요. 세금이 걷히기 시작해요','A stone watchtower. Taxes start to come in'),cost:6000,rank:1},
@@ -645,6 +645,7 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-11-13',build:'v0.2 build 97',title:P('오류 수정','Bug fixes'),items:[P('비밀 섬에서 물건을 사면 금화가 망가지던 오류를 고쳤어요','Fixed gold breaking when buying goods on a secret island'),P('닫히면 안 되는 창이 Esc나 바깥을 눌러 닫히던 오류를 고쳤어요','Fixed windows that should stay open closing with Esc or an outside click'),P('온라인에서 잘못된 선물·거래 값이 들어와도 금화와 짐이 망가지지 않게 했어요','Online, bad gift or trade values can no longer break your gold or cargo')]},
  {date:'2026-11-13',build:'v0.2 build 96',title:P('느린 컴퓨터 자동 감지','Slow computer detection'),items:[P('컴퓨터에서 처음 시작하면 몇 초 동안 화면이 얼마나 부드러운지 재요. 너무 느리면 낮은 사양 설정을 자동으로 켜요','On a computer the game measures smoothness for a few seconds at first. If it is too slow, low-spec settings turn on automatically'),P('자동으로 켜졌다면 설정 창에 안내가 나오고, 최적화 단추로 바꿀 수 있어요','If it turned on automatically, Settings says so and the Optimize buttons change it')]},
  {date:'2026-11-13',build:'v0.2 build 95',title:P('컴퓨터 · 모바일 고르기','Computer or mobile'),items:[P('처음 열면 컴퓨터인지 모바일인지 고르는 창이 떠요. 설정에서 언제든 바꿀 수 있어요','On first launch you pick computer or mobile. You can change it any time in Settings'),P('컴퓨터는 지금과 똑같고, 모바일은 효과와 섬 꾸밈을 줄이고 프레임을 낮추고 창이 떠 있을 땐 화면을 다시 그리지 않아요','Computer stays as it is. Mobile cuts effects and island decor, lowers the frame rate, and stops redrawing while a window is open')]},
  {date:'2026-11-09',build:'v0.2 build 94',title:P('게스트 이름','Guest names'),items:[P('로그인하지 않으면 이름이 게스트와 숫자 6개로 나와요','Without logging in, your name shows as Guest followed by 6 digits')]},
@@ -1468,7 +1469,7 @@ const insCost=()=>Math.round(S.ships.reduce((a,x)=>a+SHIPS[x.ty].cost,0)*0.05);
 const INSMS=600000;
 function insBuy(){if(S.money<insCost())return;S.money-=insCost();const t=NOW();S.ins.until=Math.max(S.ins.until,t)+INSMS;sfx('coin');}
 function stkValue(){if(!S||!S.stk)return 0;let v=0;for(const k in S.stk.hold)v+=S.stk.hold[k].n*S.stk.p[k];return v;}
-function stkBuy(id,n){const k=S.stk,p=k.p[id];if(n==='max')n=Math.floor(S.money/p);n=Math.floor(n);if(n<=0||S.money<p*n)return;S.money-=p*n;const h=k.hold[id]||(k.hold[id]={n:0,avg:0});h.avg=(h.avg*h.n+p*n)/(h.n+n);h.n+=n;sfx('coin');}
+function stkBuy(id,n){const k=S.stk,p=k.p[id];if(!(p>0))return;if(n==='max')n=Math.floor(S.money/p);n=Math.floor(n);if(n<=0||S.money<p*n)return;S.money-=p*n;const h=k.hold[id]||(k.hold[id]={n:0,avg:0});h.avg=(h.avg*h.n+p*n)/(h.n+n);h.n+=n;sfx('coin');}
 function stkSell(id,n){const k=S.stk,h=k.hold[id];if(!h)return;if(n==='all')n=h.n;n=Math.min(Math.floor(n),h.n);if(n<=0)return;const g=k.p[id]*n*0.99;S.money+=g;S.stats.earned+=Math.max(0,g-h.avg*n);S.stats.stkGain=(S.stats.stkGain||0)+Math.max(0,g-h.avg*n);h.n-=n;if(h.n<=0)delete k.hold[id];sfx('coin');}
 function depPut(a){a=a==='all'?S.money:Math.min(a,S.money);a=Math.floor(a);if(a<=0)return;S.money-=a;S.dep+=a;sfx('coin');}
 function depGet(a){a=a==='all'?S.dep:Math.min(a,S.dep);if(a<=0)return;S.dep-=a;S.money+=a;if(S.dep<0.5){S.money+=S.dep;S.dep=0;}sfx('coin');}
@@ -1715,7 +1716,13 @@ const pname=pid=>(MP.players[pid]||{}).name||T('상인','Trader');
 /* ---- 받은 메시지 ---- */
 function onMsg(m){if(!m||!MP.on||!S)return;if(m.to&&m.to!==MP.me)return;
   if(m.t==='hello'||m.t==='nw'||m.t==='sell'||m.t==='bye'||m.t==='aucNew'||m.t==='aucBid'||m.t==='projDon'||m.t==='coDon'){if(MP.host&&m.from!==MP.me&&m.pid!==MP.me)hostHandle(m);return;}
+  if(MSG_PAY[m.t]){const q=v=>{v=Math.floor(+v);return v>0&&isFinite(v)?v:0;};
+    if(m.gold!=null)m.gold=q(m.gold);if(m.n!=null)m.n=q(m.n);
+    if(m.g!=null&&(!GI[m.g]||(m.t!=='refund'&&!m.n)))return;
+    if(m.goods!=null){if(!m.goods||!GI[m.goods.g])return;m.goods.n=q(m.goods.n);}
+    if(m.loot!=null){const L={};if(typeof m.loot==='object')for(const k in m.loot)if(GI[k]&&q(m.loot[k]))L[k]=q(m.loot[k]);m.loot=L;}}
   handle(m);}
+const MSG_PAY={gift:1,settle:1,coPay:1,refund:1,aucWin:1,aucRet:1,raidres:1};
 function hostHandle(m){
   switch(m.t){
    case 'hello':if(m.pid!==MP.me&&!MP.players[m.pid])MP.players[m.pid]={name:m.name,aid:okAid(m.aid),nw:300,rk:0,slot:freshSlot(),last:Date.now(),ships:[]};break;
@@ -2868,7 +2875,7 @@ function updateHud(){if(!S)return;$('hud').hidden=false;const tu=$('tut'),on=S.t
 $('roomTag').hidden=!MP.on;if(MP.on)$('roomTag').textContent=T('방 {0}','Room {0}',MP.code);}
 /* ---- 창 ---- */
 let MODAL_CLOSABLE=true,MOD=null,MODS={};
-function modal(html,closable=true){MODAL_CLOSABLE=closable&&!(MOD&&MODAL_LOCK[MOD.type]);$('mbody').innerHTML=html;$('mbody').classList.toggle('wide',!!(MOD&&MOD.type==='tech'));$('modal').hidden=false;}
+function modal(html,closable=true){MODAL_CLOSABLE=closable&&!(MOD&&(MODAL_LOCK[MOD.type]||MOD.noclose));$('mbody').innerHTML=html;$('mbody').classList.toggle('wide',!!(MOD&&MOD.type==='tech'));$('modal').hidden=false;}
 function closeModal(){$('modal').hidden=true;MOD=null;}
 function openModal(type,o){if(type==='tech')TMAP.x=null;MOD=Object.assign({type},o||{});if(type==='livetrade')MOD.noclose=1;renderModal();}
 function renderModal(){if(!MOD)return;const f=MODS[MOD.type];if(!f)return;const st=$('mbody').scrollTop;const tm0=$('tmap');if(tm0&&MOD.type==='tech'){TMAP.x=tm0.scrollLeft;TMAP.y=tm0.scrollTop;}const html0=f(MOD);if(LIVEW.includes(MOD.type))MOD._sig=html0;modal(html0+(MOD.noclose?'':`<div class="btns" style="margin-top:10px"><button class="pb dark" data-act="mclose">${T('닫기','Close')}</button></div>`));$('mbody').scrollTop=st;if(MOD.type==='tech')placeTmap();if(MOD.type==='chat')fillChat();}
@@ -3320,7 +3327,7 @@ MODS.sailors=()=>{const w=S.crew.reduce((a,c)=>a+crewWage(c),0);let h=`<h2>${T('
   h+=`<div class="btns" style="margin-top:6px"><button class="pb sm dark" data-act="crewnew">${T('다른 지원자 보기','Other applicants')}</button></div></div>`;return h;};
 ACT.crewhire=i=>{const c=SAIL.c[+i];if(c&&crewHire(c)){SAIL.c.splice(+i,1);if(SAIL.c.length<3)SAIL.c.push(crewCands()[0]);}renderModal();updateHud();};
 ACT.crewfire=i=>{crewFire(+i);renderModal();};ACT.crewnew=()=>{SAIL.c=crewCands();renderModal();};
-MODS.secret=m=>{const sc=secretOf(m.id),P0=GI[sc.g];let h=`<h2>${tx(sc.n)}</h2><div class="muted">${tx(sc.d)}</div><div class="box"><h3>${T('이 섬에서만 파는 것','Sold only here')} <span>${T('사기 {0}','Buy {0}',HEL.bl||0)}</span></h3><div class="row" style="padding:2px 0"><span>${gi(sc.g,16)} ${GN(sc.g)} <small class="muted">${secretPrice(sc)}${UG()} · ${T('항구에서 {0} 안팎','ports pay ~{0}',P0.base)}</small></span><span><button class="pb sm dark" data-act="stbuy:${sc.id}:1">1</button><button class="pb sm" data-act="stbuy:${sc.id}:10">10</button></span></div></div><div class="muted" style="margin-top:6px">${T('금화 {0}','Gold {0}',fmt(S.money))} · ${T('사 온 물건은 항구에서 비싸게 팔 수 있어요','Sell what you buy at ports for a profit')}</div>`;return h;};
+MODS.secret=m=>{const sc=secretOf(m.id),P0=GI[sc.g];let h=`<h2>${tx(sc.n)}</h2><div class="muted">${tx(sc.d)}</div><div class="box"><h3>${T('이 섬에서만 파는 것','Sold only here')} <span>${T('사기 {0}','Buy {0}',HEL.bl||0)}</span></h3><div class="row" style="padding:2px 0"><span>${gi(sc.g,16)} ${GN(sc.g)} <small class="muted">${secretPrice(sc)}${UG()} · ${T('항구에서 {0} 안팎','ports pay ~{0}',P0.base)}</small></span><span><button class="pb sm dark" data-act="sbuy:${sc.id}:1">1</button><button class="pb sm" data-act="sbuy:${sc.id}:10">10</button></span></div></div><div class="muted" style="margin-top:6px">${T('금화 {0}','Gold {0}',fmt(S.money))} · ${T('사 온 물건은 항구에서 비싸게 팔 수 있어요','Sell what you buy at ports for a profit')}</div>`;return h;};
 ACT.sbuy=a=>{const [id,n]=a.split(':');if(!secretBuy(id,+n))toast(T('금화나 칸이 모자라요','Not enough gold or room'));renderModal();updateHud();};
 MODS.store=()=>{const st=S.store,m=st.mult;let h=`<h2>${T('내 가게','My shop')} <small class="muted">${stockN()}/${STOCKMAX}</small></h2><div class="muted">${T('진열한 물건을 손님이 알아서 사 가요. 값이 높을수록 손님이 덜 사요. 번 돈은 직접 챙기세요.','Customers buy what you display. Higher prices mean fewer sales. Collect the takings yourself.')}</div>`;
   h+=`<div class="box"><div class="row"><span>${T('가격','Price')} <b>×${m.toFixed(1)}</b> <small class="muted">${T('손님 반응 {0}%','Interest {0}%',Math.round(storeBuyP(m)*100))}</small></span><span><button class="pb sm dark" data-act="stkm:-0.1">−</button><button class="pb sm dark" data-act="stkm:0.1">+</button></span></div>
