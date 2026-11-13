@@ -1157,6 +1157,8 @@ sting();})();</script>
     <div class="profRow"><span class="k">배경음악 소리</span><span class="v"><input type="range" id="settingsBgmVol" min="0" max="100" step="5" style="width:130px; vertical-align:middle;"></span></div>
     <div class="profRow"><span class="k">화면 흔들림</span><span class="v"><button id="settingsShakeToggle" class="btn-secondary" style="padding:4px 12px;"></button></span></div>
     <div class="profRow"><span class="k">기기 (모바일 / 컴퓨터)</span><span class="v"><button id="settingsDeviceToggle" class="btn-secondary" style="padding:4px 12px;"></button></span></div>
+    <div class="profRow"><span class="k">저사양 자동 감지</span><span class="v"><button id="settingsLowspecToggle" class="btn-secondary" style="padding:4px 12px;"></button></span></div>
+    <div class="hint" id="settingsLowNote" style="display:none; margin:-2px 0 6px;"></div>
     <div class="profRow"><span class="k">그래픽 효과 (스킨 연출 등)</span><span class="v"><button id="settingsQualityToggle" class="btn-secondary" style="padding:4px 12px;"></button></span></div>
     <div class="profRow"><span class="k">조작 방식 (모바일 / 컴퓨터)</span><span class="v"><button id="settingsCtrlToggle" class="btn-secondary" style="padding:4px 12px;"></button></span></div>
     <div class="profRow"><span class="k">터치 버튼 크기 (모바일)</span><span class="v"><button id="settingsTouchScaleToggle" class="btn-secondary" style="padding:4px 12px;"></button></span></div>
@@ -1921,8 +1923,9 @@ function loadKeyBindings(){
 function persistKeyBindings(){ try{ localStorage.setItem('arenaClashKeybinds', JSON.stringify(keyBindings)); }catch(e){} }
 loadKeyBindings();
 
-let otherSettings={screenShake:true, damageNumbers:true, sfx:true, bgm:true, bgmVol:0.4, quality:'auto', controls:'auto', fpsLimit:0, showFps:false, abilityMode:'hold', saver:true, colorBlind:false, touchScale:1, touchLift:0};       // fpsLimit: 0 = no limit, 30 or 60 // abilityMode: 'hold' (held to aim, used on release), 'instant', 'confirm' (press once to aim, press again to use)
-var MOB={on:false};       // 기기 선택이 모바일이면 true: 글로우·스킨 연출·화면 흔들림을 끄고 파티클을 줄임
+let otherSettings={lowspec:'auto', screenShake:true, damageNumbers:true, sfx:true, bgm:true, bgmVol:0.4, quality:'auto', controls:'auto', fpsLimit:0, showFps:false, abilityMode:'hold', saver:true, colorBlind:false, touchScale:1, touchLift:0};       // fpsLimit: 0 = no limit, 30 or 60 // abilityMode: 'hold' (held to aim, used on release), 'instant', 'confirm' (press once to aim, press again to use)
+var MOB={on:false, lite:false, auto:false};      // lite = 모바일이거나 저사양 자동 감지·설정으로 가볍게 도는 중 (on = 기기 선택이 모바일)
+       // 기기 선택이 모바일이면 true: 글로우·스킨 연출·화면 흔들림을 끄고 파티클을 줄임
 let fpsN=0, fpsT=0, fpsBoxEl=null;       // quality: 'auto' (follows the speed of the game), 'high', 'mid' or 'low'
 function loadOtherSettings(){
   try{
@@ -1933,6 +1936,7 @@ function loadOtherSettings(){
       if(typeof saved.sfx==='boolean') otherSettings.sfx=saved.sfx;
       if(typeof saved.bgm==='boolean') otherSettings.bgm=saved.bgm;
       if(typeof saved.bgmVol==='number' && saved.bgmVol>=0 && saved.bgmVol<=1) otherSettings.bgmVol=saved.bgmVol;
+      if(saved.lowspec==='auto' || saved.lowspec==='on' || saved.lowspec==='off') otherSettings.lowspec=saved.lowspec;
       if(saved.quality==='auto' || saved.quality==='high' || saved.quality==='mid' || saved.quality==='low') otherSettings.quality=saved.quality;
       if(saved.controls==='auto' || saved.controls==='touch' || saved.controls==='kbm') otherSettings.controls=saved.controls;
       if(saved.fpsLimit===0 || saved.fpsLimit===30 || saved.fpsLimit===60) otherSettings.fpsLimit=saved.fpsLimit;
@@ -2072,6 +2076,13 @@ function renderSettingsScreen(){
   }
   const dvBtn=document.getElementById('settingsDeviceToggle');
   if(dvBtn){ dvBtn.textContent=deviceLabel(); dvBtn.onclick=()=>{ deviceSet(MOB.on?'pc':'mobile'); renderSettingsScreen(); }; }
+  const lsBtn=document.getElementById('settingsLowspecToggle'), lsNote=document.getElementById('settingsLowNote');
+  if(lsBtn){ const LL={auto:'자동 (느리면 가볍게)', on:'항상 가볍게', off:'끔'}, lo=['auto','on','off'];
+    const showNote=()=>{ if(lsNote){ const t=lowspecNote(); lsNote.textContent=t; lsNote.style.display=t?'block':'none'; } };
+    lsBtn.textContent=LL[otherSettings.lowspec]; showNote();
+    lsBtn.onclick=()=>{ otherSettings.lowspec=lo[(lo.indexOf(otherSettings.lowspec)+1)%lo.length];
+      if(otherSettings.lowspec==='auto'){ MOB.auto=false; try{ localStorage.removeItem('stk_lowspec'); }catch(e){} perfProbe.frames=0; perfProbe.n=0; perfProbe.sum=0; perfProbe.done=false; }
+      liteRefresh(); persistOtherSettings(); lsBtn.textContent=LL[otherSettings.lowspec]; showNote(); }; }
   const qBtn=document.getElementById('settingsQualityToggle');
   if(qBtn){
     const QL={auto:'자동', high:'높음', mid:'중간', low:'낮음'}, order=['auto','high','mid','low'];
@@ -3762,7 +3773,7 @@ function drawCape(c,id,backDir,sway,sy){
   c.restore();
 }
 function drawSkinFx(c, fx, tint, hx, hy, r, now){
-  if(MOB.on) return;      // a little effect around the head for the newer / tier skins
+  if(MOB.lite) return;      // a little effect around the head for the newer / tier skins
   if(!fx) return;
   const t=(now||0)/1000, col=tint||'#ffffff';
   c.save(); c.lineCap='round'; c.lineJoin='round';
@@ -3820,8 +3831,9 @@ function applyTouchLayout(){ const r=document.documentElement.style; r.setProper
 let fxFrames=0, fxSumDt=0, fxGoodStreak=0;
 function applyFxQualityNow(){ if(otherSettings.quality==='high') fxQuality=2; else if(otherSettings.quality==='mid') fxQuality=1; else if(otherSettings.quality==='low') fxQuality=0; }
 // 자동 화질이 가장 낮아지면 이 기기에서 한 번만 설정 화질 「낮음」을 권해요
-function lowFxHint(){ try{ if(localStorage.getItem('stk_lowFxHint')) return; localStorage.setItem('stk_lowFxHint','1'); }catch(e){ return; } showAchievementToast({icon:'',name:'화면이 느려서 효과를 줄였어요. 설정의 화질을 「낮음」으로 두면 계속 가볍게 할 수 있어요.'}, '화면 안내'); }
+function lowFxHint(){ try{ if(localStorage.getItem('stk_lowFxHint')) return; localStorage.setItem('stk_lowFxHint','1'); }catch(e){ return; } }      // (no pop-up: the settings screen carries the note about the slow screen)
 function updateFxQuality(dtSec){         // once per frame with the real time since the last frame: 'auto' lowers the effects when the game is slower than ~30 fps and raises them again after 4 s of more than ~52 fps
+  if(MOB.lite){ fxQuality=0; return; }
   if(otherSettings.quality!=='auto'){ applyFxQualityNow(); return; }
   if(!(dtSec>0) || dtSec>0.5) return;                       // (a tab that was in the background wakes up with one huge step: not a measurement)
   fxFrames++; fxSumDt+=dtSec;
@@ -3896,7 +3908,7 @@ function auroraHex(t, i){
   return '#'+[f(0),f(8),f(4)].map(v=>Math.round(Math.max(0,Math.min(1,v))*255).toString(16).padStart(2,'0')).join('');
 }
 function drawSkinLux(c, lux, tint, now, seed, layer){
-  if(MOB.on) return;
+  if(MOB.lite) return;
   if(!lux) return;
   if(tint===STAR_TINT){ drawStarlightShow(c, (now||0)/1000+(seed||0)*0.37, layer); return; }      // 별빛 사과
   if(lux>=4){ drawAuroraShow(c, (now||0)/1000+(seed||0)*0.37, layer, fxQuality); return; }
@@ -6052,10 +6064,10 @@ window.addEventListener('resize', resize); resize();
    컴퓨터: 아무것도 바꾸지 않아요 (기존 성능 그대로).
    모바일: 화질 낮음 · 30프레임 · 화면 흔들림 끔을 켜고, 글로우(shadowBlur)와 스킨 연출을 그리지 않고, 파티클을 줄이고, 화면 꾸밈(애니메이션·그림자·블러)을 끔.
    컴퓨터로 돌아오면 모바일을 고르기 전의 설정(화질·프레임·화면 흔들림)으로 되돌려요. */
-(function(){ try{ const d=Object.getOwnPropertyDescriptor(CanvasRenderingContext2D.prototype,'shadowBlur'); if(d && d.set) Object.defineProperty(CanvasRenderingContext2D.prototype,'shadowBlur',{configurable:true, enumerable:d.enumerable, get:d.get, set:function(v){ d.set.call(this, MOB.on?0:v); }}); }catch(e){} })();
+(function(){ try{ const d=Object.getOwnPropertyDescriptor(CanvasRenderingContext2D.prototype,'shadowBlur'); if(d && d.set) Object.defineProperty(CanvasRenderingContext2D.prototype,'shadowBlur',{configurable:true, enumerable:d.enumerable, get:d.get, set:function(v){ d.set.call(this, MOB.lite?0:v); }}); }catch(e){} })();
 function deviceKind(){ try{ const v=localStorage.getItem('stk_device'); return (v==='mobile'||v==='pc')?v:null; }catch(e){ return null; } }
 function deviceLabel(){ return MOB.on?'모바일 (가볍게)':'컴퓨터 (기존 성능)'; }
-function deviceApplyClass(){ try{ document.documentElement.classList.toggle('stk-mobile', !!MOB.on); }catch(e){} }
+function deviceApplyClass(){ try{ document.documentElement.classList.toggle('stk-mobile', !!MOB.lite); }catch(e){} }
 function deviceSet(kind){
   const was=MOB.on;
   try{ localStorage.setItem('stk_device', kind); }catch(e){}
@@ -6069,8 +6081,8 @@ function deviceSet(kind){
       if(['auto','high','mid','low'].includes(b.quality)) otherSettings.quality=b.quality; if([0,30,60].includes(b.fpsLimit)) otherSettings.fpsLimit=b.fpsLimit; if(typeof b.screenShake==='boolean') otherSettings.screenShake=b.screenShake;
       try{ if(window.FFPerf){ const fx=(otherSettings.quality==='auto')?'high':otherSettings.quality; if(otherSettings.quality==='auto') perfLastFx=fx; FFPerf.set({fx:fx, fps:otherSettings.fpsLimit}); } }catch(e){} }      // (the shared setting of the hub and the other games goes back too)
   }
-  deviceApplyClass(); persistOtherSettings(); fxFrames=0; fxSumDt=0; fxGoodStreak=0; try{ applyFxQualityNow(); }catch(e){}
-  if(MOB.on && typeof particles!=='undefined' && particles.length>120) particles.splice(0, particles.length-120);
+  liteRefresh(); persistOtherSettings(); fxFrames=0; fxSumDt=0; fxGoodStreak=0; try{ applyFxQualityNow(); }catch(e){}
+  if(MOB.lite && typeof particles!=='undefined' && particles.length>120) particles.splice(0, particles.length-120);
 }
 function deviceChoosePanel(){
   if(document.getElementById('deviceChoose')) return;
@@ -6082,7 +6094,22 @@ function deviceChoosePanel(){
   el.querySelectorAll('button').forEach(b=>{ b.onclick=()=>{ deviceSet(b.getAttribute('data-k')); el.remove(); try{ renderSettingsScreen(); }catch(e){} }; });
   document.body.appendChild(el);
 }
-(function deviceBoot(){ const k=deviceKind(); MOB.on=(k==='mobile'); deviceApplyClass(); if(!k) deviceChoosePanel(); })();
+/* ===== 저사양 컴퓨터: 매치 첫 몇 초의 프레임 시간을 재서 느리면 가볍게 (모바일과 같은 가벼운 모드) =====
+   설정의 「저사양 자동 감지」: 자동(기본, 느리면 가볍게) / 항상 가볍게 / 끔. 느리다고 판단하면 이 기기에 기억해서 다음부터는 처음부터 가볍게 시작해요.
+   팝업 없이 설정 화면에 작은 안내만 나와요. 앱(설치형)도 같은 게임 코드라 똑같이 동작해요. */
+function liteRefresh(){ MOB.lite=!!(MOB.on || otherSettings.lowspec==='on' || (otherSettings.lowspec==='auto' && MOB.auto)); deviceApplyClass(); }
+function lowspecNote(){ return (otherSettings.lowspec==='auto' && MOB.auto && !MOB.on) ? '이 컴퓨터가 느려서 효과를 줄였어요. 「항상 가볍게」나 「끔」으로 바꿀 수 있어요.' : ''; }
+var perfProbe={frames:0, n:0, sum:0, done:false};
+function perfProbeStep(rawDt, lim){      // called once per drawn frame; only judges frames of a running match that are not held back by a 30 fps limit
+  const P=perfProbe; if(P.done) return;
+  if(otherSettings.lowspec!=='auto' || MOB.lite){ P.done=true; return; }
+  if(!(started && MAP) || document.hidden || (lim>0 && lim<60)) return;
+  if(!(rawDt>0) || rawDt>0.25) return;      // (a frame after a stall or a hidden tab is not a measurement)
+  P.frames++; if(P.frames<=90) return;      // (the first ~1.5 s of a match: loading hitches)
+  P.n++; P.sum+=rawDt;
+  if(P.n>=240){ P.done=true; if(P.sum/P.n>0.029){ MOB.auto=true; try{ localStorage.setItem('stk_lowspec','1'); }catch(e){} liteRefresh(); fxQuality=0; } }
+}
+(function deviceBoot(){ const k=deviceKind(); MOB.on=(k==='mobile'); try{ MOB.auto=(localStorage.getItem('stk_lowspec')==='1'); }catch(e){} liteRefresh(); if(!k) deviceChoosePanel(); })();
 
 /* ================= HELPERS ================= */
 function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
@@ -6094,7 +6121,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-13-v787';
+const GAME_BUILD='build 2026-11-13-v788';
 const GAME_VERSION='1.0.1', GAME_VERSION_NAME='네온 시티';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -13267,6 +13294,7 @@ function loop(t){
     if(lim>0 && (t-lastT) < 1000/lim-3){ requestAnimationFrame(loop); return; } }      // (the frame limit: this frame is skipped)
   const rawDt=(t-lastT)/1000, dt=Math.min(0.05,rawDt); lastT=t;
   if(otherSettings.showFps){ fpsN++; if(t-fpsT>=500){ if(!fpsBoxEl){ fpsBoxEl=document.createElement('div'); fpsBoxEl.style.cssText='position:fixed; top:6px; right:8px; z-index:70; font:700 13px Rajdhani,monospace; color:#7fffd4; text-shadow:0 1px 4px #000; pointer-events:none;'; document.body.appendChild(fpsBoxEl); } fpsBoxEl.textContent=Math.round(fpsN*1000/Math.max(1,t-fpsT))+' FPS'; fpsBoxEl.style.display='block'; fpsN=0; fpsT=t; } } else if(fpsBoxEl) fpsBoxEl.style.display='none';
+  { let pl=otherSettings.fpsLimit; if(otherSettings.saver){ const sl=(started && MAP)?60:30; if(!pl || sl<pl) pl=sl; } try{ perfProbeStep(rawDt, pl); }catch(e){} }
   updateFxQuality(rawDt);
   // each step gets its OWN try/catch instead of one shared try/catch for the whole frame - previously, if
   // updateMovingPlatforms/hostTick/updateAnimPhases/recordReplaySamples threw, render() never even got
@@ -19462,7 +19490,7 @@ function hexA(col,a){
 const RND=(a,b)=>a+Math.random()*(b-a);
 function addP(o){
   if(tnVisSet && gameMode==='tournament' && o.x!==undefined && !tnFxNear(o)) return;      // tournament: nothing of the other fights is ever drawn
-  if(MOB.on){ if(particles.length>70) particles.splice(0,35); }
+  if(MOB.lite){ if(particles.length>70) particles.splice(0,35); }
   else if(particles.length>(fxQuality>=2?600:(fxQuality===1?450:300))) particles.splice(0,150);
   particles.push(Object.assign({x:0,y:0,vx:0,vy:0,grav:0,drag:0,size:3,shape:'dot',add:true,rot:0,vr:0,color:'#fff'}, o, {max:o.life, au:AURA_SPAWN}));
 }
@@ -21729,7 +21757,7 @@ function render(fxDt){
   if(gameMode==='tournament' && !kcScene) safeDraw(drawTnOver);
   if(!kcScene) safeDraw(drawAbilityPreview);
   if(!kcScene) safeDraw(drawAttackPreview);     // the mint aim of a held ability key
-  safeDraw(()=>{ updateAmbientFx(dtN); if(!MOB.on) ambientThemeFx(dtN); if(!kcScene) processNewEffects(); });   // (the live effects of the finished match must not mix into a replay)
+  safeDraw(()=>{ updateAmbientFx(dtN); if(!MOB.lite) ambientThemeFx(dtN); if(!kcScene) processNewEffects(); });   // (the live effects of the finished match must not mix into a replay)
   drawDsDragons();
   drawParticles();
   if(gameMode==='survival' && !(killcamActive && killcamReplay && killcamReplay.sceneNow)) safeDraw(drawSurvivalOverlay);
@@ -21742,7 +21770,7 @@ function render(fxDt){
   const me=players[myId];
   if(me) safeDraw(()=>{
     { const bh=!!(me.batting && me.alive); if(bh!==batHint){ batHint=bh; updateControlsHint(); } }   // (the hint bar tells a bat how to go up and down)
-    if(MOB.on && ((render.__hud=(render.__hud|0)+1)%3)) return;      // (mobile: the bars and labels below are refreshed on every third picture)
+    if(MOB.lite && ((render.__hud=(render.__hud|0)+1)%3)) return;      // (mobile: the bars and labels below are refreshed on every third picture)
     // the ENTIRE per-frame HUD update (health, weapon label, dash/teleport/ult cooldowns, mode-specific
     // labels for conquest/ffa/flag/survival) is wrapped as one unit: this whole block runs every single
     // frame, and if any ONE sub-piece throws (a malformed mode-specific state, a null reference), every
