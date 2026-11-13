@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap" rel="stylesheet">
 <!-- 새 빌드마다 아래 ?v= 숫자를 BUILD와 같게 올려요 (브라우저가 옛 파일을 쓰지 않게) -->
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=54","./js/main.js":"./js/main.js?v=55","./js/map.js":"./js/map.js?v=54","./js/music.js":"./js/music.js?v=54","./js/render.js":"./js/render.js?v=54","./js/sfx.js":"./js/sfx.js?v=54","./js/sim.js":"./js/sim.js?v=54","./js/tr.js":"./js/tr.js?v=54"}}</script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=76","./js/main.js":"./js/main.js?v=76","./js/map.js":"./js/map.js?v=76","./js/music.js":"./js/music.js?v=76","./js/render.js":"./js/render.js?v=76","./js/sfx.js":"./js/sfx.js?v=76","./js/sim.js":"./js/sim.js?v=76","./js/tr.js":"./js/tr.js?v=76"}}</script>
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script src="https://frenchfries777.com/games/ff-lang.js"></script>
 <script>window.FF_INGAME=true</script>
@@ -136,7 +136,7 @@ body.touch #emoBtn{top:36px;right:8px;padding:3px 8px;font-size:14px}body.touch 
 #guide{position:fixed;inset:0;z-index:45;display:none;align-items:center;justify-content:center;background:rgba(5,4,8,.72);pointer-events:auto}#guide.on{display:flex}
 #guide .gbox{max-width:min(520px,92vw);max-height:90vh;overflow:auto;background:var(--panel);border:3px solid var(--line);padding:16px 18px;color:var(--ink)}
 #guide h3{margin:0 0 8px;font-size:18px}#gB p{margin:6px 0;font-size:14px;line-height:1.5}#gOk{margin-top:10px;background:var(--gold,#d9a441);color:#1a1208;border:0;padding:8px 18px;font-weight:800;font-size:15px}
-#mini{position:absolute;right:14px;top:56px;width:120px;height:120px;border-radius:8px;pointer-events:none;opacity:.92}
+#mini{position:absolute;right:14px;top:96px;width:120px;height:120px;border-radius:8px;pointer-events:none;opacity:.92}
 #spec{position:absolute;left:50%;top:72px;transform:translateX(-50%);display:none;align-items:center;gap:8px;pointer-events:auto;background:var(--panel);border:3px solid var(--line);padding:5px 10px;font-weight:700;font-size:14px}#spec.on{display:flex}#spec button{background:var(--panel2);border:2px solid var(--line);color:var(--ink);padding:3px 10px;font-weight:700}body.touch #spec{top:52px;padding:3px 8px;font-size:12px}
 #exitBtn{position:absolute;right:14px;top:12px;pointer-events:auto;background:var(--panel);border:3px solid var(--line);padding:7px 12px;font-weight:700;font-size:14px}
 #bossBar{position:absolute;left:50%;top:12px;transform:translateX(-50%);width:min(440px,70vw);background:var(--panel);border:3px solid var(--line);padding:6px 14px 10px;text-align:center;display:none}
@@ -201,7 +201,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
 /* 휴대폰: 대사·알림·버튼이 화면 가운데를 가리지 않게 가장자리로 모아요 */
 @media (max-height:520px) and (min-aspect-ratio:1/1){
 body.touch #roomTag{font-size:11px;padding:3px 8px;top:6px;left:8px;max-width:calc(100vw - 150px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-body.touch #exitBtn{top:6px;right:8px;padding:4px 8px;font-size:12px}body.touch #mini{width:76px;height:76px;right:8px;top:40px}
+body.touch #exitBtn{top:6px;right:8px;padding:4px 8px;font-size:12px}body.touch #mini{width:76px;height:76px;right:8px;top:70px}
 body.touch #talk{top:50px;width:min(470px,calc(100vw - 340px));padding:10px 12px 8px 14px}
 body.touch #talk p{font-size:12px;line-height:1.45;min-height:18px}
 body.touch #talk .face{width:38px;height:38px;top:-30px;left:-8px}body.touch #talk .who{left:34px;font-size:12px;top:-11px;line-height:18px}
@@ -312,6 +312,6 @@ body.touch #prompt.up,#prompt.up{bottom:262px}
 <script>["gesturestart","gesturechange","gestureend"].forEach(function(e){document.addEventListener(e,function(x){x.preventDefault()})});</script>
 <script>/* 옛 빌드가 캐시에서 뜨면: 사이트에 더 새 빌드가 있을 때 그 빌드 번호를 주소에 넣어 한 번만 다시 불러와요 (새 주소는 캐시에서 나오지 않아요) */
 (function(){try{var m=document.querySelector('script[src*="js/main.js"]').src.match(/v=(\d+)/),cur=m?+m[1]:0;fetch('../versions.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){var v=(j.versions||[]).find(function(x){return x.version==='0.2'}),n=v?+String(v.build||'').replace(/\D/g,''):0,u=new URL(location.href);if(n>cur&&u.searchParams.get('b')!==String(n)){u.searchParams.set('b',n);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();</script>
-<script type="module" src="js/main.js?v=75"></script>
+<script type="module" src="js/main.js?v=76"></script>
 </body>
 </html>
