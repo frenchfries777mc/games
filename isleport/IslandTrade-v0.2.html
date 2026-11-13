@@ -500,7 +500,7 @@ const TUT=[
  [P('다 자라면 ▼ 표시의 밭을 눌러 수확해요','When it is grown, tap the field with the ▼ to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=95;
+const OUTMAX=12,BUILD=96;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const CASTLE_T=[
  {n:P('망루','Watchtower'),d:P('돌로 쌓은 망루를 세워요. 세금이 걷히기 시작해요','A stone watchtower. Taxes start to come in'),cost:6000,rank:1},
@@ -645,6 +645,7 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-11-13',build:'v0.2 build 96',title:P('느린 컴퓨터 자동 감지','Slow computer detection'),items:[P('컴퓨터에서 처음 시작하면 몇 초 동안 화면이 얼마나 부드러운지 재요. 너무 느리면 낮은 사양 설정을 자동으로 켜요','On a computer the game measures smoothness for a few seconds at first. If it is too slow, low-spec settings turn on automatically'),P('자동으로 켜졌다면 설정 창에 안내가 나오고, 최적화 단추로 바꿀 수 있어요','If it turned on automatically, Settings says so and the Optimize buttons change it')]},
  {date:'2026-11-13',build:'v0.2 build 95',title:P('컴퓨터 · 모바일 고르기','Computer or mobile'),items:[P('처음 열면 컴퓨터인지 모바일인지 고르는 창이 떠요. 설정에서 언제든 바꿀 수 있어요','On first launch you pick computer or mobile. You can change it any time in Settings'),P('컴퓨터는 지금과 똑같고, 모바일은 효과와 섬 꾸밈을 줄이고 프레임을 낮추고 창이 떠 있을 땐 화면을 다시 그리지 않아요','Computer stays as it is. Mobile cuts effects and island decor, lowers the frame rate, and stops redrawing while a window is open')]},
  {date:'2026-11-09',build:'v0.2 build 94',title:P('게스트 이름','Guest names'),items:[P('로그인하지 않으면 이름이 게스트와 숫자 6개로 나와요','Without logging in, your name shows as Guest followed by 6 digits')]},
  {date:'2026-11-09',build:'v0.2 build 93',title:P('게스트 모드','Guest mode'),items:[P('로그인하지 않고 들어가면 로그인 창이 뜨고, 그 아래에 게스트 모드로 하기 버튼이 있어요','If you are not logged in, a login window appears with a Play as guest button under it'),P('게스트는 온라인 게임은 할 수 있고, 업적과 랭킹처럼 계정이 필요한 기능만 꺼져요','Guests can play online; only account features like goals and ranking are off')]},
@@ -1878,7 +1879,9 @@ const AU={ctx:null,sfx:true,mus:true,vol:.6,step:0,next:0,timer:0,seed:1};
 try{const s=JSON.parse(localStorage.getItem('islandtrade.set'));if(s){AU.sfx=s.sfx!==false;AU.mus=s.mus!==false;AU.vol=typeof s.vol==='number'?s.vol:.6;}}catch(e){}
 const DEVK='islandtrade.device';let DEV='';try{DEV=localStorage.getItem(DEVK)||'';}catch(e){}
 /* 기기: 컴퓨터는 기존 성능 그대로, 모바일은 최적화를 끝까지 (xlow) */
-const perf=()=>DEV==='mobile'?{low:true,fx:'low',fps:30,xlow:true}:(window.FFPerf?FFPerf.get():{low:false,fx:'high',fps:0});
+const AUTOK='islandtrade.autolow';let AUTO=false;try{AUTO=localStorage.getItem(AUTOK)==='1';}catch(e){}
+function clearAuto(){AUTO=false;try{localStorage.removeItem(AUTOK);}catch(e){}}
+const perf=()=>DEV==='mobile'?{low:true,fx:'low',fps:30,xlow:true}:AUTO?{low:true,fx:'low',fps:30}:(window.FFPerf?FFPerf.get():{low:false,fx:'high',fps:0});
 try{if(window.FFPerf&&localStorage.getItem('ff_perf')===null&&matchMedia('(pointer:coarse)').matches&&((navigator.hardwareConcurrency||8)<=4||(navigator.deviceMemory||8)<=3))FFPerf.set({low:true,fx:'low',fps:30});}catch(e){}
 function saveSet(){try{localStorage.setItem('islandtrade.set',JSON.stringify({sfx:AU.sfx,mus:AU.mus,vol:AU.vol}));}catch(e){}}
 function auCtx(){if(!AU.ctx){try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;AU.ctx=new C();AU.master=AU.ctx.createGain();AU.master.gain.value=AU.vol;AU.master.connect(AU.ctx.destination);AU.mg=AU.ctx.createGain();AU.mg.gain.value=.32;AU.mg.connect(AU.master);}catch(e){return null;}}
@@ -3432,7 +3435,7 @@ MODS.settings=()=>`<h2>${T('설정','Settings')}</h2>
  <div class="row" style="margin-top:6px"><label>${T('최적화','Optimize')}</label><button class="pb sm ${perf().low?'gold':''}" data-act="topt">${perf().low?T('켜짐','On'):T('꺼짐','Off')}</button></div>
  <div class="row" style="margin-top:4px"><label class="muted">${T('효과','Effects')}</label><span>${['high','mid','low'].map((k,i)=>`<button class="pb sm ${perf().fx===k?'gold':''}" data-act="pfx:${k}">${[T('높음','High'),T('중간','Mid'),T('낮음','Low')][i]}</button>`).join(' ')}</span></div>
  <div class="row" style="margin-top:4px"><label class="muted">${T('프레임','Frame rate')}</label><span>${[[0,T('자동','Auto')],[30,'30'],[60,'60']].map(f=>`<button class="pb sm ${perf().fps===f[0]?'gold':''}" data-act="pfps:${f[0]}">${f[1]}</button>`).join(' ')}</span></div>
- <div class="muted" style="font-size:12px">${T('최적화를 켜면 30프레임으로 그리고 비·눈 효과를 꺼서 폰이 덜 뜨거워져요. 모든 사이트와 게임에 같이 적용돼요','Optimize draws at 30 fps and turns off rain and snow so phones run cooler. Shared by all sites and games')}</div></div>
+ <div class="muted" style="font-size:12px">${T('최적화를 켜면 30프레임으로 그리고 비·눈 효과를 꺼서 폰이 덜 뜨거워져요. 모든 사이트와 게임에 같이 적용돼요','Optimize draws at 30 fps and turns off rain and snow so phones run cooler. Shared by all sites and games')}</div>${AUTO?`<div class="muted" style="font-size:12px;margin-top:4px">${T('컴퓨터가 느려서 낮은 사양 설정을 자동으로 켰어요. 위에서 바꿀 수 있어요','Your computer looked slow, so low-spec settings were turned on automatically. You can change them above')}</div>`:''}</div>
  <label class="muted">${T('소리 크기','Volume')}</label><input id="setVol" type="range" min="0" max="100" value="${Math.round(AU.vol*100)}">
  <div class="muted" style="margin-top:10px">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener" style="color:inherit">CC BY-NC-ND 4.0</a></div><div class="btns" style="margin-top:10px"><button class="pb sm" data-act="exitGame">${T('나가기','Exit')}</button></div>
  ${S&&!MP.on?`<h5>${T('저장 내보내기 · 불러오기','Export / import save')}</h5><textarea id="saveTxt" rows="3" placeholder="${T('여기에 저장 글자를 붙여 넣어요','Paste save text here')}"></textarea><div class="btns"><button class="pb sm" data-act="saveExp">${T('내보내기','Export')}</button><button class="pb sm" data-act="saveImp">${T('불러오기','Import')}</button></div>`:''}`;
@@ -3440,7 +3443,7 @@ $('mbody').addEventListener('input',e=>{if(e.target.id==='setLang'){setLang(e.ta
 ACT.exitGame=()=>{try{if(S)save();}catch(e){}try{window.close();}catch(e){}setTimeout(()=>{if(!window.closed&&document.visibilityState!=='hidden')openModal('exitfail');},500);};
 MODS.exitfail=()=>`<h2>${T('창을 닫지 못했어요','Could not close the window')}</h2><div class="muted">${T('저장은 끝났어요. 브라우저에서 이 탭을 직접 닫아 주세요. 사이트에서 새 창으로 연 게임만 나가기로 닫을 수 있어요.','Your game is saved. Please close this tab yourself. Only games opened in a new window from the site can be closed with Exit.')}</div><div class="btns" style="margin-top:10px"><button class="pb sm gold" data-act="toSite">${T('사이트로 가기','Go to the site')}</button></div>`;
 ACT.toSite=()=>{location.href='https://frenchfries777.com/games/';};
-ACT.topt=()=>{const l=!perf().low;FFPerf&&FFPerf.set({low:l,fx:l?'low':'high',fps:l?30:0});renderModal();};ACT.pfx=a=>{FFPerf&&FFPerf.set({fx:a});renderModal();};ACT.pfps=a=>{FFPerf&&FFPerf.set({fps:+a});renderModal();};ACT.tsfx=()=>{AU.sfx=!AU.sfx;saveSet();renderModal();};ACT.tmus=()=>{AU.mus=!AU.mus;saveSet();if(AU.mus)musicStart();renderModal();};
+ACT.topt=()=>{const l=!perf().low;clearAuto();FFPerf&&FFPerf.set({low:l,fx:l?'low':'high',fps:l?30:0});renderModal();};ACT.pfx=a=>{clearAuto();FFPerf&&FFPerf.set({fx:a});renderModal();};ACT.pfps=a=>{clearAuto();FFPerf&&FFPerf.set({fps:+a});renderModal();};ACT.tsfx=()=>{AU.sfx=!AU.sfx;saveSet();renderModal();};ACT.tmus=()=>{AU.mus=!AU.mus;saveSet();if(AU.mus)musicStart();renderModal();};
 ACT.saveExp=()=>{save();try{$('saveTxt').value=btoa(unescape(encodeURIComponent(JSON.stringify({S,DEM,EV,PROJ}))));$('saveTxt').select();}catch(e){}};
 ACT.saveImp=()=>{try{const t=JSON.parse(decodeURIComponent(escape(atob($('saveTxt').value.trim()))));if(!t.S||t.S.v!==2)throw 0;migrate(t.S);S=t.S;DEM=t.DEM;EV=t.EV||[];CO=t.CO||freshCO();PROJ=t.PROJ||freshProj();save();toast(T('불러왔어요','Imported'));closeModal();renderSide(true);}catch(e){toast(T('저장 글자가 올바르지 않아요','Invalid save text'));}};
 /* 계급 올림 */
@@ -3874,7 +3877,11 @@ window.addEventListener('resize',()=>fit());
 new ResizeObserver(()=>fit()).observe($('stage'));
 let PF=perf(),lastDraw=0;window.addEventListener('ffperf',()=>{PF=perf();if(MOD&&MOD.type==='settings')renderModal();});
 let last=performance.now(),lastSave=0,lastSide=0,lastWealth=0;
-function loop(now){const dt=Math.min(1,(now-last)/1000);last=now;
+/* 느린 컴퓨터 자동 감지: 게임을 시작하고 3초 뒤부터 6초 동안 프레임 간격을 재서, 한가운데 값이 40ms(초당 25장)보다 느리면 낮은 사양 설정을 자동으로 켜요. 한 번만 재요 */
+const AP={t:0,a:[],done:DEV==='mobile'};try{if(localStorage.getItem('islandtrade.autochk')==='1')AP.done=true;}catch(e){}
+function autoPerfTick(raw){if(AP.done||!S||document.hidden)return;if(perf().low){AP.done=true;return;}if(raw>=.5)return;AP.t+=raw;if(AP.t<3)return;AP.a.push(raw);if(AP.t<9)return;AP.done=true;try{localStorage.setItem('islandtrade.autochk','1');}catch(e){}
+  const s=AP.a.slice().sort((x,y)=>x-y),med=s[s.length>>1];if(med>.04){AUTO=true;try{localStorage.setItem(AUTOK,'1');}catch(e){}PF=perf();if(VIEW!=='isl')devSync();}}
+function loop(now){const dt=Math.min(1,(now-last)/1000);autoPerfTick((now-last)/1000);last=now;
   if(VW&&(PF.xlow?(now-lastDraw>=45&&(!S||$('modal').hidden)):(PF.fps!==30||now-lastDraw>=30))){lastDraw=now;draw();}
   if(S&&!LOCKLOST){movePlayer(dt);updateJoy();updateCam(dt);tickAcc+=dt;tick(dt);updateHud();if(now-lastSide>(PF.xlow?1500:400)&&!POPOPEN){lastSide=now;renderSide(false);renderChat();}if(now-lastSave>4000){lastSave=now;save();}if(now>lastWealth&&UID&&VIEW!=='visit'&&!VIS.on){lastWealth=now+15000;pushWealth();}}
   requestAnimationFrame(loop);}
