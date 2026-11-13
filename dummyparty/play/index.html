@@ -1787,7 +1787,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b103)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b104)</summary>
+   <b>2026-11-13 · v0.1 · b104 · 안정성 보강</b>
+   <ul><li>방장이 다른 탭을 보고 있어도 모두의 게임 속도가 느려지지 않아요</li><li>미니게임 계산 중 오류가 나도 방 전체가 멈추지 않고 그 판만 끝나요</li><li>방장과 참가자가 주고받는 값을 한 번 더 검사해서, 이상한 값 때문에 화면이 깨지거나 멈추지 않아요</li></ul>
    <b>2026-11-13 · v0.1 · b103 · 저사양 자동 감지</b>
    <ul><li>켠 뒤 처음 몇 초 동안 화면이 계속 느리면 최적화를 자동으로 켜 줘요. 한 번만 켜지고, 「최적화」 버튼으로 끌 수 있어요</li></ul>
    <b>2026-11-13 · v0.1 · b102 · 기기 선택</b>
@@ -1990,7 +1992,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 · b1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 42개 미니게임 중 7개 · v0.1 b103 · <a href="../">← Dummy Party 사이트로</a></p>
+  <p class="foot">2~8명 · 판마다 42개 미니게임 중 7개 · v0.1 b104 · <a href="../">← Dummy Party 사이트로</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -8471,7 +8473,7 @@ var PREFIX = 'ff-dummyparty-', CODE_CH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', MAX
 var PTS = [5, 3, 2, 1];
 var T_INTRO = 6, T_COUNT = 3, T_END = 4.0, T_RESULT = 6;
 // 게임 버전(0.x)과 빌드. 버전이 다르면 같은 방에 못 들어와요 (빌드가 달라도 괜찮아요). dp_config 의 min_build 보다 낮은 빌드는 dC를 못 받아요
-var DP_VER = '0.1', DP_BUILD = 103;
+var DP_VER = '0.1', DP_BUILD = 104;
 function dpNotice(msg) { dpAsk(msg, '확인', function () { }); }
 var BOT_NAMES = ['방귀쟁이', '홀쭉이', '바보1', '멍청이', '10급 공무원', '교무실 단골', '벌점부자', '말썽이', '김개똥'];
 var qs = new URLSearchParams(location.search);
@@ -8546,6 +8548,7 @@ function hostMsg(conn, d) {
     if ((d.ver || '0.1') !== DP_VER) { conn.send({ t: 'deny', ver: DP_VER, why: '게임 버전이 달라요. 이 방은 v' + DP_VER + '이라서 v' + (d.ver || '0.1') + '로는 같이 할 수 없어요.' }); setTimeout(function () { conn.close(); }, 300); return; }
   }
   if (d.t === 'hello') {
+    if (conn._pid) return;   // 한 연결이 여러 번 들어와 자리를 채우지 못하게
     if (G.phase !== 'lobby') { conn.send({ t: 'deny', why: '이미 게임이 진행 중이에요. 다음 판에 들어와 주세요.' }); setTimeout(function () { conn.close(); }, 300); return; }
     var humans = G.players.filter(function (p) { return !p.bot; });
     if (humans.length >= MAXP) { conn.send({ t: 'deny', why: '방이 가득 찼어요 (최대 8명).' }); setTimeout(function () { conn.close(); }, 300); return; }
@@ -8567,7 +8570,7 @@ function hostMsg(conn, d) {
   if (d.t === 'e') { doEmote(pid, d.e | 0); return; }
   if (d.t === 'iv') { ivPick(d.k | 0, pid); return; }
   if (d.t === 'i') { var r = G.raw[pid] || (G.raw[pid] = { acts: [] }); r.mx = clamp(+d.mx || 0, -1, 1); r.my = clamp(+d.my || 0, -1, 1); r.a = !!d.a; r.b = !!d.b; r.ac = d.ac | 0; r.bc = d.bc | 0; }
-  else if (d.t === 'a') { var r2 = G.raw[pid] || (G.raw[pid] = { acts: [] }); if (r2.acts.length < 10) r2.acts.push(d.d); }
+  else if (d.t === 'a') { var r2 = G.raw[pid] || (G.raw[pid] = { acts: [] }); if (r2.acts.length < 10 && d.d && typeof d.d === 'object' && !Array.isArray(d.d)) r2.acts.push(d.d); }
 }
 function dropConn(conn) {
   var pid = conn._pid; if (!pid) return; delete G.conns[pid];
@@ -8633,7 +8636,7 @@ function migBecomeHost() {
     });
     G.order = m.order || []; G.round = m.round | 0; G.boost = m.boost || {}; G.ranking = m.ranking; G.gained = m.gained; G.mgId = m.mg;
     G.snapPrev = G.snapCur = null; G.bots = 0;
-    if (!G.hostTimer) G.hostTimer = setInterval(hostTick, 1000 / 60);
+    hostTimerStart();
     toast('이제 내가 방장이에요.');
     var ph = m.phase;
     if (ph === 'lobby') {
@@ -8659,7 +8662,7 @@ function guestMsg(d) {
     if ((d.ver || '0.1') !== DP_VER) { var hv = d.ver || '0.1'; if (G.phase !== 'idle') goHome(); else { busy(false); destroyPeer(); G.role = null; } dpNotice('게임 버전이 달라요. 이 방은 v' + hv + '이라서 v' + DP_VER + '로는 같이 할 수 없어요.'); return; }
     G.me = d.id; busy(false); homeMsg(''); if (G.mig) { G.mig = null; toast('방장이 바뀌었어요.'); } return; }
   if (d.t === 'hb') return;
-  if (d.t === 'ls') { lobGuestSnap(d.d); return; }
+  if (d.t === 'ls') { if (d.d && typeof d.d === 'object') lobGuestSnap(d.d); return; }
   if (d.t === 'm') { applyMeta(d.m); return; }
   if (d.t === 'e') { showEmote(d.id, d.e | 0); return; }
   if (d.t === 's') {
@@ -8667,6 +8670,7 @@ function guestMsg(d) {
     var now = performance.now();
     if (G.snapAt) G.snapGap = lerp(G.snapGap, clamp(now - G.snapAt, 15, 120), 0.2);
     if (d.j != null) { try { d.d = JSON.parse(d.j); } catch (er) { return; } }
+    if (!d.d || typeof d.d !== 'object') return;
     G.snapCur = { mg: d.mg, d: d.d, tl: d.tl }; G.snapAt = now;
     if (d.d && d.d._fx) onFxList(d.d._fx);
   }
@@ -8732,7 +8736,7 @@ function initLobby() {
   G.players = [{ id: 'p0', name: G.name, color: 0, bot: false, online: true, score: 0, wins: 0, h: myDeco().h, g: myDeco().g, f: myDeco().f, d: myDeco().d, t: myDeco().t }];
   G.bots = G.role === 'solo' ? 3 : 0;
   trimBots(true);
-  if (!G.hostTimer) G.hostTimer = setInterval(hostTick, 1000 / 60);
+  hostTimerStart();
   show('sLobby'); renderLobby(); sendMeta();
 }
 function trimBots(fill) {
@@ -8793,7 +8797,27 @@ function sendMeta() {
   var m = { t: 'm', m: G.meta };
   for (var k in G.conns) try { G.conns[k].send(m); } catch (e) { }
 }
+/* 방장이 보낸 메타를 그대로 믿지 않고 모양과 값을 한 번 걸러요 (이상한 값이 화면 글자로 들어가거나 게임이 멈추지 않게) */
+function metaClean(m) {
+  if (!m || typeof m !== 'object' || !Array.isArray(m.players)) return null;
+  var S = function (v, n) { return String(v == null ? '' : v).slice(0, n); }, I = function (v) { return (+v || 0) | 0; };
+  var PH = ['lobby', 'intro', 'count', 'play', 'end', 'result', 'final'];
+  var o = { phase: PH.indexOf(m.phase) >= 0 ? m.phase : 'lobby', round: Math.max(0, I(m.round)), mg: S(m.mg, 24), tl: +m.tl || 0, hostId: S(m.hostId, 24), gen: I(m.gen), pub: m.pub ? 1 : 0 };
+  o.order = (Array.isArray(m.order) ? m.order : []).slice(0, 60).map(function (x) { return S(x, 24); });
+  o.players = m.players.slice(0, 16).filter(function (p) { return p && typeof p === 'object'; }).map(function (p) {
+    return { id: S(p.id, 24), name: S(p.name, 24).replace(/\s+/g, ' ').trim() || '마네킹', color: clamp(I(p.color), 0, COLORS.length - 1), bot: !!p.bot, score: I(p.score), wins: I(p.wins), h: I(p.h), g: I(p.g), f: I(p.f), d: I(p.d), t: I(p.t) };
+  });
+  o.boost = {}; if (m.boost && typeof m.boost === 'object') for (var k in m.boost) if (m.boost[k]) o.boost[S(k, 24)] = 1;
+  o.ranking = Array.isArray(m.ranking) ? m.ranking.slice(0, 16).map(function (x) { return S(x, 24); }) : m.ranking ? [] : m.ranking;
+  if (o.ranking) o.ranking = o.ranking.filter(function (id) { return o.players.some(function (p) { return p.id === id; }); });
+  o.gained = {}; if (m.gained && typeof m.gained === 'object') for (var g in m.gained) o.gained[S(g, 24)] = I(m.gained[g]);
+  o.awards = Array.isArray(m.awards) ? m.awards.slice(0, 12).filter(function (w) { return w && typeof w === 'object'; }).map(function (w) { return { id: S(w.id, 24), k: S(w.k, 16), ln: I(w.ln), v: I(w.v) }; }) : null;
+  o.iv = m.iv && typeof m.iv === 'object' ? { q: I(m.iv.q), w: S(m.iv.w, 24), pick: clamp(I(m.iv.pick), -1, 2) } : null;
+  o.rl = Array.isArray(m.rl) ? [I(m.rl[0]), I(m.rl[1])] : [0, 0];
+  return o;
+}
 function applyMeta(m) {
+  m = metaClean(m); if (!m) return;
   var prev = G.meta ? G.meta.phase : null, prevMg = G.meta ? G.meta.mg + ':' + G.meta.round : '';
   G.meta = m; G.phase = m.phase; G.pub = !!m.pub; syncDeco(m);
   if (m.mg + ':' + m.round !== prevMg) { G.snapPrev = G.snapCur = null; }
@@ -8824,6 +8848,17 @@ function beginIntro() {
 }
 function setPhase(ph, t) { var prev = G.phase; G.phase = ph; G.tl = t; G.phaseT = 0; sendMeta(); onPhase(prev); }
 var hAcc = 0, hLast = 0, hLag = 0, hLagT = 0;
+/* 방장 계산 타이머: 방장이 다른 탭을 보고 있으면 브라우저가 일반 타이머를 1초에 한 번으로 늦춰서 모두의 게임이 느려져요.
+   그래서 늦춰지지 않는 워커 타이머로 돌리고, 워커를 못 쓰면 원래 타이머를 써요 */
+function hostTimerStart() {
+  if (G.hostTimer) return;
+  try {
+    var w = new Worker(URL.createObjectURL(new Blob(['setInterval(function(){postMessage(0)},' + (1000 / 60) + ')'], { type: 'text/javascript' })));
+    w.onmessage = hostTick;
+    w.onerror = function () { try { w.terminate(); } catch (e) { } G.hostTimer = setInterval(hostTick, 1000 / 60); };
+    G.hostTimer = w;
+  } catch (e) { G.hostTimer = setInterval(hostTick, 1000 / 60); }
+}
 function hostTick() {
   if (G.role !== 'host' && G.role !== 'solo') { hLast = 0; return; }
   if (G.phase === 'lobby') { hAcc = 0; hLast = 0; lobTick(); return; }
@@ -8845,9 +8880,17 @@ function hostStep() {
   else if (G.phase === 'play') {
     var inputs = gatherInputs(def);
     evTick(def, dt);
-    def.step(G.st, inputs, dt, G.mgRng); awTick(G.st, G.frame / 60);
-    var r = def.result(G.st, false);
-    if (!r && G.tl <= 0) r = def.result(G.st, true);
+    // 미니게임 계산에서 오류가 나도 방 전체가 멈추지 않게, 그 판만 지금 순위로 끝내요
+    var r = null;
+    try {
+      def.step(G.st, inputs, dt, G.mgRng); awTick(G.st, G.frame / 60);
+      r = def.result(G.st, false);
+      if (!r && G.tl <= 0) r = def.result(G.st, true);
+    } catch (e) {
+      console.error(e);
+      try { r = def.result(G.st, true); } catch (e2) { r = null; }
+      if (!Array.isArray(r) || r.length !== G.players.length) r = G.players.map(function (p) { return p.id; });
+    }
     if (r) finishRound(r);
   }
   else if (G.phase === 'end' && G.tl <= 0) setPhase('result', T_RESULT);
