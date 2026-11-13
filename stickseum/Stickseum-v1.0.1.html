@@ -6001,7 +6001,7 @@ let connecting=false;
 let killFeedEl=document.getElementById('killFeed');
 
 const canvas=document.getElementById('game');
-let ctx=canvas.getContext('2d');       // (a `let` only so that drawFigureOn can draw a figure onto a small card canvas for a moment)
+let ctx=canvas.getContext('2d', (function(){ try{ return localStorage.getItem('stk_device')==='mobile'; }catch(e){ return false; } })() ? {alpha:false} : undefined);       // (a `let` only so that drawFigureOn can draw a figure onto a small card canvas for a moment)
 /* 오로라 색 변환 (그랜드 마스터 스킨): AURA 가 켜진 동안 그리는 색은 모두 오로라 색으로 바뀌어요 (흰색과 회색은 그대로).
    스킬과 궁극기의 효과(입자, 벽, 어둠, 포탑, 마법진, 탄환...)를 하나하나 고치지 않고, 그 효과를 쓴 사람이 그랜드 마스터 스킨이면 그리는 동안만 켜요. */
 let AURA=false, AURA_SPAWN=false, curAur=false;      // AURA / AURA_SPAWN / curAur: 0 = off, 1 = aurora (그랜드 마스터), 2 = 입냄새 (the breath skin)
@@ -6094,7 +6094,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-13-v786';
+const GAME_BUILD='build 2026-11-13-v787';
 const GAME_VERSION='1.0.1', GAME_VERSION_NAME='네온 시티';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -19462,7 +19462,7 @@ function hexA(col,a){
 const RND=(a,b)=>a+Math.random()*(b-a);
 function addP(o){
   if(tnVisSet && gameMode==='tournament' && o.x!==undefined && !tnFxNear(o)) return;      // tournament: nothing of the other fights is ever drawn
-  if(MOB.on){ if(particles.length>120) particles.splice(0,60); }
+  if(MOB.on){ if(particles.length>70) particles.splice(0,35); }
   else if(particles.length>(fxQuality>=2?600:(fxQuality===1?450:300))) particles.splice(0,150);
   particles.push(Object.assign({x:0,y:0,vx:0,vy:0,grav:0,drag:0,size:3,shape:'dot',add:true,rot:0,vr:0,color:'#fff'}, o, {max:o.life, au:AURA_SPAWN}));
 }
@@ -21729,7 +21729,7 @@ function render(fxDt){
   if(gameMode==='tournament' && !kcScene) safeDraw(drawTnOver);
   if(!kcScene) safeDraw(drawAbilityPreview);
   if(!kcScene) safeDraw(drawAttackPreview);     // the mint aim of a held ability key
-  safeDraw(()=>{ updateAmbientFx(dtN); ambientThemeFx(dtN); if(!kcScene) processNewEffects(); });   // (the live effects of the finished match must not mix into a replay)
+  safeDraw(()=>{ updateAmbientFx(dtN); if(!MOB.on) ambientThemeFx(dtN); if(!kcScene) processNewEffects(); });   // (the live effects of the finished match must not mix into a replay)
   drawDsDragons();
   drawParticles();
   if(gameMode==='survival' && !(killcamActive && killcamReplay && killcamReplay.sceneNow)) safeDraw(drawSurvivalOverlay);
@@ -21742,6 +21742,7 @@ function render(fxDt){
   const me=players[myId];
   if(me) safeDraw(()=>{
     { const bh=!!(me.batting && me.alive); if(bh!==batHint){ batHint=bh; updateControlsHint(); } }   // (the hint bar tells a bat how to go up and down)
+    if(MOB.on && ((render.__hud=(render.__hud|0)+1)%3)) return;      // (mobile: the bars and labels below are refreshed on every third picture)
     // the ENTIRE per-frame HUD update (health, weapon label, dash/teleport/ult cooldowns, mode-specific
     // labels for conquest/ffa/flag/survival) is wrapped as one unit: this whole block runs every single
     // frame, and if any ONE sub-piece throws (a malformed mode-specific state, a null reference), every
