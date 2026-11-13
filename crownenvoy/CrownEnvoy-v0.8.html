@@ -569,24 +569,28 @@ sting();})();</script>
 <script>
 /* 기기 선택: 처음 한 번 모바일/컴퓨터를 고르고, 이후에는 설정에서 바꿔요. 컴퓨터는 기존 그대로, 모바일은 그래픽을 최대한 줄여요 */
 (function(){var K='ce_device',PK='ce_perf',AK='ce_autolow',H=document.documentElement,sd=Object.getOwnPropertyDescriptor(CanvasRenderingContext2D.prototype,'shadowBlur');
-function get(){try{var v=localStorage.getItem(K);return v==='mobile'||v==='pc'?v:null;}catch(e){return null;}}
+var M={};function ls(k){var v=null;try{v=localStorage.getItem(k);}catch(e){}return v===null&&(k in M)?M[k]:v;}function ss(k,v){M[k]=v;try{localStorage.setItem(k,v);}catch(e){}}function rm(k){delete M[k];try{localStorage.removeItem(k);}catch(e){}}   // 저장소를 못 쓰는 브라우저에서도 이번 접속 동안은 기억한다
+function get(){var v=ls(K);return v==='mobile'||v==='pc'?v:null;}
 function guess(){try{return (matchMedia('(pointer:coarse)').matches||Math.min(screen.width,screen.height)<700)?'mobile':'pc';}catch(e){return 'pc';}}
-function perf(){try{var v=localStorage.getItem(PK);return v==='lite'||v==='full'?v:'auto';}catch(e){return 'auto';}}
-function auto(){try{return localStorage.getItem(AK)==='1';}catch(e){return false;}}
+function perf(){var v=ls(PK);return v==='lite'||v==='full'?v:'auto';}
+function auto(){return ls(AK)==='1';}
 function lite(){return get()==='mobile'||perf()==='lite'||(perf()==='auto'&&auto());}
 function apply(){var m=lite();H.classList.toggle('ce-lite',m);
   try{if(sd&&sd.set){Object.defineProperty(CanvasRenderingContext2D.prototype,'shadowBlur',m?{configurable:true,enumerable:sd.enumerable,get:sd.get,set:function(){sd.set.call(this,0);}}:sd);}}catch(e){}}
 function fire(){try{window.dispatchEvent(new Event('ffperf'));window.dispatchEvent(new Event('resize'));}catch(e){}}
 /* 느린 컴퓨터 감지: 처음 몇 초 동안 화면이 그려지는 간격을 재서, 느리면 가벼운 설정으로 자동 전환해요 (한 번만 재요) */
-var probing=false;function probe(){if(probing||get()==='mobile'||perf()!=='auto')return;try{if(localStorage.getItem(AK)!==null)return;}catch(e){return;}probing=true;
-  var t0=0,last=0,ds=[],hid=false;function f(t){if(document.hidden||(get()==='mobile')){hid=true;last=0;if(get()==='mobile'){probing=false;return;}requestAnimationFrame(f);return;}
+var probing=false;function probe(){if(probing||get()==='mobile'||perf()!=='auto'||ls(AK)!==null)return;probing=true;
+  var t0=0,last=0,ds=[],hid=false,again=false;function f(t){if(document.hidden||(get()==='mobile')){hid=true;last=0;if(get()==='mobile'){probing=false;return;}requestAnimationFrame(f);return;}
     if(!t0)t0=t;if(last){var d=t-last;if(t-t0>1500&&d<250)ds.push(d);}last=t;
     if(t-t0<5500){requestAnimationFrame(f);return;}probing=false;if(hid&&ds.length<30)return;ds.sort(function(a,b){return a-b;});var med=ds.length?ds[ds.length>>1]:999,slow=med>30;
-    try{localStorage.setItem(AK,slow?'1':'0');}catch(e){}if(slow){apply();fire();}}
+    if(slow&&!again){again=true;probing=true;t0=0;last=0;ds=[];hid=false;requestAnimationFrame(f);return;}   // 잠깐 버벅인 것일 수 있으니 한 번 더 재서 확인한다
+    if(ls(AK)!==null||perf()!=='auto')return;ss(AK,slow?'1':'0');if(slow){apply();fire();}}
   requestAnimationFrame(f);}
 var D={get:get,mobile:function(){return get()==='mobile';},lite:lite,perf:perf,auto:auto,probe:probe,guess:guess,
-  setPerf:function(v){if(v!=='auto'&&v!=='lite'&&v!=='full')return;try{localStorage.setItem(PK,v);if(v==='auto')localStorage.removeItem(AK);}catch(e){}apply();fire();if(v==='auto')setTimeout(probe,300);},
-  set:function(v){if(v!=='mobile'&&v!=='pc')return;try{localStorage.setItem(K,v);}catch(e){}apply();fire();if(v==='pc')setTimeout(probe,1500);},
+  slow:function(){if(get()==='mobile'||perf()!=='auto'||auto())return false;ss(AK,'1');apply();fire();return true;},   // 게임 중에 느린 것이 확인되면 호출
+
+  setPerf:function(v){if(v!=='auto'&&v!=='lite'&&v!=='full')return;ss(PK,v);if(v==='auto')rm(AK);apply();fire();if(v==='auto')setTimeout(probe,300);},
+  set:function(v){if(v!=='mobile'&&v!=='pc')return;ss(K,v);apply();fire();if(v==='pc')setTimeout(probe,1500);},
   dpr:function(max){var d=window.devicePixelRatio||1;return lite()?1:Math.min(max||2,d);},
   ask:function(){if(get()||document.getElementById('devPick'))return;var g=guess(),o=document.createElement('div');o.id='devPick';o.setAttribute('data-notr','');
     var card=function(v,ic,t,d){return '<button data-dev="'+v+'"><span class="di">'+ic+'</span><b>'+t+(g===v?' <i>추천</i>':'')+'</b><small>'+d+'</small></button>';};
@@ -600,7 +604,7 @@ if(document.body)arm();else document.addEventListener('DOMContentLoaded',arm);
 </script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.8 · build 197</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.8 · build 198</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div><p class="tagline">사절을 보내 동맹을 맺고, 군대를 보내 왕관을 차지하세요.</p></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -4785,7 +4789,7 @@ const MapView={cv:null,ctx:null,W:0,H:0,dpr:1,scale:1,ox:0,oy:0,hover:-1,deco:[]
     $('#zIn').onclick=()=>this.zoomAt(null,1.4);$('#zOut').onclick=()=>this.zoomAt(null,1/1.4);$('#zReset').onclick=()=>this.resetView();$('#zMark').onclick=()=>{const v=C.view;if(!v||v.draft||v.spec){return;}const nx=!UI.markMode?'pin':UI.markMode==='pin'?'arrow':null;UI.markMode=nx;UI.markFrom=null;$('#zMark').classList.toggle('on',!!nx);$('#zMark').textContent=nx==='arrow'?'➡':'📍';UI.toast(nx==='pin'?'계획 표시: 핀. 지도에서 지역을 눌러 찍어요.':nx==='arrow'?'계획 표시: 화살표. 시작 지역, 도착 지역 순서로 눌러요.':'계획 표시를 껐어요.','ok');};$('#zMarkX').onclick=()=>{send({a:'markclr'});};$('#zMine').onclick=()=>{const v=C.view;if(!v||!v.terr)return;if(v.draft&&C.draft&&C.draft.picks[C.me].length)this.focus(C.draft.picks[C.me],3);else this.focusMine();};
     /* 느린 컴퓨터(특히 방장)를 위해: 저사양 옵션이거나 그리기가 계속 느리면 초당 30번만 그리고, 선명도(dpr)도 낮춘다 */
     const loop=t=>{requestAnimationFrame(loop);if(this.paused)return;if((UI.optOn()||UI.autoLow)&&t-(this._lt||0)<30)return;this._lt=t;const a0=performance.now();this.draw(t);const dd=performance.now()-a0;this._dms=(this._dms==null?dd:this._dms*0.92+dd*0.08);
-      if(!UI.autoLow&&dd>0.5&&this._dms>22&&(this._slN=(this._slN||0)+1)>90){UI.autoLow=true;try{this.resize();UI.toast('화면 그리기가 느려서 저사양 모드로 바꿨어요. (기록·설정에서 확인)','ok');}catch(_){}}};requestAnimationFrame(loop);this.resize();
+      if(!UI.autoLow&&Dev.perf()!=='full'&&dd>0.5&&this._dms>22&&(this._slN=(this._slN||0)+1)>90){UI.autoLow=true;try{Dev.slow();}catch(_){}try{this.resize();UI.toast('화면 그리기가 느려서 저사양 모드로 바꿨어요. (기록·설정에서 확인)','ok');}catch(_){}}};requestAnimationFrame(loop);this.resize();
   },
   build(){
     this.deco=[];this.view={z:1,x:0,y:0};this.layerKey='';const NN=GEO.polys.length;this.big=NN>300;this.zmax=NN>600?28:NN>120?14:6;this.bb=GEO.polys.map(rs=>{let a=1e9,b=-1e9,c=1e9,d=-1e9;rs.forEach(r=>r.forEach(p=>{if(p[0]<a)a=p[0];if(p[0]>b)b=p[0];if(p[1]<c)c=p[1];if(p[1]>d)d=p[1];}));return[a,b,c,d];});const mk=rs=>{const p=new Path2D();rs.forEach(o=>{p.moveTo(o[0][0],o[0][1]);for(let i=1;i<o.length;i++)p.lineTo(o[i][0],o[i][1]);p.closePath();});return p;};this.p2=GEO.polys.map(mk);this.p2bg=mk(GEO.bg);this.p2base=mk(GEO.base);this.pAll=new Path2D();this.pSea=new Path2D();this.p2.forEach((p,i)=>{if(TDEF[i].kind==='sea')this.pSea.addPath(p);else this.pAll.addPath(p);});{const E=0.6,onE=(x,y)=>x<=E||y<=E||x>=MAP_W-E||y>=MAP_H-E,mkS=rs=>{const p=new Path2D();rs.forEach(o=>{for(let i=0;i<o.length;i++){const A=o[i],B=o[(i+1)%o.length];const fr=(A[0]<=E&&B[0]<=E)||(A[1]<=E&&B[1]<=E)||(A[0]>=MAP_W-E&&B[0]>=MAP_W-E)||(A[1]>=MAP_H-E&&B[1]>=MAP_H-E);if(!fr){p.moveTo(A[0],A[1]);p.lineTo(B[0],B[1]);}}});return p;};this.pAllS=new Path2D();this.pSeaS=new Path2D();GEO.polys.forEach((rs,i)=>{(TDEF[i].kind==='sea'?this.pSeaS:this.pAllS).addPath(mkS(rs));});}
@@ -6131,7 +6135,7 @@ const UI={
     $('#btnReady').onclick=()=>UI.onReady();$('#btnAuto').onclick=()=>UI.toggleAuto();$('#btnMenu').onclick=()=>UI.openMenu();
     $('#menu').addEventListener('click',e=>{if(e.target.id==='menu')UI.closeMenu();const b=e.target.closest('[data-act]');if(!b)return;if(b.dataset.act==='closeMenu')UI.closeMenu();if(b.dataset.act==='wl'){UI.closeMenu();UI.openWarlog();}if(b.dataset.act==='wd'){UI.closeMenu();UI.openWorld();}if(b.dataset.act==='sum'){UI.closeMenu();UI.openSummary();}if(b.dataset.act==='savegame'){UI.doSave();}if(b.dataset.act==='site'){UI.ask('게임을 나가고 이 창을 닫을까요?',()=>UI.closeWin(),{yes:'나가기'});}if(b.dataset.act==='leave'){UI.leaveGame();}if(b.dataset.act==='saveName'){const v=($('#nameEdit').value||'').trim().slice(0,15);if(v){try{localStorage.setItem('ce_name',v);}catch(_){}UI.toast('이름을 저장했어요.','ok');}}if(b.dataset.act==='saveK'){const v=($('#kEdit').value||'').trim();if(v){try{localStorage.setItem('ce_kname',v);}catch(_){}if(C.view&&!C.view.draft){send({a:'kname',name:v});UI.toast('나라 이름을 바꿨어요.','ok');}else UI.toast('게임이 시작되면 적용돼요.','ok');}}if(b.dataset.act==='trmode'){TRMODE=b.dataset.val==='1';try{localStorage.setItem('ce_trmode',TRMODE?'1':'0');}catch(_){}UI.openMenu();}if(b.dataset.act==='mapmode'){MAPMODE=b.dataset.val;try{localStorage.setItem('ce_mapmode',MAPMODE);}catch(_){}try{MapView._kv=null;MapView.layerKey='';}catch(_){}UI.openMenu();}if(b.dataset.act==='saveAl'){send({a:'alname',name:(($('#alEdit')||{}).value||'').trim()});UI.toast('동맹 이름을 바꿨어요.','ok');setTimeout(()=>{try{MapView._kv=null;UI.openMenu();}catch(_){}},250);}if(b.dataset.act==='saveFlag'){send({a:'flag',key:($('#flagEdit')||{}).value||''});try{MapView._fi={};MapView.layerKey='';}catch(_){}UI.toast('국기를 바꿨어요.','ok');setTimeout(()=>{try{UI.renderAll();UI.openMenu();}catch(_){}},250);}if(b.dataset.act==='endGame'){UI.ask('지금 승점으로 게임을 끝낼까요?',()=>{Net.send({t:'endgame'});UI.closeMenu();},{yes:'게임 끝내기'});}if(b.dataset.act==='opt'){try{FFPerf.set({low:b.dataset.val==='1'});}catch(_){}try{MapView.resize();}catch(_){}UI.openMenu();}if(b.dataset.act==='fx'&&!UI.isMulti()){C.fx=b.dataset.val;try{localStorage.setItem('ce_fx2',C.fx);}catch(_){}UI.openMenu();}
       if(b.dataset.act==='blur'){BLUR_FLAGS=b.dataset.val==='1';try{localStorage.setItem('ce_blurflag',BLUR_FLAGS?'1':'0');}catch(_){}Object.keys(_fc).forEach(k=>delete _fc[k]);MapView._fi={};MapView.layerKey='';try{if(C.view)UI.renderAll();}catch(_){}UI.openMenu();}
-      if(b.dataset.act==='dev'){Dev.set(b.dataset.val);UI.openMenu();}if(b.dataset.act==='perf'){Dev.setPerf(b.dataset.val);UI.openMenu();}if(b.dataset.act==='bgm'){Music.setOn(b.dataset.val==='1');UI.openMenu();}
+      if(b.dataset.act==='dev'){Dev.set(b.dataset.val);UI.openMenu();}if(b.dataset.act==='perf'){UI.autoLow=false;try{MapView._slN=0;MapView._dms=null;}catch(_){}Dev.setPerf(b.dataset.val);UI.openMenu();}if(b.dataset.act==='bgm'){Music.setOn(b.dataset.val==='1');UI.openMenu();}
       if(b.dataset.act==='snd'){Battle.snd=b.dataset.val==='1';try{localStorage.setItem('ce_snd',Battle.snd?'1':'0');}catch(_){}UI.openMenu();}});
     $('#evwin').addEventListener('click',e=>{e.stopPropagation();UI.nextEvent();});
     document.addEventListener('keydown',e=>{if(C.evQ&&C.evQ.length&&(e.key==='Enter'||e.key===' '||e.key==='Escape')){e.preventDefault();UI.nextEvent();}});
@@ -11208,7 +11212,9 @@ let lastUi=0;
 function frame(t){requestAnimationFrame(frame);if(!R||!R.on)return;const dt=Math.min(.1,(t-R.last)/1000);R.last=t;
   if(R.spd>0&&!document.hidden){let rem=dt*R.spd*.6;let guard=0;while(rem>1e-4&&guard++<12){const s=Math.min(.1,rem);if(ON.mode==='client')clientUpdate(s);else update(s);rem-=s;}}
   if(R.toastT>0){R.toastT-=dt;if(R.toastT<=0)Q('#rtToast').style.display='none';}
-  if(!Dev.lite()||t-(R.dT||0)>=32){R.dT=t;draw(t);}   // 모바일은 초당 30번만 그린다
+  if(!Dev.lite()||t-(R.dT||0)>=32){R.dT=t;const a0=performance.now();draw(t);const dd=performance.now()-a0;R.dms=R.dms==null?dd:R.dms*.92+dd*.08;
+    if(!Dev.lite()&&R.dms>22&&(R.slN=(R.slN||0)+1)>90){R.slN=0;Dev.slow();}}   // 실시간 전투가 계속 느리면 가벼운 설정으로 (자동일 때만)
+    // 모바일은 초당 30번만 그린다
   if(t-lastUi>(Dev.lite()?400:250)){lastUi=t;refresh(false);}
   if(t-(R.miniT||0)>(Dev.lite()?1500:600)){R.miniT=t;drawMini();}}
 
