@@ -7,7 +7,93 @@
    "items": [
     "모바일에서 배경음악이 나오지 않던 문제를 줄였어요 (손가락을 뗄 때와 버튼을 누를 때도 소리를 켜고, 앱으로 돌아오면 다시 켜요)",
     "모바일 조준 조이스틱을 드래그하지 않고 그냥 누르고 있으면 가장 가까운 적을 자동으로 조준해 계속 발사해요 (드래그하면 바로 직접 조준)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Mobile background music stability, and auto-aim when pressing without dragging",
+     "items": [
+      "Reduced the problem where background music did not play on mobile. Sound turns back on when you lift your finger or press buttons, and when you return to the app",
+      "On the mobile aim joystick, pressing and holding without dragging auto-aims at the nearest enemy and keeps firing (dragging aims manually right away)"
+     ]
+    },
+    "es": {
+     "title": "Música de fondo estable en móvil y autoapuntado al mantener pulsado sin arrastrar",
+     "items": [
+      "Se redujo el problema de que la música de fondo no sonaba en móvil. El sonido se vuelve a activar al soltar el dedo o pulsar botones, y al volver a la app",
+      "En el joystick de apuntado móvil, mantener pulsado sin arrastrar apunta automáticamente al enemigo más cercano y sigue disparando (arrastrar apunta manualmente al instante)"
+     ]
+    },
+    "fr": {
+     "title": "Musique de fond stable sur mobile, et visée automatique en maintenant appuyé sans glisser",
+     "items": [
+      "Le problème de musique de fond absente sur mobile est atténué : le son se réactive quand vous relâchez le doigt ou appuyez sur des boutons, et quand vous revenez dans l'app",
+      "Sur le joystick de visée mobile, rester appuyé sans glisser vise automatiquement l'ennemi le plus proche et continue de tirer (glisser vise manuellement tout de suite)"
+     ]
+    },
+    "de": {
+     "title": "Stabilere Hintergrundmusik auf dem Handy und automatisches Zielen bei Gedrückthalten ohne Ziehen",
+     "items": [
+      "Das Problem, dass die Hintergrundmusik auf dem Handy nicht lief, wurde verringert. Der Ton wird wieder eingeschaltet, wenn du den Finger hebst oder Tasten drückst, und wenn du zur App zurückkehrst",
+      "Beim mobilen Zielstick zielt Gedrückthalten ohne Ziehen automatisch auf den nächsten Gegner und feuert weiter (Ziehen zielt sofort manuell)"
+     ]
+    },
+    "ja": {
+     "title": "モバイルの BGM を安定させ、ドラッグせずに押し続けると自動照準",
+     "items": [
+      "モバイルで BGM が流れない問題を減らしました。指を離したときやボタンを押したとき、アプリに戻ったときにも音を入れ直します",
+      "モバイルの照準ジョイスティックは、ドラッグせずに押し続けると最も近い敵を自動で照準して撃ち続けます（ドラッグすればすぐ手動で狙えます）"
+     ]
+    },
+    "zh": {
+     "title": "手机背景音乐更稳定，不拖动只按住即可自动瞄准",
+     "items": [
+      "减轻了手机上背景音乐不播放的问题。松手、按按钮以及返回应用时都会重新开启声音",
+      "手机瞄准摇杆上，不拖动只按住会自动瞄准最近的敌人并持续射击（拖动则立即手动瞄准）"
+     ]
+    },
+    "pt": {
+     "title": "Música de fundo mais estável no celular e mira automática ao segurar sem arrastar",
+     "items": [
+      "Reduzido o problema de a música de fundo não tocar no celular. O som volta quando você tira o dedo ou aperta botões e quando retorna ao aplicativo",
+      "No joystick de mira do celular, segurar sem arrastar mira automaticamente no inimigo mais próximo e continua atirando (arrastar mira manualmente na hora)"
+     ]
+    },
+    "ru": {
+     "title": "Стабильная фоновая музыка на телефоне и автоприцеливание при удержании без перетаскивания",
+     "items": [
+      "Уменьшена проблема, когда фоновая музыка не играла на телефоне. Звук включается снова, когда вы отпускаете палец или нажимаете кнопки, и когда возвращаетесь в приложение",
+      "На джойстике прицеливания на телефоне удержание без перетаскивания автоматически наводится на ближайшего врага и продолжает стрельбу (перетаскивание сразу переводит в ручное прицеливание)"
+     ]
+    },
+    "tr": {
+     "title": "Mobilde arka plan müziği daha kararlı ve sürüklemeden basılı tutunca otomatik nişan",
+     "items": [
+      "Mobilde arka plan müziğinin çalmaması sorunu azaltıldı. Parmağınızı kaldırdığınızda, düğmelere bastığınızda ve uygulamaya geri döndüğünüzde ses yeniden açılır",
+      "Mobil nişan joystick'inde sürüklemeden basılı tutmak en yakın düşmana otomatik nişan alır ve ateş etmeye devam eder (sürüklerseniz hemen elle nişan alırsınız)"
+     ]
+    },
+    "it": {
+     "title": "Musica di sottofondo più stabile su mobile e mira automatica tenendo premuto senza trascinare",
+     "items": [
+      "Ridotto il problema della musica di sottofondo che non partiva su mobile. Il suono si riattiva quando alzi il dito o premi i pulsanti e quando torni nell'app",
+      "Sul joystick di mira mobile, tenere premuto senza trascinare mira automaticamente al nemico più vicino e continua a sparare (trascinando si mira subito a mano)"
+     ]
+    },
+    "pl": {
+     "title": "Stabilniejsza muzyka w tle na telefonie i automatyczne celowanie przy przytrzymaniu bez przeciągania",
+     "items": [
+      "Ograniczono problem z brakiem muzyki w tle na telefonie. Dźwięk włącza się ponownie, gdy podniesiesz palec lub naciśniesz przyciski oraz gdy wrócisz do aplikacji",
+      "Na joysticku celowania w telefonie przytrzymanie bez przeciągania automatycznie celuje w najbliższego wroga i strzela dalej (przeciągnięcie od razu celuje ręcznie)"
+     ]
+    },
+    "ar": {
+     "title": "استقرار موسيقى الخلفية على الجوال، والتصويب التلقائي عند الضغط المستمر دون سحب",
+     "items": [
+      "تقليل مشكلة عدم تشغيل موسيقى الخلفية على الجوال. يُعاد تشغيل الصوت عند رفع إصبعك أو الضغط على الأزرار، وعند العودة إلى التطبيق",
+      "على عصا التصويب في الجوال، الضغط المستمر دون سحب يُصوّب تلقائياً نحو أقرب عدو ويواصل الإطلاق (السحب يصوّب يدوياً فوراً)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-13",
@@ -16,7 +102,93 @@
    "items": [
     "매치 첫 몇 초의 프레임 시간을 재서 느린 컴퓨터면 효과를 줄여 가볍게 바꿔요 (한 번 느리다고 판단하면 기억해서 다음부터 처음부터 가볍게 시작)",
     "설정의 「저사양 자동 감지」에서 자동, 항상 가볍게, 끔을 고를 수 있고, 느려서 줄였다는 안내는 설정 화면에만 나와요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Automatic detection of low-spec computers",
+     "items": [
+      "The frame time is measured during the first few seconds of a match; if the computer is slow, effects are reduced to run lighter. Once it is judged slow, this is remembered and the game starts light from the beginning next time",
+      "In Settings under 'Automatic low-spec detection' you can choose Auto, Always light, or Off. The notice that effects were reduced because the computer was slow appears only on the Settings screen"
+     ]
+    },
+    "es": {
+     "title": "Detección automática de ordenadores de bajas prestaciones",
+     "items": [
+      "Se mide el tiempo por fotograma en los primeros segundos de una partida; si el ordenador va lento, se reducen los efectos para ir más ligero. Una vez detectado, se recuerda y la próxima vez se empieza ya ligero",
+      "En Ajustes, en «Detección automática de bajas prestaciones», puedes elegir Automático, Siempre ligero o Desactivado. El aviso de que se redujeron los efectos por lentitud solo aparece en la pantalla de Ajustes"
+     ]
+    },
+    "fr": {
+     "title": "Détection automatique des ordinateurs peu puissants",
+     "items": [
+      "Le temps d'image est mesuré pendant les premières secondes d'une partie ; si l'ordinateur est lent, les effets sont réduits pour alléger le jeu. Une fois jugé lent, ce choix est mémorisé et la partie commence léger dès la prochaine fois",
+      "Dans les Paramètres, sous « Détection automatique des configurations faibles », vous pouvez choisir Auto, Toujours léger ou Désactivé. L'avis indiquant que les effets ont été réduits parce que l'ordinateur était lent n'apparaît que sur l'écran des Paramètres"
+     ]
+    },
+    "de": {
+     "title": "Automatische Erkennung leistungsschwacher Computer",
+     "items": [
+      "In den ersten Sekunden einer Partie wird die Bildzeit gemessen; ist der Computer langsam, werden die Effekte reduziert, damit es leichter läuft. Einmal als langsam erkannt, wird das gemerkt und beim nächsten Mal gleich leicht gestartet",
+      "In den Einstellungen unter „Automatische Erkennung schwacher Hardware“ kannst du Automatisch, Immer leicht oder Aus wählen. Der Hinweis, dass Effekte wegen eines langsamen Computers reduziert wurden, erscheint nur im Einstellungsbildschirm"
+     ]
+    },
+    "ja": {
+     "title": "低スペックのPCを自動で検出",
+     "items": [
+      "試合の最初の数秒でフレーム時間を測り、遅いPCならエフェクトを減らして軽くします。一度遅いと判断したら記憶し、次回から最初から軽く始めます",
+      "設定の「低スペック自動検出」で、自動・常に軽く・オフを選べます。遅いため軽くしたという案内は設定画面にだけ出ます"
+     ]
+    },
+    "zh": {
+     "title": "自动检测低配电脑",
+     "items": [
+      "对局开始的头几秒会测量帧时间；如果电脑较慢，就减少特效使其运行更轻。一旦判定为慢速，会被记住，下次从一开始就以轻量模式开始",
+      "在设置的“低配自动检测”中可以选择自动、始终轻量或关闭。因电脑较慢而减少特效的提示只会在设置界面中显示"
+     ]
+    },
+    "pt": {
+     "title": "Detecção automática de computadores com baixo desempenho",
+     "items": [
+      "O tempo de quadro é medido nos primeiros segundos da partida; se o computador estiver lento, os efeitos são reduzidos para ficar mais leve. Depois de considerado lento, isso fica registrado e na próxima vez o jogo já começa leve",
+      "Em Configurações, em \"Detecção automática de baixo desempenho\", você pode escolher Automático, Sempre leve ou Desligado. O aviso de que os efeitos foram reduzidos por lentidão aparece somente na tela de Configurações"
+     ]
+    },
+    "ru": {
+     "title": "Автоопределение слабых компьютеров",
+     "items": [
+      "В первые секунды матча измеряется время кадра; если компьютер медленный, эффекты уменьшаются и игра становится легче. Однажды определив медленную работу, игра запоминает это и в следующий раз сразу стартует в лёгком режиме",
+      "В настройках в пункте «Автоопределение слабых компьютеров» можно выбрать «Авто», «Всегда легко» или «Выкл». Сообщение о том, что эффекты уменьшены из-за медленной работы, показывается только на экране настроек"
+     ]
+    },
+    "tr": {
+     "title": "Düşük donanımlı bilgisayarların otomatik algılanması",
+     "items": [
+      "Maçın ilk birkaç saniyesinde kare süresi ölçülür; bilgisayar yavaşsa efektler azaltılarak daha hafif çalışır. Yavaş olduğu anlaşılınca bu kaydedilir ve bir dahaki sefere baştan hafif başlar",
+      "Ayarlar'daki «Düşük donanım otomatik algılama» bölümünden Otomatik, Her zaman hafif veya Kapalı seçebilirsiniz. Bilgisayar yavaş olduğu için efektlerin azaltıldığına dair uyarı yalnızca Ayarlar ekranında görünür"
+     ]
+    },
+    "it": {
+     "title": "Rilevamento automatico dei computer poco potenti",
+     "items": [
+      "Nei primi secondi di una partita si misura il tempo di fotogramma; se il computer è lento, gli effetti vengono ridotti per girare più leggero. Una volta giudicato lento, viene ricordato e la volta successiva si parte leggeri dall'inizio",
+      "Nelle Impostazioni, alla voce «Rilevamento automatico computer poco potenti», puoi scegliere Automatico, Sempre leggero o Disattivato. L'avviso che gli effetti sono stati ridotti perché il computer era lento compare solo nella schermata Impostazioni"
+     ]
+    },
+    "pl": {
+     "title": "Automatyczne wykrywanie słabych komputerów",
+     "items": [
+      "W pierwszych sekundach meczu mierzony jest czas klatki; jeśli komputer jest wolny, efekty są ograniczane, by działać lżej. Raz uznany za wolny jest zapamiętywany i następnym razem gra od początku startuje w lekkim trybie",
+      "W Ustawieniach, w opcji „Automatyczne wykrywanie słabych komputerów”, można wybrać Automatycznie, Zawsze lekko lub Wyłączone. Informacja, że efekty zostały ograniczone z powodu wolnego komputera, pojawia się tylko na ekranie ustawień"
+     ]
+    },
+    "ar": {
+     "title": "اكتشاف الحواسيب ضعيفة المواصفات تلقائياً",
+     "items": [
+      "يُقاس زمن الإطار خلال الثواني الأولى من المباراة؛ وإذا كان الحاسوب بطيئاً تُخفَّض التأثيرات لتعمل اللعبة أخف. وبعد الحكم بأنه بطيء يتم تذكر ذلك فتبدأ اللعبة خفيفة من البداية في المرة القادمة",
+      "في الإعدادات ضمن «اكتشاف الحواسيب ضعيفة المواصفات تلقائياً» يمكنك اختيار تلقائي أو خفيف دائماً أو إيقاف. يظهر تنبيه تخفيض التأثيرات بسبب بطء الحاسوب فقط في شاشة الإعدادات"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-13",
@@ -26,7 +198,105 @@
     "모바일에서 아래쪽 막대와 글자 표시를 덜 자주 갱신해서 더 가벼워요",
     "모바일에서 배경 분위기 효과를 끄고 효과 조각 수를 더 줄였어요",
     "모바일에서 게임 화면을 불투명하게 그려서 화면 합치는 부담을 줄였어요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Mobile optimization",
+     "items": [
+      "On mobile, the bottom bar and text update less often, which is lighter",
+      "On mobile, background atmosphere effects are turned off and the number of effect pieces is reduced further",
+      "On mobile, the game screen is drawn opaquely, reducing the cost of compositing the screen"
+     ]
+    },
+    "es": {
+     "title": "Optimización para móvil",
+     "items": [
+      "En móvil, la barra inferior y los textos se actualizan con menos frecuencia, así que va más ligero",
+      "En móvil se desactivan los efectos de ambiente de fondo y se reduce aún más el número de fragmentos de efecto",
+      "En móvil, la pantalla de juego se dibuja opaca, lo que reduce el coste de componer la imagen"
+     ]
+    },
+    "fr": {
+     "title": "Optimisation mobile",
+     "items": [
+      "Sur mobile, la barre du bas et les textes sont mis à jour moins souvent, ce qui allège le jeu",
+      "Sur mobile, les effets d'ambiance en arrière-plan sont désactivés et le nombre de fragments d'effet est encore réduit",
+      "Sur mobile, l'écran de jeu est dessiné en opaque, ce qui réduit le coût de composition de l'image"
+     ]
+    },
+    "de": {
+     "title": "Mobile Optimierung",
+     "items": [
+      "Auf dem Handy werden die untere Leiste und die Texte seltener aktualisiert, das ist leichter",
+      "Auf dem Handy werden Hintergrund-Atmosphäreeffekte ausgeschaltet und die Anzahl der Effektteile weiter reduziert",
+      "Auf dem Handy wird das Spielbild deckend gezeichnet, das verringert den Aufwand beim Zusammensetzen des Bildes"
+     ]
+    },
+    "ja": {
+     "title": "モバイルの最適化",
+     "items": [
+      "モバイルでは下部のバーと文字表示の更新頻度を下げて軽くしました",
+      "モバイルでは背景の雰囲気効果を切り、効果の粒の数をさらに減らしました",
+      "モバイルではゲーム画面を不透明で描画し、画面を合成する負担を減らしました"
+     ]
+    },
+    "zh": {
+     "title": "手机优化",
+     "items": [
+      "手机上底部栏和文字的刷新频率降低，运行更轻快",
+      "手机上关闭背景氛围特效，并进一步减少特效碎片数量",
+      "手机上游戏画面以不透明方式绘制，减少画面合成的负担"
+     ]
+    },
+    "pt": {
+     "title": "Otimização para celular",
+     "items": [
+      "No celular, a barra inferior e os textos são atualizados com menos frequência, o que deixa o jogo mais leve",
+      "No celular, os efeitos de atmosfera do fundo são desligados e a quantidade de partículas de efeito é reduzida ainda mais",
+      "No celular, a tela do jogo é desenhada de forma opaca, reduzindo o custo de compor a imagem"
+     ]
+    },
+    "ru": {
+     "title": "Оптимизация для телефона",
+     "items": [
+      "На телефоне нижняя панель и текст обновляются реже, поэтому игра легче",
+      "На телефоне отключены фоновые эффекты атмосферы, а число эффектных частиц уменьшено ещё сильнее",
+      "На телефоне игровой экран рисуется непрозрачным, что снижает нагрузку на композицию изображения"
+     ]
+    },
+    "tr": {
+     "title": "Mobil optimizasyon",
+     "items": [
+      "Mobilde alt çubuk ve yazılar daha seyrek güncellenir, bu da daha hafif çalışmasını sağlar",
+      "Mobilde arka plan atmosfer efektleri kapatıldı ve efekt parçalarının sayısı daha da azaltıldı",
+      "Mobilde oyun ekranı opak çizilir; bu da ekranı birleştirme yükünü azaltır"
+     ]
+    },
+    "it": {
+     "title": "Ottimizzazione mobile",
+     "items": [
+      "Su mobile la barra in basso e i testi si aggiornano meno spesso, quindi è più leggero",
+      "Su mobile sono disattivati gli effetti atmosferici di sfondo e il numero di frammenti degli effetti è ridotto ulteriormente",
+      "Su mobile la schermata di gioco viene disegnata opaca, riducendo il carico di composizione dell'immagine"
+     ]
+    },
+    "pl": {
+     "title": "Optymalizacja pod telefon",
+     "items": [
+      "Na telefonie dolny pasek i teksty są odświeżane rzadziej, dzięki czemu gra działa lżej",
+      "Na telefonie wyłączono efekty atmosfery w tle, a liczbę fragmentów efektów dalej ograniczono",
+      "Na telefonie ekran gry jest rysowany nieprzezroczyście, co zmniejsza obciążenie składania obrazu"
+     ]
+    },
+    "ar": {
+     "title": "تحسين الجوال",
+     "items": [
+      "على الجوال يتم تحديث الشريط السفلي والنصوص بشكل أقل تكراراً، مما يجعلها أخف",
+      "على الجوال تم إيقاف تأثيرات الأجواء في الخلفية وتقليل عدد قطع التأثيرات أكثر",
+      "على الجوال يُرسم شاشة اللعب بشكل معتم، مما يقلل تكلفة تركيب الشاشة"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-13",
@@ -39,7 +309,141 @@
     "한 명의 인터넷이 느려도 다른 사람들의 화면은 느려지지 않아요",
     "인터넷이 잠깐 끊겨도 바로 방에서 나가지지 않고 12초까지 기다려요 (그동안 캐릭터는 멈춰 있어요)",
     "연결이 불안정하면 화면 위에 작은 안내가 나오고, 돌아오면 바로 이어져요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Mobile control screen cleanup, less stutter, and handling unstable internet",
+     "items": [
+      "On mobile, keyboard key hints no longer appear at the bottom of the screen",
+      "Mobile buttons (skill, ultimate, dash) look faded while on cooldown",
+      "During matches, the screen is redrawn only when something changes, which is lighter on mobile",
+      "Even if one player's internet is slow, the screens of other players do not slow down",
+      "If the internet drops briefly, you are not removed from the room right away; the game waits up to 12 seconds (your character stays still meanwhile)",
+      "If the connection is unstable, a small notice appears on screen, and play resumes right away when it returns"
+     ]
+    },
+    "es": {
+     "title": "Mejoras en la pantalla de control móvil, menos cortes y gestión de internet inestable",
+     "items": [
+      "En móvil, ya no aparecen las indicaciones de teclas del teclado en la parte inferior",
+      "Los botones móviles (habilidad, definitiva, impulso) se ven apagados mientras están en enfriamiento",
+      "Durante las partidas la pantalla se redibuja solo cuando algo cambia, lo que es más ligero en móvil",
+      "Aunque la conexión de un jugador sea lenta, las pantallas de los demás no se ralentizan",
+      "Si la conexión se corta un momento, no se te saca de la sala de inmediato: el juego espera hasta 12 segundos (mientras, tu personaje se queda quieto)",
+      "Si la conexión es inestable, aparece un pequeño aviso en pantalla, y la partida se reanuda en cuanto vuelve"
+     ]
+    },
+    "fr": {
+     "title": "Écran de contrôle mobile simplifié, moins de saccades et prise en charge d'une connexion instable",
+     "items": [
+      "Sur mobile, les indications de touches du clavier n'apparaissent plus en bas",
+      "Les boutons mobiles (compétence, ultime, dash) apparaissent estompés pendant le temps de recharge",
+      "Pendant les parties, l'écran n'est redessiné que lorsque quelque chose change, ce qui allège le jeu sur mobile",
+      "Même si la connexion d'un joueur est lente, les écrans des autres ne ralentissent pas",
+      "Si la connexion coupe brièvement, vous n'êtes pas exclu de la salle tout de suite : le jeu attend jusqu'à 12 secondes (votre personnage reste immobile entre-temps)",
+      "Si la connexion est instable, un petit avis s'affiche à l'écran, et la partie reprend dès le retour de la connexion"
+     ]
+    },
+    "de": {
+     "title": "Mobile Steuerung aufgeräumt, weniger Ruckler und besserer Umgang mit instabilem Internet",
+     "items": [
+      "Auf dem Handy erscheinen unten keine Tastenhinweise mehr",
+      "Mobile Tasten (Fähigkeit, Ultimate, Dash) werden während der Abklingzeit abgeblendet dargestellt",
+      "Während der Partie wird der Bildschirm nur neu gezeichnet, wenn sich etwas ändert, das ist auf dem Handy leichter",
+      "Auch wenn die Verbindung eines Spielers langsam ist, werden die Bildschirme der anderen nicht langsamer",
+      "Bricht die Verbindung kurz ab, wirst du nicht sofort aus dem Raum geworfen; das Spiel wartet bis zu 12 Sekunden (in der Zeit bleibt dein Charakter stehen)",
+      "Ist die Verbindung instabil, erscheint oben auf dem Bildschirm ein kleiner Hinweis, und das Spiel geht sofort weiter, sobald sie zurückkehrt"
+     ]
+    },
+    "ja": {
+     "title": "モバイルの操作画面を整理し、カクつきを軽減、不安定な接続に対応",
+     "items": [
+      "モバイルでは下部にキーボードのキー案内が表示されなくなりました",
+      "モバイルのボタン（スキル・必殺技・ダッシュ）はクールタイム中は薄く表示されます",
+      "対戦中は表示が変わるときだけ画面を描き直すので、モバイルでより軽くなりました",
+      "一人の回線が遅くても、ほかのプレイヤーの画面は遅くなりません",
+      "インターネットが一時的に切れても、すぐに部屋から出されず12秒まで待ちます（その間キャラクターは止まっています）",
+      "接続が不安定なときは画面に小さな案内が出て、戻るとすぐに再開します"
+     ]
+    },
+    "zh": {
+     "title": "整理手机操作界面，减少卡顿，并应对不稳定的网络",
+     "items": [
+      "手机上底部不再显示键盘按键提示",
+      "手机按钮（技能、大招、冲刺）在冷却中会变暗显示",
+      "对局中只在画面变化时才重绘，手机上更加流畅",
+      "即使某位玩家的网络很慢，其他玩家的画面也不会变慢",
+      "网络短暂中断时不会立即被移出房间，游戏最多等待12秒（期间角色会停住）",
+      "网络不稳定时屏幕上会出现小提示，恢复后立即继续"
+     ]
+    },
+    "pt": {
+     "title": "Tela de controle móvel organizada, menos travamentos e suporte a internet instável",
+     "items": [
+      "No celular, as dicas de teclas do teclado não aparecem mais na parte inferior",
+      "Os botões móveis (habilidade, ultimate, dash) aparecem esmaecidos durante a recarga",
+      "Durante as partidas, a tela só é redesenhada quando algo muda, o que deixa o celular mais leve",
+      "Mesmo que a internet de um jogador esteja lenta, as telas dos outros jogadores não ficam lentas",
+      "Se a internet cair por um momento, você não é removido da sala imediatamente; o jogo espera até 12 segundos (enquanto isso, seu personagem fica parado)",
+      "Se a conexão estiver instável, um pequeno aviso aparece na tela, e a partida continua assim que a conexão voltar"
+     ]
+    },
+    "ru": {
+     "title": "Упорядочен экран управления на телефоне, меньше рывков и поддержка нестабильного интернета",
+     "items": [
+      "На телефоне внизу экрана больше не показываются подсказки клавиш клавиатуры",
+      "Кнопки на телефоне (умение, ульта, рывок) выглядят блёкло, пока перезаряжаются",
+      "Во время матча экран перерисовывается только при изменениях, на телефоне это легче",
+      "Даже если интернет у одного игрока медленный, экраны других не замедляются",
+      "Если интернет на время пропал, вас не выбросит из комнаты сразу: игра ждёт до 12 секунд (всё это время персонаж стоит на месте)",
+      "При нестабильном соединении на экране появляется небольшая подсказка, а игра продолжается сразу после восстановления связи"
+     ]
+    },
+    "tr": {
+     "title": "Mobil kontrol ekranı düzenlendi, takılmalar azaltıldı ve kararsız internet desteği eklendi",
+     "items": [
+      "Mobilde alt kısımda artık klavye tuş ipuçları görünmüyor",
+      "Mobil düğmeler (yetenek, nihai, atılma) bekleme süresindeyken soluk görünür",
+      "Maç sırasında ekran yalnızca bir şey değiştiğinde yeniden çizilir; bu mobilde daha hafif çalışmasını sağlar",
+      "Bir oyuncunun interneti yavaş olsa bile diğer oyuncuların ekranları yavaşlamaz",
+      "İnternet kısa süreliğine kesilirse hemen odadan çıkarılmazsınız; oyun 12 saniyeye kadar bekler (bu sürede karakteriniz durur)",
+      "Bağlantı kararsızsa ekranda küçük bir uyarı belirir ve bağlantı geri geldiğinde oyun hemen devam eder"
+     ]
+    },
+    "it": {
+     "title": "Schermata di controllo mobile semplificata, meno scatti e gestione di una connessione instabile",
+     "items": [
+      "Su mobile, in basso non compaiono più le indicazioni dei tasti della tastiera",
+      "I pulsanti mobile (abilità, ultimate, scatto) appaiono attenuati durante il ricaricamento",
+      "Durante le partite lo schermo viene ridisegnato solo quando cambia qualcosa, quindi è più leggero su mobile",
+      "Anche se la connessione di un giocatore è lenta, le schermate degli altri non rallentano",
+      "Se la connessione cade per un attimo, non vieni espulso subito dalla stanza: il gioco attende fino a 12 secondi (nel frattempo il personaggio resta fermo)",
+      "Se la connessione è instabile compare un piccolo avviso sullo schermo, e il gioco riprende subito al ritorno della connessione"
+     ]
+    },
+    "pl": {
+     "title": "Uporządkowany ekran sterowania na telefonie, mniej przycięć i obsługa niestabilnego internetu",
+     "items": [
+      "Na telefonie na dole ekranu nie pojawiają się już podpowiedzi klawiszy klawiatury",
+      "Przyciski na telefonie (umiejętność, ultimate, sprint) są przygaszone podczas odnawiania",
+      "Podczas meczu ekran jest odświeżany tylko wtedy, gdy coś się zmienia, dzięki czemu na telefonie działa lżej",
+      "Nawet gdy internet jednego gracza jest wolny, ekrany pozostałych nie zwalniają",
+      "Jeśli internet na chwilę zniknie, nie zostaniesz od razu wyrzucony z pokoju; gra czeka do 12 sekund (w tym czasie postać stoi w miejscu)",
+      "Gdy połączenie jest niestabilne, na ekranie pojawia się małe ostrzeżenie, a po powrocie łączności gra wznawia się od razu"
+     ]
+    },
+    "ar": {
+     "title": "تنظيم شاشة التحكم على الجوال وتقليل التقطع والتعامل مع الإنترنت غير المستقر",
+     "items": [
+      "على الجوال لم تعد تظهر إرشادات مفاتيح لوحة المفاتيح في الأسفل",
+      "تظهر أزرار الجوال (المهارة، الضربة النهائية، الاندفاع) باهتة أثناء فترة إعادة الشحن",
+      "أثناء المباراة تُعاد رسم الشاشة فقط عند حدوث تغيير، مما يجعلها أخف على الجوال",
+      "حتى إذا كان إنترنت أحد اللاعبين بطيئاً، فلا تتباطأ شاشات باقي اللاعبين",
+      "إذا انقطع الإنترنت لفترة قصيرة فلن يتم إخراجك من الغرفة فوراً، إذ تنتظر اللعبة حتى 12 ثانية (وتبقى شخصيتك ثابتة خلال ذلك)",
+      "إذا كان الاتصال غير مستقر يظهر تنبيه صغير على الشاشة، ويستأنف اللعب فوراً عند عودته"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-13",
@@ -47,7 +451,81 @@
    "title": "친선과 연습 화면이 모바일 가로에서 잘리는 문제 수정",
    "items": [
     "모바일 가로 화면에서 친선과 연습의 모드 카드 아래쪽이 잘리던 문제를 고쳤어요 (카드가 보이는 화면 높이에 맞춰져요)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Fixed Friendly and Practice screens cut off in mobile landscape",
+     "items": [
+      "In mobile landscape, the bottom of the mode cards in Friendly and Practice was cut off. Fixed: the cards now fit the visible screen height"
+     ]
+    },
+    "es": {
+     "title": "Corregido: las pantallas de Amistoso y Práctica se cortaban en horizontal en móvil",
+     "items": [
+      "En horizontal en móvil, la parte inferior de las tarjetas de modo de Amistoso y Práctica se cortaba. Corregido: ahora las tarjetas caben en la altura visible de la pantalla"
+     ]
+    },
+    "fr": {
+     "title": "Correction : les écrans Amical et Entraînement étaient coupés en mobile paysage",
+     "items": [
+      "En mobile paysage, le bas des cartes de mode d'Amical et d'Entraînement était coupé. Corrigé : les cartes s'adaptent maintenant à la hauteur visible de l'écran"
+     ]
+    },
+    "de": {
+     "title": "Behoben: Freundschaftsspiel- und Übungs-Bildschirm waren im Querformat auf dem Handy abgeschnitten",
+     "items": [
+      "Im Querformat auf dem Handy wurde der untere Teil der Modus-Karten bei Freundschaftsspiel und Übung abgeschnitten. Behoben: Die Karten passen sich jetzt an die sichtbare Bildschirmhöhe an"
+     ]
+    },
+    "ja": {
+     "title": "モバイル横画面で「フレンドリー」と「練習」の画面が切れる問題を修正",
+     "items": [
+      "モバイルの横画面で、フレンドリーと練習のモードカードの下側が切れていた問題を直しました（カードが見える画面の高さに合わせられます）"
+     ]
+    },
+    "zh": {
+     "title": "修复手机横屏时“好友”和“练习”界面被截断的问题",
+     "items": [
+      "修复手机横屏时好友和练习的模式卡片下方被截断的问题（卡片现在会适应可见的屏幕高度）"
+     ]
+    },
+    "pt": {
+     "title": "Corrigido: as telas Amistoso e Treino ficavam cortadas no celular em paisagem",
+     "items": [
+      "Em paisagem no celular, a parte de baixo dos cards de modo em Amistoso e Treino era cortada. Corrigido: os cards agora se ajustam à altura visível da tela"
+     ]
+    },
+    "ru": {
+     "title": "Исправлено: экраны «Товарищеская» и «Тренировка» обрезались на телефоне в альбомной ориентации",
+     "items": [
+      "На телефоне в альбомной ориентации нижняя часть карточек режимов в «Товарищеской» и «Тренировке» обрезалась. Исправлено: карточки теперь подстраиваются под видимую высоту экрана"
+     ]
+    },
+    "tr": {
+     "title": "Düzeltildi: Dostluk ve Antrenman ekranları mobilde yatay modda kesiliyordu",
+     "items": [
+      "Mobil yatay modda Dostluk ve Antrenman'daki mod kartlarının alt kısmı kesiliyordu. Düzeltildi: kartlar artık görünen ekran yüksekliğine uyuyor"
+     ]
+    },
+    "it": {
+     "title": "Corretto: le schermate Amichevole e Allenamento venivano tagliate in orizzontale su mobile",
+     "items": [
+      "In orizzontale su mobile, la parte inferiore delle schede modalità in Amichevole e Allenamento veniva tagliata. Corretto: ora le schede si adattano all'altezza visibile dello schermo"
+     ]
+    },
+    "pl": {
+     "title": "Naprawiono: ekrany Towarzyski i Trening były ucinane na telefonie w poziomie",
+     "items": [
+      "Na telefonie w poziomie dolna część kart trybów w Towarzyskim i Treningu była ucinana. Naprawiono: karty mieszczą się teraz w widocznej wysokości ekranu"
+     ]
+    },
+    "ar": {
+     "title": "تم إصلاح قص شاشتي «الودية» و«التدريب» على الجوال في الوضع الأفقي",
+     "items": [
+      "في الوضع الأفقي على الجوال كان الجزء السفلي من بطاقات الأوضاع في «الودية» و«التدريب» يُقطع. تم الإصلاح: تتناسب البطاقات الآن مع ارتفاع الشاشة المرئي"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-13",
@@ -57,7 +535,105 @@
     "처음 접속하면 모바일/컴퓨터 중에서 고르는 화면이 나와요 (설정의 「기기」에서 나중에 바꿀 수 있어요)",
     "컴퓨터는 기존 그대로예요",
     "모바일은 글로우·스킨 연출·화면 흔들림을 끄고 파티클을 줄이고 30프레임으로 제한해서 훨씬 가벼워요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Choose device on first visit (mobile/computer)",
+     "items": [
+      "On your first visit, a screen appears to choose mobile or computer (you can change it later under 'Device' in Settings)",
+      "The computer stays as it was",
+      "Mobile turns off glow, skin effects and screen shake, reduces particles, and limits to 30 FPS, so it runs much lighter"
+     ]
+    },
+    "es": {
+     "title": "Elegir dispositivo en la primera visita (móvil/ordenador)",
+     "items": [
+      "En la primera visita aparece una pantalla para elegir móvil u ordenador (luego puedes cambiarlo en «Dispositivo» en Ajustes)",
+      "El ordenador sigue igual que antes",
+      "En móvil se desactivan el resplandor, los efectos de skin y la sacudida de pantalla, se reducen las partículas y se limita a 30 FPS, así que va mucho más ligero"
+     ]
+    },
+    "fr": {
+     "title": "Choix de l'appareil à la première visite (mobile/ordinateur)",
+     "items": [
+      "À la première visite, un écran vous demande de choisir mobile ou ordinateur (vous pourrez changer plus tard dans « Appareil » des Paramètres)",
+      "L'ordinateur reste comme avant",
+      "Sur mobile, les lueurs, les effets de skin et les secousses d'écran sont désactivés, les particules sont réduites et la fréquence limitée à 30 FPS : le jeu est bien plus léger"
+     ]
+    },
+    "de": {
+     "title": "Gerätewahl beim ersten Besuch (Handy/Computer)",
+     "items": [
+      "Beim ersten Besuch erscheint eine Auswahl zwischen Handy und Computer (später unter „Gerät“ in den Einstellungen änderbar)",
+      "Der Computer bleibt wie bisher",
+      "Auf dem Handy werden Glühen, Skin-Effekte und Bildschirmwackeln ausgeschaltet, Partikel reduziert und auf 30 FPS begrenzt, dadurch läuft es deutlich leichter"
+     ]
+    },
+    "ja": {
+     "title": "初回アクセス時にデバイスを選択（モバイル/PC）",
+     "items": [
+      "初めて接続すると、モバイルかPCかを選ぶ画面が出ます（設定の「デバイス」からいつでも変えられます）",
+      "PCはこれまでどおりです",
+      "モバイルではグロウ・スキン演出・画面の揺れを消し、パーティクルを減らし、30フレームに制限して大幅に軽くしています"
+     ]
+    },
+    "zh": {
+     "title": "首次访问时选择设备（手机/电脑）",
+     "items": [
+      "首次进入时会出现选择手机或电脑的画面（之后可在设置的“设备”中更改）",
+      "电脑保持原样",
+      "手机版关闭光晕、皮肤特效和画面抖动，减少粒子并限制为30帧，运行更加流畅"
+     ]
+    },
+    "pt": {
+     "title": "Escolher dispositivo na primeira visita (celular/computador)",
+     "items": [
+      "Na primeira visita aparece uma tela para escolher celular ou computador (depois você pode mudar em \"Dispositivo\" nas configurações)",
+      "O computador continua como antes",
+      "No celular, brilho, efeitos de skin e tremor da tela são desligados, as partículas são reduzidas e o jogo é limitado a 30 FPS, ficando bem mais leve"
+     ]
+    },
+    "ru": {
+     "title": "Выбор устройства при первом входе (телефон/компьютер)",
+     "items": [
+      "При первом входе появляется экран выбора: телефон или компьютер (позже можно изменить в настройках в разделе «Устройство»)",
+      "Компьютерная версия работает как прежде",
+      "На телефоне отключены свечение, эффекты скинов и тряска экрана, частиц стало меньше, а частота ограничена 30 кадрами в секунду, поэтому игра работает заметно легче"
+     ]
+    },
+    "tr": {
+     "title": "İlk ziyarette cihaz seçimi (mobil/bilgisayar)",
+     "items": [
+      "İlk ziyarette mobil mi bilgisayar mı seçmeniz istenir (daha sonra Ayarlar'daki «Cihaz» bölümünden değiştirebilirsiniz)",
+      "Bilgisayar eskisi gibi kalıyor",
+      "Mobilde parlama, skin efektleri ve ekran sarsıntısı kapatıldı, parçacıklar azaltıldı ve 30 FPS ile sınırlandırıldı; böylece çok daha hafif çalışır"
+     ]
+    },
+    "it": {
+     "title": "Scelta del dispositivo alla prima visita (mobile/computer)",
+     "items": [
+      "Alla prima visita appare una schermata per scegliere mobile o computer (puoi cambiarlo più tardi in «Dispositivo» nelle Impostazioni)",
+      "Il computer resta com'era",
+      "Su mobile sono disattivati bagliore, effetti delle skin e scuotimento dello schermo, le particelle sono ridotte e il gioco è limitato a 30 FPS: va molto più leggero"
+     ]
+    },
+    "pl": {
+     "title": "Wybór urządzenia przy pierwszej wizycie (telefon/komputer)",
+     "items": [
+      "Przy pierwszej wizycie pojawia się ekran wyboru: telefon lub komputer (później zmienisz to w Ustawieniach w sekcji „Urządzenie”)",
+      "Komputer działa jak dotychczas",
+      "Na telefonie wyłączono poświatę, efekty skórek i drganie ekranu, zmniejszono cząsteczki i ograniczono do 30 FPS, dzięki czemu działa znacznie lżej"
+     ]
+    },
+    "ar": {
+     "title": "اختيار الجهاز عند أول زيارة (جوال/كمبيوتر)",
+     "items": [
+      "عند أول زيارة تظهر شاشة لاختيار الجوال أو الكمبيوتر (يمكنك تغييره لاحقاً من «الجهاز» في الإعدادات)",
+      "الكمبيوتر يبقى كما كان",
+      "على الجوال تم إيقاف التوهج وتأثيرات الأزياء واهتزاز الشاشة، وتقليل الجزيئات، والحد من الإطارات إلى 30 إطاراً في الثانية، فيعمل أخف بكثير"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-11",
