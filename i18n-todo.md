@@ -970,3 +970,6 @@
 
 ## Kitchen Defense b3 (2026-11-12)
 - 새 문구(한국어만, prototypes/kitchendefense/index.html): 새로운 적 알림과 적 이름(ENM), 다음, 남은 적, 일찍 시작 보너스, 가장 활약한 타워, 결과 화면 한 줄(웨이브 N 클리어 · 처치)
+
+## Kitchen Defense b6 (2026-11-13)
+- 새 문구(한국어만, prototypes/kitchendefense/index.html): 플레이 환경, 컴퓨터, 모바일, 기기(설정)
