@@ -1,6 +1,101 @@
 {
  "notes": [
   {
+   "date": "2026-11-13",
+   "build": "v0.2 build 95",
+   "title": "컴퓨터 · 모바일 고르기",
+   "items": [
+    "처음 열면 컴퓨터인지 모바일인지 고르는 창이 떠요. 설정에서 언제든 바꿀 수 있어요",
+    "컴퓨터는 지금과 똑같고, 모바일은 효과와 섬 꾸밈을 줄이고 프레임을 낮추고 창이 떠 있을 땐 화면을 다시 그리지 않아요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Computer or mobile",
+     "items": [
+      "On first launch you pick computer or mobile. You can change it any time in Settings",
+      "Computer stays as it is. Mobile cuts effects and island decor, lowers the frame rate, and stops redrawing while a window is open"
+     ]
+    },
+    "ja": {
+     "title": "Computer or mobile",
+     "items": [
+      "On first launch you pick computer or mobile. You can change it any time in Settings",
+      "Computer stays as it is. Mobile cuts effects and island decor, lowers the frame rate, and stops redrawing while a window is open"
+     ]
+    },
+    "es": {
+     "title": "Computer or mobile",
+     "items": [
+      "On first launch you pick computer or mobile. You can change it any time in Settings",
+      "Computer stays as it is. Mobile cuts effects and island decor, lowers the frame rate, and stops redrawing while a window is open"
+     ]
+    },
+    "fr": {
+     "title": "Computer or mobile",
+     "items": [
+      "On first launch you pick computer or mobile. You can change it any time in Settings",
+      "Computer stays as it is. Mobile cuts effects and island decor, lowers the frame rate, and stops redrawing while a window is open"
+     ]
+    },
+    "de": {
+     "title": "Computer or mobile",
+     "items": [
+      "On first launch you pick computer or mobile. You can change it any time in Settings",
+      "Computer stays as it is. Mobile cuts effects and island decor, lowers the frame rate, and stops redrawing while a window is open"
+     ]
+    },
+    "zh": {
+     "title": "Computer or mobile",
+     "items": [
+      "On first launch you pick computer or mobile. You can change it any time in Settings",
+      "Computer stays as it is. Mobile cuts effects and island decor, lowers the frame rate, and stops redrawing while a window is open"
+     ]
+    },
+    "pt": {
+     "title": "Computer or mobile",
+     "items": [
+      "On first launch you pick computer or mobile. You can change it any time in Settings",
+      "Computer stays as it is. Mobile cuts effects and island decor, lowers the frame rate, and stops redrawing while a window is open"
+     ]
+    },
+    "ru": {
+     "title": "Computer or mobile",
+     "items": [
+      "On first launch you pick computer or mobile. You can change it any time in Settings",
+      "Computer stays as it is. Mobile cuts effects and island decor, lowers the frame rate, and stops redrawing while a window is open"
+     ]
+    },
+    "tr": {
+     "title": "Computer or mobile",
+     "items": [
+      "On first launch you pick computer or mobile. You can change it any time in Settings",
+      "Computer stays as it is. Mobile cuts effects and island decor, lowers the frame rate, and stops redrawing while a window is open"
+     ]
+    },
+    "it": {
+     "title": "Computer or mobile",
+     "items": [
+      "On first launch you pick computer or mobile. You can change it any time in Settings",
+      "Computer stays as it is. Mobile cuts effects and island decor, lowers the frame rate, and stops redrawing while a window is open"
+     ]
+    },
+    "pl": {
+     "title": "Computer or mobile",
+     "items": [
+      "On first launch you pick computer or mobile. You can change it any time in Settings",
+      "Computer stays as it is. Mobile cuts effects and island decor, lowers the frame rate, and stops redrawing while a window is open"
+     ]
+    },
+    "ar": {
+     "title": "Computer or mobile",
+     "items": [
+      "On first launch you pick computer or mobile. You can change it any time in Settings",
+      "Computer stays as it is. Mobile cuts effects and island decor, lowers the frame rate, and stops redrawing while a window is open"
+     ]
+    }
+   }
+  },
+  {
    "date": "2026-11-09",
    "build": "v0.2 build 94",
    "title": "게스트 이름",
