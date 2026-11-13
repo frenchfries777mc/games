@@ -36,6 +36,7 @@ addEventListener('ffperf', () => { perfApply(); if (S.scr === 'sSettings') paint
 let lowHintDone = false; try { lowHintDone = !!localStorage.getItem('vk_lowHint'); } catch (e) { }
 // 깬 장 수 (예전 저장은 1장을 깼으면 1)
 if (SAVE.chMax == null) SAVE.chMax = Object.keys(SAVE.clears || {}).length ? 1 : 0;
+if (!ROLES[SAVE.role]) SAVE.role = 'knight'; if (!isFinite(SAVE.honor)) SAVE.honor = 0; for (const k of ['xp', 'gear', 'ach', 'clears']) if (!SAVE[k] || typeof SAVE[k] !== 'object') SAVE[k] = {};   // 망가진 저장도 열리게
 SAVE.cos = SAVE.cos || { own: {}, on: {} }; SAVE.cos.own = SAVE.cos.own || {}; SAVE.cos.on = SAVE.cos.on || {};
 SAVE.lore = SAVE.lore || {}; SAVE.flags = SAVE.flags || {}; SAVE.puz = SAVE.puz | 0; SAVE.combos = SAVE.combos || {}; SAVE.deepBest = SAVE.deepBest | 0;
 // 다음에 이어서 할 장 (모든 장을 깼으면 1장부터 새 원정)
@@ -345,7 +346,7 @@ function pickRole(r) {
 function roomLink() { return location.origin + location.pathname + '?join=' + S.code; }
 function copyLink() {
   const u = roomLink(); SFX.play('click');
-  const ok = () => homeMsg(T('방 링크를 복사했어요. 친구에게 보내 주세요.')), fail = () => { try { prompt(T('방 링크'), u); } catch (e) { } };
+  const say = t => { $('roomMsg').textContent = t; }, ok = () => say(T('방 링크를 복사했어요. 친구에게 보내 주세요.')), fail = () => say(u);
   try { navigator.clipboard.writeText(u).then(ok, fail); } catch (e) { fail(); }
 }
 $('copyBtn').onclick = copyLink;
@@ -447,8 +448,16 @@ function hostMsg(c, d) {
   if (!d || typeof d !== 'object') return;
   if (d.t === 'hello') {
     if (d.ver && d.ver !== VERSION) { c.send({ t: 'deny', why: '버전이 달라요. 같은 버전끼리만 같이 할 수 있어요.' }); setTimeout(() => c.close(), 300); return; }
-    const uid = String(d.uid || '').slice(0, 20), name = String(d.name || T('기사')).slice(0, 15);
-    c._uid = uid; c._name = name; c._xp = d.xp || {}; c._gear = d.gear || {}; c._cos = d.cos || null;
+    let uid = String(d.uid || '').slice(0, 20); const name = String(d.name || T('기사')).slice(0, 15);
+    // 같은 브라우저의 다른 탭처럼 방장과 번호가 같으면 새 번호를 줘요 (방장 캐릭터를 조종하지 않게)
+    if (!uid || uid === UID) uid = 'g' + Math.random().toString(36).slice(2, 10);
+    c._uid = uid; c._name = name; c._xp = {}; c._gear = {}; c._cos = d.cos && typeof d.cos === 'object' ? d.cos : null;
+    for (const r of ROLE_IDS) {   // 레벨·장비는 정해진 범위의 숫자만 받아요
+      const x = d.xp && +d.xp[r], g = d.gear && d.gear[r];
+      c._xp[r] = x > 0 && isFinite(x) ? x : 0;
+      const tier = v => Math.max(0, Math.min(GEAR_TIERS.length - 1, v | 0));
+      c._gear[r] = { weapon: tier(g && g.weapon), armor: tier(g && g.armor) };
+    }
     if (S.G) { // 진행 중: 내 자리로 돌아오거나, 봇 자리를 맡아요
       let p = S.G.players.find(q => q.uid === uid) || S.G.players.find(q => q.bot && q.wasHuman == null) || S.G.players.find(q => q.bot);
       if (!p || (!p.bot && p.uid !== uid)) { c.send({ t: 'deny', why: '방이 가득 찼어요 (최대 4명).' }); setTimeout(() => c.close(), 300); return; }
@@ -465,7 +474,14 @@ function hostMsg(c, d) {
   }
   const uid = c._uid; if (!uid) return;
   if (d.t === 'role' && !S.G) { const tgt = S.slots.find(s => s.role === d.role); if (tgt && !tgt.uid) { const cur = S.slots.find(s => s.uid === uid); if (cur) { cur.uid = null; cur.name = ''; } tgt.uid = uid; tgt.name = c._name || T('기사'); hostLobby(); paintSlots(); } }
-  else if (d.t === 'i' && S.G) { const pid = c._pid; if (!pid) return; const r = S.rin[pid] || (S.rin[pid] = {}); const once = { q: r.q || d.q, e: r.e || d.e, r: r.r || d.r, roll: r.roll || d.roll, skip: r.skip || d.skip }; Object.assign(r, d, once); }
+  else if (d.t === 'i' && S.G) {
+    // 손님이 보낸 조작은 숫자·참거짓만 골라 받아요 (이상한 값이 규칙 계산을 망가뜨리지 않게)
+    const pid = c._pid; if (!pid) return; const r = S.rin[pid] || (S.rin[pid] = {});
+    const num = v => typeof v === 'number' && isFinite(v) ? v : null, okPos = num(d.px) != null && num(d.pz) != null, okAim = num(d.ax) != null && num(d.az) != null;
+    const cl = { px: okPos ? d.px : null, pz: okPos ? d.pz : null, aim: num(d.aim), ax: okAim ? d.ax : null, az: okAim ? d.az : null, atk: !!d.atk, f: !!d.f };
+    const once = { q: r.q || !!d.q, e: r.e || !!d.e, r: r.r || !!d.r, roll: r.roll || !!d.roll, skip: r.skip || !!d.skip };
+    Object.assign(r, cl, once);
+  }
   else if (d.t === 'em' && S.G) { if (c._pid) emote(S.G, c._pid, d.k | 0); }
   else if (d.t === 'b' && S.G) { if (c._pid) chooseBless(S.G, c._pid, d.id); }
 }
@@ -490,7 +506,7 @@ function startGuest(code) {
 function guestMsg(d) {
   if (!d || typeof d !== 'object') return;
   if (d.t === 'welcome' && d.ver && d.ver !== VERSION) { homeMsg(T('버전이 달라요. 같은 버전끼리만 같이 할 수 있어요.')); leaveNet(); }
-  else if (d.t === 'welcome') { homeMsg(''); if (d.start) { S.me = d.pid; useDeep(d.dp); { const fw = useWk(d.wk); useChapter(d.ch | 0, !!d.dp || fw); } startClient(); } else { openRoom(); } }
+  else if (d.t === 'welcome') { homeMsg(''); if (typeof d.uid === 'string' && d.uid) UID = d.uid; if (d.start) { S.me = d.pid; useDeep(d.dp); { const fw = useWk(d.wk); useChapter(d.ch | 0, !!d.dp || fw); } startClient(); } else { openRoom(); } }
   else if (d.t === 'lobby') { S.slots = d.slots; S.chSel = d.ch | 0; S.wk = !!d.wk; if (S.scr === 'sRoom') { paintSlots(); paintChapters(); } }
   else if (d.t === 'deny') { homeMsg(T(d.why || '들어갈 수 없어요.')); leaveNet(); }
   else if (d.t === 'start') { if (S.snap && S.snap.won) clearChapter(); S.me = d.pid; useDeep(d.dp); { const fw = useWk(d.wk); useChapter(d.ch | 0, !!d.dp || fw); } startClient(); }
@@ -582,7 +598,7 @@ function awardHonor() {
 
 /* ---------- 조작 ---------- */
 // 한글 입력 상태여도 같은 자리의 글쇠로 읽어요 (e.code 기준)
-function keyOf(e) { const c = e.code || ''; if (/^Key[A-Z]$/.test(c)) return c[3].toLowerCase(); if (/^Digit[0-9]$/.test(c)) return c[5]; if (c === 'Space') return ' '; return e.key.toLowerCase(); }
+function keyOf(e) { const c = e.code || ''; if (!c && !e.key) return ''; if (/^Key[A-Z]$/.test(c)) return c[3].toLowerCase(); if (/^Digit[0-9]$/.test(c)) return c[5]; if (c === 'Space') return ' '; return String(e.key || '').toLowerCase(); }
 const K = {}; let mouse = { x: innerWidth / 2, y: innerHeight / 2, down: false }; const once = { q: 0, e: 0, r: 0, roll: 0, skip: 0 };
 addEventListener('keydown', e => {
   if (e.target && e.target.tagName === 'INPUT') return;
@@ -593,7 +609,7 @@ addEventListener('keydown', e => {
   if (k === 'q' || k === 'ㅂ') once.q = 1; if (k === 'e' || k === 'ㄷ') once.e = 1; if (k === 'r' || k === 'ㄱ') once.r = 1; if (k === ' ') { once.roll = 1; e.preventDefault(); }
   if (k === '1' || k === '2' || k === '3') pickBlessIdx(+k - 1);
 });
-addEventListener('keyup', e => { K[keyOf(e)] = false; K[e.key.toLowerCase()] = false; });
+addEventListener('keyup', e => { K[keyOf(e)] = false; K[String(e.key || '').toLowerCase()] = false; });
 addEventListener('blur', () => { for (const k in K) K[k] = false; mouse.down = false; });
 $('gl').addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
 addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
