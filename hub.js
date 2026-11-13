@@ -800,14 +800,20 @@ async function online(){
   var b=$('#onlineBar'); if(!b||!sb) return;
   var r=await sb.rpc('ff_online'); if(r.error){ b.innerHTML=''; return; }
   var c={}; (r.data||[]).forEach(function(x){ c[x.place]=x.people; });
-  var html='<span class="on-dot"></span><b>'+esc(F('지금 {0}명 접속 중',c.all||0))+'</b>';
+  var html='<span class="on-dot"></span><b class="on-n" role="button" tabindex="0" style="cursor:pointer">'+esc(F('지금 {0}명 접속 중',c.all||0))+'</b>';
   var order=GLIST.concat(['hub','games'],SITE_IDS); Object.keys(c).sort().forEach(function(g){ if(g!=='all'&&order.indexOf(g)<0) order.push(g); });
   order.forEach(function(g){ if(c[g]) html+='<span class="on-c">'+(g==='hub'?'<span>허브</span>':'<span data-notr>'+esc(placeName(g))+'</span>')+' <b data-notr>'+c[g]+'</b></span>'; });
   if(me){ var f=await sb.rpc('ff_online_friends'), rows=((f&&!f.error&&f.data)||[]).filter(function(x){ return !blocked(x.user_id); });
     if(rows.length){ await loadNames(rows.map(function(x){ return x.user_id; })); await loadAv(rows.slice(0,8).map(function(x){ return x.user_id; }));
       html+='<span class="on-f"><span>친구</span> '+rows.slice(0,8).map(function(x){ var pn=placeName(x.place); return '<a class="who on-p" data-uid="'+esc(x.user_id)+'" data-notr title="'+esc(pn)+'">'+'<img class="on-i" src="https://frenchfries777.com/games/avatars/'+encodeURIComponent(/^[a-z0-9_-]{2,30}$/.test(AV[x.user_id]||'')?AV[x.user_id]:'account')+(/^(stk|ce|bf|ip|dp|vk)_/.test(AV[x.user_id]||'')?'.png':'.svg')+'" alt="" width="20" height="20" onerror="this.style.display=\'none\'">'+esc(names[x.user_id]||'???')+'<small>'+esc(pn)+'</small></a>'; }).join('')+(rows.length>8?'<span>+'+(rows.length-8)+'</span>':'')+'</span>'; } }
+  if(onlWho){ var w=await sb.rpc('ff_online_who'), wr=((w&&!w.error&&w.data)||[]).filter(function(x){ return !blocked(x.user_id); });   // 접속자 수를 누르면 누가 있는지 펼쳐요 (supabase-online-who-2026-11-13.sql)
+    if(w&&!w.error){ var gs=Math.max(0,(c.all||0)-((w.data||[]).length));
+      html+='<span class="on-w" style="flex-basis:100%;display:flex;flex-wrap:wrap;align-items:center;gap:6px">'+wr.map(function(x){ var pn=placeName(x.place); return '<a class="who on-p" data-uid="'+esc(x.user_id)+'" data-notr>'+esc(x.name||'???')+'<small>'+esc(pn)+'</small></a>'; }).join('')+(gs?'<span class="on-c"><span>손님</span> <b data-notr>'+gs+'</b></span>':'')+'</span>'; } }
   b.innerHTML=html;
 }
+var onlWho=false;
+function onlTap(e){ var t=e.target&&e.target.closest&&e.target.closest('#onlineBar .on-n'); if(!t||(e.type==='keydown'&&e.key!=='Enter'&&e.key!==' ')) return; e.preventDefault(); onlWho=!onlWho; online(); }
+document.addEventListener('click',onlTap); document.addEventListener('keydown',onlTap);
 var hubPT=null;
 function hubPing(){ if(me&&sb){ try{ sb.rpc('ff_hub_ping').then(function(){},function(){}); }catch(e){} } }      // 다른 탭에 가 있어도 접속으로 쳐요 (옛 코드는 화면이 보일 때만 보냈어요)
 function onlineLoop(){ clearInterval(onlT); clearInterval(hubPT); hubPing(); online(); onlT=setInterval(function(){ if(document.visibilityState==='visible'){ hubPing(); online(); } },20000); hubPT=setInterval(function(){ if(document.visibilityState!=='visible') hubPing(); },50000); }
