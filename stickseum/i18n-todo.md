@@ -23,3 +23,5 @@ patchnotes.json | v784 title | 처음 접속할 때 기기 선택 (모바일/컴
 patchnotes.json | v784 items[0] | 처음 접속하면 모바일/컴퓨터 중에서 고르는 화면이 나와요 (설정의 「기기」에서 나중에 바꿀 수 있어요) | build 784 | 2026-11-13
 patchnotes.json | v784 items[1] | 컴퓨터는 기존 그대로예요 | build 784 | 2026-11-13
 patchnotes.json | v784 items[2] | 모바일은 글로우·스킨 연출·화면 흔들림을 끄고 파티클을 줄이고 30프레임으로 제한해서 훨씬 가벼워요 | build 784 | 2026-11-13
+patchnotes.json | v785 title | 친선과 연습 화면이 모바일 가로에서 잘리는 문제 수정 | build 785 | 2026-11-13
+patchnotes.json | v785 items[0] | 모바일 가로 화면에서 친선과 연습의 모드 카드 아래쪽이 잘리던 문제를 고쳤어요 (카드가 보이는 화면 높이에 맞춰져요) | build 785 | 2026-11-13
