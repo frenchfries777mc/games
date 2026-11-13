@@ -47,11 +47,11 @@ function emit(e){if(netOn())NET.ev.push(e)}
 
 /* ===== 저장 ===== */
 const SK='kitchenDefense_v1';
-const DEF=()=>({best:0,kills:0,bossSet:{},mapBest:[0,0,0],ach:{},title:'',pinged:0,seen:{},dev:'',pt:0,towers:{pan:1,freezer:1,chef:1,oven:0,mixer:0,toaster:0,cooker:0,pressure:0},recipes:{egg_roll:1,carrot_juice:1,mushroom_grill:0,veg_stirfry:0,fruit_salad:0},vol:.6,speed:1});
+const DEF=()=>({best:0,kills:0,bossSet:{},mapBest:[0,0,0],ach:{},title:'',pinged:0,seen:{},dev:'',perf:'',perfAuto:0,perfManual:0,pt:0,towers:{pan:1,freezer:1,chef:1,oven:0,mixer:0,toaster:0,cooker:0,pressure:0},recipes:{egg_roll:1,carrot_juice:1,mushroom_grill:0,veg_stirfry:0,fruit_salad:0},vol:.6,speed:1});
 let save=DEF();
 try{const s=JSON.parse(localStorage.getItem(SK)||'null');if(s){save=Object.assign(DEF(),s);save.towers=Object.assign(DEF().towers,s.towers);save.recipes=Object.assign(DEF().recipes,s.recipes);if(!Array.isArray(save.mapBest)||save.mapBest.length<3)save.mapBest=[0,0,0];if(!save.bossSet||typeof save.bossSet!=='object')save.bossSet={};if(!save.ach||typeof save.ach!=='object')save.ach={};if(!save.seen||typeof save.seen!=='object')save.seen={}}}catch(e){}
-let LOW=save.dev==='mobile',RS=LOW?.75:1;cv.width=Math.round(W*RS);cv.height=Math.round(H*RS);
-function applyDev(){LOW=save.dev==='mobile';RS=LOW?.75:1;cv.width=Math.round(W*RS);cv.height=Math.round(H*RS);SPS=LOW?1:2;SPR.clear();TOW.clear();MAPC=null;BGC=null}
+let LOW=save.dev==='mobile'||save.perf==='low',RS=LOW?.75:1;cv.width=Math.round(W*RS);cv.height=Math.round(H*RS);
+function applyDev(){LOW=save.dev==='mobile'||save.perf==='low';RS=LOW?.75:1;cv.width=Math.round(W*RS);cv.height=Math.round(H*RS);SPS=LOW?1:2;SPR.clear();TOW.clear();MAPC=null;BGC=null}
 function persist(){try{localStorage.setItem(SK,JSON.stringify(save))}catch(e){}}
 
 /* ===== 소리 ===== */
@@ -1299,7 +1299,7 @@ function sMenu(dt){
 function sDevice(){
   setMap(0);tilesBG();
   heading('플레이 환경',W/2,120,72);
-  const pick=d=>{save.dev=d;persist();applyDev();scene='menu'};
+  const pick=d=>{save.dev=d;save.perf='';save.perfAuto=0;save.perfManual=0;persist();applyDev();scene='menu'};
   [['pc','컴퓨터','🖥️'],['mobile','모바일','📱']].forEach((a,i)=>{
     const x=W/2-310+i*330;
     if(btn(x,220,290,220,'',{ghost:1}))pick(a[0]);
@@ -1447,7 +1447,9 @@ function sSettings(){
   txt('기본 배속',cx-250,330,30,'#f6e7cc','left','');
   if(btn(cx+20,300,220,60,save.speed+'x',{fs:28,ghost:1})){save.speed=save.speed===1?2:1;persist()}
   txt('기기',cx-250,420,30,'#f6e7cc','left','');
-  if(btn(cx+20,390,220,60,save.dev==='mobile'?'모바일':'컴퓨터',{fs:28,ghost:1})){save.dev=save.dev==='mobile'?'pc':'mobile';persist();applyDev()}
+  const ds=save.dev==='mobile'?2:save.perf==='low'?1:0;
+  if(btn(cx+20,390,220,60,['컴퓨터','컴퓨터 · 가볍게','모바일'][ds],{fs:ds===1?24:28,ghost:1})){const n=(ds+1)%3;save.dev=n===2?'mobile':'pc';save.perf=n===1?'low':'';save.perfAuto=0;save.perfManual=1;persist();applyDev()}
+  if(save.perfAuto&&ds===1)txt('느려서 자동으로 바꿨어요',cx+130,466,14,'#d9c3a0','center','');
   if(!resetAsk){
   if(btn(cx-120,490,240,60,'데이터 초기화',{col:'#c9604a',fs:24}))resetAsk=true;
   }else{
@@ -1747,8 +1749,20 @@ function frame(dt){
   cv.style.cursor=hoverAny?'pointer':'default';
   click=null;rclick=null;
 }
+let perfS=null;
+function perfWatch(ms){
+  if(LOW||save.dev!=='pc'||save.perfManual||scene!=='play'||!G||G.over||document.hidden){perfS=null;return}
+  if(!perfS)perfS={t:0,a:[]};
+  perfS.t+=ms;if(perfS.t<1500)return;
+  perfS.a.push(ms);
+  if(perfS.t>=6500){
+    const a=perfS.a.sort((x,y)=>x-y),m=a[a.length>>1];perfS=null;
+    if(m>1000/35){save.perf='low';save.perfAuto=1;persist();applyDev()}
+  }
+}
 function loop(now){
   requestAnimationFrame(loop);
+  perfWatch(now-last);
   if(LOW&&now-last<31)return;
   const dt=Math.min(.05,(now-last)/1000);last=now;
   frame(dt);
