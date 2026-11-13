@@ -1,0 +1,26 @@
+{
+  "name": "문장 수리공",
+  "short_name": "문장 수리공",
+  "description": "컨베이어 벨트로 쏟아져 오는 문장을 고치세요! 이 정도면 월급은 올려줘야 합니다!",
+  "lang": "ko",
+  "id": "/educations/munjang/",
+  "start_url": "/educations/munjang/",
+  "scope": "/educations/munjang/",
+  "display": "standalone",
+  "background_color": "#0e0e0e",
+  "theme_color": "#0e0e0e",
+  "icons": [
+    {
+      "src": "/games/pwa/icons/munjang-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/games/pwa/icons/munjang-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
