@@ -6122,7 +6122,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-13-v790';
+const GAME_BUILD='build 2026-11-14-v791';
 const GAME_VERSION='1.0.1', GAME_VERSION_NAME='네온 시티';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -12809,7 +12809,8 @@ const STREAK_BONUS=[[10,5],[7,4],[5,3],[3,2],[1,1]];
 function streakBonusFor(n){ for(const [a,b] of STREAK_BONUS) if(n>=a) return b; return 0; }       // (연승 보너스, owner 10-26: 1연승 +1, 3연승 +2, 5연승 +3, 7연승 +4, 10연승 이상 +5)
 function streakTagHtml(n){ n=Math.floor(+n||0); return n>=2 ? ' <span class="streakTag">🔥'+n+'연승</span>' : ''; }
 const MODE_MASTERY_MULT={hyperbr:3.25, tournament:3, gold:1.75, duo:1.5, raid:1.5, br:1.5, dashbr:1.25, duel:1.25, vault:1.25, ctf:1.25, conquest:1, turf:1, team:1, rush:0.75, dd:0.75, koth:0.75, ffa:0.75, crownhold:0.75, bounty:0.75, vip:0.75, redlight:0.5, freeze:0.5, lowg:0.5};      // 모드 배율 (owner 11-11): one base set (kill 3, assist 1, finish 1, win 3) times this per mode, rounded; a duel has no assists
-function modeMasteryMult(m){ const v=MODE_MASTERY_MULT[m]; return v===undefined?1:v; }
+const MASTERY_GAIN_BOOST=1.5;      // (owner 11-14: every mode's mastery points are 1.5 times as many)
+function modeMasteryMult(m){ const v=MODE_MASTERY_MULT[m]; return (v===undefined?1:v)*MASTERY_GAIN_BOOST; }
 const TIER_PT_DEFEND_WAVE=5, TIER_PT_DEFEND_DONE=3;      // 제국 수호전 (owner 11-11): 5 per defended wave and 3 for finishing, no kills / assists / win / streak
 function defendWavesDone(){      // waves that were beaten: the one still running does not count
   if(xm && xm.id==='defend') return Math.max(0, (xm.wave||0)-(xm.active?1:0));
