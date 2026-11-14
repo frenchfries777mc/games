@@ -42,7 +42,9 @@ footer{padding:14px 0;text-align:center;font-size:11px;color:#a1a1a6}
 /* 설치할 수 있는 프로그램 (games/ff-install.js 와 games/pwa/ 에 있는 것과 같아요) */
 var IDS=['stickseum','crownenvoy','beaconfall','isleport','vowkeep','tumblecrown','dummyparty','gatecrash',
          'planetsearch','speedcode','timeline','munjang','balance','proverb',
-         'code','blocks','sheet','docs','slides','lab','draw','score','video'];
+         'code','blocks','sheet','docs','slides','lab','draw','score','video','chat'];
+/* 채팅은 자기 주소(chat.frenchfries777.com)에서 따로 설치돼요 */
+var CHAT='https://chat.frenchfries777.com/';
 var ko=/^ko/i.test(navigator.language||'ko');
 var T=ko?{back:'‹ 뒤로',install:'설치',installing:'설치 중…',done:'설치됐어요',have:'이미 앱으로 열려 있어요',
   ios:'공유 버튼 → 홈 화면에 추가를 눌러 주세요.',other:'주소창 오른쪽의 설치 아이콘을 누르거나, 브라우저 메뉴(⋮) → 저장 및 공유 → 앱으로 설치(또는 홈 화면에 추가)를 눌러 주세요.',
@@ -70,7 +72,7 @@ if(IDS.indexOf(id)<0){ $('nm').textContent=T.bad; go.hidden=true; return; }
 
 /* 이 프로그램의 설치 정보를 불러와서 이름·소개·아이콘을 보여 줘요 */
 var mf='/games/pwa/'+id+'.webmanifest';
-var ml=document.createElement('link'); ml.rel='manifest'; ml.href=mf; document.head.appendChild(ml);
+if(id!=='chat'){ var ml=document.createElement('link'); ml.rel='manifest'; ml.href=mf; document.head.appendChild(ml); }
 fetch(mf).then(function(r){ if(!r.ok) throw 0; return r.json(); }).then(function(m){
   app={name:m.name||id,url:new URL(m.start_url||'/',location.origin).href}; $('nm').textContent=m.name||id; document.title=(m.name||id)+' · '+T.install;
   $('ds').textContent=m.description||'';
@@ -90,6 +92,7 @@ addEventListener('appinstalled',function(){ ev=null; installedUI(); });
 go.onclick=function(){
   if(android){ var a=document.createElement('a'); a.href='/games/install/apk/'+id+'.apk'; a.download=id+'.apk'; document.body.appendChild(a); a.click(); a.remove(); msg.textContent=T.apk; return; }
   if(win&&!ev){ var x=document.createElement('a'); x.href='/games/install/setup.exe'; x.download=id+'-setup.exe'; document.body.appendChild(x); x.click(); x.remove(); msg.textContent=T.exe; return; }
+  if(id==='chat'&&!ev){ location.href=CHAT+'?ffinstall=1'; return; }
   var e=ev;
   if(!e){ msg.textContent=ios?T.ios:T.other; return; }
   ev=null; go.disabled=true; go.textContent=T.installing; e.prompt();
