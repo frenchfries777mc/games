@@ -1542,6 +1542,22 @@ function ckPaint(){
   el.textContent=t; el.style.display='block';
 }
 setInterval(()=>{ try{ if(ckPending>0) ckFlush(); else if(Date.now()-ckLast>20000 && document.getElementById('menuScreen') && document.getElementById('menuScreen').classList.contains('active')) ckRefresh(); }catch(e){} }, 15000);
+/* after the challenge is over: everyone who took part (at least 1 kill) gets the limited 11/11 hood once, with a reward screen, if the 1111 kills were reached together */
+const CK_REWARD_ID='skin_shuriken_pp_1111';
+let ckRewardBusy=false;
+async function ckRewardCheck(){
+  if(ckActive() || ckRewardBusy || !sb || !sbUser || started || !saveData || saveData.ckRewardDone===CK_ID) return;
+  ckRewardBusy=true;
+  try{
+    const r=await sb.rpc('challenge_totals',{p_challenge:CK_ID}); if(r.error||!r.data) return;
+    const total=+r.data.total||0, mine=+r.data.mine||0;
+    if(total>=CK_GOAL && mine>=1 && COSMETICS[CK_REWARD_ID] && !cosOwned(CK_REWARD_ID)){
+      saveData.owned[CK_REWARD_ID]=true; saveData.ckRewardDone=CK_ID; persistSave();
+      showRewardWindow('🎉 1111킬 챌린지 달성!', '🎖️', '모두 합쳐 '+total+'킬! 내 '+mine+'킬로 참여해 주셔서 감사해요.\n한정판 「'+COSMETICS[CK_REWARD_ID].name.replace('(한정판) ','')+'」 (수리검 스킨)을 받았어요.\n치장품 상점의 스킨에서 장착할 수 있어요.', [{text:'확인', onclick:closeRewardModal}]);
+      try{ const c=iconCenter(); rewardCelebrate(c.x,c.y,4); }catch(e){}
+    } else { saveData.ckRewardDone=CK_ID; persistSave(); }
+  }catch(e){} finally{ ckRewardBusy=false; }
+}
 const PRACTICE_ULT_CD=3, PRACTICE_TELEPORT_CD=2, PRACTICE_RESPAWN_SEC=2, PRACTICE_MAX_OPPONENTS=8;
 const BAT_DMG_MULT = 1.6, BAT_SPEED_MULT = 1.7, BAT_FORM_SEC = 8, BAT_TEAM_HEAL_SHARE = 0.5, BAT_VERT_SPEED = 260;   // (260px/s up with jump, the same down with S)
 const WIZ_CIRCLE_R = 330, WIZ_CIRCLE_SEC = 10, WIZ_HEAL_PER_SEC = 12, WIZ_ENEMY_DPS = 9, WIZ_SPEED_MULT = 1.4, WIZ_DMG_MULT = 1.3, WIZ_CD_MULT = 0.7;
@@ -3062,6 +3078,16 @@ Object.assign(COSMETICS.skin_pistol_new, {name:'바나나 제임스', price:1500
 const STAR_TINT='#ff9ad5';
 COSMETICS.skin_pistol_apology={cat:'skin', char:'pistol', name:'(한정판) 별빛 사과 제임스', price:0, tint:STAR_TINT, fx:'sparkle', lux:3, exclusive:true, concept:'starlight'};
 COSMETICS.skin_wizard_apology={cat:'skin', char:'wizard', name:'(한정판) 별빛 사과 마법사', price:0, tint:STAR_TINT, fx:'sparkle', lux:3, exclusive:true, concept:'starlight'};
+/* 빼빼로 skins (owner 11-14): headgear, the held weapon and the flying shot are all pepero. The 11/11 hood is the reward of the 1111킬 챌린지 (exclusive: only its owners see it in the shop). */
+COSMETICS.skin_pistol_pp_choco={cat:'skin', char:'pistol', name:'초코 빼빼로 왕관', price:800, tint:'#4b2a18', concept:'pp_choco', isNew:true};
+COSMETICS.skin_sword_pp_almond={cat:'skin', char:'sword', name:'아몬드 빼빼로 투구', price:1200, tint:'#5a3320', concept:'pp_almond', isNew:true};
+COSMETICS.skin_bat_pp_berry={cat:'skin', char:'bat', name:'딸기 빼빼로 캡', price:800, tint:'#ff9fbd', concept:'pp_berry', isNew:true};
+COSMETICS.skin_wizard_pp_white={cat:'skin', char:'wizard', name:'화이트 쿠키 빼빼로 모자', price:1200, tint:'#fff4e2', concept:'pp_white', isNew:true};
+COSMETICS.skin_bow_pp_nude={cat:'skin', char:'bow', name:'누드 빼빼로 숲 모자', price:300, tint:'#e3bd7c', concept:'pp_nude', isNew:true};
+COSMETICS.skin_pirate_pp_box={cat:'skin', char:'pirate', name:'빼빼로 박스 선장 모자', price:900, tint:'#d62a30', concept:'pp_box', isNew:true};
+COSMETICS.skin_shuriken_pp_1111={cat:'skin', char:'shuriken', name:'(한정판) 11월 11일 두건', price:0, tint:'#233066', concept:'pp_1111', exclusive:true, isNew:true};
+COSMETICS.skin_gambler_pp_double={cat:'skin', char:'gambler', name:'더블 초코 바이저', price:800, tint:'#c98f5a', concept:'pp_double', isNew:true};
+COSMETICS.skin_magiccard_pp_magic={cat:'skin', char:'magiccard', name:'빼빼로 마술 실크햇', price:4000, tint:'#1d1522', fx:'sparkle', lux:3, premium:true, concept:'pp_magic', isNew:true};
 /* ===== the character's own color in a match: plain colors are free, the shiny ones are bought (cat 'bcol', equipped as saveData.equipped.bcol, sent as cos.col) ===== */
 [['red','빨강','#ff4d4d'],['mint','민트','#3fe0c5'],['yellow','노랑','#f5c94c'],['blue','파랑','#7c9eff'],['pink','분홍','#ff8fd9'],['lime','연두','#8dff7c'],
  ['orange','주황','#ff9d4d'],['purple','보라','#b98cff'],['sky','하늘','#4dd9ff'],['rose','장미','#ff6b9d'],['emerald','에메랄드','#6bffb3'],['white','하양','#eef1f6']]
@@ -3385,7 +3411,157 @@ function drawThorSpin(c,p){      // while the knight charges only Mjolnir is see
   c.restore();
   if(Math.random()<0.8){ const a=Math.random()*Math.PI*2; addP({x:p.x+Math.cos(a)*34,y:p.y-30+Math.sin(a)*34,vx:Math.cos(a)*90,vy:Math.sin(a)*90,life:RND(.15,.3),size:RND(1.6,3),color:Math.random()<.5?'#ffe66b':'#ffffff',glow:1,grav:0,drag:2}); }
 }
+/* ===== 빼빼로 시안 (preview only): headgear drawn on top of the plain head, origin = head centre ===== */
+let PP_LINE='#3a2212';
+function ppRR(c,x,y,w,h,rad){ c.beginPath(); if(c.roundRect) c.roundRect(x,y,w,h,rad); else c.rect(x,y,w,h); }
+function ppStick(c,x,y,len,ang,coat,o){ o=o||{}; c.save(); c.translate(x,y); c.rotate(ang||0);
+  const w=o.w||3.1, cf=(o.coatFrac===undefined)?0.68:o.coatFrac;
+  c.lineWidth=0.7; c.strokeStyle=PP_LINE;
+  c.fillStyle='#e3bd7c'; ppRR(c,-w*0.36,-len,w*0.72,len,w*0.36); c.fill(); c.stroke();                       // the biscuit
+  if(coat){ const ch=len*cf; c.fillStyle=coat; ppRR(c,-w/2,-len,w,ch,w/2); c.fill(); c.stroke(); if(o.shine!==false && w>3.4){ c.strokeStyle='rgba(255,255,255,0.32)'; c.lineWidth=Math.max(0.6,w*0.14); c.lineCap='round'; c.beginPath(); c.moveTo(-w*0.22,-len+w*0.5); c.lineTo(-w*0.22,-len+ch-w*0.5); c.stroke(); c.strokeStyle=PP_LINE; }            // the coat
+    if(o.dots){ let i=0; for(const col of o.dots){ c.fillStyle=col; c.beginPath(); c.arc(((i%2)?0.55:-0.55), -len+1.4+i*(ch-2.4)/Math.max(1,o.dots.length), 0.5, 0, 7); c.fill(); i++; } }
+    if(o.nuts){ c.fillStyle='#d7a867'; for(let i=0;i<o.nuts;i++){ c.beginPath(); c.ellipse(((i%2)?0.5:-0.5), -len+1.6+i*(ch-2.6)/o.nuts, 0.75, 0.5, 0.5, 0, 7); c.fill(); } } }
+  c.restore(); }
+function ppEyes(c,hx,hy,r){ c.fillStyle='#2a1a12'; c.beginPath(); c.arc(hx-r*0.36,hy+0.8,1.05,0,7); c.arc(hx+r*0.36,hy+0.8,1.05,0,7); c.fill(); c.strokeStyle='#2a1a12'; c.lineWidth=0.8; c.lineCap='round'; c.beginPath(); c.arc(hx,hy+2.6,2.1,0.25,Math.PI-0.25); c.stroke(); }
+function ppDome(c,hx,hy,r,col,edge){ c.fillStyle=col; c.strokeStyle=edge||PP_LINE; c.lineWidth=0.9; c.beginPath(); c.arc(hx,hy-0.5,r+1.2,Math.PI,Math.PI*2); c.closePath(); c.fill(); c.stroke(); }
+function ppPersona(c,wid,concept,hx,hy,r,shy,tint){
+  c.save(); ppEyes(c,hx,hy,r); c.lineJoin='round';
+  switch(concept){
+    case 'pp_choco': {       // 초코 빼빼로 왕관
+      for(const a of [-0.55,0,0.55]) ppStick(c,hx+a*5,hy-r*0.55,17,a,'#4b2a18',{nuts:0});
+      c.fillStyle='#4b2a18'; c.strokeStyle=PP_LINE; c.lineWidth=0.8; ppRR(c,hx-r-0.6,hy-r*0.78,2*r+1.2,4.2,1.6); c.fill(); c.stroke();
+      c.fillStyle='#f3dfb8'; c.fillRect(hx-r+2,hy-r*0.78+1.4,2*r-4,1.2); break; }
+    case 'pp_almond': {      // 아몬드 빼빼로 투구
+      ppStick(c,hx+r*0.45,hy-r*0.85,16,0.95,'#5a3320',{nuts:3});
+      ppDome(c,hx,hy,r,'#5a3320'); c.fillStyle='#d7a867'; c.strokeStyle=PP_LINE; c.lineWidth=0.5;
+      for(const [a,d] of [[-2.7,r*0.95],[-2.15,r*1.0],[-1.6,r*1.02],[-1.05,r*1.0],[-0.5,r*0.95]]){ c.beginPath(); c.ellipse(hx+Math.cos(a)*d, hy-0.5+Math.sin(a)*d, 2.1, 1.35, a+1.57, 0, 7); c.fill(); c.stroke(); }
+      c.fillStyle='#3a2212'; c.fillRect(hx-r-1.4,hy-1.2,2*r+2.8,2.4); break; }
+    case 'pp_berry': {       // 딸기 빼빼로 캡
+      ppStick(c,hx-r*0.25,hy-r*0.9,16,-0.7,'#ff7fa6',{dots:['#fff','#ffe3ef','#fff','#ffe3ef']});
+      ppStick(c,hx+r*0.1,hy-r*0.9,16,0.2,'#ff7fa6',{dots:['#fff','#ffe3ef','#fff','#ffe3ef']});
+      ppDome(c,hx,hy,r,'#ff9fbd'); c.fillStyle='#ff7fa6'; c.strokeStyle=PP_LINE; c.lineWidth=0.9; c.beginPath(); c.ellipse(hx+r*0.95,hy-1.2,r*0.62,1.9,0,0,7); c.fill(); c.stroke();
+      c.fillStyle='#fff'; for(const [a,d] of [[-2.5,0.62],[-1.95,0.8],[-1.4,0.55],[-0.9,0.8],[-0.45,0.6]]){ c.beginPath(); c.arc(hx+Math.cos(a)*r*d, hy-0.5+Math.sin(a)*r*d, 0.8, 0, 7); c.fill(); } break; }
+    case 'pp_white': {       // 화이트 쿠키 빼빼로 모자
+      c.fillStyle='#fff4e2'; c.strokeStyle='#8a7a5a'; c.lineWidth=0.9; c.beginPath(); c.moveTo(hx-r*1.05,hy-r*0.5); c.quadraticCurveTo(hx-r*0.5,hy-r*2.2,hx+r*0.55,hy-r*3.3); c.quadraticCurveTo(hx+r*0.7,hy-r*1.6,hx+r*1.05,hy-r*0.5); c.closePath(); c.fill(); c.stroke();
+      c.fillStyle='#5a3a22'; for(const [x,y] of [[-0.3,-1.0],[0.35,-1.55],[0.05,-2.1],[0.45,-0.85],[-0.55,-0.7],[0.3,-2.7]]){ c.beginPath(); c.arc(hx+x*r, hy+y*r, 0.85, 0, 7); c.fill(); }
+      c.fillStyle='#fff4e2'; c.beginPath(); c.ellipse(hx,hy-r*0.5,r*1.3,2.1,0,0,7); c.fill(); c.stroke(); break; }
+    case 'pp_nude': {        // 누드 빼빼로 숲 모자
+      ppStick(c,hx+r*0.3,hy-r*0.7,21,0.85,'#4b2a18',{coatFrac:0.22,w:2.6});
+      ppDome(c,hx,hy,r,'#e3bd7c'); c.fillStyle='#d3a965'; c.strokeStyle=PP_LINE; c.lineWidth=0.8; c.beginPath(); c.moveTo(hx-r-1.6,hy-1.4); c.lineTo(hx-r-5.5,hy+0.6); c.lineTo(hx-r-1.6,hy+1.1); c.closePath(); c.fill(); c.stroke();
+      c.fillStyle='#4b2a18'; c.fillRect(hx-r-1.2,hy-2.3,2*r+2.4,1.6); break; }
+    case 'pp_box': {         // 빼빼로 박스 선장 모자
+      c.save(); c.translate(hx,hy-r*1.15); c.rotate(-0.12);
+      c.fillStyle='#d62a30'; c.strokeStyle=PP_LINE; c.lineWidth=0.9; ppRR(c,-r-1.5,-5.6,2*r+3,11.2,1.2); c.fill(); c.stroke();
+      c.fillStyle='#fff2d6'; c.fillRect(-r-1.5,-1.5,2*r+3,3); c.strokeRect(-r-1.5,-1.5,2*r+3,3);
+      c.fillStyle='#ffd34d'; for(const x of [-0.6,0,0.6]){ c.beginPath(); c.arc(x*r,-3.6,0.7,0,7); c.fill(); c.beginPath(); c.arc(x*r,3.7,0.7,0,7); c.fill(); }
+      c.strokeStyle='#8a1d22'; c.lineWidth=0.6; c.beginPath(); c.moveTo(-r-1.5,-5.6); c.lineTo(r+1.5,-5.6); c.stroke(); c.restore(); break; }
+    case 'pp_1111': {        // 11월 11일 두건 (four sticks)
+      c.fillStyle='#233066'; c.strokeStyle=PP_LINE; c.lineWidth=0.9; ppRR(c,hx-r-0.8,hy-r*0.82,2*r+1.6,4.6,1.5); c.fill(); c.stroke();
+      c.beginPath(); c.moveTo(hx-r-0.8,hy-r*0.62); c.lineTo(hx-r-5,hy-r*0.1); c.lineTo(hx-r-2,hy+1); c.closePath(); c.fill(); c.stroke();
+      for(let i=0;i<4;i++) ppStick(c,hx+(i-1.5)*3.6,hy-r*0.62,14.5,0,i%2?'#6b3a1f':'#4b2a18',{w:2.9});
+      break; }
+    case 'pp_double': {      // 더블 초코 바이저
+      c.fillStyle='#4b2a18'; c.strokeStyle=PP_LINE; c.lineWidth=0.9; ppRR(c,hx-r-0.8,hy-r*0.9,2*r+1.6,4.4,1.5); c.fill(); c.stroke();
+      c.beginPath(); c.moveTo(hx,hy-r*0.9+1); c.lineTo(hx+r+7,hy-r*0.9+1.4); c.quadraticCurveTo(hx+r+6,hy-r*0.9+5.2,hx,hy-r*0.9+4.4); c.closePath(); c.fillStyle='#c98f5a'; c.fill(); c.stroke();
+      c.fillStyle='#fff4e2'; for(const [x,y] of [[0.35,0.5],[0.6,1.2],[0.85,0.55]]){ c.beginPath(); c.arc(hx+r*x*1.3,hy-r*0.9+y*1.4+1,0.6,0,7); c.fill(); }
+      ppStick(c,hx-r*0.7,hy-r*0.85,11,-0.6,'#c98f5a',{nuts:2}); break; }
+    case 'pp_magic': {       // 빼빼로 마술 실크햇
+      const bunch=[[-0.75,'#4b2a18',{nuts:0}],[-0.38,'#ff7fa6',{dots:['#fff','#ffe3ef','#fff']}],[0,'#fff4e2',{dots:['#6b4a2f','#6b4a2f','#6b4a2f']}],[0.38,'#c98f5a',{nuts:3}],[0.75,'#4b2a18',{nuts:2}]];
+      for(const [a,col,o] of bunch) ppStick(c,hx+a*4.2,hy-r*2.35,19,a,col,o);
+      c.save(); c.translate(hx,hy-r*1.2); c.rotate(-0.1); c.fillStyle='#1d1522'; c.strokeStyle=PP_LINE; c.lineWidth=0.9; ppRR(c,-r*0.82,-r*1.15,r*1.64,r*1.3,1.4); c.fill(); c.stroke();
+      c.beginPath(); c.ellipse(0,r*0.15,r*1.35,2.2,0,0,7); c.fill(); c.stroke(); c.fillStyle='#d62a30'; c.fillRect(-r*0.82,-r*0.1,r*1.64,2.6); c.fillStyle='#ffd34d'; c.fillRect(-1.6,-r*0.1,3.2,2.6);
+      c.restore(); c.fillStyle='#ffe9a8'; for(const [x,y,s] of [[-1.6,-3.4,1.5],[1.7,-3.6,1.1],[0.2,-4.3,1.3]]){ c.beginPath(); c.moveTo(hx+x*r,hy+y*r-s*2); c.lineTo(hx+x*r+s*0.6,hy+y*r); c.lineTo(hx+x*r,hy+y*r+s*2); c.lineTo(hx+x*r-s*0.6,hy+y*r); c.closePath(); c.fill(); } break; }
+  }
+  c.restore(); }
+
+/* ===== 빼빼로 시안 (preview only): held weapons + projectiles drawn as pepero ===== */
+const PP_COAT={pp_choco:'#4b2a18',pp_almond:'#5a3320',pp_berry:'#ff7fa6',pp_white:'#fff4e2',pp_nude:'#4b2a18',pp_box:'#4b2a18',pp_1111:'#4b2a18',pp_double:'#6b3a1f',pp_magic:'#4b2a18'};
+// a pepero lying along +x (biscuit handle at x0, coat at the far end)
+function ppBar(c,x0,len,w,coat,o){ ppStick(c,x0,0,len,Math.PI/2,coat,o); }
+function ppBoxCard(c,w,h){      // the front of a red pepero box: cream band, a few sticks
+  c.fillStyle='#d62a30'; c.strokeStyle='#3a2212'; c.lineWidth=1.2; ppRR(c,-w/2,-h/2,w,h,1.6); c.fill(); c.stroke();
+  c.fillStyle='#fff2d6'; c.fillRect(-w/2+1,-h*0.1,w-2,h*0.2);
+  for(let i=-1;i<=1;i++) ppStick(c,i*w*0.22,h*0.34,h*0.62,i*0.12,i?'#ff7fa6':'#4b2a18',{w:w*0.17,coatFrac:0.6});
+  c.fillStyle='#ffd34d'; c.beginPath(); c.arc(-w*0.3,-h*0.36,0.9,0,7); c.arc(w*0.3,-h*0.36,0.9,0,7); c.fill();
+}
+function ppChip(c,r){      // a pepero cut into a round coin: coat ring, biscuit heart, cream dashes
+  c.fillStyle='#4b2a18'; c.strokeStyle='#fff2d6'; c.lineWidth=1.4; c.beginPath(); c.arc(0,0,r,0,7); c.fill(); c.stroke();
+  c.setLineDash([2.4,2.6]); c.lineWidth=1.8; c.beginPath(); c.arc(0,0,r*0.62,0,7); c.stroke(); c.setLineDash([]);
+  c.fillStyle='#e3bd7c'; c.beginPath(); c.arc(0,0,r*0.3,0,7); c.fill();
+}
+function ppCrumb(x,y,cols,n){ for(let i=0;i<(n||1);i++) addP({x:x+RND(-3,3),y:y+RND(-3,3),vx:RND(-70,70),vy:RND(-80,10),life:RND(.25,.5),size:RND(1.3,2.6),color:cols[Math.floor(Math.random()*cols.length)],add:false,grav:260,drag:1.2}); }
+// ---- held in the hand (frame: origin = hand, +x = aim) ----
+function ppHeld0(c,w,concept){
+  const coat=PP_COAT[concept]||'#4b2a18';
+  switch(w.id){
+    case 'pistol': ppBar(c,-5,34,5.4,coat,{coatFrac:0.74}); c.fillStyle='#ffd34d'; c.fillRect(2,-2.7,2.2,5.4); return true;           // the gold foil ring at the hand
+    case 'sword': ppBar(c,-4,40,5.6,coat,{coatFrac:0.84,nuts:6}); c.fillStyle='#ffd34d'; c.fillRect(1.6,-3,2.2,6); return true;
+    case 'bat': ppBar(c,-3,31,9.2,coat,{coatFrac:0.8,dots:['#fff','#ffe3ef','#fff','#ffe3ef','#fff']}); return true;
+    case 'wizard': ppBar(c,-6,32,3.8,coat,{coatFrac:0.72,dots:['#6b4a2f','#6b4a2f','#6b4a2f','#6b4a2f']});
+      c.save(); c.globalCompositeOperation='lighter'; const g=c.createRadialGradient(28,0,0,28,0,9); g.addColorStop(0,'rgba(255,240,190,0.95)'); g.addColorStop(1,'rgba(255,200,120,0)'); c.fillStyle=g; c.beginPath(); c.arc(28,0,9,0,7); c.fill(); c.restore(); return true;
+    case 'pirate': { c.fillStyle='#d62a30'; c.strokeStyle='#3a2212'; c.lineWidth=0.8; ppRR(c,-1,-4.2,8,8.4,1.2); c.fill(); c.stroke();      // the red box held in the fist
+      c.lineCap='round'; c.strokeStyle='#e3bd7c'; c.lineWidth=3.2; c.beginPath(); c.moveTo(7,0); c.lineTo(12,0); c.stroke();
+      c.strokeStyle='#4b2a18'; c.lineWidth=4; c.beginPath(); c.moveTo(12,0); c.lineTo(20,0); c.arc(20,-6.5,6.5,Math.PI/2,-Math.PI*0.4,true); c.stroke(); return true; }
+    case 'shuriken': for(let i=0;i<4;i++){ c.save(); c.translate(11,0); c.rotate(i*Math.PI/2+0.4); ppStick(c,0,0,9,0,i%2?'#6b3a1f':'#4b2a18',{w:3.1,coatFrac:0.8}); c.restore(); } return true;
+    case 'gambler': c.save(); c.translate(14,0); ppChip(c,6.8); c.restore(); return true;
+    case 'magiccard': c.save(); c.translate(10,0); ppBoxCard(c,13,19); c.restore(); return true;
+  }
+  return false;
+}
+// ---- flying things / swings ----
+function ppProj0(b,cp){
+  const swing=b.swingAngle!==undefined, shot=!swing && !b.dmgless && b.vx!==undefined, coat=PP_COAT[cp]||'#4b2a18';
+  const wp=WEAPONS[b.wid]; const t=performance.now();
+  if(shot){
+    const a=Math.atan2(b.vy||0,b.vx||0), sc=(b.big||b.ult)?1.7:1, crumbs=['#e3bd7c','#4b2a18','#fff2d6'];
+    if(b.wid==='pistol'){ drawTrail(b); if(Math.random()<0.5) ppCrumb(b.x-Math.cos(a)*10,b.y-Math.sin(a)*10,crumbs,1);
+      ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(a); ctx.scale(sc,sc); ppBar(ctx,-9,24,5.4,coat,{coatFrac:0.72}); ctx.restore(); return true; }
+    if(b.wid==='wizard'){ drawTrail(b); if(Math.random()<0.7) addP({x:b.x+RND(-4,4),y:b.y+RND(-4,4),vx:RND(-40,40),vy:RND(-40,40),life:RND(.3,.55),size:RND(1.4,2.6),color:Math.random()<.5?'#ffffff':'#ffe9a8',glow:1,drag:2});
+      ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(a); ctx.save(); ctx.globalCompositeOperation='lighter'; const g=ctx.createRadialGradient(8,0,0,8,0,15); g.addColorStop(0,'rgba(255,245,210,0.75)'); g.addColorStop(1,'rgba(255,220,150,0)'); ctx.fillStyle=g; ctx.beginPath(); ctx.arc(8,0,15,0,7); ctx.fill(); ctx.restore();
+      ppBar(ctx,-10,24,4.2,coat,{coatFrac:0.72,dots:['#6b4a2f','#6b4a2f','#6b4a2f']}); ctx.restore(); return true; }
+    if(b.wid==='bow'){ drawTrail(b); ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(a);
+      ctx.lineCap='round'; ppBar(ctx,-12,25,3.4,'#4b2a18',{coatFrac:0.3});                           // a plain (nude) pepero with a chocolate tip
+      ctx.fillStyle='#fff2d6'; ctx.strokeStyle='#3a2212'; ctx.lineWidth=0.6; for(const s of [-1,1]){ ctx.beginPath(); ctx.moveTo(-12,0); ctx.lineTo(-17,s*3.6); ctx.lineTo(-8,s*1.6); ctx.closePath(); ctx.fill(); ctx.stroke(); }
+      ctx.restore(); return true; }
+    if(b.wid==='shuriken'){ drawTrail(b); ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(t*0.02);
+      for(let i=0;i<4;i++){ ctx.save(); ctx.rotate(i*Math.PI/2); ppStick(ctx,0,0,10,0,i%2?'#6b3a1f':'#4b2a18',{w:3.2,coatFrac:0.82}); ctx.restore(); } ctx.restore(); return true; }
+    if(b.wid==='gambler'){ drawTrail(b); ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(t/60); const s=b.ult?1.7:1.15; ctx.scale(s,s); ppChip(ctx,8); ctx.restore(); return true; }
+    if(b.wid==='magiccard'){ drawTrail(b); ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(t*0.012); ppBoxCard(ctx,12,18); ctx.restore(); return true; }
+    return false;
+  }
+  if(swing){
+    const shape=wp&&wp.shape, rs=(wp&&wp.range&&MELEE_DRAW_RANGE[shape])?wp.range/MELEE_DRAW_RANGE[shape]:1, ang=b.swingAngle;
+    const prog=b.life0?clamp(1-(b.life/b.life0),0,1):1;
+    if(b.wid==='sword' || b.wid==='bat'){
+      const bat=b.wid==='bat', a0=bat?-1.0:-1.7, a1=a0+(bat?2.0:3.4)*prog, r=bat?34:30, glow=bat?'#ffb3cf':'#e8b27a', mid=bat?'#ff7fa6':coat;
+      ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(ang); if(rs!==1) ctx.scale(rs,rs); ctx.lineCap='round';
+      ctx.save(); ctx.globalCompositeOperation='lighter'; for(let k=0;k<3;k++){ ctx.strokeStyle=hexA(glow,0.26-0.07*k); ctx.lineWidth=(bat?22:16)-k*6; ctx.beginPath(); ctx.arc(0,0,r,Math.max(a0,a1-(bat?1.1:1.3)),a1); ctx.stroke(); } ctx.restore();
+      ctx.strokeStyle=hexA(mid,0.7); ctx.lineWidth=bat?8:4.5; ctx.beginPath(); ctx.arc(0,0,r,a0,a1); ctx.stroke();
+      ctx.strokeStyle='#fff3e0'; ctx.lineWidth=bat?4:2.4; ctx.beginPath(); ctx.arc(0,0,r,Math.max(a0,a1-0.8),a1); ctx.stroke();
+      ctx.save(); ctx.translate(Math.cos(a1)*(r-18),Math.sin(a1)*(r-18)); ctx.rotate(a1); ppBar(ctx,0,bat?34:38,bat?9:5.6,mid,{coatFrac:0.8,nuts:bat?0:6,dots:bat?['#fff','#ffe3ef','#fff','#ffe3ef']:undefined}); ctx.restore();
+      ctx.restore();
+      if(prog>0&&prog<1) ppCrumb(b.x+Math.cos(ang+a1)*r*rs,b.y+Math.sin(ang+a1)*r*rs,bat?['#ff7fa6','#ffffff','#ffe3ef']:['#d7a867','#5a3320','#e3bd7c'],2);
+      return true;
+    }
+    if(b.wid==='pirate'){
+      ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(ang); if(rs!==1) ctx.scale(rs,rs); ctx.lineCap='round';
+      ctx.save(); ctx.globalCompositeOperation='lighter'; ctx.strokeStyle=hexA('#e8b27a',0.35); ctx.lineWidth=12; ctx.beginPath(); ctx.moveTo(-6,0); ctx.lineTo(-6+30*prog,0); ctx.stroke(); ctx.restore();
+      ctx.strokeStyle=hexA('#4b2a18',0.85); ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(-6,0); ctx.lineTo(-6+26*prog,0); ctx.stroke();
+      ctx.strokeStyle='#fff3e0'; ctx.lineWidth=1.8; ctx.beginPath(); ctx.moveTo(-6+10*prog,0); ctx.lineTo(-6+26*prog,0); ctx.stroke();
+      ctx.save(); ctx.translate(-6+26*prog,0); ctx.strokeStyle='#4b2a18'; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(0,0); ctx.arc(0,-6,6,Math.PI/2,-Math.PI*0.4,true); ctx.stroke(); ctx.restore();
+      ctx.restore();
+      if(prog>0&&prog<1) ppCrumb(b.x+Math.cos(ang)*20*prog*rs,b.y+Math.sin(ang)*20*prog*rs,['#4b2a18','#e3bd7c','#fff2d6'],1);
+      return true;
+    }
+  }
+  return false;
+}
+
+function ppHeld(c,w,k){ const o=PP_LINE; PP_LINE='#ffe6bd'; try{ return ppHeld0(c,w,k); } finally{ PP_LINE=o; } }
+function ppProj(b,k){ const o=PP_LINE; PP_LINE='#ffe6bd'; try{ return ppProj0(b,k); } finally{ PP_LINE=o; } }
+
 function drawWeaponPersona(c,wid,hx,hy,r,shy,tint,concept){
+  if(concept && String(concept).indexOf('pp_')===0){ ppPersona(c,wid,concept,hx,hy,r,shy,tint); return; }
   c.save();
   switch(wid){
     case 'cleon': case 'guard': case 'pel': drawSpacePersona(c,wid,hx,hy,r,shy,tint); break;
@@ -4065,7 +4241,7 @@ function renderBoxTab(grid){
   const openAll=document.getElementById('boxOpenAllBtn'); if(openAll){ openAll.disabled=n<2; openAll.onclick=()=>{ if((saveData.boxes||0)>0) playAllBoxesOpening(); }; }
 }
 /* 1.0 NEW marks: a new skin shows a red NEW tag in the shop (and a dot on the shop button) until it has been seen once */
-const NEW_COS_IDS=['skin_kurus_diaper','skin_tionis_janus','skin_grenade_envy','skin_pistol_zeus','skin_gloves_gilga','skin_sword_thor','skin_boomerang_odin','skin_horemheb_poseidon'];
+const NEW_COS_IDS=['skin_pistol_pp_choco','skin_sword_pp_almond','skin_bat_pp_berry','skin_wizard_pp_white','skin_bow_pp_nude','skin_pirate_pp_box','skin_gambler_pp_double','skin_magiccard_pp_magic','skin_kurus_diaper','skin_tionis_janus','skin_grenade_envy','skin_pistol_zeus','skin_gloves_gilga','skin_sword_thor','skin_boomerang_odin','skin_horemheb_poseidon'];
 function newSeen(id){ try{ return !!(saveData.seenNew && saveData.seenNew[id]); }catch(e){ return true; } }
 function refreshNewDot(){
   try{ const btn=document.getElementById('goShopBtn'); if(!btn) return; let d=btn.querySelector('.newDot');
@@ -6122,7 +6298,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-14-v791';
+const GAME_BUILD='build 2026-11-14-v792';
 const GAME_VERSION='1.0.1', GAME_VERSION_NAME='네온 시티';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -7483,7 +7659,7 @@ function refreshDailyBadge(screenId){
   try{ refreshMissionBadge(); }catch(e){}
 }
 function showScreen(id){
-  try{ setTimeout(()=>{ ckPaint(); if(id==='menuScreen'){ if(ckPending>0) ckFlush(); else ckRefresh(); } }, 0); }catch(e){}
+  try{ setTimeout(()=>{ ckPaint(); if(id==='menuScreen'){ if(ckPending>0) ckFlush(); else ckRefresh(); ckRewardCheck(); } }, 0); }catch(e){}
   { const bz=document.getElementById('bzBox'); if(bz) bz.style.display='none'; }      // (the danger-zone countdown belongs to the match: leaving to a menu mid-match used to leave it hanging there; brzHud shows it again every frame in a match)
   document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -19220,7 +19396,7 @@ function drawHeldWeapon(c, weaponId, ax, ay, hx, hy, swingProg, concept){
     c.save();
     c.translate(hx, hy);
     c.scale(facing, 1);
-    c.strokeStyle=(concept==='cupid')?'#ff7ab8':'#c9a463'; c.lineWidth=3;
+    c.strokeStyle=(concept==='cupid')?'#ff7ab8':((concept==='pp_nude')?'#e3bd7c':'#c9a463'); c.lineWidth=(concept==='pp_nude')?4:3;
     c.beginPath(); c.arc(0,0,13,-1.15,1.15); c.stroke();
     // reloading: right after the shot the string is slack, then an arrow is nocked, and the other hand draws it back until the next shot is ready
     let pull=1, nock=1, rel=0;
@@ -19232,10 +19408,10 @@ function drawHeldWeapon(c, weaponId, ax, ay, hx, hy, swingProg, concept){
     c.beginPath(); c.moveTo(tip,-tipY); c.lineTo(pull>0||nock>0?nx:0,pull>0||nock>0?ny:0); c.lineTo(tip,tipY); c.stroke();      // the string, drawn back with the arrow
     if(nock>0){
       const sh=(0.35+0.65*nock), tx=dx*17*sh, ty=dy*17*sh;      // shaft slides onto the string
-      c.strokeStyle='#8a5a2a'; c.lineWidth=2; c.lineCap='round'; c.beginPath(); c.moveTo(nx,ny); c.lineTo(tx,ty); c.stroke();
-      c.fillStyle='#d9dde5'; c.strokeStyle='#59616d'; c.lineWidth=0.8; const px=-dy, py=dx;      // the arrowhead
+      c.strokeStyle=(concept==='pp_nude')?'#e3bd7c':'#8a5a2a'; c.lineWidth=(concept==='pp_nude')?2.8:2; c.lineCap='round'; c.beginPath(); c.moveTo(nx,ny); c.lineTo(tx,ty); c.stroke();
+      c.fillStyle=(concept==='pp_nude')?'#4b2a18':'#d9dde5'; c.strokeStyle='#59616d'; c.lineWidth=0.8; const px=-dy, py=dx;      // the arrowhead
       c.beginPath(); c.moveTo(tx+dx*7,ty+dy*7); c.lineTo(tx+px*3.2,ty+py*3.2); c.lineTo(tx-px*3.2,ty-py*3.2); c.closePath(); c.fill(); c.stroke();
-      c.fillStyle=(concept==='cupid')?'#ff7ab8':'#7ad06a';      // fletching (three little feathers)
+      c.fillStyle=(concept==='cupid')?'#ff7ab8':((concept==='pp_nude')?'#fff2d6':'#7ad06a');      // fletching (three little feathers)
       for(let i=0;i<3;i++){ const fx=nx+dx*(2+i*3), fy=ny+dy*(2+i*3); c.beginPath(); c.moveTo(fx,fy); c.lineTo(fx+dx*3+px*3.4,fy+dy*3+py*3.4); c.lineTo(fx+dx*3,fy+dy*3); c.lineTo(fx+dx*3-px*3.4,fy+dy*3-py*3.4); c.closePath(); c.fill(); }
     }
     c.restore();
@@ -19244,6 +19420,7 @@ function drawHeldWeapon(c, weaponId, ax, ay, hx, hy, swingProg, concept){
   const ang = Math.atan2(ay, ax) + (w.shape==='club' ? ((swingProg||0)-0.5)*1.1 : 0);
   c.save();
   c.translate(hx, hy); c.rotate(ang);
+  if(concept && String(concept).indexOf('pp_')===0 && ppHeld(c,w,concept)){ c.restore(); return; }
   switch(w.shape){
     case 'kdgun': {      // 카다스: the dark gun (long, low, P90-like: a magazine along the top)
       const K=kdPal(concept); c.save(); if(ax<0) c.scale(1,-1); c.lineJoin='round'; c.shadowColor=K.a; c.shadowBlur=8; c.fillStyle='#0a0612'; c.strokeStyle=K.a; c.lineWidth=1.2;
@@ -20638,6 +20815,7 @@ function drawWizardStarShot(b){
   ctx.restore();
 }
 function drawConceptProjectile(b,cp){
+  if(cp.indexOf('pp_')===0 && ppProj(b,cp)) return true;
   const swing=b.swingAngle!==undefined, shot=!swing && !b.dmgless && b.vx!==undefined;
   if(cp==='poseidon' && shot && b.wid==='horemheb'){      // 포세이돈: the trident flies in a straight line (no spinning), pointing where it goes, with a trail of sea spray
     drawTrail(b); const a=Math.atan2(b.vy||0,b.vx||0);
