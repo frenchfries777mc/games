@@ -806,13 +806,24 @@ async function online(){
   if(me){ var f=await sb.rpc('ff_online_friends'), rows=((f&&!f.error&&f.data)||[]).filter(function(x){ return !blocked(x.user_id); });
     if(rows.length){ await loadNames(rows.map(function(x){ return x.user_id; })); await loadAv(rows.slice(0,8).map(function(x){ return x.user_id; }));
       html+='<span class="on-f"><span>친구</span> '+rows.slice(0,8).map(function(x){ var pn=placeName(x.place); return '<a class="who on-p" data-uid="'+esc(x.user_id)+'" data-notr title="'+esc(pn)+'">'+'<img class="on-i" src="https://frenchfries777.com/games/avatars/'+encodeURIComponent(/^[a-z0-9_-]{2,30}$/.test(AV[x.user_id]||'')?AV[x.user_id]:'account')+(/^(stk|ce|bf|ip|dp|vk)_/.test(AV[x.user_id]||'')?'.png':'.svg')+'" alt="" width="20" height="20" onerror="this.style.display=\'none\'">'+esc(names[x.user_id]||'???')+'<small>'+esc(pn)+'</small></a>'; }).join('')+(rows.length>8?'<span>+'+(rows.length-8)+'</span>':'')+'</span>'; } }
-  if(onlWho){ var w=await sb.rpc('ff_online_who'), wr=((w&&!w.error&&w.data)||[]).filter(function(x){ return !blocked(x.user_id); });   // 접속자 수를 누르면 누가 있는지 펼쳐요 (supabase-online-who-2026-11-13.sql)
-    if(w&&!w.error){ var gs=Math.max(0,(c.all||0)-((w.data||[]).length));
-      html+='<span class="on-w" style="flex-basis:100%;display:flex;flex-wrap:wrap;align-items:center;gap:6px">'+wr.map(function(x){ var pn=placeName(x.place); return '<a class="who on-p" data-uid="'+esc(x.user_id)+'" data-notr>'+esc(x.name||'???')+'<small>'+esc(pn)+'</small></a>'; }).join('')+(gs?'<span class="on-c"><span>손님</span> <b data-notr>'+gs+'</b></span>':'')+'</span>'; } }
+  if(onlWho){ var w=await sb.rpc('ff_online_who'), wr=((w&&!w.error&&w.data)||[]).filter(function(x){ return !blocked(x.user_id); });   // 접속자 수를 누르면 누가 있는지 창으로 보여줘요 (supabase-online-who-2026-11-13.sql)
+    if(w&&!w.error&&onlWho){ var gs=Math.max(0,(c.all||0)-((w.data||[]).length));
+      onlPanel(esc(F('지금 {0}명 접속 중',c.all||0)),wr.map(function(x){ return {uid:esc(x.user_id),name:esc(x.name||'???'),place:esc(placeName(x.place))}; }),esc(F('손님',0)),gs); } }
   b.innerHTML=html;
 }
 var onlWho=false;
-function onlTap(e){ var t=e.target&&e.target.closest&&e.target.closest('#onlineBar .on-n'); if(!t||(e.type==='keydown'&&e.key!=='Enter'&&e.key!==' ')) return; e.preventDefault(); onlWho=!onlWho; online(); }
+function onlClose(){ onlWho=false; var o=document.getElementById('onlWho'); if(o&&o.parentNode) o.parentNode.removeChild(o); }
+function onlPanel(title,rows,gtxt,gn){ var o=document.getElementById('onlWho'), st=0;
+  if(!o){ o=document.createElement('div'); o.id='onlWho'; o.setAttribute('role','dialog'); o.setAttribute('aria-modal','true'); o.style.cssText='position:fixed;left:0;top:0;right:0;bottom:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.6)';
+    o.addEventListener('click',function(e){ if(e.target===o||(e.target.closest&&e.target.closest('.ow-x'))) onlClose(); }); document.body.appendChild(o); }
+  else{ var l0=o.querySelector('.ow-l'); if(l0) st=l0.scrollTop; }
+  var row='display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 16px;border-top:1px solid #2a2a2a;font-size:14px';
+  o.innerHTML='<div style="background:#181818;color:#eee;border:1px solid #333;border-radius:14px;width:min(380px,100%);max-height:min(72vh,540px);display:flex;flex-direction:column;box-shadow:0 12px 40px rgba(0,0,0,.6)">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px"><b style="font-size:15px"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#3ddc84;margin-right:8px"></span>'+title+'</b><button type="button" class="ow-x" aria-label="close" style="background:none;border:0;color:#aaa;font-size:22px;line-height:1;cursor:pointer;padding:0 4px">&times;</button></div>'
+    +'<div class="ow-l" style="overflow:auto">'+rows.map(function(r){ return '<div style="'+row+'"><a class="who on-p" data-uid="'+r.uid+'" data-notr style="font-weight:600;color:inherit">'+r.name+'</a><small style="opacity:.6" data-notr>'+r.place+'</small></div>'; }).join('')
+    +(gn?'<div style="'+row+'"><span>'+gtxt+'</span><b data-notr>'+gn+'</b></div>':'')+'</div></div>';
+  var l=o.querySelector('.ow-l'); if(l) l.scrollTop=st; }
+function onlTap(e){ if(e.type==='keydown'&&e.key==='Escape'&&onlWho){ onlClose(); return; } var t=e.target&&e.target.closest&&e.target.closest('#onlineBar .on-n'); if(!t||(e.type==='keydown'&&e.key!=='Enter'&&e.key!==' ')) return; e.preventDefault(); onlWho=!onlWho; if(onlWho) online(); else onlClose(); }
 document.addEventListener('click',onlTap); document.addEventListener('keydown',onlTap);
 var hubPT=null;
 function hubPing(){ if(me&&sb){ try{ sb.rpc('ff_hub_ping').then(function(){},function(){}); }catch(e){} } }      // 다른 탭에 가 있어도 접속으로 쳐요 (옛 코드는 화면이 보일 때만 보냈어요)
