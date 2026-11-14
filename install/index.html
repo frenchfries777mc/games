@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#ffffff">
+<meta name="copyright" content="© 2026 Frenchfries777. CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)">
+<title>설치</title>
+<style>
+/* 설치 전용 페이지: 흰 배경에 아이콘, 이름, 소개, 설치 버튼만 (다른 곳으로 가는 링크 없음) */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:#fff;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR','Segoe UI',system-ui,sans-serif;
+  padding:env(safe-area-inset-top,0px) max(20px,env(safe-area-inset-right,0px)) env(safe-area-inset-bottom,0px) max(20px,env(safe-area-inset-left,0px));display:flex;flex-direction:column}
+main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;padding-block:32px}
+.ic{width:128px;height:128px;border-radius:22.5%;background:#f2f2f4;box-shadow:0 0 0 1px rgba(0,0,0,.08),0 8px 24px rgba(0,0,0,.12);overflow:hidden}
+.ic img{display:block;width:100%;height:100%;object-fit:cover}
+h1{margin:10px 0 0;font-size:28px;line-height:1.2;font-weight:700;letter-spacing:-.01em;overflow-wrap:anywhere}
+p{margin:0;max-width:30em;color:#6e6e73;font-size:15px;line-height:1.5}
+button{margin-top:10px;min-width:120px;border:0;border-radius:999px;padding:12px 34px;background:#0071e3;color:#fff;font:700 17px/1.2 inherit;font-family:inherit;cursor:pointer}
+button:disabled{background:#e8e8ed;color:#86868b;cursor:default}
+button:focus-visible{outline:3px solid rgba(0,113,227,.45);outline-offset:2px}
+.msg{min-height:1.5em;font-size:14px;color:#6e6e73}
+footer{padding:14px 0;text-align:center;font-size:11px;color:#a1a1a6}
+</style>
+</head>
+<body>
+<main>
+  <div class="ic" id="ic" hidden><img id="icimg" alt=""></div>
+  <h1 id="nm"></h1>
+  <p id="ds"></p>
+  <button type="button" id="go" disabled></button>
+  <div class="msg" id="msg" role="status"></div>
+</main>
+<footer>Created by Frenchfries777 · © 2026 Frenchfries777 · CC BY-NC-ND 4.0</footer>
+<script>
+(function(){
+'use strict';
+/* 설치할 수 있는 프로그램 (games/ff-install.js 와 games/pwa/ 에 있는 것과 같아요) */
+var IDS=['stickseum','crownenvoy','beaconfall','isleport','vowkeep','tumblecrown','dummyparty','gatecrash',
+         'planetsearch','speedcode','timeline','munjang','balance','proverb',
+         'code','blocks','sheet','docs','slides','lab','draw','score','video'];
+var ko=/^ko/i.test(navigator.language||'ko');
+var T=ko?{install:'설치',installing:'설치 중…',done:'설치됐어요',have:'이미 앱으로 열려 있어요',
+  ios:'공유 버튼 → 홈 화면에 추가를 눌러 주세요.',other:'브라우저 메뉴(⋮) → 앱 설치(또는 홈 화면에 추가)를 눌러 주세요.',
+  after:'앱 목록이나 홈 화면에서 열어 보세요.',bad:'설치할 수 있는 앱이 아니에요.',cancel:'설치를 취소했어요.'}
+ :{install:'Install',installing:'Installing…',done:'Installed',have:'Already open as an app',
+  ios:'Tap Share, then Add to Home Screen.',other:'Use the browser menu (⋮) → Install app (or Add to Home screen).',
+  after:'Open it from your app list or home screen.',bad:'This app cannot be installed.',cancel:'Installation cancelled.'};
+var $=function(i){return document.getElementById(i)};
+var id=(new URLSearchParams(location.search).get('app')||'').toLowerCase();
+var go=$('go'), msg=$('msg'), ev=null, standalone=false;
+try{standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}catch(e){}
+var ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
+
+if(IDS.indexOf(id)<0){ $('nm').textContent=T.bad; go.hidden=true; return; }
+
+/* 이 프로그램의 설치 정보를 불러와서 이름·소개·아이콘을 보여 줘요 */
+var mf='/games/pwa/'+id+'.webmanifest';
+var ml=document.createElement('link'); ml.rel='manifest'; ml.href=mf; document.head.appendChild(ml);
+fetch(mf).then(function(r){ if(!r.ok) throw 0; return r.json(); }).then(function(m){
+  $('nm').textContent=m.name||id; document.title=(m.name||id)+' · '+T.install;
+  $('ds').textContent=m.description||'';
+  var ic=(m.icons||[]).filter(function(i){return /512|192/.test(i.sizes||'')}).sort(function(a,b){return parseInt(b.sizes)-parseInt(a.sizes)})[0];
+  if(ic){ $('icimg').src=ic.src; $('ic').hidden=false; }
+}).catch(function(){ $('nm').textContent=id; });
+
+if('serviceWorker' in navigator){ try{ navigator.serviceWorker.register('/sw.js',{scope:'/'}).catch(function(){}); }catch(e){} }
+
+function ready(){ go.textContent=T.install; go.disabled=false; msg.textContent=''; }
+function installedUI(){ go.textContent=T.done; go.disabled=true; msg.textContent=T.after; }
+if(standalone){ go.textContent=T.install; go.disabled=true; msg.textContent=T.have; return; }
+go.textContent=T.install; go.disabled=false;
+addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); ev=e; ready(); });
+addEventListener('appinstalled',function(){ ev=null; installedUI(); });
+go.onclick=function(){
+  var e=ev;
+  if(!e){ msg.textContent=ios?T.ios:T.other; return; }
+  ev=null; go.disabled=true; go.textContent=T.installing; e.prompt();
+  e.userChoice.then(function(c){ if(c&&c.outcome==='accepted') installedUI(); else { go.textContent=T.install; go.disabled=false; msg.textContent=T.cancel; } });
+};
+})();
+</script>
+</body>
+</html>
