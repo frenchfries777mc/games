@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
-<script src="ff-lang.js?v=20261109c"></script>
+<script src="ff-lang.js?v=20261114a"></script>
 <script id="i18n">
 /* Site translation (same 6 languages and the same saved choice as the game).
    The pages are written in Korean; this file translates their text in place. Whole text nodes are looked up first (S: site strings),
@@ -91,6 +91,10 @@ img{max-width:100%}
 #onlineBar{display:flex;align-items:center;flex-wrap:nowrap;white-space:nowrap;overflow:hidden;max-width:62vw;gap:8px 12px;height:44px;box-sizing:border-box;padding:0 16px;border-radius:10px;background:rgba(14,14,14,.6);border:1px solid #3a3530;font-size:14px;color:#ece6d8}
 #onlineBar:empty{display:none}
 #ffTop .tb{margin:0}
+.srx-btn{flex:none;width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:rgba(14,14,14,.6);border:1px solid #3a3530;color:#ece6d8;font-size:16px;cursor:pointer;padding:0}
+.srx-btn:hover{border-color:#d9b45f}
+.ffx-foot{padding:26px 0 48px;margin-top:10px;border-top:1px solid #2e2b25;font-size:13px;color:#8d877a;display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px}
+.ffx-foot a{color:#a39c8c;text-decoration:none}.ffx-foot a:hover{color:#f0cf7e}
 .ffx-nav a:hover{background:#1c1a16}
 @media(max-width:860px){
   .ffx-root{flex-direction:column!important;flex-wrap:nowrap!important}
@@ -101,6 +105,75 @@ img{max-width:100%}
   .ffx-root>main>div{padding-left:18px!important;padding-right:18px!important}
 }
 </style>
+<style id="ffrestore">
+.sp{color:var(--dim); margin:0 0 16px; font-size:15px;}
+.cm-tabs button,.cm-f button{background:var(--panel); color:var(--dim); border:1px solid var(--line); border-radius:99px; padding:8px 15px; font:inherit; font-size:14.5px; font-weight:700; cursor:pointer;}
+.cm-tabs button.on,.cm-f button.on{color:#1a1206; background:linear-gradient(135deg,var(--fry),var(--fry2)); border-color:transparent;}
+.cm-f{display:flex; flex-wrap:wrap; gap:6px;}
+.cm-f button{padding:5px 11px; font-size:13px;}
+.cm-cm,.cm-fbi{position:relative; padding:8px 30px 8px 12px; border-radius:9px; background:#141925; margin-top:6px;}
+.cm-fbi.done{opacity:.6;}
+.cm-fbi .ok{color:#7dff9b;}
+.nws{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:14px;}
+.nw{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px 18px; display:flex; flex-direction:column;}
+.nw.g1{border-top:3px solid #3fe0c5;}
+.nw.g2{border-top:3px solid #d4af4f;}
+.nw.g3{border-top:3px solid #f2c75a;}
+.nw.g1 .ng{color:#3fe0c5;}
+.nw.g2 .ng{color:#f2dc94;}
+.nw.g3 .ng{color:#f3e4b0;}
+.nw h3{margin:6px 0 6px; font-size:17px; line-height:1.35;}
+.nw ul{margin:0; padding-left:18px; color:#b7bfcf; font-size:14px; flex:1;}
+.nw li{margin:3px 0;}
+.fbar{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:0 0 14px; font-size:14px; color:var(--dim);}
+.fbar:empty{display:none;}
+.nl{margin-top:10px; color:var(--fry); font-size:14px; font-weight:700; text-decoration:none;}
+.nl:hover{text-decoration:underline;}
+.nw.g0{border-top:3px solid var(--fry,#d9b45f);}
+.nw.g0 .ng{color:var(--fry,#d9b45f);}
+.rk-g{display:grid; grid-template-columns:1fr; gap:14px;}
+.rk-c{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:16px 18px;}
+.rk-c h3{margin:0 0 4px; font-size:18px;}
+.rk-n{color:var(--dim); font-size:13px; margin:0 0 10px;}
+.rk-f{margin:6px 0 10px; display:flex; flex-wrap:wrap; gap:6px;}
+.rk-f button{padding:6px 12px; font-size:13.5px;}
+.rkt{width:100%; border-collapse:collapse; font-size:14.5px;}
+.rkt th{color:var(--dim); font-size:12.5px; font-weight:700; text-align:right; padding:4px 6px;}
+.rkt th:nth-child(2){text-align:left;}
+.rkt td{padding:7px 6px; border-top:1px solid var(--line); text-align:right; white-space:nowrap;}
+.rkt td:nth-child(2){text-align:left; max-width:160px; overflow:hidden; text-overflow:ellipsis;}
+.rkt td:first-child{font-weight:800; color:var(--dim); width:34px;}
+.rkt tr.t1 td:first-child{color:#ffd36b;}
+.rkt tr.t2 td:first-child{color:#d8dee9;}
+.rkt tr.t3 td:first-child{color:#e0a36b;}
+.rkt tr.me td{background:rgba(217,180,95,.10);}
+.rkt .pt{font-weight:800; color:var(--fry);}
+.rk-me{margin-top:8px; font-size:13.5px; color:var(--dim);}
+@media(max-width:820px){.rk-g{grid-template-columns:1fr;}}
+html[data-ff-theme=light] .cm-cm,html[data-ff-theme=light] .cm-fbi,html[data-ff-theme=light] .pl,html[data-ff-theme=light] .lf{background:#f3efe6;}
+html[data-ff-theme=light] .nw ul,html[data-ff-theme=light] .hn-n ul{color:#333;}
+html[data-ff-theme=light] .nw.g1 .ng{color:#333;}
+html[data-ff-theme=light] .nw.g2 .ng{color:#7a5a00;}
+html[data-ff-theme=light] .nw.g3 .ng,html[data-ff-theme=light] .nw.g0 .ng{color:#7a5a00;}
+@media(max-width:520px){.nws{grid-template-columns:1fr;}}
+/* 숫자로 보는 줄 */
+  .hstats{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:0 0 18px; padding:18px 8px; border:1px solid var(--line); border-radius:18px; background:color-mix(in srgb,var(--panel) 80%,transparent); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);}
+.hstats div{text-align:center; padding:2px 6px; border-left:1px solid var(--line);}
+.hstats div:first-child{border-left:0;}
+.hstats b{display:block; font-family:'Oswald','Noto Sans KR',sans-serif; font-weight:700; font-size:clamp(26px,4.2vw,42px); line-height:1.1; background:linear-gradient(90deg,var(--fry),var(--fry2)); -webkit-background-clip:text; background-clip:text; color:transparent; font-variant-numeric:tabular-nums;}
+.hstats span{display:block; margin-top:4px; font-size:13px; color:var(--dim);}
+@media(max-width:640px){.hstats{gap:4px; padding:14px 4px;}.hstats div{padding:2px 2px;}.hstats span{font-size:12px;}}
+.rx{display:flex;flex-direction:column;gap:34px;padding:10px 0 20px}
+.rx-h{margin:0 0 18px;font-family:'Oswald','Noto Sans KR',sans-serif;font-weight:600;font-size:28px;letter-spacing:.04em;color:#ece6d8}
+.rx .hstats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:18px 8px;border:1px solid #2e2b25;border-radius:16px;background:rgba(23,23,23,.92)}
+.rx .hstats div{text-align:center;border-left:1px solid #2e2b25}.rx .hstats div:first-child{border-left:0}
+.rx .hstats b{display:block;font-family:'Oswald',sans-serif;font-size:clamp(26px,4vw,40px);color:#f0cf7e}.rx .hstats span{color:#a39c8c;font-size:13px}
+.rx .rk-c,.rx .nw{background:rgba(23,23,23,.92);border:1px solid #2e2b25;border-radius:16px}
+.rx .cm-f button{background:rgba(14,14,14,.55);border:1px solid #3a3530;color:#c9c2b0;border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer}
+.rx .cm-f button.on{background:#26221a;border-color:#d9b45f;color:#f0cf7e}
+
+</style>
+<link rel="stylesheet" href="https://frenchfries777.com/ff-themes.css?v=1">
 </head>
 <body>
 <div class="ffx-root" style="background:#0e0e0e;color:#ece6d8;min-height:1700px;display:flex;flex-wrap:wrap;align-items:stretch">
@@ -129,7 +202,7 @@ img{max-width:100%}
 <img src="/img/pixel-bg.png" alt="도트 풍경" style="position:absolute;left:0;top:0;width:100%;height:auto;display:block;image-rendering:pixelated">
 <div style="position:absolute;left:0;top:0;width:100%;height:100%;background:linear-gradient(180deg,rgba(14,14,14,.1) 0,rgba(14,14,14,.1) 120px,rgba(14,14,14,.8) 430px,rgba(14,14,14,.78) 100%)"></div>
 <div style="position:relative;padding:0 40px;display:flex;flex-direction:column">
-<div id="ffTop"><div id="onlineBar"></div><div class="tb"><span data-ff-account data-ff-nohub></span></div></div>
+<div id="ffTop"><button type="button" class="srx-btn" id="srxBtn" aria-label="검색" title="검색">🔍</button><div id="onlineBar"></div><div class="tb"><span data-ff-account data-ff-nohub></span></div></div><script>(function(){var b=document.getElementById('srxBtn');if(!b)return;b.addEventListener('click',function f(e){if(b.onclick)return;b.removeEventListener('click',f);e.stopImmediatePropagation();e.preventDefault();var s=document.createElement('script');s.src='https://frenchfries777.com/games/hub.js?v=20261109a';s.onload=function(){setTimeout(function(){if(b.onclick)b.click();},500);};document.head.appendChild(s);},true);})();</script>
 <div style="padding:70px 0 34px;display:flex;flex-direction:column;gap:16px">
 <span style="font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;letter-spacing:.2em;color:#f0cf7e">GAMES · 8개</span>
 <h1 style="margin:0;font-family:'Oswald',sans-serif;font-weight:700;font-size:clamp(48px,7vw,96px);line-height:.95;letter-spacing:.01em">Games</h1>
@@ -145,6 +218,24 @@ img{max-width:100%}
 <h2 style="margin:0;font-family:'Oswald','Noto Sans KR',sans-serif;font-weight:600;font-size:28px;letter-spacing:.04em">이런 점이 좋아요</h2>
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px"><div style="padding:22px;border-radius:14px;background:rgba(23,23,23,.88);border:1px solid #2e2b25;display:flex;flex-direction:column;gap:8px"><b style="font-size:17px">무료, 광고 없음</b><span style="font-size:14px;line-height:1.65;color:#a39c8c">돈도 광고도 없이 바로 써요.</span></div><div style="padding:22px;border-radius:14px;background:rgba(23,23,23,.88);border:1px solid #2e2b25;display:flex;flex-direction:column;gap:8px"><b style="font-size:17px">계정 만들기가 쉬워요</b><span style="font-size:14px;line-height:1.65;color:#a39c8c">계정 하나로 모든 곳에 로그인돼요.</span></div><div style="padding:22px;border-radius:14px;background:rgba(23,23,23,.88);border:1px solid #2e2b25;display:flex;flex-direction:column;gap:8px"><b style="font-size:17px">설치 필요 없음</b><span style="font-size:14px;line-height:1.65;color:#a39c8c">브라우저에서 열면 바로 시작해요.</span></div><div style="padding:22px;border-radius:14px;background:rgba(23,23,23,.88);border:1px solid #2e2b25;display:flex;flex-direction:column;gap:8px"><b style="font-size:17px">친구와 링크로 같이</b><span style="font-size:14px;line-height:1.65;color:#a39c8c">주소만 보내면 같이 할 수 있어요.</span></div></div>
 </section>
+<div class="rx"><section class="hstats" id="heroStats" aria-label="모든 게임에 적용되는 숫자">
+    <div><b data-n="6" id="gameN">6</b><span>게임</span></div>
+    <div><b data-n="337" id="achN">337</b><span>달성할 업적</span></div>
+    <div><b data-n="144" id="skinN">144</b><span>스킨</span></div>
+    <div><b data-n="18">18</b><span>언어 18개</span></div>
+  </section><section class="rk" id="ranking">
+    <h2 class="rx-h">랭킹</h2>
+    <div class="rk-g">
+      <div class="rk-c"><h3>🏆 게임 랭킹</h3><div class="cm-f rk-f"><button data-g="stickseum" class="on">Stickseum</button><button data-g="crownenvoy">Crown Envoy</button><button data-g="beaconfall">Beaconfall</button><button data-g="isleport">Isleport</button><button data-g="dummyparty">Dummy Party</button><button data-g="tumblecrown">Tumble Crown</button></div><div id="rankList"></div></div>
+    </div>
+  </section>
+
+  <section class="news" id="news">
+    <h2 class="rx-h">뉴스</h2>
+    <p class="sp">게임과 허브의 가장 최근 업데이트 6개예요. <a id="hubNotesBtn" class="nl" href="https://frenchfries777.com/patchnotes/">패치노트 →</a></p>
+    <div id="followBar" class="fbar"></div>
+    <div id="newsList" class="nws"></div>
+  </section></div><div class="ffx-foot"><span>Made by Frenchfries777 with Claude AI</span> <span data-notr>Created by Frenchfries777</span> · <span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span><nav class="fl"><a href="https://frenchfries777.com/lounge/">라운지</a><a href="https://frenchfries777.com/settings/">설정</a><a href="https://frenchfries777.com/patchnotes/">패치노트</a><a href="https://frenchfries777.com/wiki/">위키</a><a href="https://frenchfries777.com/music/">음악</a><a href="https://frenchfries777.com/community/#feedback">피드백</a><a href="https://github.com/frenchfries777mc" target="_blank" rel="noopener">GitHub</a></nav></div>
 </div>
 </main>
 </div>
