@@ -202,7 +202,7 @@ function hostHandlers(p) {
         N.inputs[c.gid] = { d: q.d > 0 ? 1 : q.d < 0 ? -1 : 0, j: !!q.j, atk: !!q.atk, aim: isFinite(aim) ? aim : 0, jp: !!(o.jp || q.jp), swap: !!(o.swap || q.swap), emo: (emo >= 1 && emo <= 4 ? emo : 0) || o.emo || 0, spr: !!(o.spr || q.spr) };
       }
     });
-    const drop = () => { N.conns = N.conns.filter(x => x !== c); if (!N.G) { N.players = N.players.filter(p => p.id !== c.gid); pushRoom(); if (scr === 'sRoom') paintSlots(); } else { const r = N.G.racers.find(r => r.id === c.gid); if (r) { r.bot = true; r.ai = { plan: null, stuck: 0, best: Infinity, wait: 0, noise: .3, aimT: 0, react: .35 }; } } };
+    const drop = () => { N.conns = N.conns.filter(x => x !== c); if (!N.G) { N.players = N.players.filter(p => p.id !== c.gid); pushRoom(); if (scr === 'sRoom') paintSlots(); } else { const r = N.G.racers.find(r => r.id === c.gid); if (r) { r.bot = true; r.ai = botAI(); } } };
     c.on('close', drop); c.on('error', drop);
   });
   p.on('disconnected', () => { if (N.peer === p && !p.destroyed) setTimeout(() => { if (N.peer === p && !p.destroyed) p.reconnect(); }, 1000); });
