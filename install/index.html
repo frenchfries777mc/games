@@ -45,15 +45,17 @@ var IDS=['stickseum','crownenvoy','beaconfall','isleport','vowkeep','tumblecrown
          'code','blocks','sheet','docs','slides','lab','draw','score','video'];
 var ko=/^ko/i.test(navigator.language||'ko');
 var T=ko?{back:'‹ 뒤로',install:'설치',installing:'설치 중…',done:'설치됐어요',have:'이미 앱으로 열려 있어요',
-  ios:'공유 버튼 → 홈 화면에 추가를 눌러 주세요.',other:'주소창 오른쪽의 설치 아이콘이나 브라우저 메뉴(⋮) → 앱 설치(또는 홈 화면에 추가)를 눌러 주세요. 이미 설치했다면 앱 목록에서 열어 보세요.',
+  ios:'공유 버튼 → 홈 화면에 추가를 눌러 주세요.',other:'주소창 오른쪽의 설치 아이콘을 누르거나, 브라우저 메뉴(⋮) → 저장 및 공유 → 앱으로 설치(또는 홈 화면에 추가)를 눌러 주세요.',
+  outbtn:'브라우저에서 설치',outmsg:'지금은 앱 창 안이라 여기서는 설치할 수 없어요. 브라우저 탭에서 열어 설치해 주세요.',
   after:'앱 목록이나 홈 화면에서 열어 보세요.',bad:'설치할 수 있는 앱이 아니에요.',cancel:'설치를 취소했어요.',
   apk:'받은 파일을 열어 설치해 주세요. 처음에는 \'출처를 알 수 없는 앱\' 허용을 물어볼 수 있어요.',
-  exe:'받은 파일을 실행해 주세요. Windows 경고가 뜨면 \'추가 정보\' → \'실행\'을 누르면 돼요.',fail:'파일을 받지 못했어요. 다시 눌러 주세요.'}
+  exe:'받은 파일을 실행해 주세요. 백신이나 Windows가 막으면 알림의 \'세부 정보\'에서 허용(복원)한 뒤 실행하면 돼요.',fail:'파일을 받지 못했어요. 다시 눌러 주세요.'}
  :{back:'‹ Back',install:'Install',installing:'Installing…',done:'Installed',have:'Already open as an app',
-  ios:'Tap Share, then Add to Home Screen.',other:'Use the install icon in the address bar or the browser menu (⋮) → Install app (or Add to Home screen). If already installed, open it from your app list.',
+  ios:'Tap Share, then Add to Home Screen.',other:'Use the install icon in the address bar, or the browser menu (⋮) → Save and share → Install as app (or Add to Home screen).',
+  outbtn:'Install in browser',outmsg:'This is an app window, so it cannot install here. Open it in a browser tab to install.',
   after:'Open it from your app list or home screen.',bad:'This app cannot be installed.',cancel:'Installation cancelled.',
   apk:'Open the downloaded file to install. You may be asked to allow unknown apps once.',
-  exe:'Run the downloaded file. If Windows shows a warning, choose More info then Run anyway.',fail:'Download failed. Please try again.'};
+  exe:'Run the downloaded file. If antivirus or Windows blocks it, allow (restore) it from the notification details, then run it.',fail:'Download failed. Please try again.'};
 var $=function(i){return document.getElementById(i)};
 var id=(new URLSearchParams(location.search).get('app')||'').toLowerCase();
 var bk=$('bk'); bk.textContent=T.back;
@@ -80,22 +82,14 @@ if('serviceWorker' in navigator){ try{ navigator.serviceWorker.register('/sw.js'
 
 function ready(){ go.textContent=T.install; go.disabled=false; msg.textContent=''; }
 function installedUI(){ go.textContent=T.done; go.disabled=true; msg.textContent=T.after; }
-if(standalone&&!win&&!android){ go.textContent=T.install; go.disabled=true; msg.textContent=T.have; return; }
+if(standalone&&!android&&!win){ go.textContent=T.outbtn; go.disabled=false; msg.textContent=T.outmsg;
+  go.onclick=function(){ window.open(location.origin+'/games/install/?v=3&app='+id,'_blank'); }; return; }
 go.textContent=T.install; go.disabled=false;
 addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); ev=e; ready(); });
 addEventListener('appinstalled',function(){ ev=null; installedUI(); });
-function save(blob,name){ var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },4000); }
 go.onclick=function(){
   if(android){ var a=document.createElement('a'); a.href='/games/install/apk/'+id+'.apk'; a.download=id+'.apk'; document.body.appendChild(a); a.click(); a.remove(); msg.textContent=T.apk; return; }
-  if(win&&app){
-    go.disabled=true; go.textContent=T.installing;
-    fetch('/games/install/setup.exe').then(function(r){ if(!r.ok) throw 0; return r.arrayBuffer(); }).then(function(buf){
-      var cfg='\n#FF777CFG#'+JSON.stringify({id:id,name:app.name,url:app.url})+'#END#';
-      save(new Blob([buf,new TextEncoder().encode(cfg)],{type:'application/octet-stream'}),((app.name.replace(/[^\x20-\x7e]/g,'').replace(/[<>:"\/\\|?*]/g,'').trim()||id).replace(/\s+/g,'-'))+'-setup.exe');
-      go.textContent=T.install; go.disabled=false; msg.textContent=T.exe;
-    }).catch(function(){ go.textContent=T.install; go.disabled=false; msg.textContent=T.fail; });
-    return;
-  }
+  if(win&&!ev){ var x=document.createElement('a'); x.href='/games/install/setup.exe'; x.download=id+'-setup.exe'; document.body.appendChild(x); x.click(); x.remove(); msg.textContent=T.exe; return; }
   var e=ev;
   if(!e){ msg.textContent=ios?T.ios:T.other; return; }
   ev=null; go.disabled=true; go.textContent=T.installing; e.prompt();
