@@ -91,7 +91,7 @@ go.onclick=function(){
     go.disabled=true; go.textContent=T.installing;
     fetch('/games/install/setup.exe').then(function(r){ if(!r.ok) throw 0; return r.arrayBuffer(); }).then(function(buf){
       var cfg='\n#FF777CFG#'+JSON.stringify({id:id,name:app.name,url:app.url})+'#END#';
-      save(new Blob([buf,new TextEncoder().encode(cfg)],{type:'application/octet-stream'}),app.name.replace(/[<>:"\/\\|?*]/g,'')+' 설치.exe');
+      save(new Blob([buf,new TextEncoder().encode(cfg)],{type:'application/octet-stream'}),((app.name.replace(/[^\x20-\x7e]/g,'').replace(/[<>:"\/\\|?*]/g,'').trim()||id).replace(/\s+/g,'-'))+'-setup.exe');
       go.textContent=T.install; go.disabled=false; msg.textContent=T.exe;
     }).catch(function(){ go.textContent=T.install; go.disabled=false; msg.textContent=T.fail; });
     return;
