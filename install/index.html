@@ -80,7 +80,7 @@ if('serviceWorker' in navigator){ try{ navigator.serviceWorker.register('/sw.js'
 
 function ready(){ go.textContent=T.install; go.disabled=false; msg.textContent=''; }
 function installedUI(){ go.textContent=T.done; go.disabled=true; msg.textContent=T.after; }
-if(standalone){ go.textContent=T.install; go.disabled=true; msg.textContent=T.have; return; }
+if(standalone&&!win&&!android){ go.textContent=T.install; go.disabled=true; msg.textContent=T.have; return; }
 go.textContent=T.install; go.disabled=false;
 addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); ev=e; ready(); });
 addEventListener('appinstalled',function(){ ev=null; installedUI(); });
