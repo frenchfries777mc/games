@@ -18,19 +18,21 @@ main{flex:1;display:flex;flex-direction:column;align-items:center;justify-conten
 .ic img{display:block;width:100%;height:100%;object-fit:cover}
 h1{margin:10px 0 0;font-size:28px;line-height:1.2;font-weight:700;letter-spacing:-.01em;overflow-wrap:anywhere}
 p{margin:0;max-width:30em;color:#6e6e73;font-size:15px;line-height:1.5}
-button{margin-top:10px;min-width:120px;border:0;border-radius:999px;padding:12px 34px;background:#0071e3;color:#fff;font:700 17px/1.2 inherit;font-family:inherit;cursor:pointer}
-button:disabled{background:#e8e8ed;color:#86868b;cursor:default}
+button.go{margin-top:10px;min-width:120px;border:0;border-radius:999px;padding:12px 34px;background:#0071e3;color:#fff;font:700 17px/1.2 inherit;font-family:inherit;cursor:pointer}
+button.go:disabled{background:#e8e8ed;color:#86868b;cursor:default}
 button:focus-visible{outline:3px solid rgba(0,113,227,.45);outline-offset:2px}
+.back{position:absolute;top:calc(env(safe-area-inset-top,0px) + 8px);left:8px;border:0;background:none;color:#0071e3;font:500 17px/1 inherit;font-family:inherit;padding:12px;cursor:pointer;border-radius:10px}
 .msg{min-height:1.5em;font-size:14px;color:#6e6e73}
 footer{padding:14px 0;text-align:center;font-size:11px;color:#a1a1a6}
 </style>
 </head>
 <body>
+<button type="button" class="back" id="bk"></button>
 <main>
   <div class="ic" id="ic" hidden><img id="icimg" alt=""></div>
   <h1 id="nm"></h1>
   <p id="ds"></p>
-  <button type="button" id="go" disabled></button>
+  <button type="button" class="go" id="go" disabled></button>
   <div class="msg" id="msg" role="status"></div>
 </main>
 <footer>Created by Frenchfries777 · © 2026 Frenchfries777 · CC BY-NC-ND 4.0</footer>
@@ -42,14 +44,16 @@ var IDS=['stickseum','crownenvoy','beaconfall','isleport','vowkeep','tumblecrown
          'planetsearch','speedcode','timeline','munjang','balance','proverb',
          'code','blocks','sheet','docs','slides','lab','draw','score','video'];
 var ko=/^ko/i.test(navigator.language||'ko');
-var T=ko?{install:'설치',installing:'설치 중…',done:'설치됐어요',have:'이미 앱으로 열려 있어요',
-  ios:'공유 버튼 → 홈 화면에 추가를 눌러 주세요.',other:'브라우저 메뉴(⋮) → 앱 설치(또는 홈 화면에 추가)를 눌러 주세요.',
+var T=ko?{back:'‹ 뒤로',install:'설치',installing:'설치 중…',done:'설치됐어요',have:'이미 앱으로 열려 있어요',
+  ios:'공유 버튼 → 홈 화면에 추가를 눌러 주세요.',other:'주소창 오른쪽의 설치 아이콘이나 브라우저 메뉴(⋮) → 앱 설치(또는 홈 화면에 추가)를 눌러 주세요. 이미 설치했다면 앱 목록에서 열어 보세요.',
   after:'앱 목록이나 홈 화면에서 열어 보세요.',bad:'설치할 수 있는 앱이 아니에요.',cancel:'설치를 취소했어요.'}
- :{install:'Install',installing:'Installing…',done:'Installed',have:'Already open as an app',
-  ios:'Tap Share, then Add to Home Screen.',other:'Use the browser menu (⋮) → Install app (or Add to Home screen).',
+ :{back:'‹ Back',install:'Install',installing:'Installing…',done:'Installed',have:'Already open as an app',
+  ios:'Tap Share, then Add to Home Screen.',other:'Use the install icon in the address bar or the browser menu (⋮) → Install app (or Add to Home screen). If already installed, open it from your app list.',
   after:'Open it from your app list or home screen.',bad:'This app cannot be installed.',cancel:'Installation cancelled.'};
 var $=function(i){return document.getElementById(i)};
 var id=(new URLSearchParams(location.search).get('app')||'').toLowerCase();
+var bk=$('bk'); bk.textContent=T.back;
+bk.onclick=function(){ if(history.length>1) history.back(); else location.href='https://apps.frenchfries777.com/'; };
 var go=$('go'), msg=$('msg'), ev=null, standalone=false;
 try{standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}catch(e){}
 var ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
