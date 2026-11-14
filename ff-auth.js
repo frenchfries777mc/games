@@ -1056,10 +1056,10 @@ function goNote(n){
   if(n.kind==='invite'){ var v=invMap[n.ref]; if(v&&inviteLive(v)&&/^[a-z0-9_.\/-]+\.html$/i.test(v.path)&&v.path.indexOf('..')<0) window.open(inviteUrl(v),'_blank'); else toast(noteText(n)); return; }
   if(n.kind==='dm') return openDM(n.actor_id);
   if(n.kind==='chat'){ location.href='https://frenchfries777.com/chat/?msg='+encodeURIComponent(n.ref); return; }
-  if(n.kind==='coin'){ if(onHub&&window.FFHub&&FFHub.coin) return FFHub.coin(); location.href=hubUrl+'#coin'; return; }
-  if(n.kind==='mentionc'){ if(onHub&&window.FFHub) return FFHub.tab('chat'); location.href=hubUrl+'#chat'; return; }
-  if(n.kind==='comment'||n.kind==='like'||n.kind==='mention'||n.kind==='friendpost'){ if(onHub&&window.FFHub) return FFHub.openPost(n.ref); location.href=hubUrl+'?post='+encodeURIComponent(n.ref)+'#community'; return; }
-  if(onHub&&window.FFHub) return FFHub.tab('fb'); location.href=hubUrl+'#feedback';
+  if(n.kind==='coin'){ if(window.FFHub&&FFHub.coin) return FFHub.coin(); location.href=hubUrl+'#coin'; return; }
+  if(n.kind==='mentionc'){ if(window.FFHub) return FFHub.tab('chat'); location.href=hubUrl+'#chat'; return; }
+  if(n.kind==='comment'||n.kind==='like'||n.kind==='mention'||n.kind==='friendpost'){ if(window.FFHub) return FFHub.openPost(n.ref); location.href=hubUrl+'?post='+encodeURIComponent(n.ref)+'#community'; return; }
+  if(window.FFHub) return FFHub.tab('fb'); location.href=hubUrl+'#feedback';
 }
 function watchNotes(){
   if(noteChan){ try{ sb.removeChannel(noteChan); }catch(e){} noteChan=null; }
@@ -1161,7 +1161,7 @@ function votePaint(){
   for(var i=0;i<ws.length;i++){ var w=ws[i], b=w.querySelector('.ffa-vote');
     if(!vState.show){ if(b) b.remove(); continue; }
     if(!b){ b=document.createElement('button'); b.type='button'; b.className='ffa-vote';
-      b.onclick=function(e){ e.stopPropagation(); closeMenus(); if(onHub&&window.FFHub&&FFHub.polls) return FFHub.polls(); location.href=HUB+'#poll'; };
+      b.onclick=function(e){ e.stopPropagation(); closeMenus(); if(window.FFHub&&FFHub.polls) return FFHub.polls(); location.href=HUB+'#poll'; };
       var me=w.querySelector('.ffa-chip,.ffa-btn'); w.insertBefore(b, me||null); }
     var t=VT[lang()]||VT.en; b.title=t; b.setAttribute('aria-label',t);
     b.innerHTML='📊<span class="t">'+esc(t)+'</span>'+(vState.todo?'<i class="ffa-vb" style="font-style:normal">'+(vState.todo>9?'9+':vState.todo)+'</i>':''); }
