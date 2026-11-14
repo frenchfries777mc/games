@@ -176,9 +176,14 @@ function newRacer(o, W) {
   const s = W.starts[o.slot % W.starts.length];
   const r = Object.assign(newBody(s.x, s.y), { id: o.id, name: o.name, col: o.col, skin: o.skin || '', bot: !!o.bot, slot: o.slot, own: !!o.own,
     emo: 0, emoT: 0, emoCd: 0, face: 1, aim: 0, hp: MAX_HP, wep: null, cd: 0, inv: 0, swing: 0, flash: 0, fin: false, finT: 0, anim: 0, node: -1, prog: 1, ko: 0,
-    ai: o.bot ? { plan: null, stuck: 0, best: Infinity, wait: 0, noise: 0.15 + Math.random() * 0.25, aimT: 0, react: 0.2 + Math.random() * 0.3, err: 0.03 + Math.random() * 0.07 } : null,
+    ai: o.bot ? botAI() : null,
     tx: s.x, ty: s.y });
   return r;
+}
+/* 봇 실력: 사람 같은 작은 실수는 남기되, 반응이 빠르고 길을 거의 안 틀려요 */
+function botAI() {
+  const sk = Math.random(), lo = 1 - sk;      // 0=보통 ~ 1=아주 잘함 (봇마다 조금씩 달라요)
+  return { plan: null, stuck: 0, best: Infinity, wait: 0, noise: 0.02 + lo * 0.07, aimT: 0, react: 0.05 + lo * 0.07, err: 0.002 + lo * 0.009, aimErr: 0.015 + lo * 0.05, tgtId: null };
 }
 function respawn(W, r) {
   const s = W.starts[r.slot % W.starts.length];
@@ -193,7 +198,7 @@ function progressOf(W, r) {
 }
 
 /* ---------- 봇 조종 ---------- */
-function botInput(G, r, dt) {
+function botMove(G, r, dt) {
   const W = G.W, ai = r.ai, inp = { d: 0, jp: false, j: true };
   if (r.fin || G.phase !== 'race') return { d: 0, jp: false, j: false };
   if (ai.wait > 0) { ai.wait -= dt; return { d: 0, jp: false, j: false }; }
@@ -220,7 +225,7 @@ function botInput(G, r, dt) {
     if (n >= 0 && (!ai.plan || ai.plan.from !== n || ai.plan.done)) {
       let best = null, bc = Infinity;
       for (const e of W.edges[n] || []) { const c = e.t + W.dist[e.to] + Math.random() * ai.noise * 0.3; if (c < bc) { bc = c; best = e; } }
-      ai.plan = best ? { from: n, e: best, done: false, launched: false, shift: Math.random() < ai.err ? (Math.random() < .5 ? -1 : 1) * (5 + Math.random() * 8) : 0 } : null;
+      ai.plan = best ? { from: n, e: best, done: false, launched: false, align: 0, shift: Math.random() < ai.err ? (Math.random() < .5 ? -1 : 1) * (5 + Math.random() * 8) : 0 } : null;
       if (ai.plan && Math.random() < ai.err * .45) ai.wait = .3 + Math.random() * .7;     // 잠깐 망설여요
       if (ai.plan && ai.plan.shift && Math.random() < .35 && W.edges[n].length > 1) ai.plan.e = W.edges[n][(Math.random() * W.edges[n].length) | 0];   // 엉뚱한 길로 가 봐요
     }
@@ -230,9 +235,9 @@ function botInput(G, r, dt) {
       if (e.walk) { inp.d = e.walk; }
       else {
         const lx = tx * TS + e.act.off * (TS - PH.W) + p.shift;
-        const dx = lx - r.x;
-        if (Math.abs(dx) > 2.5) inp.d = Math.sign(dx) * (Math.abs(dx) < 10 && Math.abs(r.vx) > 60 ? 0 : 1);
-        else if (Math.abs(r.vx) > 45 && e.act.d !== Math.sign(r.vx)) inp.d = 0;
+        const dx = lx - r.x, tol = 2.5 + p.align * 14; p.align += dt;      // 무빙워크 위에서 한 점에 맞추느라 오래 헤매지 않게, 시간이 갈수록 오차를 넉넉히 받아요
+        if (Math.abs(dx) > tol) inp.d = Math.sign(dx) * (Math.abs(dx) < 10 && Math.abs(r.vx) > 60 && p.align < 0.5 ? 0 : 1);
+        else if (p.align < 0.7 && Math.abs(r.vx) > 45 && e.act.d !== Math.sign(r.vx)) inp.d = 0;
         else if (e.act.jump) { inp.jp = true; inp.d = e.act.delay ? 0 : e.act.d; p.launched = true; p.t = 0; }
         else { inp.d = e.act.d; p.launched = true; p.t = 0; }
       }
@@ -245,20 +250,49 @@ function botInput(G, r, dt) {
   }
   return inp;
 }
+/* 길 위의 함정을 뛰어넘고, 빈손이면 가까운 무기를 주우러 가요 */
+function botFloorOK(W, r, tx0, tx1) {
+  const fr = Math.floor((r.y + PH.H) / TS) - 1, a = Math.min(tx0, tx1), b = Math.max(tx0, tx1);
+  for (let tx = a; tx <= b; tx++) if (isSolid(tileAt(W, tx, fr)) || isSolid(tileAt(W, tx, fr - 1)) || !canStand(tileAt(W, tx, fr + 1)) || tileAt(W, tx, fr + 1) === 'I') return false;
+  return true;
+}
+function botInput(G, r, dt) {
+  const W = G.W, ai = r.ai, inp = botMove(G, r, dt);
+  if (r.fin || G.phase !== 'race' || !r.ground || r.stun > 0 || inLift(W, r)) return inp;
+  const cx = r.x + PH.W / 2, dir = inp.d || Math.sign(r.vx);
+  if (dir) for (const t of G.traps) {
+    if (t.by === r.id && t.arm > 0) continue;
+    const dx = (t.x - cx) * dir;
+    if (dx > 0 && dx < 22 + Math.abs(r.vx) * 0.1 && Math.abs(t.y - (r.y + PH.H)) < 10) { inp.jp = true; inp.j = true; return inp; }
+  }
+  ai.seek = Math.max(0, (ai.seek || 0) - dt * 0.5);
+  if (!r.wep && !(ai.plan && ai.plan.launched) && ai.seek < 2) {
+    let hit = null, bd = 90;
+    for (const it of G.items) { const dx = it.x - cx; if (it.on && Math.abs(dx) < bd && Math.abs(it.y - (r.y + PH.H / 2)) < 18 && botFloorOK(W, r, Math.floor(cx / TS), Math.floor(it.x / TS))) { bd = Math.abs(dx); hit = it; } }
+    if (hit && Math.abs(hit.x - cx) > 5) { inp.d = Math.sign(hit.x - cx); inp.jp = false; ai.seek += dt * 1.5; }
+  }
+  return inp;
+}
 function botFight(G, r) {
   const ai = r.ai; if (!r.wep || r.cd > 0 || r.fin || G.phase !== 'race') return null;
-  const w = WEAPONS[r.wep.k], reach = w.kind === 'melee' ? w.range + 8 : w.reach;
+  const w = WEAPONS[r.wep.k], proj = w.kind === 'shot' || w.kind === 'rocket' || w.kind === 'spray', reach = w.kind === 'melee' ? w.range + 8 : w.reach;
   if (w.kind === 'boost') return r.ground && r.boost <= 0 ? 0 : null;
-  if (w.kind === 'trap') { for (const o of G.racers) if (o !== r && !o.fin && Math.abs(o.x - r.x) < 110 && Math.abs(o.y - r.y) < 30 && o.prog > r.prog && r.ground) return 0; return null; }
-  let tgt = null, bd = Infinity;
+  if (w.kind === 'trap') { for (const o of G.racers) if (o !== r && !o.fin && Math.abs(o.x - r.x) < 140 && Math.abs(o.y - r.y) < 30 && o.prog > r.prog && r.ground) return 0; return null; }
+  const cx = r.x + PH.W / 2, cy = r.y + 8;
+  let tgt = null, bs = -Infinity, ax = 0, ay = 0;
   for (const o of G.racers) {
     if (o === r || o.fin || o.inv > 0) continue;
-    const dx = o.x - r.x, dy = o.y - r.y, d = Math.hypot(dx, dy);
-    if (d < reach && d < bd && Math.abs(dy) < (w.kind === 'rocket' ? 70 : 34) && clearLine(G.W, r.x + PH.W / 2, r.y + 8, o.x + PH.W / 2, o.y + 8)) { bd = d; tgt = o; }
+    const ox = o.x + 5, oy = o.y + 11, dx = ox - cx, dy = oy - cy, d = Math.hypot(dx, dy);
+    if (d > reach || Math.abs(dy) > (w.kind === 'rocket' ? 70 : proj ? 44 : 34) || !clearLine(G.W, cx, cy, ox, oy)) continue;
+    const sc = -d + (o.prog < r.prog ? 40 : 0) + (o.wep ? 10 : 0);      // 앞서가는 상대를 먼저 노려요
+    if (sc > bs) {
+      bs = sc; tgt = o; ax = dx; ay = dy;
+      if (proj) { const lead = Math.min(0.3, d / w.speed) * 0.5; ax += o.vx * lead; ay += o.ground ? 0 : o.vy * lead * 0.5; }      // 움직이는 상대는 조금 앞을 보고 쏴요
+    }
   }
   if (!tgt) { ai.aimT = 0; return null; }
   ai.aimT += 1 / 60; if (ai.aimT < ai.react) return null;
-  return Math.atan2(tgt.y - r.y, tgt.x - r.x) + (Math.random() - 0.5) * 0.15;
+  return Math.atan2(ay, ax) + (Math.random() - 0.5) * 2 * (w.cd < 0.2 ? Math.max(ai.aimErr, 0.075) : ai.aimErr);      // 연사 무기는 흩뿌리듯 쏴요
 }
 function clearLine(W, x0, y0, x1, y1) {
   const n = Math.ceil(Math.hypot(x1 - x0, y1 - y0) / 6);
