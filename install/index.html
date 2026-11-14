@@ -46,10 +46,14 @@ var IDS=['stickseum','crownenvoy','beaconfall','isleport','vowkeep','tumblecrown
 var ko=/^ko/i.test(navigator.language||'ko');
 var T=ko?{back:'‹ 뒤로',install:'설치',installing:'설치 중…',done:'설치됐어요',have:'이미 앱으로 열려 있어요',
   ios:'공유 버튼 → 홈 화면에 추가를 눌러 주세요.',other:'주소창 오른쪽의 설치 아이콘이나 브라우저 메뉴(⋮) → 앱 설치(또는 홈 화면에 추가)를 눌러 주세요. 이미 설치했다면 앱 목록에서 열어 보세요.',
-  after:'앱 목록이나 홈 화면에서 열어 보세요.',bad:'설치할 수 있는 앱이 아니에요.',cancel:'설치를 취소했어요.'}
+  after:'앱 목록이나 홈 화면에서 열어 보세요.',bad:'설치할 수 있는 앱이 아니에요.',cancel:'설치를 취소했어요.',
+  apk:'받은 파일을 열어 설치해 주세요. 처음에는 \'출처를 알 수 없는 앱\' 허용을 물어볼 수 있어요.',
+  exe:'받은 파일을 실행해 주세요. Windows 경고가 뜨면 \'추가 정보\' → \'실행\'을 누르면 돼요.',fail:'파일을 받지 못했어요. 다시 눌러 주세요.'}
  :{back:'‹ Back',install:'Install',installing:'Installing…',done:'Installed',have:'Already open as an app',
   ios:'Tap Share, then Add to Home Screen.',other:'Use the install icon in the address bar or the browser menu (⋮) → Install app (or Add to Home screen). If already installed, open it from your app list.',
-  after:'Open it from your app list or home screen.',bad:'This app cannot be installed.',cancel:'Installation cancelled.'};
+  after:'Open it from your app list or home screen.',bad:'This app cannot be installed.',cancel:'Installation cancelled.',
+  apk:'Open the downloaded file to install. You may be asked to allow unknown apps once.',
+  exe:'Run the downloaded file. If Windows shows a warning, choose More info then Run anyway.',fail:'Download failed. Please try again.'};
 var $=function(i){return document.getElementById(i)};
 var id=(new URLSearchParams(location.search).get('app')||'').toLowerCase();
 var bk=$('bk'); bk.textContent=T.back;
@@ -57,6 +61,8 @@ bk.onclick=function(){ if(history.length>1) history.back(); else location.href='
 var go=$('go'), msg=$('msg'), ev=null, standalone=false;
 try{standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}catch(e){}
 var ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
+var android=/android/i.test(navigator.userAgent), win=!android&&/windows/i.test(navigator.userAgent);
+var app=null;
 
 if(IDS.indexOf(id)<0){ $('nm').textContent=T.bad; go.hidden=true; return; }
 
@@ -64,7 +70,7 @@ if(IDS.indexOf(id)<0){ $('nm').textContent=T.bad; go.hidden=true; return; }
 var mf='/games/pwa/'+id+'.webmanifest';
 var ml=document.createElement('link'); ml.rel='manifest'; ml.href=mf; document.head.appendChild(ml);
 fetch(mf).then(function(r){ if(!r.ok) throw 0; return r.json(); }).then(function(m){
-  $('nm').textContent=m.name||id; document.title=(m.name||id)+' · '+T.install;
+  app={name:m.name||id,url:new URL(m.start_url||'/',location.origin).href}; $('nm').textContent=m.name||id; document.title=(m.name||id)+' · '+T.install;
   $('ds').textContent=m.description||'';
   var ic=(m.icons||[]).filter(function(i){return /512|192/.test(i.sizes||'')}).sort(function(a,b){return parseInt(b.sizes)-parseInt(a.sizes)})[0];
   if(ic){ $('icimg').src=ic.src; $('ic').hidden=false; }
@@ -78,7 +84,18 @@ if(standalone){ go.textContent=T.install; go.disabled=true; msg.textContent=T.ha
 go.textContent=T.install; go.disabled=false;
 addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); ev=e; ready(); });
 addEventListener('appinstalled',function(){ ev=null; installedUI(); });
+function save(blob,name){ var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },4000); }
 go.onclick=function(){
+  if(android){ var a=document.createElement('a'); a.href='/games/install/apk/'+id+'.apk'; a.download=id+'.apk'; document.body.appendChild(a); a.click(); a.remove(); msg.textContent=T.apk; return; }
+  if(win&&app){
+    go.disabled=true; go.textContent=T.installing;
+    fetch('/games/install/setup.exe').then(function(r){ if(!r.ok) throw 0; return r.arrayBuffer(); }).then(function(buf){
+      var cfg='\n#FF777CFG#'+JSON.stringify({id:id,name:app.name,url:app.url})+'#END#';
+      save(new Blob([buf,new TextEncoder().encode(cfg)],{type:'application/octet-stream'}),app.name.replace(/[<>:"\/\\|?*]/g,'')+' 설치.exe');
+      go.textContent=T.install; go.disabled=false; msg.textContent=T.exe;
+    }).catch(function(){ go.textContent=T.install; go.disabled=false; msg.textContent=T.fail; });
+    return;
+  }
   var e=ev;
   if(!e){ msg.textContent=ios?T.ios:T.other; return; }
   ev=null; go.disabled=true; go.textContent=T.installing; e.prompt();
