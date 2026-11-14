@@ -34,14 +34,25 @@ async function paint(){
   if(u){ var f=await sb.rpc('ff_online_friends'), rows=((f&&!f.error&&f.data)||[]).filter(function(x){ return !(FFAuth.isBlocked&&FFAuth.isBlocked(x.user_id)); });
     if(rows.length){ await loadNames(rows.map(function(x){ return x.user_id; })); await loadAv(rows.slice(0,8).map(function(x){ return x.user_id; }));
       html+='<span class="on-f"><span>'+esc(L()[1])+'</span> '+rows.slice(0,8).map(function(x){ return '<span class="on-p">'+'<img class="on-i" src="https://frenchfries777.com/games/avatars/'+encodeURIComponent(/^[a-z0-9_-]{2,30}$/.test(AV[x.user_id]||'')?AV[x.user_id]:'account')+(/^(stk|ce|bf|ip|dp|vk)_/.test(AV[x.user_id]||'')?'.png':'.svg')+'" alt="" width="20" height="20" onerror="this.style.display=\'none\'">'+esc(names[x.user_id]||'???')+'<small>'+esc(gname(x.place))+'</small></span>'; }).join('')+(rows.length>8?'<span>+'+(rows.length-8)+'</span>':'')+'</span>'; } }
-  if(who){ var w=await sb.rpc('ff_online_who'), wr=((w&&!w.error&&w.data)||[]).filter(function(x){ return !(FFAuth.isBlocked&&FFAuth.isBlocked(x.user_id)); });   // 접속자 수를 누르면 누가 있는지 펼쳐요
-    if(w&&!w.error){ var gs=Math.max(0,(c.all||0)-((w.data||[]).length));
-      html+='<span class="on-f" style="flex-basis:100%">'+wr.map(function(x){ return '<span class="on-p">'+esc(x.name||'???')+'<small>'+esc(gname(x.place))+'</small></span>'; }).join('')+(gs?'<span class="on-c"><span>'+esc(L()[3]||'Guests')+'</span> <b>'+gs+'</b></span>':'')+'</span>'; } }
+  if(who){ var w=await sb.rpc('ff_online_who'), wr=((w&&!w.error&&w.data)||[]).filter(function(x){ return !(FFAuth.isBlocked&&FFAuth.isBlocked(x.user_id)); });   // 접속자 수를 누르면 누가 있는지 창으로 보여줘요
+    if(w&&!w.error&&who){ var gs=Math.max(0,(c.all||0)-((w.data||[]).length));
+      onlPanel(esc(L()[0].replace('{0}',c.all||0)),wr.map(function(x){ return {uid:esc(x.user_id),name:esc(x.name||'???'),place:esc(gname(x.place))}; }),esc(L()[3]||'Guests'),gs); } }
   bar.innerHTML=html;
 }
 var who=false;
-function tap(e){ var t=e.target&&e.target.closest&&e.target.closest('.on-n'); if(!t||(e.type==='keydown'&&e.key!=='Enter'&&e.key!==' ')) return; e.preventDefault(); who=!who; paint(); }
-bar.addEventListener('click',tap); bar.addEventListener('keydown',tap);
+function onlClose(){ who=false; var o=document.getElementById('onlWho'); if(o&&o.parentNode) o.parentNode.removeChild(o); }
+function onlPanel(title,rows,gtxt,gn){ var o=document.getElementById('onlWho'), st=0;
+  if(!o){ o=document.createElement('div'); o.id='onlWho'; o.setAttribute('role','dialog'); o.setAttribute('aria-modal','true'); o.style.cssText='position:fixed;left:0;top:0;right:0;bottom:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.6)';
+    o.addEventListener('click',function(e){ if(e.target===o||(e.target.closest&&e.target.closest('.ow-x'))) onlClose(); }); document.body.appendChild(o); }
+  else{ var l0=o.querySelector('.ow-l'); if(l0) st=l0.scrollTop; }
+  var row='display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 16px;border-top:1px solid #2a2a2a;font-size:14px';
+  o.innerHTML='<div style="background:#181818;color:#eee;border:1px solid #333;border-radius:14px;width:min(380px,100%);max-height:min(72vh,540px);display:flex;flex-direction:column;box-shadow:0 12px 40px rgba(0,0,0,.6)">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px"><b style="font-size:15px"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#3ddc84;margin-right:8px"></span>'+title+'</b><button type="button" class="ow-x" aria-label="close" style="background:none;border:0;color:#aaa;font-size:22px;line-height:1;cursor:pointer;padding:0 4px">&times;</button></div>'
+    +'<div class="ow-l" style="overflow:auto">'+rows.map(function(r){ return '<div style="'+row+'"><a class="who on-p" data-uid="'+r.uid+'" data-notr style="font-weight:600;color:inherit">'+r.name+'</a><small style="opacity:.6" data-notr>'+r.place+'</small></div>'; }).join('')
+    +(gn?'<div style="'+row+'"><span>'+gtxt+'</span><b data-notr>'+gn+'</b></div>':'')+'</div></div>';
+  var l=o.querySelector('.ow-l'); if(l) l.scrollTop=st; }
+function tap(e){ if(e.type==='keydown'&&e.key==='Escape'&&who){ onlClose(); return; } var t=e.target&&e.target.closest&&e.target.closest('.on-n'); if(!t||(e.type==='keydown'&&e.key!=='Enter'&&e.key!==' ')) return; e.preventDefault(); who=!who; if(who) paint(); else onlClose(); }
+bar.addEventListener('click',tap); bar.addEventListener('keydown',tap); document.addEventListener('keydown',tap);
 function start(){ sb=FFAuth.client&&FFAuth.client(); if(!sb) return; paint(); setInterval(function(){ if(document.visibilityState==='visible') paint(); },20000);
   document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible') paint(); });
   window.addEventListener('ffpresence',function(){ setTimeout(paint,600); }); setTimeout(paint,4000); }
