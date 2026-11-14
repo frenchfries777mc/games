@@ -1161,7 +1161,7 @@ function votePaint(){
   for(var i=0;i<ws.length;i++){ var w=ws[i], b=w.querySelector('.ffa-vote');
     if(!vState.show){ if(b) b.remove(); continue; }
     if(!b){ b=document.createElement('button'); b.type='button'; b.className='ffa-vote';
-      b.onclick=function(e){ e.stopPropagation(); closeMenus(); if(window.FFHub&&FFHub.polls) return FFHub.polls(); location.href=HUB+'#poll'; };
+      b.onclick=function(e){ e.stopPropagation(); closeMenus(); if(window.FFHub&&FFHub.polls) return FFHub.polls(); location.href=HUBSITE+'#poll'; };
       var me=w.querySelector('.ffa-chip,.ffa-btn'); w.insertBefore(b, me||null); }
     var t=VT[lang()]||VT.en; b.title=t; b.setAttribute('aria-label',t);
     b.innerHTML='📊<span class="t">'+esc(t)+'</span>'+(vState.todo?'<i class="ffa-vb" style="font-style:normal">'+(vState.todo>9?'9+':vState.todo)+'</i>':''); }
