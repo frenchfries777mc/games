@@ -1,0 +1,26 @@
+{
+  "name": "Frenchfries777 Chat",
+  "short_name": "FF Chat",
+  "description": "친구와 1:1 또는 그룹으로 대화해요. Frenchfries777 계정 하나로 바로 쓸 수 있어요.",
+  "lang": "ko",
+  "id": "/",
+  "start_url": "https://chat.frenchfries777.com/",
+  "scope": "https://chat.frenchfries777.com/",
+  "display": "standalone",
+  "background_color": "#0e0e0e",
+  "theme_color": "#0e0e0e",
+  "icons": [
+    {
+      "src": "/games/pwa/icons/chat-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/games/pwa/icons/chat-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

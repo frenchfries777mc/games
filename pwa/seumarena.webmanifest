@@ -1,0 +1,26 @@
+{
+  "name": "SeumArena",
+  "short_name": "SeumArena",
+  "description": "Stickseum의 스틱맨들이 탑다운 아레나로! 3대3 팀 난투에서 스킬을 골라 상대 팀을 쓰러뜨리세요!",
+  "lang": "ko",
+  "id": "/seumarena/",
+  "start_url": "/seumarena/",
+  "scope": "/seumarena/",
+  "display": "standalone",
+  "background_color": "#0c0e13",
+  "theme_color": "#0c0e13",
+  "icons": [
+    {
+      "src": "/games/pwa/icons/seumarena-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/games/pwa/icons/seumarena-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
