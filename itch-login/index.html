@@ -17,7 +17,7 @@ async function ensureProfile(user){
   var r=await sb.from('profiles').select('username').eq('id',user.id).maybeSingle();
   if(r&&r.data) return;
   window.FFAuthClient=sb; say('아이디를 정해 주세요.');   /* 처음 Google로 들어온 사람: 허브의 '아이디 정하기' 창이 떠요 */
-  var s=document.createElement('script'); s.src='https://frenchfries777.com/games/ff-auth.js'; document.head.appendChild(s);
+  var s=document.createElement('script'); s.src='https://frenchfries777.com/games/ff-auth.js?v=20261114c'; document.head.appendChild(s);
   await new Promise(function(res){ var t=setInterval(async function(){ var z=await sb.from('profiles').select('username').eq('id',user.id).maybeSingle(); if(z&&z.data){ clearInterval(t); res(); } },1500); });
 }
 (async function(){
