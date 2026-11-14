@@ -57,7 +57,7 @@ try{ if(!window.FFInstall){ var is=document.createElement('script'); is.src=base
 /* 테마(다크 · 라이트)와 글자 크기: 허브나 게임 사이트의 ⚙️ 에서 고르면 모두 같이 바뀌어요.
    <html> 에 data-ff-theme="dark|light" 와 data-ff-size="s|m|l|xl" 를 붙이고, 허브와 게임 사이트(게임 화면은 빼고)는 크기만큼 확대해요.
    라이트 색은 각 페이지 CSS 가 html[data-ff-theme=light] 로 정해요. */
-var TK='ff.theme', SK='ff.size', THEMES=['dark','light'], ZOOM={s:0.9,m:1,l:1.12,xl:1.25};
+var TK='ff.theme', SK='ff.size', THEMES=['dark','light','yellow','red','blue'], ZOOM={s:0.9,m:1,l:1.12,xl:1.25};
 /* game site pages that get a light look here (their own CSS only has the dark one): 'site' or 'site/page' */
 function sitePage(){ var m=/\/(stickseum|crownenvoy|beaconfall)\/(?:(index|codex|ranking|balance|mods)\.html)?$/i.exec(location.pathname||''); return m?m[1].toLowerCase()+'/'+(m[2]||'index').toLowerCase():''; }
 function isSite(){ var p=location.pathname||''; return !/\.html$/i.test(p) || /\/index\.html$/i.test(p) || !!sitePage(); }
@@ -123,8 +123,8 @@ function barCss(){ if(document.getElementById('ff-bar')) return; var n=siteName(
   var css=(BAR.all||'')+(BAR[n]||''); var st=document.createElement('style'); st.id='ff-bar'; st.textContent=css; (document.head||document.documentElement).appendChild(st); }
 function lightCss(){ var k=sitePage(); if(!k||document.getElementById('ff-light')) return; var css=(LIGHT[k.split('/')[0]]||'')+(LIGHT[k]||'')+(ACC[k.split('/')[0]]||''); if(!css) return;
   var st=document.createElement('style'); st.id='ff-light'; st.textContent=css; (document.head||document.documentElement).appendChild(st); }      // a page's own html[data-ff-theme=light] rules can still override these
-function tget(){ var t='dark', z='m'; try{ var tv=localStorage.getItem(TK); if(tv==='yellow') tv='light'; else if(tv==='red'||tv==='blue') tv='dark'; if(THEMES.indexOf(tv)>=0) t=tv; var v=localStorage.getItem(SK); if(ZOOM[v]) z=v; }catch(e){} return {theme:t, size:z}; }
-function tapply(){ var st=tget(), h=document.documentElement; h.setAttribute('data-ff-theme',st.theme==='light'?'light':'dark'); h.removeAttribute('data-ff-accent'); h.setAttribute('data-ff-size',st.size); if(isSite()) h.style.zoom=ZOOM[st.size]===1?'':String(ZOOM[st.size]); }
+function tget(){ var t='dark', z='m'; try{ var tv=localStorage.getItem(TK); if(THEMES.indexOf(tv)>=0) t=tv; var v=localStorage.getItem(SK); if(ZOOM[v]) z=v; }catch(e){} return {theme:t, size:z}; }
+function tapply(){ var st=tget(), h=document.documentElement; h.setAttribute('data-ff-theme',(st.theme==='light'||st.theme==='yellow')?'light':'dark'); if(st.theme==='yellow'||st.theme==='red'||st.theme==='blue') h.setAttribute('data-ff-accent',st.theme); else h.removeAttribute('data-ff-accent'); h.setAttribute('data-ff-size',st.size); if(isSite()) h.style.zoom=ZOOM[st.size]===1?'':String(ZOOM[st.size]); }
 /* 새 디자인(2026-11-06): 검정/흰색 바탕 + 황금 포인트. 허브·게임 첫 화면·교육·도구가 같은 변수(--bg --panel --line --text --dim --fry --fry2)를 읽어요. 게임 사이트 안쪽 화면은 자기 색을 써요. */
 function skinCss(){ if(document.getElementById('ff-skin')) return; if(/\/(stickseum|crownenvoy|beaconfall|isleport|vowkeep|tumblecrown|dummyparty|gatecrash|kitchendefense)\//i.test(location.pathname||'')) return;
   var D='html[data-ff-theme=dark]:root', W='html[data-ff-theme=light]:root';

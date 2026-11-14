@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
-<script src="../ff-lang.js?v=20261109c"></script>
+<script src="../ff-lang.js?v=20261114a"></script>
 <script id="i18n">
 /* Site translation (same 6 languages and the same saved choice as the game).
    The pages are written in Korean; this file translates their text in place. Whole text nodes are looked up first (S: site strings),
@@ -89,6 +89,10 @@ img{max-width:100%}
 #onlineBar{display:flex;align-items:center;flex-wrap:nowrap;white-space:nowrap;overflow:hidden;max-width:62vw;gap:8px 12px;height:44px;box-sizing:border-box;padding:0 16px;border-radius:10px;background:rgba(14,14,14,.6);border:1px solid #3a3530;font-size:14px;color:#ece6d8}
 #onlineBar:empty{display:none}
 #ffTop .tb{margin:0}
+.srx-btn{flex:none;width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:rgba(14,14,14,.6);border:1px solid #3a3530;color:#ece6d8;font-size:16px;cursor:pointer;padding:0}
+.srx-btn:hover{border-color:#d9b45f}
+.ffx-foot{padding:26px 0 48px;margin-top:10px;border-top:1px solid #2e2b25;font-size:13px;color:#8d877a;display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px}
+.ffx-foot a{color:#a39c8c;text-decoration:none}.ffx-foot a:hover{color:#f0cf7e}
 .ffx-nav a:hover{background:#1c1a16}
 @media(max-width:860px){
   .ffx-root{flex-direction:column!important;flex-wrap:nowrap!important}
@@ -99,6 +103,7 @@ img{max-width:100%}
   .ffx-root>main>div{padding-left:18px!important;padding-right:18px!important}
 }
 </style>
+<link rel="stylesheet" href="https://frenchfries777.com/ff-themes.css?v=1">
 </head>
 <body data-root="../">
 <div class="ffx-root" style="background:#0e0e0e;color:#ece6d8;min-height:1500px;display:flex;flex-wrap:wrap;align-items:stretch">
@@ -127,7 +132,7 @@ img{max-width:100%}
 <img src="/img/pixel-bg.png" alt="도트 풍경" style="position:absolute;left:0;top:0;width:100%;height:auto;display:block;image-rendering:pixelated">
 <div style="position:absolute;left:0;top:0;width:100%;height:100%;background:linear-gradient(180deg,rgba(14,14,14,.1) 0,rgba(14,14,14,.1) 120px,rgba(14,14,14,.8) 430px,rgba(14,14,14,.78) 100%)"></div>
 <div style="position:relative;padding:0 40px;display:flex;flex-direction:column">
-<div id="ffTop"><div id="onlineBar"></div><div class="tb"><span data-ff-account data-ff-nohub></span></div></div>
+<div id="ffTop"><button type="button" class="srx-btn" id="srxBtn" aria-label="검색" title="검색">🔍</button><div id="onlineBar"></div><div class="tb"><span data-ff-account data-ff-nohub></span></div></div><script>(function(){var b=document.getElementById('srxBtn');if(!b)return;b.addEventListener('click',function f(e){if(b.onclick)return;b.removeEventListener('click',f);e.stopImmediatePropagation();e.preventDefault();var s=document.createElement('script');s.src='https://frenchfries777.com/games/hub.js?v=20261109a';s.onload=function(){setTimeout(function(){if(b.onclick)b.click();},500);};document.head.appendChild(s);},true);})();</script>
 <div style="padding:70px 0 34px;display:flex;flex-direction:column;gap:16px">
 <span style="font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;letter-spacing:.2em;color:#f0cf7e">PROTOTYPES</span>
 <h1 style="margin:0;font-family:'Oswald',sans-serif;font-weight:700;font-size:clamp(48px,7vw,96px);line-height:.95;letter-spacing:.01em">Prototypes</h1>
@@ -139,6 +144,7 @@ img{max-width:100%}
 <h2 style="margin:0;font-family:'Oswald','Noto Sans KR',sans-serif;font-weight:600;font-size:28px;letter-spacing:.04em">시험 게임</h2>
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px"><a href="/games/prototypes/kitchendefense/" style="display:flex;flex-direction:column;border-radius:16px;overflow:hidden;background:rgba(23,23,23,.92);border:1px solid #2e2b25;min-width:0"><span style="display:flex;align-items:center;justify-content:center;width:100%;aspect-ratio:1200/630;background:linear-gradient(135deg,#2b1d15,#6b3f1f)"><img src="/_blob/4ded1d58fd4fbbc74f871aea53ca766b" alt="Kitchen Defense" style="width:34%;max-width:160px;display:block"></span><span style="padding:18px 20px 20px;display:flex;flex-direction:column;gap:6px"><b style="font-family:'Oswald',sans-serif;font-size:22px;letter-spacing:.04em">Kitchen Defense</b><span style="font-size:14px;line-height:1.6;color:#a39c8c">반란을 일으킨 식재료들로부터 냉장고를 지키는 타워 디펜스예요. 혼자 또는 최대 4명이 함께 해요.</span></span></a><div style="visibility:hidden;aspect-ratio:1200/630"></div><div style="visibility:hidden;aspect-ratio:1200/630"></div></div>
 </section>
+<div class="ffx-foot"><span>Made by Frenchfries777 with Claude AI</span> <span data-notr>Created by Frenchfries777</span> · <span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span><nav class="fl"><a href="https://frenchfries777.com/lounge/">라운지</a><a href="https://frenchfries777.com/settings/">설정</a><a href="https://frenchfries777.com/patchnotes/">패치노트</a><a href="https://frenchfries777.com/wiki/">위키</a><a href="https://frenchfries777.com/music/">음악</a><a href="https://frenchfries777.com/community/#feedback">피드백</a><a href="https://github.com/frenchfries777mc" target="_blank" rel="noopener">GitHub</a></nav></div>
 </div>
 </main>
 </div>
