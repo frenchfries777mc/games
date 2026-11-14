@@ -10,10 +10,10 @@
 <style>
 /* 설치 전용 페이지: 흰 배경에 아이콘, 이름, 소개, 설치 버튼만 (다른 곳으로 가는 링크 없음) */
 *{box-sizing:border-box}
-html,body{height:100%}
+html{height:100%}
 body{margin:0;background:#fff;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR','Segoe UI',system-ui,sans-serif;
-  padding:env(safe-area-inset-top,0px) max(20px,env(safe-area-inset-right,0px)) env(safe-area-inset-bottom,0px) max(20px,env(safe-area-inset-left,0px));display:flex;flex-direction:column}
-main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;padding-block:32px}
+  padding:env(safe-area-inset-top,0px) max(20px,env(safe-area-inset-right,0px)) env(safe-area-inset-bottom,0px) max(20px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;min-height:100%}
+main{flex:none;min-height:calc(100vh - 48px);min-height:calc(100svh - 48px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;padding-block:32px}
 .ic{width:128px;height:128px;border-radius:22.5%;background:#f2f2f4;box-shadow:0 0 0 1px rgba(0,0,0,.08),0 8px 24px rgba(0,0,0,.12);overflow:hidden}
 .ic img{display:block;width:100%;height:100%;object-fit:cover}
 h1{margin:10px 0 0;font-size:28px;line-height:1.2;font-weight:700;letter-spacing:-.01em;overflow-wrap:anywhere}
@@ -23,6 +23,11 @@ button.go:disabled{background:#e8e8ed;color:#86868b;cursor:default}
 button:focus-visible{outline:3px solid rgba(0,113,227,.45);outline-offset:2px}
 .back{position:absolute;top:calc(env(safe-area-inset-top,0px) + 8px);left:8px;border:0;background:none;color:#0071e3;font:500 17px/1 inherit;font-family:inherit;padding:12px;cursor:pointer;border-radius:10px}
 .msg{min-height:1.5em;font-size:14px;color:#6e6e73}
+.rt{border:0;background:none;color:#6e6e73;font:600 14px/1.2 inherit;font-family:inherit;padding:6px 10px;border-radius:999px;cursor:pointer}
+.rt:hover{background:#f2f2f4}
+.rt b{color:#f5a623;font-weight:700}
+/* 리뷰 영역: 설치 화면 아래에 붙어요 */
+.rv{width:100%;max-width:680px;margin:0 auto;padding:28px 0 40px;min-height:80px}
 footer{padding:14px 0;text-align:center;font-size:11px;color:#a1a1a6}
 </style>
 </head>
@@ -34,7 +39,9 @@ footer{padding:14px 0;text-align:center;font-size:11px;color:#a1a1a6}
   <p id="ds"></p>
   <button type="button" class="go" id="go" disabled></button>
   <div class="msg" id="msg" role="status"></div>
+  <button type="button" class="rt" id="rt" hidden></button>
 </main>
+<section class="rv" id="rv" aria-label="평점 및 리뷰"></section>
 <footer>Created by Frenchfries777 · © 2026 Frenchfries777 · CC BY-NC-ND 4.0</footer>
 <script>
 (function(){
@@ -69,6 +76,20 @@ var android=/android/i.test(navigator.userAgent), win=!android&&/windows/i.test(
 var app=null;
 
 if(IDS.indexOf(id)<0){ $('nm').textContent=T.bad; go.hidden=true; return; }
+
+/* 별점·리뷰: 설치 버튼과 따로 동작해요. 실패해도 설치에는 영향이 없어요 */
+try{
+  var fsc=document.createElement('script'); fsc.async=true; fsc.src='https://frenchfries777.com/store/ffstore.js?v=1';
+  fsc.onload=function(){ try{
+    var rt=$('rt');
+    var chip=function(avg,n){ rt.textContent=''; if(n){ var b=document.createElement('b'); b.textContent='★ '+avg.toFixed(1); rt.appendChild(b); rt.appendChild(document.createTextNode(' · 리뷰 '+n+'개')); }
+      else rt.textContent='리뷰 남기기'; rt.hidden=false; };
+    rt.addEventListener('click',function(){ try{ $('rv').scrollIntoView({behavior:'smooth'}); }catch(e){ $('rv').scrollIntoView(); } });
+    window.FFStore.stats([id]).then(function(m){ var s=m[id]; chip(s?s.avg:0,s?s.n:0); }).catch(function(){});
+    window.FFStore.lazyReviews($('rv'),id,{onStats:chip});
+  }catch(e){} };
+  document.head.appendChild(fsc);
+}catch(e){}
 
 /* 이 프로그램의 설치 정보를 불러와서 이름·소개·아이콘을 보여 줘요 */
 var mf='/games/pwa/'+id+'.webmanifest';
