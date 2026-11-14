@@ -1543,7 +1543,7 @@ function ckPaint(){
 }
 setInterval(()=>{ try{ if(ckPending>0) ckFlush(); else if(Date.now()-ckLast>20000 && document.getElementById('menuScreen') && document.getElementById('menuScreen').classList.contains('active')) ckRefresh(); }catch(e){} }, 15000);
 /* after the challenge is over: everyone who took part (at least 1 kill) gets the limited 11/11 hood once, with a reward screen, if the 1111 kills were reached together */
-const CK_REWARD_ID='skin_shuriken_pp_1111';
+const CK_REWARD_IDS=['skin_pistol_pp_choco','skin_sword_pp_almond','skin_bat_pp_berry','skin_wizard_pp_white','skin_bow_pp_nude','skin_pirate_pp_box','skin_shuriken_pp_1111','skin_gambler_pp_double','skin_magiccard_pp_magic'];
 let ckRewardBusy=false;
 async function ckRewardCheck(){
   if(ckActive() || ckRewardBusy || !sb || !sbUser || started || !saveData || saveData.ckRewardDone===CK_ID) return;
@@ -1551,9 +1551,10 @@ async function ckRewardCheck(){
   try{
     const r=await sb.rpc('challenge_totals',{p_challenge:CK_ID}); if(r.error||!r.data) return;
     const total=+r.data.total||0, mine=+r.data.mine||0;
-    if(total>=CK_GOAL && mine>=1 && COSMETICS[CK_REWARD_ID] && !cosOwned(CK_REWARD_ID)){
-      saveData.owned[CK_REWARD_ID]=true; saveData.ckRewardDone=CK_ID; persistSave();
-      showRewardWindow('🎉 1111킬 챌린지 달성!', '🎖️', '모두 합쳐 '+total+'킬! 내 '+mine+'킬로 참여해 주셔서 감사해요.\n한정판 「'+COSMETICS[CK_REWARD_ID].name.replace('(한정판) ','')+'」 (수리검 스킨)을 받았어요.\n치장품 상점의 스킨에서 장착할 수 있어요.', [{text:'확인', onclick:closeRewardModal}]);
+    const fresh=CK_REWARD_IDS.filter(id=>COSMETICS[id] && !cosOwned(id));
+    if(total>=CK_GOAL && mine>=1 && fresh.length){
+      for(const id of fresh) saveData.owned[id]=true; saveData.ckRewardDone=CK_ID; persistSave();
+      showRewardWindow('🎉 1111킬 챌린지 달성!', '🎖️', '모두 합쳐 '+total+'킬! 내 '+mine+'킬로 참여해 주셔서 감사해요.\n한정판 빼빼로 스킨 '+fresh.length+'종을 받았어요:\n'+fresh.map(id=>COSMETICS[id].name.replace('(한정판) ','')).join(' · ')+'\n치장품 상점의 스킨에서 장착할 수 있어요.', [{text:'확인', onclick:closeRewardModal}]);
       try{ const c=iconCenter(); rewardCelebrate(c.x,c.y,4); }catch(e){}
     } else { saveData.ckRewardDone=CK_ID; persistSave(); }
   }catch(e){} finally{ ckRewardBusy=false; }
@@ -3078,16 +3079,16 @@ Object.assign(COSMETICS.skin_pistol_new, {name:'바나나 제임스', price:1500
 const STAR_TINT='#ff9ad5';
 COSMETICS.skin_pistol_apology={cat:'skin', char:'pistol', name:'(한정판) 별빛 사과 제임스', price:0, tint:STAR_TINT, fx:'sparkle', lux:3, exclusive:true, concept:'starlight'};
 COSMETICS.skin_wizard_apology={cat:'skin', char:'wizard', name:'(한정판) 별빛 사과 마법사', price:0, tint:STAR_TINT, fx:'sparkle', lux:3, exclusive:true, concept:'starlight'};
-/* 빼빼로 skins (owner 11-14): headgear, the held weapon and the flying shot are all pepero. The 11/11 hood is the reward of the 1111킬 챌린지 (exclusive: only its owners see it in the shop). */
-COSMETICS.skin_pistol_pp_choco={cat:'skin', char:'pistol', name:'초코 빼빼로 왕관', price:800, tint:'#4b2a18', concept:'pp_choco', isNew:true};
-COSMETICS.skin_sword_pp_almond={cat:'skin', char:'sword', name:'아몬드 빼빼로 투구', price:1200, tint:'#5a3320', concept:'pp_almond', isNew:true};
-COSMETICS.skin_bat_pp_berry={cat:'skin', char:'bat', name:'딸기 빼빼로 캡', price:800, tint:'#ff9fbd', concept:'pp_berry', isNew:true};
-COSMETICS.skin_wizard_pp_white={cat:'skin', char:'wizard', name:'화이트 쿠키 빼빼로 모자', price:1200, tint:'#fff4e2', concept:'pp_white', isNew:true};
-COSMETICS.skin_bow_pp_nude={cat:'skin', char:'bow', name:'누드 빼빼로 숲 모자', price:300, tint:'#e3bd7c', concept:'pp_nude', isNew:true};
-COSMETICS.skin_pirate_pp_box={cat:'skin', char:'pirate', name:'빼빼로 박스 선장 모자', price:900, tint:'#d62a30', concept:'pp_box', isNew:true};
+/* 빼빼로 skins (owner 11-14): headgear, the held weapon and the flying shot are all pepero. All nine are limited: the reward of the 1111킬 챌린지 (exclusive, never sold: only their owners see them in the shop). */
+COSMETICS.skin_pistol_pp_choco={cat:'skin', char:'pistol', name:'(한정판) 초코 빼빼로 왕관', price:0, tint:'#4b2a18', exclusive:true, concept:'pp_choco', isNew:true};
+COSMETICS.skin_sword_pp_almond={cat:'skin', char:'sword', name:'(한정판) 아몬드 빼빼로 투구', price:0, tint:'#5a3320', exclusive:true, concept:'pp_almond', isNew:true};
+COSMETICS.skin_bat_pp_berry={cat:'skin', char:'bat', name:'(한정판) 딸기 빼빼로 캡', price:0, tint:'#ff9fbd', exclusive:true, concept:'pp_berry', isNew:true};
+COSMETICS.skin_wizard_pp_white={cat:'skin', char:'wizard', name:'(한정판) 화이트 쿠키 빼빼로 모자', price:0, tint:'#fff4e2', exclusive:true, concept:'pp_white', isNew:true};
+COSMETICS.skin_bow_pp_nude={cat:'skin', char:'bow', name:'(한정판) 누드 빼빼로 숲 모자', price:0, tint:'#e3bd7c', exclusive:true, concept:'pp_nude', isNew:true};
+COSMETICS.skin_pirate_pp_box={cat:'skin', char:'pirate', name:'(한정판) 빼빼로 박스 선장 모자', price:0, tint:'#d62a30', exclusive:true, concept:'pp_box', isNew:true};
 COSMETICS.skin_shuriken_pp_1111={cat:'skin', char:'shuriken', name:'(한정판) 11월 11일 두건', price:0, tint:'#233066', concept:'pp_1111', exclusive:true, isNew:true};
-COSMETICS.skin_gambler_pp_double={cat:'skin', char:'gambler', name:'더블 초코 바이저', price:800, tint:'#c98f5a', concept:'pp_double', isNew:true};
-COSMETICS.skin_magiccard_pp_magic={cat:'skin', char:'magiccard', name:'빼빼로 마술 실크햇', price:4000, tint:'#1d1522', fx:'sparkle', lux:3, premium:true, concept:'pp_magic', isNew:true};
+COSMETICS.skin_gambler_pp_double={cat:'skin', char:'gambler', name:'(한정판) 더블 초코 바이저', price:0, tint:'#c98f5a', exclusive:true, concept:'pp_double', isNew:true};
+COSMETICS.skin_magiccard_pp_magic={cat:'skin', char:'magiccard', name:'(한정판) 빼빼로 마술 실크햇', price:0, tint:'#1d1522', fx:'sparkle', lux:3, premium:true, exclusive:true, concept:'pp_magic', isNew:true};
 /* ===== the character's own color in a match: plain colors are free, the shiny ones are bought (cat 'bcol', equipped as saveData.equipped.bcol, sent as cos.col) ===== */
 [['red','빨강','#ff4d4d'],['mint','민트','#3fe0c5'],['yellow','노랑','#f5c94c'],['blue','파랑','#7c9eff'],['pink','분홍','#ff8fd9'],['lime','연두','#8dff7c'],
  ['orange','주황','#ff9d4d'],['purple','보라','#b98cff'],['sky','하늘','#4dd9ff'],['rose','장미','#ff6b9d'],['emerald','에메랄드','#6bffb3'],['white','하양','#eef1f6']]
@@ -4241,7 +4242,7 @@ function renderBoxTab(grid){
   const openAll=document.getElementById('boxOpenAllBtn'); if(openAll){ openAll.disabled=n<2; openAll.onclick=()=>{ if((saveData.boxes||0)>0) playAllBoxesOpening(); }; }
 }
 /* 1.0 NEW marks: a new skin shows a red NEW tag in the shop (and a dot on the shop button) until it has been seen once */
-const NEW_COS_IDS=['skin_pistol_pp_choco','skin_sword_pp_almond','skin_bat_pp_berry','skin_wizard_pp_white','skin_bow_pp_nude','skin_pirate_pp_box','skin_gambler_pp_double','skin_magiccard_pp_magic','skin_kurus_diaper','skin_tionis_janus','skin_grenade_envy','skin_pistol_zeus','skin_gloves_gilga','skin_sword_thor','skin_boomerang_odin','skin_horemheb_poseidon'];
+const NEW_COS_IDS=['skin_kurus_diaper','skin_tionis_janus','skin_grenade_envy','skin_pistol_zeus','skin_gloves_gilga','skin_sword_thor','skin_boomerang_odin','skin_horemheb_poseidon'];
 function newSeen(id){ try{ return !!(saveData.seenNew && saveData.seenNew[id]); }catch(e){ return true; } }
 function refreshNewDot(){
   try{ const btn=document.getElementById('goShopBtn'); if(!btn) return; let d=btn.querySelector('.newDot');
@@ -6298,7 +6299,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-14-v792';
+const GAME_BUILD='build 2026-11-14-v793';
 const GAME_VERSION='1.0.1', GAME_VERSION_NAME='네온 시티';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
