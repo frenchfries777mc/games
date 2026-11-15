@@ -11,6 +11,7 @@
   if(pm){ if(!ml){ ml=document.createElement('link'); ml.rel='manifest'; document.head.appendChild(ml); } ml.href='/games/pwa/'+pm[1]+'.webmanifest'; }
   else if(!ml){ var l=document.createElement('link'); l.rel='manifest'; l.href='https://frenchfries777.com/manifest.webmanifest'; document.head.appendChild(l); }
   if('serviceWorker' in navigator && !/^\/tools\//.test(location.pathname)){ try{ navigator.serviceWorker.register('/sw.js',{scope:'/'}).catch(function(){}); }catch(e){} }
+  try{ if(!window.FFOffline){ var of=document.createElement('script'); of.src='/games/ff-offline.js?v=20261115a'; of.async=true; document.head.appendChild(of); } }catch(e){}
   window.FFInstall={};
   if(standalone) return;
   var ev=null, btn=null;
