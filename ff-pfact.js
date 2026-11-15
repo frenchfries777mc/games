@@ -51,7 +51,7 @@
     paintFr(); paintBlk();
     var blkArm=0;
     root.onclick=async function(e){ var b=e.target.closest&&e.target.closest('button[data-a]'); if(!b||b.disabled) return; var a=b.getAttribute('data-a'); say('');
-      if(a==='card'){ try{ A().openProfile(uid); }catch(e2){} return; }
+      if(a==='card'){ try{ A().openProfile(uid,{modal:true}); }catch(e2){} return; }
       if(a==='link'){ if(o.link) return o.link();
         var u=o.un?'https://frenchfries777.com/profile/?u='+encodeURIComponent(o.un):'', old=b.textContent; if(!u) return;
         try{ await navigator.clipboard.writeText(u); b.textContent='✓ 복사했어요'; setTimeout(function(){ b.textContent=old; },1600); }catch(e2){ say(u); } return; }
@@ -79,7 +79,7 @@
     return {refresh:function(){ paintFr(); paintBlk(); }};
   }
   /* 카드 창을 잠깐 열어 그림 파일로 저장해요 */
-  function saveCard(uid){ try{ A().openProfile(uid); }catch(e){ return; } var n=0, t=setInterval(function(){ var m=document.getElementById('ffpModal'), cv=m&&m.querySelector('canvas');
+  function saveCard(uid){ try{ A().openProfile(uid,{modal:true}); }catch(e){ return; } var n=0, t=setInterval(function(){ var m=document.getElementById('ffpModal'), cv=m&&m.querySelector('canvas');
     if(cv&&m.style.display==='flex'&&cv.style.display!=='none'){ clearInterval(t); var s=m.querySelector('.s'); if(s) s.click(); setTimeout(function(){ m.style.display='none'; },500); }
     else if(++n>80) clearInterval(t); },150); }
   window.FFPfAct={mount:mount, saveCard:saveCard};

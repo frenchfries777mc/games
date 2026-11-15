@@ -516,8 +516,18 @@ async function chipBorder(root){ try{ if(!sb||!user) return; var uid=user.id;
   if(!window.FFBorders) await loadScript(BASE+'ff-borders.js?v=20261104a', function(){ return !!window.FFBorders; });
   if(!window.FFBorders||!user||user.id!==uid) return; var id=await window.FFBorders.equipped(sb,uid), b=window.FFBorders.get(id); if(!b) return;
   var col=b.a==='rainbow'?'#ffd23f':b.a, im=root.querySelector('.ffa-av'); if(im){ im.style.borderRadius='6px'; im.style.boxShadow='0 0 0 2px '+col+',0 0 8px '+col+'99'; } }catch(e){} }
-function profileLib(){ return loadScript(BASE+'ff-profile.js?v=20261115b', function(){ return !!window.FFProfile; }); }
-async function openProfile(uid, o){ if(!sb) return; if(!uid&&!user) return openLogin(); if(await profileLib()) window.FFProfile.open(sb, uid||user.id, o); }
+function profileLib(){ return loadScript(BASE+'ff-profile.js?v=20261115c', function(){ return !!window.FFProfile; }); }
+/* 프로필은 창이 아니라 허브의 프로필 페이지로 열어요. 게임 안, 도전과제 창, 카드 창(o.modal)만 예전처럼 창으로 열어요 */
+function profilePage(uid, o){ try{
+  if((o&&(o.modal||o.openAch||o.game||o.noDeco!=null))||window.FF_INGAME) return null;
+  if(!/^(frenchfries777\.com|frenchfries777mc\.github\.io)$/.test(location.hostname)) return null;
+  if(/\/(Stickseum|CrownEnvoy|BEACONFALL|IslandTrade)-[^\/]*\.html/i.test(location.pathname)||/\/play\//.test(location.pathname)||/\/prototypes\/[^\/]+\/(index\.html)?$/.test(location.pathname)) return null;
+  return (!uid||(user&&uid===user.id))?'/profile/':false; }catch(e){ return null; } }
+async function openProfile(uid, o){ if(!sb) return; if(!uid&&!user) return openLogin();
+  var pg=profilePage(uid,o);
+  if(pg===false){ try{ var r=await sb.from('profiles').select('username').eq('id',uid).limit(1); var un=r&&r.data&&r.data[0]&&r.data[0].username; if(un){ location.href='/profile/?u='+encodeURIComponent(un); return; } }catch(e){} }
+  else if(pg){ location.href=pg; return; }
+  if(await profileLib()) window.FFProfile.open(sb, uid||user.id, o); }
 
 /* 게임 사이트(허브가 아닌 페이지)에는 계정 버튼 옆에 '← 허브' 버튼을 붙여요. 빼고 싶으면 자리에 data-ff-nohub */
 var HUB=BASE, HUBSITE='https://frenchfries777.com/', onHub=/\/hub\//.test(location.pathname||'') || location.href.indexOf(HUB)===0 && !/\/(stickseum|crownenvoy|beaconfall|isleport|vowkeep|dummyparty|tumblecrown|educations|tools)\//i.test(location.pathname||''), SETURL='https://frenchfries777.com/settings/';
