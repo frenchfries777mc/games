@@ -89,7 +89,7 @@ if(IDS.indexOf(id)<0){ $('nm').textContent=T.bad; go.hidden=true; return; }
 
 /* 별점·리뷰: 설치 버튼과 따로 동작해요. 실패해도 설치에는 영향이 없어요 */
 try{
-  var fsc=document.createElement('script'); fsc.async=true; fsc.src='https://frenchfries777.com/store/ffstore.js?v=1';
+  var fsc=document.createElement('script'); fsc.async=true; fsc.src='https://frenchfries777.com/store/ffstore.js?v=2';
   fsc.onload=function(){ try{
     var rt=$('rt');
     var chip=function(avg,n){ rt.textContent=''; if(n){ var b=document.createElement('b'); b.textContent='★ '+avg.toFixed(1); rt.appendChild(b); rt.appendChild(document.createTextNode(' · 리뷰 '+n+'개')); }
