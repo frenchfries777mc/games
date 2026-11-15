@@ -966,6 +966,7 @@ sting();})();</script>
     <div id="matchEndMastery" style="display:none; margin:-6px 0 18px; padding:8px 16px; border:1px solid #3a3320; background:rgba(255,211,77,.07); border-radius:10px; text-align:center; font-size:14px; line-height:1.6; color:#e8eaed;"></div>
     <div id="matchEndVote" style="display:none; margin:-6px 0 16px; padding:10px 16px; border:1px solid #2d3b4d; background:rgba(93,170,255,.07); border-radius:10px; text-align:center; font-size:14px; color:#e8eaed;"></div>
     <button class="btn-primary" id="matchEndMenuBtn" style="padding:12px 28px;">메인으로</button>
+    <button class="btn-secondary" id="matchEndReplayBtn" style="display:none; padding:10px 22px; margin-top:10px;">리플레이 링크</button>
   </div>
   <div id="elimOverlay" style="display:none; position:fixed; inset:0; z-index:19; background:rgba(8,9,12,.82); align-items:center; justify-content:center; flex-direction:column; pointer-events:auto;">
     <div id="elimTitle" style="font-size:40px; font-weight:800; color:#ff4d5e; letter-spacing:.04em; margin-bottom:6px;">💀 패배</div>
@@ -6299,7 +6300,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-14-v793';
+const GAME_BUILD='build 2026-11-15-v794';
 const GAME_VERSION='1.0.1', GAME_VERSION_NAME='네온 시티';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -8402,13 +8403,15 @@ async function rpSave(meta, chunks){
   const l=await rpList(); for(const m of l.slice(RP_KEEP)) await rpDelete(m.id);
 }
 async function rpRecFinish(resultText, winnerIds){
-  const r=rpRec; if(!r || r.saved) return; r.saved=true; rpRec=null;
+  const r=rpRec; if(!r || r.saved) return null; r.saved=true; rpRec=null;
   try{
-    if(r.n<30) return; rpFlush(r); await Promise.all(r.pend);
+    if(r.n<30) return null; rpFlush(r); await Promise.all(r.pend);
     const names=Object.values(players).filter(p=>p && !p.isMinion && !p.isBoss && p.name).map(p=>p.name).slice(0,8);
     const meta={id:Date.now(), ts:Date.now(), mapId:r.mapId, mode:r.mode, me:r.me, text:String(resultText||'').slice(0,80), names, win:(winnerIds||[]).indexOf(myId)!==-1, n:r.n, dur:Math.round((Date.now()-r.t0)/1000)};
     await rpSave(meta, r.chunks.filter(Boolean));
+    return meta.id;
   }catch(e){ console.warn('[replay save]', e); }
+  return null;
 }
 async function rpLoadFrames(rec){ const frames=[]; for(const ch of rec.chunks){ const txt=await rpGunzip(ch); for(const f of JSON.parse(txt)) frames.push(f); } return frames; }
 function rpBar(){
@@ -8467,27 +8470,39 @@ function rpStop(){
 }
 async function rpPlayId(id){ try{ const d=await rpGet(id), m=(await rpList()).find(x=>x.id===id); if(!d||!m){ uiAlert('리플레이를 찾을 수 없어요'); return; } rpStart(m, await rpLoadFrames(d)); }catch(e){ uiAlert('리플레이를 열 수 없어요'); console.warn(e); } }
 /* sharing: a gzip+base64 copy in the Supabase `replays` table (see supabase-replays.sql), found again by an 8 letter code */
-async function rpShare(id, btn){
-  if(!sb || !sbUser){ uiAlert('공유하려면 로그인이 필요해요'); return; }
-  try{
-    btn.disabled=true; btn.textContent='올리는 중...';
-    const d=await rpGet(id), m=(await rpList()).find(x=>x.id===id); if(!d||!m) throw new Error('none');
-    const frames=await rpLoadFrames(d), keep=frames.filter((f,k)=>k%2===0||k===frames.length-1);
-    const gz=await rpGzip(JSON.stringify(keep)); if(typeof gz==='string') throw new Error('nogzip');
-    let bin=''; const u8=new Uint8Array(gz); for(let k=0;k<u8.length;k+=8192) bin+=String.fromCharCode.apply(null,u8.subarray(k,k+8192));
-    const b64=btoa(bin); if(b64.length>1500000){ uiAlert('리플레이가 너무 커서 공유할 수 없어요'); btn.disabled=false; btn.textContent='공유'; return; }
-    const code=Array.from({length:8},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*32)]).join('');
-    const {error}=await sb.from('replays').insert({code, owner:sbUser.id, title:(m.text||'리플레이').slice(0,60), meta:{mapId:m.mapId, mode:m.mode, me:m.me, names:m.names, text:m.text, n:keep.length, dur:m.dur}, data:b64});
-    if(error) throw error;
-    btn.textContent='코드 '+code; try{ navigator.clipboard.writeText(code); }catch(e){}
-    uiAlert('공유 코드: '+code+'\n(복사됨) 기록 화면의 "코드로 불러오기"에 입력하면 볼 수 있어요');
-  }catch(e){ console.warn(e); uiAlert('공유 실패 - supabase-replays.sql 로 테이블을 만들었는지 확인하세요'); btn.disabled=false; btn.textContent='공유'; }
+async function rpUpload(id){          // puts a match on the server (a gzip+base64 copy) and gives back its 8 letter code
+  if(!sb || !sbUser){ uiAlert('공유하려면 로그인이 필요해요'); return null; }
+  const d=await rpGet(id), m=(await rpList()).find(x=>x.id===id); if(!d||!m) throw new Error('none');
+  if(m.shareCode) return m.shareCode;      // (already uploaded: the same link again)
+  const frames=await rpLoadFrames(d), keep=frames.filter((f,k)=>k%2===0||k===frames.length-1);
+  const gz=await rpGzip(JSON.stringify(keep)); if(typeof gz==='string') throw new Error('nogzip');
+  let bin=''; const u8=new Uint8Array(gz); for(let k=0;k<u8.length;k+=8192) bin+=String.fromCharCode.apply(null,u8.subarray(k,k+8192));
+  const b64=btoa(bin); if(b64.length>1500000){ uiAlert('리플레이가 너무 커서 공유할 수 없어요'); return null; }
+  const code=Array.from({length:8},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*32)]).join('');
+  const {error}=await sb.from('replays').insert({code, owner:sbUser.id, title:(m.text||'리플레이').slice(0,60), meta:{mapId:m.mapId, mode:m.mode, me:m.me, names:m.names, text:m.text, n:keep.length, dur:m.dur}, data:b64});
+  if(error) throw error;
+  try{ m.shareCode=code; const db=await rpDb(); const tx=db.transaction('m','readwrite'); tx.objectStore('m').put(m); await new Promise(r=>{ tx.oncomplete=r; tx.onerror=r; }); db.close(); }catch(e){}
+  return code;
 }
+function rpLinkOf(code){ try{ const u=new URL(location.href); u.search=''; u.hash=''; u.searchParams.set('replay',code); return u.toString(); }catch(e){ return location.href.split('?')[0]+'?replay='+code; } }
+async function rpShareLink(id, btn){          // the link of a saved match: copied, and on a phone the share sheet opens (a friend, chat ...)
+  const old=btn?btn.textContent:''; if(btn){ btn.disabled=true; btn.textContent='올리는 중...'; }
+  try{
+    const code=await rpUpload(id); if(!code){ if(btn){ btn.disabled=false; btn.textContent=old; } return; }
+    const url=rpLinkOf(code); let copied=false;
+    try{ await navigator.clipboard.writeText(url); copied=true; }catch(e){}
+    let shared=false; if(navigator.share && (MOB.on || /Android|iPhone|iPad/i.test(navigator.userAgent))){ try{ await navigator.share({title:'Stickseum 리플레이', text:'Stickseum 리플레이', url}); shared=true; }catch(e){} }
+    if(btn){ btn.disabled=false; btn.textContent=copied?'링크 복사됨':'링크 '+code; setTimeout(()=>{ btn.textContent=old; }, 2500); }
+    if(!copied && !shared) uiAlert('리플레이 링크:\n'+url);
+  }catch(e){ console.warn(e); uiAlert('공유 실패 - 잠시 뒤 다시 해보세요'); if(btn){ btn.disabled=false; btn.textContent=old; } }
+}
+async function rpShare(id, btn){ return rpShareLink(id, btn); }
 async function rpLoadShared(code){
-  if(!sb){ uiAlert('온라인 기능을 쓸 수 없어요'); return; }
+  let cl=sb; try{ if(!cl && window.supabase) cl=window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); }catch(e){}      // (a guest has no login: the link still opens)
+  if(!cl){ uiAlert('온라인 기능을 쓸 수 없어요'); return; }
   code=String(code||'').trim().toUpperCase(); if(code.length!==8){ uiAlert('코드 8자리를 입력하세요'); return; }
   try{
-    const {data,error}=await sb.from('replays').select('meta,data').eq('code',code).maybeSingle();
+    const {data,error}=await cl.from('replays').select('meta,data').eq('code',code).maybeSingle();
     if(error||!data){ uiAlert('해당 코드의 리플레이가 없어요'); return; }
     const bin=atob(data.data), u8=new Uint8Array(bin.length); for(let k=0;k<bin.length;k++) u8[k]=bin.charCodeAt(k);
     const frames=JSON.parse(await rpGunzip(u8.buffer)); const m=data.meta||{};
@@ -10867,6 +10882,17 @@ function joinPrivateByCode(code){
   if(privateJoinStatus) privateJoinStatus.textContent='접속 중...';
   becomeClient('arena-'+code, 'private', null, code);
 }
+(function replayFromLink(){          // a link ?replay=CODE opens the game and plays that match
+  let code=''; try{ code=String(new URLSearchParams(location.search).get('replay')||'').trim().toUpperCase(); }catch(e){}
+  if(!/^[A-Z2-9]{8}$/.test(code)) return;
+  try{ const u=new URL(location.href); u.searchParams.delete('replay'); history.replaceState(null,'',u.pathname+(u.search||'')+u.hash); }catch(e){}
+  let tries=0; const iv=setInterval(()=>{
+    tries++; if(tries>240){ clearInterval(iv); return; }
+    if(document.getElementById('introScr')) return;
+    const ms=document.getElementById('menuScreen'); if(!ms || !ms.classList.contains('active')) return;
+    clearInterval(iv); rpLoadShared(code);
+  }, 500);
+})();
 let pendingJoinCode=null;
 (function joinFromLink(){          // a link from the hub (?join=CODE&room=CODE) opens the game and goes straight into that room
   let code=''; try{ const q=new URLSearchParams(location.search); code=String(q.get('join')||q.get('room')||'').trim().toUpperCase(); }catch(e){}
@@ -10899,6 +10925,8 @@ document.getElementById('inviteFriendBtn').onclick=()=>{
   box.style.display = show ? 'block' : 'none';
   if(show) renderInviteFriendList();
 };
+let rpLastId=null;
+document.getElementById('matchEndReplayBtn').onclick=()=>{ if(rpLastId) rpShareLink(rpLastId, document.getElementById('matchEndReplayBtn')); };
 document.getElementById('matchEndMenuBtn').onclick=()=>{
   try{ if(!practiceMode && !spectatorMode && !highlightViewing && !rpView && matchEnded && sb && sbUser && window.FFProfile && FFProfile.matchDone) FFProfile.matchDone(sb,'stickseum'); }catch(e){}      // the hub quest "play one match": counted when a real match is finished and the player goes back to the lobby (not on entering, not on leaving halfway)
   stopResultSound();
@@ -12238,7 +12266,7 @@ function showMatchEndOverlay(resultText, winnerIds, forcedPick){
     if(onlineWar && onlineClan && currentMode==='online' && gameMode==='duel' && !practiceMode && !highlightViewing && myClan && hum.length===2 && hum[0].clanId && hum[1].clanId && hum[0].clanId!==hum[1].clanId && winnerIds && winnerIds.indexOf(myId)!==-1) clanWarReport(onlineWar.id); }catch(e){}
   try{ const hum=Object.values(players).filter(q=>q && !q.isBot && !q.isMinion && !q.isBoss && !q.isSpectator);
     if(currentMode==='online' && !practiceMode && !highlightViewing && myClan && hum.length>=2 && winnerIds) clanContribReport(winnerIds.indexOf(myId)!==-1); }catch(e){}
-  try{ rpRecFinish(resultText, winnerIds); }catch(e){}
+  try{ rpLastId=null; const rb=document.getElementById('matchEndReplayBtn'); if(rb){ rb.style.display='none'; rb.textContent='리플레이 링크'; rb.disabled=false; } Promise.resolve(rpRecFinish(resultText, winnerIds)).then(id=>{ rpLastId=id||null; if(id && rb && matchEnded) rb.style.display=''; }).catch(()=>{}); }catch(e){}
   matchEnded=true; lastWinnerIds=winnerIds||[];
   elimState=null; document.getElementById('elimOverlay').style.display='none'; document.getElementById('elimExitBtn').style.display='none';
   lastMatchVerdict=matchVerdict(resultText, winnerIds);
