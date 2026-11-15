@@ -7,7 +7,93 @@
    "items": [
     "온라인 판이 끝나면 「리플레이 링크」 버튼으로 방금 판의 링크를 만들어 복사하고, 폰에서는 바로 친구에게 보낼 수 있어요",
     "기록 화면의 리플레이 「공유」도 코드 대신 링크로 바뀌었어요. 링크를 누르면 게임이 열리면서 바로 재생되고, 로그인 없이도 볼 수 있어요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Share replays as links",
+     "items": [
+      "When an online match ends, the “Replay link” button creates and copies a link to that match, and on phones you can send it straight to a friend",
+      "The replay “Share” on the record screen now uses a link instead of a code too. Tapping the link opens the game and plays the replay right away, and it can be watched without logging in"
+     ]
+    },
+    "es": {
+     "title": "Compartir repeticiones como enlaces",
+     "items": [
+      "Cuando termina una partida online, el botón «Enlace de repetición» crea y copia el enlace de esa partida, y en el móvil puedes enviarlo directamente a un amigo",
+      "Compartir la repetición en la pantalla de registros también usa ahora un enlace en lugar de un código. Al pulsar el enlace se abre el juego y la repetición se reproduce enseguida, y se puede ver sin iniciar sesión"
+     ]
+    },
+    "fr": {
+     "title": "Partage des replays par lien",
+     "items": [
+      "Quand une partie en ligne se termine, le bouton « Lien du replay » crée et copie le lien de cette partie ; sur téléphone, vous pouvez l'envoyer directement à un ami",
+      "Le « Partager » du replay sur l'écran des historiques utilise lui aussi un lien au lieu d'un code. Un clic sur le lien ouvre le jeu et lance le replay tout de suite, sans connexion requise"
+     ]
+    },
+    "de": {
+     "title": "Replays als Link teilen",
+     "items": [
+      "Wenn eine Online-Partie endet, erstellt der Button „Replay-Link“ einen Link zu genau dieser Partie und kopiert ihn; auf dem Handy kannst du ihn direkt an einen Freund schicken",
+      "Das Teilen eines Replays im Verlaufsbildschirm funktioniert jetzt ebenfalls per Link statt Code. Ein Tipp auf den Link öffnet das Spiel und spielt das Replay sofort ab, auch ohne Anmeldung"
+     ]
+    },
+    "ja": {
+     "title": "リプレイをリンクで共有",
+     "items": [
+      "オンライン対戦が終わると「リプレイリンク」ボタンで、その試合のリンクを作ってコピーできます。スマホではそのまま友だちに送れます",
+      "記録画面のリプレイ「共有」も、コードではなくリンクになりました。リンクを開くとゲームが起動してすぐ再生され、ログインしなくても見られます"
+     ]
+    },
+    "zh": {
+     "title": "以链接分享回放",
+     "items": [
+      "在线对局结束后，点击「回放链接」按钮即可生成并复制本局的链接，在手机上还能直接发给好友",
+      "记录界面中回放的「分享」也改为链接而非代码。点击链接后会打开游戏并立即播放回放，无需登录即可观看"
+     ]
+    },
+    "pt": {
+     "title": "Compartilhar replays por link",
+     "items": [
+      "Ao terminar uma partida online, o botão «Link do replay» cria e copia o link dessa partida, e no celular você pode enviá-lo direto a um amigo",
+      "O «Compartilhar» do replay na tela de histórico também usa um link agora, em vez de um código. Ao tocar no link, o jogo abre e o replay começa na hora, e dá para assistir sem fazer login"
+     ]
+    },
+    "ru": {
+     "title": "Повторы теперь можно отправлять ссылкой",
+     "items": [
+      "Когда онлайн-партия заканчивается, кнопка «Ссылка на повтор» создаёт и копирует ссылку на эту партию, а на телефоне её можно сразу отправить другу",
+      "Кнопка «Поделиться» повтора на экране записей тоже теперь делает ссылку вместо кода. По ссылке игра открывается и повтор сразу воспроизводится, без входа в аккаунт"
+     ]
+    },
+    "tr": {
+     "title": "Tekrarları bağlantı olarak paylaş",
+     "items": [
+      "Çevrimiçi maç bittiğinde «Tekrar bağlantısı» düğmesi o maçın bağlantısını oluşturup kopyalar; telefonda bağlantıyı doğrudan bir arkadaşınıza gönderebilirsiniz",
+      "Kayıt ekranındaki tekrarın «Paylaş» özelliği de artık kod yerine bağlantı kullanıyor. Bağlantıya dokununca oyun açılır ve tekrar hemen oynatılır; giriş yapmadan da izlenebilir"
+     ]
+    },
+    "it": {
+     "title": "Condividi i replay tramite link",
+     "items": [
+      "Quando una partita online finisce, il pulsante «Link del replay» crea e copia il link di quella partita; su telefono puoi inviarlo subito a un amico",
+      "Anche «Condividi» del replay nella schermata dei record ora usa un link invece di un codice. Toccando il link si apre il gioco e il replay parte subito, e si può guardare senza accedere"
+     ]
+    },
+    "pl": {
+     "title": "Udostępnianie powtórek linkiem",
+     "items": [
+      "Gdy partia online się skończy, przycisk „Link do powtórki” tworzy i kopiuje link do tej partii; na telefonie możesz od razu wysłać go znajomemu",
+      "„Udostępnij” powtórkę na ekranie historii też działa teraz na link zamiast kodu. Po kliknięciu linku gra się otwiera i powtórka od razu się odtwarza, a obejrzeć ją można bez logowania"
+     ]
+    },
+    "ar": {
+     "title": "مشاركة الإعادات عبر رابط",
+     "items": [
+      "عند انتهاء مباراة أونلاين، يُنشئ زر «رابط الإعادة» رابطًا لتلك المباراة وينسخه، وعلى الهاتف يمكنك إرساله مباشرة إلى صديق",
+      "أصبح زر «مشاركة» الإعادة في شاشة السجل يستخدم رابطًا بدلًا من الرمز أيضًا. عند النقر على الرابط تُفتح اللعبة وتُشغَّل الإعادة فورًا، ويمكن مشاهدتها دون تسجيل الدخول"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-14",
