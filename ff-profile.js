@@ -98,7 +98,7 @@ async function fetchData(sb, uid){
 
 /* ---- card looks unlocked by hub achievements (ff_deco in supabase-ff-extra.sql; keep the "need" numbers in step with ff_deco_need there) ---- */
 var DECO={
- bg:[{id:'base',need:0,c:['#3a2410','#1a1410','#0e1016'],n:{ko:'감자튀김',en:'Fries',es:'Patatas',fr:'Frites',de:'Pommes',ja:'ポテト',zh:"薯条",pt:"Batata frita",ru:"Картошка фри",tr:"Patates kızartması",it:"Patatine",pl:"Frytki",ar:"بطاطس مقلية",nw:"Fries",gk:"Fries"}},
+ bg:[{id:'base',need:0,c:['#3a2810','#271a0c','#17120a'],n:{ko:'감자튀김',en:'Fries',es:'Patatas',fr:'Frites',de:'Pommes',ja:'ポテト',zh:"薯条",pt:"Batata frita",ru:"Картошка фри",tr:"Patates kızartması",it:"Patatine",pl:"Frytki",ar:"بطاطس مقلية",nw:"Fries",gk:"Fries"}},
      {id:'night',need:2,c:['#1b2350','#11152c','#07080f'],n:{ko:'밤하늘',en:'Night sky',es:'Cielo nocturno',fr:'Ciel de nuit',de:'Nachthimmel',ja:'夜空',zh:"夜空",pt:"Céu noturno",ru:"Ночное небо",tr:"Gece gökyüzü",it:"Cielo notturno",pl:"Nocne niebo",ar:"سماء الليل",nw:"Unday up",gk:"밤 하늘"}},
      {id:'ocean',need:4,c:['#0b4f6c','#0a2a3d','#061017'],n:{ko:'바다',en:'Ocean',es:'Océano',fr:'Océan',de:'Ozean',ja:'海',zh:"海洋",pt:"Oceano",ru:"Океан",tr:"Okyanus",it:"Oceano",pl:"Ocean",ar:"المحيط",nw:"Ocean",gk:"Ocean"}},
      {id:'forest',need:6,c:['#1f5130','#11291b','#070f0a'],n:{ko:'숲',en:'Forest',es:'Bosque',fr:'Forêt',de:'Wald',ja:'森',zh:"森林",pt:"Floresta",ru:"Лес",tr:"Orman",it:"Foresta",pl:"Las",ar:"الغابة",nw:"Trees",gk:"Forest"}},
@@ -773,7 +773,7 @@ function drawCharFig(c, ch, x, y, k, col, skin){
   c.restore();
 }
 async function draw(cv, d, o){
-  var BX=(d.border&&window.FFBorders&&window.FFBorders.get(d.border))?26:0;
+  var BX=((d.border&&window.FFBorders&&window.FFBorders.get(d.border))?26:0)+(d.dev?30:0);
   var T=L[lang(o)], c=cv.getContext('2d'), W=cv.width=480, H=cv.height=640+Math.max(0,GAMES.length-3)*66, pr=d.profile||{}, st=pr.stats||{}, av=st.avatar||{};
   var onStk=false; try{ onStk=(o&&o.game)? o.game==='stickseum' : /\/Stickseum-[^\/]*\.html/i.test(location.pathname||''); }catch(e){}      // the character / mastery / stats card belongs to Stickseum only; the hub and the other sites show the played-games list
   var hasStk=onStk&&!!(st.tp&&st.tp.length&&Array.isArray(st.tp[0])), LVB=hasStk&&st.lv>0, DET=hasStk&&st.tp[0].length>8; if(hasStk) H=cv.height=900;
@@ -783,48 +783,61 @@ async function draw(cv, d, o){
   var all=CORE.every(function(g){ return played[g.id]; });
   var ach=Object.assign({}, d.ach||{});
   if(STK.achTotal && Array.isArray(st.ach) && st.ach.length && !(ach.stickseum&&ach.stickseum[1])) ach.stickseum=[Math.min(st.ach.length,STK.achTotal), STK.achTotal];   // Stickseum's own record, until the game reports it
-  if(hasStk) H=cv.height=70+((262+BX)+(LVB?32:0))+(all?50:34)+(DET?392:252)+126+44;
+
+  /* layout of the card (the approved profile card): gold frame, round avatar, name, rank pill, bio, favourite game, two stat boxes */
+  var CD=d.card||{}, lg=lang(o), TT=d.ctitle?{n:{en:d.ctitle}}:(CD.title&&titleOf(CD.title)), bio=String(CD.bio||'').trim(), PW=34;
+  var pill=TT?(TT.n[lg]||TT.n.en):''; if(!pill&&d.border&&window.FFBorders&&window.FFBorders.name){ try{ pill=window.FFBorders.name(d.border,lg)||''; }catch(e){} }
+  var favG=CD.fav?GAMES.filter(function(g){ return g.id===CD.fav; })[0]:null, subU=pr.username?'@'+pr.username:'';
+  var nPlayed=GAMES.filter(function(g){ return played[g.id]||ach[g.id]; }).length, nAch=0; Object.keys(ach).forEach(function(k){ nAch+=(ach[k]&&+ach[k][0])||0; });
+  var LY={}, cy=14+BX+132+(LVB?32:0)+14; LY.ny=cy+28; cy=LY.ny+14;
+  if(subU){ LY.su=LY.ny+24; cy=LY.su+12; } if(pill){ LY.pl=cy; cy+=30+12; } if(bio){ LY.bio=cy+14; cy+=30; } if(favG){ LY.fav=cy+13; cy+=28; }
+  LY.box=cy+6; var HHB=LY.box+64, HYc=44;
+  if(hasStk) H=cv.height=HYc+HHB+(all?50:34)+(DET?392:252)+126+44;
   var gid=gameId(o), inOther=!hasStk&&!!gid&&GAMES.some(function(g){ return g.id===gid&&g.id!=='stickseum'; });      // inside another game: that game's own card (no list of games); the hub keeps the list
   var FG=inOther&&o&&o.fig&&o.fig.img?o.fig:null, FGI=null; if(FG){ try{ FGI=await loadImg(typeof FG.img==='string'?FG.img:FG.img.toDataURL('image/png')); }catch(e){} }
-  if(inOther) H=cv.height=70+((262+BX))+(FGI?34+220:0)+60;
+  if(inOther) H=cv.height=HYc+HHB+(FGI?34+220:0)+60; else if(!hasStk) H=cv.height=HYc+HHB+(all?74:58)+GAMES.length*66+50;
       // the card grows with the mastery block and the big player level
   var DB=decoOf('bg',d.deco&&d.deco.bg), DF=decoOf('fr',d.deco&&d.deco.fr);
-  var g0=c.createLinearGradient(0,0,W,H); g0.addColorStop(0,DB.c[0]); g0.addColorStop(.55,DB.c[1]); g0.addColorStop(1,DB.c[2]); c.fillStyle=g0; c.fillRect(0,0,W,H);
+  var gF=c.createLinearGradient(0,0,W,H);
+  if(DF.id==='gold'){ gF.addColorStop(0,'#f0cf7e'); gF.addColorStop(1,'#c9972e'); c.fillStyle=gF; } else c.fillStyle=DF.col==='rainbow'?rainbow(c,0,W):DF.col;
+  rrect(c,0,0,W,H,28); c.fill();
+  var th=160*Math.PI/180, dx=Math.sin(th), dy=-Math.cos(th), hl=(Math.abs(W*dx)+Math.abs(H*dy))/2, g0=c.createLinearGradient(W/2-dx*hl,H/2-dy*hl,W/2+dx*hl,H/2+dy*hl);
+  g0.addColorStop(0,DB.c[0]); g0.addColorStop(.55,DB.c[1]); g0.addColorStop(1,DB.c[2]);
+  c.save(); rrect(c,5,5,W-10,H-10,24); c.clip(); c.fillStyle=g0; c.fillRect(0,0,W,H);
   if(DB.stars){ var sd=7; for(var si=0;si<70;si++){ sd=(sd*9301+49297)%233280; var sx=sd/233280*W; sd=(sd*9301+49297)%233280; var sy=sd/233280*H; c.fillStyle='rgba(255,255,255,'+(.25+(si%4)*.18)+')'; c.fillRect(sx,sy,si%7?1.5:2.5,si%7?1.5:2.5); } }
-  c.strokeStyle=DF.col==='rainbow'?rainbow(c,10,W-10):DF.col; c.lineWidth=DF.crown?6:4; c.strokeRect(10,10,W-20,H-20); c.lineWidth=1; c.strokeStyle=DF.crown?'rgba(255,215,0,.5)':'rgba(255,255,255,.16)'; c.strokeRect(20,20,W-40,H-40);
-  if(DF.crown){ c.save(); c.fillStyle=DB.c[1]; c.fillRect(W/2-26,0,52,24); c.font='26px serif'; c.textAlign='center'; c.fillText('👑',W/2,26); c.restore(); }
-  c.textAlign='center'; c.fillStyle=DF.col==='rainbow'?'#d9b45f':DF.col; c.font='800 15px system-ui, sans-serif'; c.fillText('🍟  F R E N C H F R I E S 7 7 7',W/2,52);
-  // header: the game's profile background
-  var HX=36, HY=70, HW=W-72, HH=(262+BX)+(LVB?32:0), pbg=st.pbg&&STK.pbg[st.pbg];
-  c.save(); rrect(c,HX,HY,HW,HH,16); c.clip(); c.translate(HX,HY);
-  if(pbg) paintCss(c, pbg, HW, HH); else { c.fillStyle='rgba(255,255,255,.05)'; c.fillRect(0,0,HW,HH); }
   c.restore();
+  if(DF.crown){ c.save(); c.fillStyle=DB.c[1]; c.fillRect(W/2-26,0,52,24); c.font='26px serif'; c.textAlign='center'; c.fillText('👑',W/2,26); c.restore(); }
+  c.textAlign='center';
+  // header: the game's profile background
+  var HX=PW+6, HY=HYc, HW=W-2*HX, HH=HHB, pbg=st.pbg&&STK.pbg[st.pbg];
+  if(pbg){ c.save(); rrect(c,HX,HY,HW,HH,16); c.clip(); c.translate(HX,HY); paintCss(c, pbg, HW, HH); c.restore(); }
   // avatar with its frame
-  var AS=138, AX=W/2-AS/2, AY=HY+22+BX, a=document.createElement('canvas'); a.width=a.height=168;
+  var AS=132, AX=W/2-AS/2, AY=HY+14+BX, a=document.createElement('canvas'); a.width=a.height=168;
   var im=av.ext?await loadImg(ext(av.ext)):null; drawAvatar(a, av, im);
   var hp=d.avpick&&avatarOf(d.avpick); if(hp&&t2lock(hp.id,st)) hp=null; if(hp){ var hi=await loadImg(avatarUrl(hp.id)); if(hi){ var ac=a.getContext('2d'); ac.clearRect(0,0,168,168); if(hp.grp){ ac.fillStyle=av.bg||'#274d3a'; ac.fillRect(0,0,168,168); ac.imageSmoothingEnabled=!/^(bf|ip|vk)$/.test(hp.grp); } ac.drawImage(hi,0,0,168,168); ac.imageSmoothingEnabled=true; } }          // a profile photo replaces the game character picture
   var fr=st.pfr&&STK.pfr[st.pfr], gl=fr&&glowOf(fr.shadow);
-  c.save(); if(gl){ c.shadowColor=gl.color; c.shadowBlur=gl.blur*1.6; } c.fillStyle='#000'; rrect(c,AX,AY,AS,AS,20); c.fill(); c.restore();
-  c.save(); rrect(c,AX,AY,AS,AS,20); c.clip(); c.drawImage(a,AX,AY,AS,AS); c.restore();
-  c.save(); rrect(c,AX,AY,AS,AS,20); c.lineWidth=fr?5:2; c.strokeStyle=fr?(fr.cls==='pfrRainbow'?rainbow(c,AX,AX+AS):fr.color):'rgba(255,255,255,.18)'; c.stroke(); c.restore();
-  if(d.border&&window.FFBorders&&window.FFBorders.get(d.border)) window.FFBorders.draw(c,d.border,AX,AY,AS,AS,20);
+  c.save(); if(gl){ c.shadowColor=gl.color; c.shadowBlur=gl.blur*1.6; } c.fillStyle='#0e0e0e'; rrect(c,AX,AY,AS,AS,AS/2); c.fill(); c.restore();
+  c.save(); rrect(c,AX,AY,AS,AS,AS/2); c.clip(); c.drawImage(a,AX,AY,AS,AS); c.restore();
+  c.save(); rrect(c,AX,AY,AS,AS,AS/2); c.lineWidth=fr?5:3; c.strokeStyle=fr?(fr.cls==='pfrRainbow'?rainbow(c,AX,AX+AS):fr.color):'#f0cf7e'; c.stroke(); c.restore();
+  if(d.border&&window.FFBorders&&window.FFBorders.get(d.border)) window.FFBorders.draw(c,d.border,AX,AY,AS,AS,AS/2);
   if(d.dev){ var DVN={owner:{ko:'총괄 개발자',en:'Lead Developer',es:'Desarrollador jefe',fr:'Développeur en chef',de:'Chefentwickler',ja:'総括開発者',zh:"总开发者",pt:"Desenvolvedor-chefe",ru:"Главный разработчик",tr:"Baş geliştirici",it:"Sviluppatore principale",pl:"Główny deweloper",ar:"المطور الرئيسي",nw:"Lead Inner party",gk:"Lead 현상액"},dev:{ko:'개발자',en:'Developer',es:'Desarrollador',fr:'Développeur',de:'Entwickler',ja:'開発者',zh:"开发者",pt:"Desenvolvedor",ru:"Разработчик",tr:"Geliştirici",it:"Sviluppatore",pl:"Deweloper",ar:"مطوّر",nw:"Inner party",gk:"현상액"}}[d.dev]; if(DVN){ var dl=(d.dev==='owner'?'👑 ':'🛠️ ')+(DVN[lang(o)]||DVN.en); c.save(); c.font='800 13px system-ui, sans-serif'; c.textAlign='left'; var dw=c.measureText(dl).width+20; rrect(c,HX+12,HY+12,dw,26,13); c.fillStyle=d.dev==='owner'?'rgba(217,180,95,.2)':'rgba(90,160,255,.2)'; c.fill(); c.lineWidth=1.5; c.strokeStyle=d.dev==='owner'?'rgba(217,180,95,.75)':'rgba(120,180,255,.7)'; c.stroke(); c.fillStyle=d.dev==='owner'?'#ffe08a':'#b5d8ff'; c.fillText(dl,HX+22,HY+30); c.restore(); } }
   // the name in the name colour (the clan is Stickseum-only, so it is not on the shared card)
-  var CD=d.card||{}, TT=d.ctitle?{n:{en:d.ctitle}}:(CD.title&&titleOf(CD.title)), bio=String(CD.bio||'').trim(), lg=lang(o);
-  var name=String(pr.display_name||pr.username||T.player).slice(0,16), ny=AY+AS+(bio||TT?38:46)+(LVB?32:0), fs=29;
+  var name=String(pr.display_name||pr.username||T.player).slice(0,16), ny=HY+LY.ny, fs=33;
   if(LVB){ c.save(); c.textAlign='center'; c.shadowColor='rgba(0,0,0,.8)'; c.shadowBlur=6; c.fillStyle='#ffd36b'; c.font='900 26px system-ui, sans-serif'; c.fillText(SL.plv+st.lv,W/2,AY+AS+32); c.restore(); }      // the player level, big, right under the avatar
   c.save(); c.shadowColor='rgba(0,0,0,.8)'; c.shadowBlur=6; c.shadowOffsetY=1; c.textAlign='left';
-  c.font='900 '+fs+'px system-ui, sans-serif'; var wN=c.measureText(name).width;
-  if(wN>HW-28){ fs=Math.floor(fs*(HW-28)/wN); c.font='900 '+fs+'px system-ui, sans-serif'; wN=c.measureText(name).width; }
+  c.font='700 '+fs+'px system-ui, sans-serif'; var wN=c.measureText(name).width;
+  if(wN>HW-28){ fs=Math.floor(fs*(HW-28)/wN); c.font='700 '+fs+'px system-ui, sans-serif'; wN=c.measureText(name).width; }
   var x=W/2-wN/2, nc=st.nm&&STK.name.hasOwnProperty(st.nm)?STK.name[st.nm]:null;
-  c.fillStyle=st.nm==='name_rainbow'?rainbow(c,x,x+wN):(nc||'#ffffff'); c.fillText(name,x,ny);
+  c.fillStyle=st.nm==='name_rainbow'?rainbow(c,x,x+wN):(nc||'#ece6d8'); c.fillText(name,x,ny);
   c.restore();
-  var sub=(pr.username?'@'+pr.username:'')+(TT?(pr.username?'  ·  ':'')+'🏷️ '+(TT.n[lg]||TT.n.en):'');
-  if(sub){ c.save(); c.shadowColor='rgba(0,0,0,.8)'; c.shadowBlur=4; c.font='600 14px system-ui, sans-serif'; c.textAlign='center';
-    if(TT){ var su=pr.username?'@'+pr.username+'  ·  ':'', tw=c.measureText(sub).width, x0=W/2-tw/2; c.textAlign='left'; c.fillStyle='rgba(255,255,255,.62)'; c.fillText(su,x0,ny+22); c.fillStyle='#ffd36b'; c.font='800 14px system-ui, sans-serif'; c.fillText('🏷️ '+(TT.n[lg]||TT.n.en),x0+c.measureText(su).width,ny+22); }
-    else { c.fillStyle='rgba(255,255,255,.62)'; c.fillText(sub,W/2,ny+22); }
-    c.restore(); }
-  if(bio){ c.save(); c.textAlign='center'; c.fillStyle='rgba(255,255,255,.85)'; c.font='italic 500 14px system-ui, sans-serif'; var bt='“'+bio+'”'; while(c.measureText(bt).width>HW-30&&bt.length>4) bt=bt.slice(0,-2)+'”'; c.shadowColor='rgba(0,0,0,.8)'; c.shadowBlur=4; c.fillText(bt,W/2,ny+(sub?44:24)); c.restore(); }
+  c.save(); c.textAlign='center';
+  if(subU){ c.font='500 15px system-ui, sans-serif'; c.fillStyle='#a39c8c'; c.fillText(subU,W/2,HY+LY.su); }
+  if(pill){ var pf='500 16px system-ui, sans-serif'; c.font=pf; var pw=Math.min(HW-20,c.measureText(pill).width+36); rrect(c,W/2-pw/2,HY+LY.pl,pw,30,15); c.fillStyle='#26221a'; c.fill(); c.lineWidth=1.5; c.strokeStyle='#d9b45f'; c.stroke(); c.fillStyle='#f0cf7e'; c.fillText(pill,W/2,HY+LY.pl+21,pw-20); }
+  if(bio){ c.font='400 17px system-ui, sans-serif'; c.fillStyle='#d8d1c0'; var bt=bio; while(c.measureText(bt).width>HW-30&&bt.length>4) bt=bt.slice(0,-2)+'…'; c.fillText(bt,W/2,HY+LY.bio); }
+  if(favG){ c.font='400 16px system-ui, sans-serif'; c.fillStyle='#a39c8c'; c.fillText(T.fav+' · '+favG.name,W/2,HY+LY.fav); }
+  var bw0=(HW-15)/2; [[nPlayed,T.games],[nAch,T.ach]].forEach(function(b,i){ var bx0=HX+i*(bw0+15), by0=HY+LY.box; rrect(c,bx0,by0,bw0,64,15); c.fillStyle='rgba(0,0,0,.3)'; c.fill();
+    c.fillStyle='#ece6d8'; c.font='700 25px system-ui, sans-serif'; c.fillText(String(b[0]),bx0+bw0/2,by0+31); c.fillStyle='#a39c8c'; c.font='400 14px system-ui, sans-serif'; c.fillText(b[1],bx0+bw0/2,by0+52,bw0-12); });
+  c.restore();
   if(all){ c.fillStyle='#ffd36b'; c.font='800 15px system-ui, sans-serif'; c.fillText('🏅 '+T.explorer,W/2,HY+HH+30); }
   if(hasStk){
     var T0=st.tp[0], sy0=all?HY+HH+50:HY+HH+34;
@@ -1005,7 +1018,7 @@ function modal(T){
   rc.textContent=P.trim()+'{background:var(--ffw-ov);-webkit-backdrop-filter:none;backdrop-filter:none;font-family:"Oswald","Noto Sans KR",sans-serif}'+
    P+':is(.D,.G,.AV,.hn){background:linear-gradient(var(--fry,#d9b45f),var(--fry,#d9b45f)) 18px 100%/70px 3px no-repeat,var(--bg,#0e0e0e);border:1px solid var(--fry,#d9b45f);border-left:8px solid var(--fry,#d9b45f);border-radius:16px;padding-bottom:18px}'+
    P+'.hn{border-style:solid}'+
-   P+'canvas{border:1px solid var(--fry,#d9b45f);border-left:8px solid var(--fry,#d9b45f);border-radius:16px;box-shadow:none;box-sizing:border-box}'+
+   P+'canvas{border:0;border-radius:0;box-shadow:none;filter:drop-shadow(0 10px 28px rgba(0,0,0,.5));box-sizing:border-box}'+
    P+':is(.D b,.G h5,.AV .avh b){color:var(--fry,#d9b45f);font-family:"Oswald","Noto Sans KR",sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.05em}'+
    P+':is(.G h5,.AV .avh b){display:block;padding-bottom:6px;margin-bottom:8px;background:linear-gradient(var(--fry,#d9b45f),var(--fry,#d9b45f)) 0 100%/60px 4px no-repeat}'+
    P+'.AV .avh{background:var(--bg,#0e0e0e)}'+
@@ -1110,7 +1123,7 @@ async function open(sb, uid, o){
   try{ var op=el.querySelector('.pfa-h'); if(op) op.remove(); el.classList.toggle('pfa-on',!own);
     if(!own){ var ph=document.createElement('div'); ph.className='pfa-h'; var rr=el.querySelector('.r'); rr.parentNode.insertBefore(ph,rr);
       var mountAct=function(){ if(window.FFPfAct) FFPfAct.mount(ph,{sb:sb,uid:uid,un:d.profile&&d.profile.username,save:function(){ el.querySelector('.s').click(); },link:function(){ var k=el.querySelector('.k'); if(k&&k.onclick) k.onclick(); }}); };
-      if(window.FFPfAct) mountAct(); else { var sc=document.createElement('script'), me0=[].filter.call(document.scripts,function(x){ return /ff-profile\.js/.test(x.src||''); })[0]; sc.src=(me0?me0.src.replace(/ff-profile\.js.*$/,''):'https://frenchfries777.com/games/')+'ff-pfact.js?v=20261114a'; sc.onload=mountAct; document.head.appendChild(sc); } } }catch(e){}
+      if(window.FFPfAct) mountAct(); else { var sc=document.createElement('script'), me0=[].filter.call(document.scripts,function(x){ return /ff-profile\.js/.test(x.src||''); })[0]; sc.src=(me0?me0.src.replace(/ff-profile\.js.*$/,''):'https://frenchfries777.com/games/')+'ff-pfact.js?v=20261115a'; sc.onload=mountAct; document.head.appendChild(sc); } } }catch(e){}
   acb.style.display=''; acb.onclick=async function(){ var w=achWin(T), box=w.querySelector('.L'); box.innerHTML='<div class="n">'+esc(T.loading)+'</div>'; box.scrollTop=0; w.classList.add('on');
     try{ await list(box, sb, d, o); }catch(e){ box.innerHTML='<div class="n">'+esc(T.fail)+'</div>'; } };
   if(o&&o.openAch) acb.click();

@@ -16,6 +16,13 @@
    '.pfa .pfa-gift input{flex:1;min-width:0;padding:10px 12px;border-radius:10px;border:1px solid #3a3530;background:transparent;color:#ece6d8;font:inherit;font-size:14px}'+
    '.pfa .pfa-gift button{padding:10px 16px;border-radius:10px;border:1px solid #d9b45f;background:none;color:#f0cf7e;font-size:14px;font-weight:500}'+
    '.pfa .pfa-msg{min-height:0;text-align:center;font-size:13px;color:#a39c8c}.pfa .pfa-msg:empty{display:none}'+
+   'html #ffpModal .pfa button{font-family:inherit;letter-spacing:0;text-transform:none;border-radius:10px;font-weight:400}'+
+   'html #ffpModal .pfa .pfa-pri{background:#d9b45f;color:#0e0e0e;border:0;font-weight:700;font-size:15px;padding:13px 14px}'+
+   'html #ffpModal .pfa .pfa-row button{background:none;color:#ece6d8;border:1px solid #3a3530;font-size:14px;font-weight:500;padding:12px 14px}'+
+   'html #ffpModal .pfa .pfa-row.s button{border-color:#2e2b25;font-size:13px;color:#a39c8c;font-weight:400;padding:10px 14px}'+
+   'html #ffpModal .pfa .pfa-ft button{background:none;border:0;padding:2px 4px;font-size:13px;color:#8d877a}'+
+   'html #ffpModal .pfa .pfa-gift button{background:none;color:#f0cf7e;border:1px solid #d9b45f;font-size:14px;font-weight:500;padding:10px 16px}'+
+   'html #ffpModal .pfa .pfa-gift input{background:transparent;color:#ece6d8;border:1px solid #3a3530;border-radius:10px}'+
    '#ffpModal .pfa-h{width:100%}#ffpModal.pfa-on .r .s,#ffpModal.pfa-on .r .k{display:none!important}';
   document.head.appendChild(css);
   function A(){ return window.FFAuth; }
