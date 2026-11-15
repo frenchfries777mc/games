@@ -23,6 +23,7 @@ button.go:disabled{background:#e8e8ed;color:#86868b;cursor:default}
 button:focus-visible{outline:3px solid rgba(0,113,227,.45);outline-offset:2px}
 .back{position:absolute;top:calc(env(safe-area-inset-top,0px) + 8px);left:8px;border:0;background:none;color:#0071e3;font:500 17px/1 inherit;font-family:inherit;padding:12px;cursor:pointer;border-radius:10px}
 .msg{min-height:1.5em;font-size:14px;color:#6e6e73}
+.alt{border:0;background:none;color:#86868b;font:500 13px/1.4 inherit;font-family:inherit;text-decoration:underline;padding:6px 10px;cursor:pointer}
 .rt{border:0;background:none;color:#6e6e73;font:600 14px/1.2 inherit;font-family:inherit;padding:6px 10px;border-radius:999px;cursor:pointer}
 .rt:hover{background:#f2f2f4}
 .rt b{color:#f5a623;font-weight:700}
@@ -48,6 +49,7 @@ footer{padding:14px 0;text-align:center;font-size:11px;color:#a1a1a6}
   <p id="ds"></p>
   <button type="button" class="go" id="go" disabled></button>
   <div class="msg" id="msg" role="status"></div>
+  <button type="button" class="alt" id="alt" hidden></button>
   <button type="button" class="rt" id="rt" hidden></button>
 </main>
 <section class="info" id="info" hidden></section>
@@ -68,16 +70,16 @@ var T=ko?{back:'‹ 뒤로',install:'설치',installing:'설치 중…',done:'�
   outbtn:'브라우저에서 설치',outmsg:'지금은 앱 창 안이라 여기서는 설치할 수 없어요. 브라우저 탭에서 열어 설치해 주세요.',
   after:'앱 목록이나 홈 화면에서 열어 보세요.',bad:'설치할 수 있는 앱이 아니에요.',cancel:'설치를 취소했어요.',
   apk:'받은 파일을 열어 설치해 주세요. 처음에는 \'출처를 알 수 없는 앱\' 허용을 물어볼 수 있어요.',
-  exe:'받은 파일을 실행해 주세요. 백신이나 Windows가 막으면 알림의 \'세부 정보\'에서 허용(복원)한 뒤 실행하면 돼요.',fail:'파일을 받지 못했어요. 다시 눌러 주세요.'}
+  exe:'받은 파일을 실행해 주세요. 백신이나 Windows가 막으면 알림의 \'세부 정보\'에서 허용(복원)한 뒤 실행하면 돼요.',fail:'파일을 받지 못했어요. 다시 눌러 주세요.',pwa:'앱 화면으로 이동해요. 아래쪽의 설치 버튼을 눌러 주세요.',alt:'설치 파일로 받기 (백신이 막을 수 있어요)'}
  :{back:'‹ Back',install:'Install',installing:'Installing…',done:'Installed',have:'Already open as an app',
   ios:'Tap Share, then Add to Home Screen.',other:'Use the install icon in the address bar, or the browser menu (⋮) → Save and share → Install as app (or Add to Home screen).',
   outbtn:'Install in browser',outmsg:'This is an app window, so it cannot install here. Open it in a browser tab to install.',
   after:'Open it from your app list or home screen.',bad:'This app cannot be installed.',cancel:'Installation cancelled.',
   apk:'Open the downloaded file to install. You may be asked to allow unknown apps once.',
-  exe:'Run the downloaded file. If antivirus or Windows blocks it, allow (restore) it from the notification details, then run it.',fail:'Download failed. Please try again.'};
+  exe:'Run the downloaded file. If antivirus or Windows blocks it, allow (restore) it from the notification details, then run it.',fail:'Download failed. Please try again.',pwa:'Opening the app. Press the install button at the bottom.',alt:'Get the installer file (antivirus may block it)'};
 var $=function(i){return document.getElementById(i)};
 var id=(new URLSearchParams(location.search).get('app')||'').toLowerCase();
-var bk=$('bk'); bk.textContent=T.back;
+var bk=$('bk'); bk.textContent=T.back; $('alt').textContent=T.alt;
 bk.onclick=function(){ if(history.length>1) history.back(); else location.href='https://apps.frenchfries777.com/'; };
 var go=$('go'), msg=$('msg'), ev=null, standalone=false;
 try{standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}catch(e){}
@@ -138,11 +140,19 @@ if(standalone&&!android&&!win){ go.textContent=T.outbtn; go.disabled=false; msg.
 go.textContent=T.install; go.disabled=false;
 addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); ev=e; ready(); });
 addEventListener('appinstalled',function(){ ev=null; installedUI(); });
-go.onclick=function(){
+/* 파일을 받지 않고 앱으로 설치하는 길이 먼저예요: 그 프로그램의 자기 화면으로 가서 브라우저 설치 창을 열어요.
+   설치 파일(apk, exe)은 아래 작은 버튼으로만 받아요. 백신이 막을 수 있어서요. */
+function fileInstall(){
   if(android){ var a=document.createElement('a'); a.href='/games/install/apk/'+id+'.apk'; a.download=id+'.apk'; document.body.appendChild(a); a.click(); a.remove(); msg.textContent=T.apk; return; }
-  if(win&&!ev){ var x=document.createElement('a'); x.href='/games/install/setup.exe'; x.download=id+'-setup.exe'; document.body.appendChild(x); x.click(); x.remove(); msg.textContent=T.exe; return; }
-  if(id==='chat'&&!ev){ location.href=CHAT+'?ffinstall=1'; return; }
-  var e=ev;
+  if(win){ var x=document.createElement('a'); x.href='/games/install/setup.exe'; x.download=id+'-setup.exe'; document.body.appendChild(x); x.click(); x.remove(); msg.textContent=T.exe; return; }
+}
+function progPage(){ try{ if(id==='chat'||id==='seumarena'||!app) return null; var u=new URL(app.url); return /^\/(games|educations|tools)\//.test(u.pathname)?u.pathname+'?ffinstall=1':null; }catch(e){ return null; } }
+var alt=$('alt'); if((android||win)&&!standalone){ alt.hidden=false; alt.onclick=fileInstall; }
+go.onclick=function(){
+  var e=ev, pp=progPage();
+  if(!e&&!ios&&pp){ msg.textContent=T.pwa; location.href=pp; return; }
+  if(!e&&!ios&&(android||win)){ fileInstall(); return; }
+  if(id==='chat'&&!e){ location.href=CHAT+'?ffinstall=1'; return; }
   if(!e){ msg.textContent=ios?T.ios:T.other; return; }
   ev=null; go.disabled=true; go.textContent=T.installing; e.prompt();
   e.userChoice.then(function(c){ if(c&&c.outcome==='accepted') installedUI(); else { go.textContent=T.install; go.disabled=false; msg.textContent=T.cancel; } });
