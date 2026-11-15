@@ -146,10 +146,11 @@ function fileInstall(){
   if(android){ var a=document.createElement('a'); a.href='/games/install/apk/'+id+'.apk'; a.download=id+'.apk'; document.body.appendChild(a); a.click(); a.remove(); msg.textContent=T.apk; return; }
   if(win){ var x=document.createElement('a'); x.href='/games/install/setup.exe'; x.download=id+'-setup.exe'; document.body.appendChild(x); x.click(); x.remove(); msg.textContent=T.exe; return; }
 }
-function progPage(){ try{ if(id==='chat'||id==='seumarena'||!app) return null; var u=new URL(app.url); return /^\/(games|educations|tools)\//.test(u.pathname)?u.pathname+'?ffinstall=1':null; }catch(e){ return null; } }
+function progPage(){ try{ if(id==='chat'||!app) return null; var u=new URL(app.url); return /^\/(games|educations|tools|seumarena)\//.test(u.pathname)?u.pathname+'?ffinstall=1':null; }catch(e){ return null; } }
 var alt=$('alt'); if((android||win)&&!standalone){ alt.hidden=false; alt.onclick=fileInstall; }
 go.onclick=function(){
   var e=ev, pp=progPage();
+  if(id==='chat'&&!e&&!ios){ msg.textContent=T.pwa; location.href=CHAT+'?ffinstall=1'; return; }
   if(!e&&!ios&&pp){ msg.textContent=T.pwa; location.href=pp; return; }
   if(!e&&!ios&&(android||win)){ fileInstall(); return; }
   if(id==='chat'&&!e){ location.href=CHAT+'?ffinstall=1'; return; }
