@@ -1123,7 +1123,7 @@ async function open(sb, uid, o){
   try{ var op=el.querySelector('.pfa-h'); if(op) op.remove(); el.classList.toggle('pfa-on',!own);
     if(!own){ var ph=document.createElement('div'); ph.className='pfa-h'; var rr=el.querySelector('.r'); rr.parentNode.insertBefore(ph,rr);
       var mountAct=function(){ if(window.FFPfAct) FFPfAct.mount(ph,{sb:sb,uid:uid,un:d.profile&&d.profile.username,save:function(){ el.querySelector('.s').click(); },link:function(){ var k=el.querySelector('.k'); if(k&&k.onclick) k.onclick(); }}); };
-      if(window.FFPfAct) mountAct(); else { var sc=document.createElement('script'), me0=[].filter.call(document.scripts,function(x){ return /ff-profile\.js/.test(x.src||''); })[0]; sc.src=(me0?me0.src.replace(/ff-profile\.js.*$/,''):'https://frenchfries777.com/games/')+'ff-pfact.js?v=20261115c'; sc.onload=mountAct; document.head.appendChild(sc); } } }catch(e){}
+      if(window.FFPfAct) mountAct(); else { var sc=document.createElement('script'), me0=[].filter.call(document.scripts,function(x){ return /ff-profile\.js/.test(x.src||''); })[0]; sc.src=(me0?me0.src.replace(/ff-profile\.js.*$/,''):'https://frenchfries777.com/games/')+'ff-pfact.js?v=20261115d'; sc.onload=mountAct; document.head.appendChild(sc); } } }catch(e){}
   acb.style.display=''; acb.onclick=async function(){ var w=achWin(T), box=w.querySelector('.L'); box.innerHTML='<div class="n">'+esc(T.loading)+'</div>'; box.scrollTop=0; w.classList.add('on');
     try{ await list(box, sb, d, o); }catch(e){ box.innerHTML='<div class="n">'+esc(T.fail)+'</div>'; } };
   if(o&&o.openAch) acb.click();
