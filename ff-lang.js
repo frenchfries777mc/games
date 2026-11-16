@@ -192,6 +192,8 @@ function aurebesh(){ if(document.getElementById('ff-au')) return; var base='http
   if(on&&FILE[on]) css+="html.ff-"+on+" body,html.ff-"+on+" body *:not(select):not(option):not(optgroup):not([data-lg]):not([data-l]):not([data-lang]):not(.ff-au-keep){font-family:'"+SCR[on]+"',system-ui,sans-serif!important}";
   st.textContent=css; (document.head||h).appendChild(st); }
 try{ aurebesh(); }catch(e){}
+/* Dropdown lists open in a native popup that the page's own colours do not reach: give every option a readable dark/white pair unless the page styles it itself */
+try{ var os=document.createElement('style'); os.textContent=':where(option,optgroup){background-color:#0d0d0d;color:#fff}'; (document.head||document.documentElement).appendChild(os); }catch(e){}
 /* 이모지어: the page waits hidden (at most 2.5 s) until ff-emoji.js has turned its English into emoji */
 function emoji(){ var h=document.documentElement, base='https://frenchfries777.com/games/'; try{ var me=document.currentScript; if(me&&me.src) base=me.src.replace(/[^\/]*$/,''); }catch(x){}
   var st=document.createElement('style'); st.textContent='html.ff-em:not(.ff-em-ready) body{visibility:hidden}'; (document.head||h).appendChild(st);
