@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&family=Noto+Sans+KR:wght@700;900&display=swap" rel="stylesheet">
 <style>
-html,body{margin:0;height:100%;background:#2b1d15;overflow:hidden}
+html,body{margin:0;height:100%;height:100dvh;background:#2b1d15;overflow:hidden}
 body{display:flex;align-items:center;justify-content:center}
 canvas{display:block;touch-action:none;user-select:none;-webkit-user-select:none}
 #ffFoot{position:fixed;left:0;right:0;bottom:6px;text-align:center;font:12px system-ui,sans-serif;color:rgba(255,243,208,.6);pointer-events:none;display:none}
@@ -34,8 +34,13 @@ const cv=document.getElementById('c');let g=cv.getContext('2d');
 cv.width=W;cv.height=H;
 {const CP=CanvasRenderingContext2D.prototype;if(!CP.roundRect)CP.roundRect=function(x,y,w,h,r){this.moveTo(x+r,y);this.arcTo(x+w,y,x+w,y+h,r);this.arcTo(x+w,y+h,x,y+h,r);this.arcTo(x,y+h,x,y,r);this.arcTo(x,y,x+w,y,r);this.closePath()}}
 function withCtx(c,fn){const o=g;g=c;try{fn()}finally{g=o}}
-function fit(){const s=Math.min(innerWidth/W,innerHeight/H);cv.style.width=Math.floor(W*s)+'px';cv.style.height=Math.floor(H*s)+'px'}
-addEventListener('resize',fit);fit();
+function fit(){
+  const vv=window.visualViewport,vw=Math.min(innerWidth,vv?vv.width:1e9),vh=Math.min(innerHeight,vv?vv.height:1e9);
+  const s=Math.min(vw/W,vh/H),cw=Math.floor(W*s),ch=Math.floor(H*s);cv.style.width=cw+'px';cv.style.height=ch+'px';
+  const f=document.getElementById('ffFoot');if(f){f.style.fontSize=Math.max(8,Math.min(12,12*s))+'px';f.style.bottom=Math.max(0,(vh-ch)/2)+Math.max(2,6*s)+'px';f.style.left=f.style.right=Math.max(0,(vw-cw)/2)+'px'}
+}
+addEventListener('resize',fit);addEventListener('orientationchange',()=>{fit();setTimeout(fit,250);setTimeout(fit,700)});
+if(window.visualViewport)visualViewport.addEventListener('resize',fit);fit();addEventListener('DOMContentLoaded',fit);
 const FONT="Jua,'Malgun Gothic','Apple SD Gothic Neo',sans-serif";
 const FONT2="'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif";
 if(document.fonts&&document.fonts.load){document.fonts.load('20px Jua').catch(()=>{});document.fonts.load('700 20px "Noto Sans KR"').catch(()=>{})}
