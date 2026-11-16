@@ -283,3 +283,16 @@ html[data-ff-theme=light] .ffhb-m.on,html[data-ff-theme=light] .ffhb-m.on:hover{
   .ffhb-strip .ffhb-sp{display:none}
 }
 @media(min-width:861px){html.ffhb-on body{overflow-x:clip}}
+
+/* top buttons like the hub: no bar, just search, online chip, bell / vote / profile floating at the right */
+#onlineBar:empty{display:none}
+.ffhb-strip #onlineBar{display:flex;align-items:center;flex-wrap:nowrap;white-space:nowrap;overflow:hidden;max-width:40vw;gap:8px 12px;height:44px;box-sizing:border-box;padding:0 16px;border-radius:10px;background:var(--hb-panel);border:1px solid var(--hb-line);font:500 14px 'Noto Sans KR',system-ui,sans-serif;color:var(--hb-text)}
+@media(min-width:861px){
+  .ffhb-strip{background:transparent;border-bottom:0;pointer-events:none}
+  .ffhb-strip .ffhb-in>*{pointer-events:auto}
+  .ffhb-strip .ffhb-in{max-width:none;justify-content:flex-end;padding:0 clamp(16px,3vw,40px);gap:14px}
+  .ffhb-strip .ffhb-sp,.ffhb-strip .ffhb-mmenu{display:none}
+  .ffhb-strip .srx-btn{width:44px;height:44px;border-radius:10px;background:var(--hb-panel);border:1px solid var(--hb-line)}
+  .ffhb-strip .srx-btn:hover{border-color:var(--hb-fry)}
+}
+@media(max-width:860px){.ffhb-strip #onlineBar{display:none}}
