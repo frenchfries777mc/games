@@ -5630,7 +5630,7 @@ MAP_TEMPLATES['lavaland'] = {
 MAP_TEMPLATES['ruins'] = {
   id:'ruins', name:THEMES.ruins.name, maxPlayers:8, arenaW:2400, arenaH:1000, theme:THEMES.ruins,
   platforms:[{x:0,y:900,w:2400,h:100}].concat(mirrorPl(2400,[
-    {x:120,y:780,w:240,h:24},{x:420,y:640,w:200,h:24},{x:600,y:810,w:44,h:90},{x:760,y:575,w:220,h:24},{x:200,y:510,w:180,h:24},{x:880,y:800,w:120,h:100}      // (780 / 575: 140 above the floor / the middle ledge was more than a jump reaches)
+    {x:120,y:780,w:240,h:24},{x:420,y:670,w:200,h:24},{x:600,y:810,w:44,h:90},{x:760,y:575,w:220,h:24},{x:200,y:560,w:180,h:24},{x:880,y:800,w:120,h:100}      // (780 / 575: 140 above the floor / the middle ledge was more than a jump reaches; 11-16: 670 and 560 so every step up from the floor is 110 or less - the old 640 and 510 could not be climbed from the side ledge)
   ])).concat([{x:1050,y:700,w:300,h:24},{x:1130,y:585,w:140,h:24}]),
   spawns:[{x:250,y:890},{x:500,y:890},{x:1450,y:890},{x:1900,y:890},{x:2150,y:890},{x:240,y:770},{x:2160,y:770},{x:1200,y:690}]
 };
@@ -6315,7 +6315,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-16-v795';
+const GAME_BUILD='build 2026-11-16-v796';
 const GAME_VERSION='1.0.1', GAME_VERSION_NAME='네온 시티';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
