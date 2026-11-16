@@ -108,7 +108,7 @@ html,body{ height:100%; margin:0; background:#1d3f73; overflow:hidden; color:var
 .tog{ min-width:76px; padding:7px 12px; cursor:pointer; border:0; background:#46557d;
   box-shadow:0 -3px 0 0 var(--ink),0 3px 0 0 var(--ink),-3px 0 0 0 var(--ink),3px 0 0 0 var(--ink); }
 .tog[aria-pressed="true"]{ background:#5a8f2f; }
-.seg{ display:flex; gap:6px; }
+.seg{ display:flex; flex-wrap:wrap; gap:8px 6px; }
 .seg button{ padding:7px 9px; cursor:pointer; border:0; background:#46557d; font-size:14px;
   box-shadow:0 -3px 0 0 var(--ink),0 3px 0 0 var(--ink),-3px 0 0 0 var(--ink),3px 0 0 0 var(--ink); }
 .seg button[aria-pressed="true"]{ background:#5a8f2f; }
@@ -186,6 +186,25 @@ body.crafting .slot{ cursor:pointer; }
 body.playing #netstat{ top:calc(14px + var(--slot) + 18px + env(safe-area-inset-top,0px)); }
 body.crafting #netstat{ top:calc(14px + var(--slot) * 2 + 36px + env(safe-area-inset-top,0px)); }
 @media (max-width:760px){ :root{ --slot:36px; } #inv,#craft{ gap:5px; } .slot canvas,#held canvas{ padding:3px; } #craft .arrow{ width:24px; margin:0 3px; } }
+/* 폭 560 이하: 제작 줄이 화면 밖으로 잘리지 않게 입력 칸 7개 / 결과 칸 두 줄로 나누고, 아래 창들을 한 줄만큼 내려요 */
+@media (max-width:560px){
+  body.crafting:not(.chest) #craft{ flex-wrap:wrap; max-width:calc(var(--slot) * 7 + 5px * 6 + 2px); row-gap:5px; }
+  body.crafting:not(.chest) #inv,body.crafting:not(.chest) #bagrow{ top:calc(14px + var(--slot) * 2 + 23px + env(safe-area-inset-top,0px)); }
+  body.crafting:not(.chest) #recipes{ top:calc(14px + var(--slot) * 3 + 41px + env(safe-area-inset-top,0px)); max-height:calc(100vh - 14px - var(--slot) * 3 - 41px - 110px - env(safe-area-inset-top,0px)); }
+  body.crafting.hasbag:not(.chest):not(.armor):not(.anvil) #inv{ top:calc(14px + var(--slot) * 3 + 41px + env(safe-area-inset-top,0px)); }
+  body.crafting.hasbag:not(.chest) #recipes{ top:calc(14px + var(--slot) * 4 + 59px + env(safe-area-inset-top,0px)); max-height:calc(100vh - 14px - var(--slot) * 4 - 59px - 110px - env(safe-area-inset-top,0px)); }
+}
+/* 폰 가로(키가 낮은 화면): 제작 칸은 왼쪽 두 줄, 레시피 목록은 오른쪽 전체 높이로 보여요 */
+@media (max-height:420px) and (orientation:landscape){
+  body.crafting:not(.chest) #craft{ flex-wrap:wrap; max-width:calc(var(--slot) * 7 + 8px * 6 + 4px); row-gap:5px; }
+  body.crafting:not(.chest) #inv,body.crafting:not(.chest) #bagrow{ top:calc(14px + var(--slot) * 2 + 23px + env(safe-area-inset-top,0px)); }
+  body.crafting.hasbag:not(.chest):not(.armor):not(.anvil) #inv{ top:calc(14px + var(--slot) * 3 + 41px + env(safe-area-inset-top,0px)); }
+  body.crafting:not(.chest) #recipes,body.crafting.hasbag:not(.chest) #recipes{ left:calc(26px + var(--slot) * 7 + 8px * 6 + env(safe-area-inset-left,0px)); top:calc(10px + env(safe-area-inset-top,0px)); width:calc(100vw - 42px - var(--slot) * 7 - 8px * 6 - env(safe-area-inset-left,0px)); max-height:calc(100vh - 20px - 100px - env(safe-area-inset-top,0px)); }
+  body.crafting #recipes .rout{ width:56px; } body.crafting #recipes .rname{ width:72px; } body.crafting #recipes .rpat{ flex-wrap:wrap; min-width:0; } body.crafting #recipes .rrow{ gap:6px; } body.crafting #recipes h3 small{ display:none; }
+}
+/* 폰에서 제작·상자 창이 열려 있는 동안은 오른쪽 단추 줄이 창을 가리지 않게 숨겨요 */
+@media (max-width:700px),(max-height:420px){ body.touch.crafting #backbtn,body.touch.crafting #statbtn,body.touch.crafting #clock,body.touch.crafting #rollbtn,body.touch.crafting #bpbtn,body.touch.crafting #photobtn{ display:none; } }
+@media (max-width:560px) and (orientation:portrait){ body.touch.crafting #recipes{ max-height:calc(100vh - 14px - var(--slot) * 3 - 41px - 250px - env(safe-area-inset-top,0px)); } body.touch.crafting.hasbag:not(.chest) #recipes{ max-height:calc(100vh - 14px - var(--slot) * 4 - 59px - 250px - env(safe-area-inset-top,0px)); } }
 #clock{ position:fixed; right:calc(18px + env(safe-area-inset-right,0px)); top:calc(16px + 104px + env(safe-area-inset-top,0px)); z-index:6;
   padding:6px 10px; font-size:13px; display:none; pointer-events:none; white-space:nowrap; }
 body.playing #clock{ display:block; }
@@ -413,7 +432,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.6<br>build 212</p>
+    <p class="foot">v0.6<br>build 213</p>
   </nav>
 </div>
 
@@ -3691,6 +3710,11 @@ body.touch #equip{bottom:calc(170px + env(safe-area-inset-bottom,0px));transform
 body.touch #hp{bottom:calc(213px + env(safe-area-inset-bottom,0px));transform:translateX(calc(-50% - 44px)) scale(.85)}
 body.touch #tc .zm{bottom:calc(252px + env(safe-area-inset-bottom,0px))}
 @media (max-height:420px){body.touch #photobtn{bottom:100px}body.touch #bpbtn{bottom:148px}body.touch #rollbtn{bottom:196px}body.touch #equip{bottom:calc(54px + env(safe-area-inset-bottom,0px));transform:translateX(-50%)}body.touch #hp{bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%)}body.touch #tc .zm{bottom:136px}}
+/* 폰 세로: 오른쪽 위 단추 줄(로비·통계·시계)을 핫바 아래로 내려 겹치지 않게 */
+@media (max-width:760px) and (orientation:portrait){body.touch #backbtn{top:calc(14px + var(--slot) + 8px + env(safe-area-inset-top,0px))}body.touch #statbtn{top:calc(14px + var(--slot) + 60px + env(safe-area-inset-top,0px))}body.touch #clock{top:calc(14px + var(--slot) + 112px + env(safe-area-inset-top,0px))}}
+@media (max-width:350px){#tc .joy{width:108px;height:108px;left:calc(14px + env(safe-area-inset-left,0px))}#tc .act{right:calc(116px + env(safe-area-inset-right,0px))}body.touch #hp{transform:translateX(calc(-50% - 38px)) scale(.7)}body.touch #equip{transform:translateX(calc(-50% - 56px)) scale(.85)}}
+/* 폰 가로: 낮은 화면에서는 오른쪽 단추를 작게 줄이고 시계·체력을 겹치지 않게 */
+@media (max-height:420px){body.touch #backbtn,body.touch #statbtn,body.touch #photobtn,body.touch #bpbtn,body.touch #rollbtn{padding:4px 10px;font-size:13px}body.touch #backbtn{top:calc(10px + env(safe-area-inset-top,0px))}body.touch #statbtn{top:calc(46px + env(safe-area-inset-top,0px))}body.touch #clock{top:calc(82px + env(safe-area-inset-top,0px));font-size:11px;padding:3px 8px}body.touch #photobtn{bottom:100px}body.touch #bpbtn{bottom:138px}body.touch #rollbtn{bottom:176px}body.touch #hp{transform:translateX(calc(-50% - 12px)) scale(.82)}}
 `;
 const keyEv=(type,code,key)=>{try{window.dispatchEvent(new KeyboardEvent(type,{code,key:key||code,bubbles:true,cancelable:true}));}catch(e){}};
 const keyTap=(code,key,hold)=>{keyEv('keydown',code,key);setTimeout(()=>keyEv('keyup',code,key),hold||80);};
