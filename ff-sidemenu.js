@@ -11,13 +11,23 @@
   'aside[style*="flex:0 0 232px"] a.ffsm.on,aside[style*="flex:0 0 232px"] a.ffsm.on:hover{background:#ffd54a!important;color:#000!important;font-weight:700!important}'+
   /* the light theme flips the whole page with a filter, so these colours are what comes out as amber with dark text */
   'html[data-ff-theme=light] aside[style*="flex:0 0 232px"] a.ffsm.on,html[data-ff-theme=light] aside[style*="flex:0 0 232px"] a.ffsm.on:hover{background:#965a00!important;color:#fff!important}'+
-  'a.ffsm svg{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}';
-  /* body font and footer links: the same on every hub-side page */
+  'html[data-ff-theme=light] aside[style*="flex:0 0 232px"]>a:first-child span:nth-child(3){color:#965a00!important}'+
+  'a.ffsm svg{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}'+
+  '#onlineBar .on-dot{flex:0 0 9px;width:9px;height:9px;border-radius:50%;background:#3fe0c5}html[data-ff-theme=light] #onlineBar .on-dot{background:#0f9e88}'+
+  /* touch: bigger tap area for the small logo and footer links (no layout change) */
+  '@media(pointer:coarse){.ffx-root>aside>a:first-child,.ffx-foot a{position:relative}.ffx-root>aside>a:first-child::after{content:"";position:absolute;inset:-12px -6px}.ffx-foot a::after{content:"";position:absolute;inset:-10px -4px}}';
+  function ffScrollHint(sc,sel){
+    function hz(){ return sc.scrollWidth>sc.clientWidth+4&&getComputedStyle(sc).overflowX!=='visible'; }
+    function fade(){ var m=''; if(hz()){ var r=sc.scrollLeft+sc.clientWidth<sc.scrollWidth-4;
+        m='linear-gradient(90deg,'+'#000 0,#000 28px'+','+(r?'#000 calc(100% - 28px),transparent 100%':'#000 calc(100% - 28px),#000 100%')+')'; }
+      sc.style.webkitMaskImage=m; sc.style.maskImage=m; }
+    function center(){ var on=sc.querySelector(sel); if(on&&hz()) sc.scrollLeft+=on.getBoundingClientRect().left-sc.getBoundingClientRect().left-(sc.clientWidth-on.offsetWidth)/2; fade(); }
+    sc.addEventListener('scroll',fade,{passive:true}); addEventListener('resize',fade); center(); addEventListener('load',center);
+  }
+  /* body font, footer links and the online bar: the same on every hub-side page */
   var css2=
   'html body{font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;font-weight:400}'+
-  /* the online bar: ff-online.js (educations, tools) draws a dot and a pill that the other pages do not have */
-  'html body #onlineBar{margin:0!important;font-size:14px!important;color:#fff!important}'+
-  'html body #onlineBar .on-dot{width:0!important;height:0!important;margin:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;animation:none!important}'+
+  'html body #onlineBar{margin:0!important;font-size:14px!important;color:#fff!important}'+      /* ff-online.js (educations, tools) uses a bigger font, a margin and a dim colour */
   'html body #onlineBar .on-n,html body #onlineBar .on-c,html body #onlineBar .on-c>span,html body #onlineBar .on-c b{color:#fff!important;font-size:14px!important}'+
   'html body #onlineBar .on-c{padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;height:auto!important}'+
   '.ffx-foot nav{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px}';
@@ -48,6 +58,7 @@
       var s=document.createElementNS('http://www.w3.org/2000/svg','svg'); s.setAttribute('viewBox','0 0 24 24'); s.innerHTML=k;
       a.replaceChild(s,sp);
     }
+    ffScrollHint(side,'a.ffsm.on');
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();
 })();

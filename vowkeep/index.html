@@ -117,7 +117,7 @@ html{scrollbar-color:var(--line) var(--bg)}
 </style>
 <style>html,body,*{touch-action:manipulation}</style>
 <script>["gesturestart","gesturechange","gestureend"].forEach(function(e){document.addEventListener(e,function(x){x.preventDefault()})});</script>
-<script src="https://frenchfries777.com/games/ff-hubbar.js?v=5" defer></script>
+<script src="https://frenchfries777.com/games/ff-hubbar.js?v=6" defer></script>
 </head>
 <body>
 <div class="top" id="topbar"><div class="wrap">
@@ -229,6 +229,6 @@ fetch('patchnotes.json',{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject
 fetch('versions.json',{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject()).then(render).catch(()=>{});
 window.addEventListener('scroll',()=>document.getElementById('topbar').classList.toggle('solid',scrollY>window.innerHeight*.6),{passive:true});
 </script>
-<script src="https://frenchfries777.com/games/ff-auth.js?v=20261115d"></script>
+<script src="https://frenchfries777.com/games/ff-auth.js?v=20261116b"></script>
 </body>
 </html>

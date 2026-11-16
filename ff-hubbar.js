@@ -8,10 +8,18 @@ var B='https://frenchfries777.com/';
 var LB={ko:['위키','커뮤니티','라운지','설정','검색'],en:['Wiki','Community','Lounge','Settings','Search'],ja:['Wiki','コミュニティ','ラウンジ','設定','検索'],
   es:['Wiki','Comunidad','Salón','Ajustes','Buscar'],fr:['Wiki','Communauté','Salon','Réglages','Recherche'],de:['Wiki','Community','Lounge','Einstellungen','Suche']};
 function lang(){ try{ var l=(window.FFLang&&FFLang.get&&FFLang.get())||document.documentElement.lang||'ko'; return String(l).slice(0,2).toLowerCase(); }catch(e){ return 'ko'; } }
+function ffScrollHint(sc,sel){
+  function hz(){ return sc.scrollWidth>sc.clientWidth+4&&getComputedStyle(sc).overflowX!=='visible'; }
+  function fade(){ var m=''; if(hz()){ var r=sc.scrollLeft+sc.clientWidth<sc.scrollWidth-4;
+      m='linear-gradient(90deg,'+'#000 0,#000 28px'+','+(r?'#000 calc(100% - 28px),transparent 100%':'#000 calc(100% - 28px),#000 100%')+')'; }
+    sc.style.webkitMaskImage=m; sc.style.maskImage=m; }
+  function center(){ var on=sc.querySelector(sel); if(on&&hz()) sc.scrollLeft+=on.getBoundingClientRect().left-sc.getBoundingClientRect().left-(sc.clientWidth-on.offsetWidth)/2; fade(); }
+  sc.addEventListener('scroll',fade,{passive:true}); addEventListener('resize',fade); center(); addEventListener('load',center);
+}
 function build(){
   if(document.querySelector('.ffhb-strip')) return;
   var acc=document.querySelector('[data-ff-account]'); if(!acc||!acc.parentNode) return;
-  if(!document.getElementById('ffhbCss')){ var l=document.createElement('link'); l.id='ffhbCss'; l.rel='stylesheet'; l.href=B+'games/ff-hubbar.css?v=7'; document.head.appendChild(l); }
+  if(!document.getElementById('ffhbCss')){ var l=document.createElement('link'); l.id='ffhbCss'; l.rel='stylesheet'; l.href=B+'games/ff-hubbar.css?v=8'; document.head.appendChild(l); }
   var t=LB[lang()]||LB.en;
   var bar=document.createElement('div'); bar.className='ffhb-strip'; bar.setAttribute('data-notr','');
   bar.innerHTML='<div class="ffhb-in"><a class="ffhb-logo" href="'+B+'games/"><i>🍟</i><span>FRENCHFRIES<b>777</b></span></a>'+
@@ -29,6 +37,7 @@ function build(){
   var mm=document.createElement('nav'); mm.className='ffhb-mmenu'; mm.innerHTML=mh; bar.querySelector('.ffhb-in').insertBefore(mm,bar.querySelector('.ffhb-sp'));
   document.body.insertBefore(bar,document.body.firstChild); document.documentElement.classList.add('ffhb-on');
   bar.querySelector('.tb').appendChild(acc);
+  ffScrollHint(mm,'.ffhb-m.on');
   /* the hub script drives the online chip and the search box */
   if(!window.__ffHubJs&&!document.querySelector('script[src*="/hub.js"]')){ window.__ffHubJs=1; var s=document.createElement('script'); s.src=B+'games/hub.js?v=20261116a'; document.body.appendChild(s); }
 }
