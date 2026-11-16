@@ -4,7 +4,7 @@
 <meta name="copyright" content="© 2026 Frenchfries777. CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)">
 <meta charset="UTF-8">
 <script src="https://frenchfries777.com/games/ff-lang.js"></script>
-<script src="../ff-verpick.js?v=2"></script>
+<script src="../ff-verpick.js?v=3"></script>
 <script src="../ff-pnsearch.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Vowkeep</title>
@@ -52,6 +52,7 @@ a{color:inherit}
 .hero::before{content:"";position:absolute;inset:0;background:rgba(8,6,12,.35);z-index:1}
 .hero .wrap{position:relative;z-index:2;width:100%;color:#f6ecd0;text-align:center}
 .hero h1{margin:0;font:400 clamp(84px,16vw,190px)/1 "Pinyon Script",cursive;color:#efe3c8;text-shadow:0 4px 0 #140f18,0 0 18px #140f18,3px 0 0 #140f18,-3px 0 0 #140f18}
+@media (max-height:700px) and (min-aspect-ratio:1/1){.hero{padding-top:70px}.hero h1{font-size:clamp(70px,13vw,130px)}.hero .sub{margin-bottom:16px}}
 .hero .sub{margin:10px auto 28px;font-size:clamp(15px,2.1vw,20px);max-width:30em;color:#e4d4ae;text-shadow:0 2px 10px #000}
 .btns{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:center}
 .pb{display:inline-block;font-weight:700;font-size:16px;text-decoration:none;cursor:pointer;padding:11px 22px;background:var(--dark);color:var(--tx);border:1px solid var(--dark2);border-radius:8px}
@@ -116,7 +117,7 @@ html{scrollbar-color:var(--line) var(--bg)}
 </style>
 <style>html,body,*{touch-action:manipulation}</style>
 <script>["gesturestart","gesturechange","gestureend"].forEach(function(e){document.addEventListener(e,function(x){x.preventDefault()})});</script>
-<script src="https://frenchfries777.com/games/ff-hubbar.js?v=1" defer></script>
+<script src="https://frenchfries777.com/games/ff-hubbar.js?v=6" defer></script>
 </head>
 <body>
 <div class="top" id="topbar"><div class="wrap">
@@ -228,6 +229,6 @@ fetch('patchnotes.json',{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject
 fetch('versions.json',{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject()).then(render).catch(()=>{});
 window.addEventListener('scroll',()=>document.getElementById('topbar').classList.toggle('solid',scrollY>window.innerHeight*.6),{passive:true});
 </script>
-<script src="https://frenchfries777.com/games/ff-auth.js?v=20261115d"></script>
+<script src="https://frenchfries777.com/games/ff-auth.js?v=20261116d"></script>
 </body>
 </html>

@@ -260,7 +260,7 @@ async function signUp(id, pw, nick){
 var OAL={
  ko:{or:'또는',gh:'GitHub로 계속하기',gg:'Google로 계속하기',off:'아직 이 로그인 방법이 켜져 있지 않아요.',
      setT:'닉네임 정하기',setP:'처음 오셨네요. 다른 사람에게 보이는 이름을 정해 주세요. 나중에 내 계정에서 바꿀 수 있어요.',nick:'닉네임 (최대 15자)',go:'시작하기',later:'취소하고 로그아웃',
-     linkT:'연결된 로그인',linkP:'연결해 두면 아이디·비밀번호 대신 이 버튼으로도 같은 계정에 로그인해요.',link:'연결',linked:'✓ 연결됨',pwSoc:'이 계정은 GitHub나 Google 버튼으로 로그인해요.',linkErr:'연결하지 못했어요. 이미 다른 계정에 연결된 것일 수 있어요.'},
+     linkT:'연결된 로그인',linkP:'연결해 두면 아이디·비밀번호 대신 이 버튼으로도 같은 계정에 로그인해요.',link:'연결',linked:'✓ 연결됨',pwSoc:'이 계정은 GitHub, Google, 디스코드 버튼으로 로그인해요.',linkErr:'연결하지 못했어요. 이미 다른 계정에 연결된 것일 수 있어요.'},
  en:{or:'or',gh:'Continue with GitHub',gg:'Continue with Google',off:'This login method is not turned on yet.',
      setT:'Pick a nickname',setP:'Welcome! Pick the name other people will see. You can change it later in My account.',nick:'Nickname (up to 15)',go:'Start',later:'Cancel and log out',
      linkT:'Linked logins',linkP:'Once linked, this button logs you into the same account instead of your username and password.',link:'Link',linked:'✓ Linked',pwSoc:'This account logs in with the GitHub or Google button.',linkErr:'Could not link. It may already belong to another account.'},
@@ -288,10 +288,12 @@ var OAL={
 };
 function OA(){ return OAL[lang()]||OAL.en; }
 var OAP=[['github','gh','<svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M8 0a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38v-1.33c-2.23.48-2.7-1.07-2.7-1.07-.36-.92-.89-1.17-.89-1.17-.73-.5.05-.49.05-.49.8.06 1.23.83 1.23.83.72 1.22 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.65-.89-3.65-3.95 0-.87.31-1.59.83-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.22 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.52.56.83 1.28.83 2.15 0 3.07-1.87 3.75-3.66 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 0 0 8 0z"/></svg>'],
- ['google','gg','<svg viewBox="0 0 48 48" width="18" height="18" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>']];
+ ['google','gg','<svg viewBox="0 0 48 48" width="18" height="18" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill=\"#1976D2\" d=\"M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z\"/></svg>'],
+ ['discord','dc','<svg viewBox="0 0 24 24" width="18" height="18" fill="#5865F2" aria-hidden="true"><path d="M20.3 4.4A19.8 19.8 0 0 0 15.4 3l-.2.5a18.3 18.3 0 0 0-4.4 0L10.6 3a19.7 19.7 0 0 0-4.9 1.4C2.6 9 1.8 13.5 2.2 17.9a19.9 19.9 0 0 0 6 3l.5-.8a12.9 12.9 0 0 1-2-1l.5-.4a14.2 14.2 0 0 0 12.2 0l.5.4c-.6.4-1.300.7-2 1l.5.8a19.9 19.9 0 0 0 6-3c.5-5.100-.8-9.500-3.600-13.500zM8.700 15.200c-1.200 0-2.100-1.100-2.100-2.400s.9-2.400 2.100-2.400 2.100 1.100 2.100 2.400-.9 2.400-2.100 2.400zm6.600 0c-1.200 0-2.100-1.100-2.100-2.400s.9-2.400 2.100-2.400 2.100 1.100 2.100 2.400-.9 2.400-2.100 2.400z"/></svg>']];
+var DCL={ko:'디스코드로 계속하기',en:'Continue with Discord',es:'Continuar con Discord',fr:'Continuer avec Discord',de:'Weiter mit Discord',ja:'Discordで続ける',zh:'使用 Discord 继续',pt:'Continuar com Discord',ru:'Продолжить через Discord',tr:'Discord ile devam et',it:'Continua con Discord',pl:'Kontynuuj przez Discord',ar:'المتابعة باستخدام Discord'};
 function backUrl(){ return location.origin+location.pathname+location.search; }   // no #hash: Supabase puts its tokens there
 function isIdAcct(u){ return /@(arenaclash\.local|frenchfries777\.com)$/i.test(String((u&&u.email)||'')); }
-function oaBtns(){ return OAP.map(function(x){ return '<button type="button" class="ffa-oa" data-p="'+x[0]+'">'+x[2]+'<span>'+esc(OA()[x[1]])+'</span></button>'; }).join(''); }
+function oaBtns(){ return OAP.map(function(x){ return '<button type="button" class="ffa-oa" data-p="'+x[0]+'">'+x[2]+'<span>'+esc(x[1]==='dc'?(DCL[lang()]||DCL.en):OA()[x[1]])+'</span></button>'; }).join(''); }
 function oaErr(e){ return /not enabled|unsupported provider|provider is not/i.test(String((e&&e.message)||''))?OA().off:errText(e); }
 async function oauth(p, m){
   if(!sb){ if(m) m.textContent=T.net; return; }
@@ -455,6 +457,8 @@ CSS+=
  W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) h3:after{display:none!important}'+
  W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) :is(h4,h5){color:var(--fry,#d9b45f)}'+
  W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) :is(input,textarea,select){background:transparent;color:var(--text,#ece6d8);border:1px solid var(--fry,#d9b45f);border-radius:12px}'+
+ W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) select{background:var(--ffw-bg,#171717);color:var(--ffw-tx,#ece6d8)}'+
+ W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) :is(option,optgroup){background:var(--ffw-bg,#171717);color:var(--ffw-tx,#ece6d8)}'+
  W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) :is(input,textarea)::placeholder{color:var(--dim,#a39c8c)}'+
  W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) :is(input,textarea):focus{box-shadow:0 0 0 1px var(--fry,#d9b45f)}'+
  W+'#ffaModal .ffa-btn,'+W+'#ffaSetup .ffa-btn{padding:12px;font-size:16px}'+
@@ -649,13 +653,14 @@ async function devPanel(el,say){ var L=DL(), box=el.querySelector('#aDevBox'); i
   var ids=Object.keys(devMap).filter(function(i){ return devMap[i]==='dev'; }), nm={};
   if(ids.length){ try{ var r=await sb.from('profiles').select('id,username,display_name').in('id',ids); ((r&&r.data)||[]).forEach(function(p){ nm[p.id]=p.username; }); }catch(e){} }
   box.innerHTML='<h4>'+esc(L.h)+'</h4><input type="text" id="aDevId" maxlength="16" autocapitalize="off" spellcheck="false" placeholder="'+esc(L.ph)+'"><button type="button" class="ffa-btn" id="aDevGo">'+esc(L.add)+'</button><div class="m" id="aDevM"></div><p>'+esc(L.note)+'</p>'+
-   '<div id="aDevList">'+(ids.length?ids.map(function(i){ return '<div class="row" style="align-items:center;margin-bottom:6px"><span style="flex:1;font-size:14px">🛠️ '+esc(nm[i]||'???')+'</span><button type="button" class="ffa-btn" data-u="'+esc(nm[i]||'')+'" style="flex:0 0 auto">'+esc(L.del)+'</button></div>'; }).join(''):'<p>'+esc(L.none)+'</p>')+'</div>';
+   '<div id="aDevList">'+(ids.length?ids.map(function(i){ return '<div class="row" style="align-items:center;margin-bottom:6px"><span style="flex:1;font-size:14px">🛠️ '+esc(nm[i]||'???')+'</span><button type="button" class="ffa-btn" data-u="'+esc(nm[i]||'')+'" data-i="'+esc(i)+'" style="flex:0 0 auto">'+esc(L.del)+'</button></div>'; }).join(''):'<p>'+esc(L.none)+'</p>')+'</div>';
   async function run(u,on){ if(!u) return; var r=await sb.rpc('ff_dev_set',{p_username:u,p_on:on}), v=r&&r.data;
     if(r.error||(v!=='ok'&&v!=='nouser'&&v!=='owner')) return say('aDevM',L.err);
     if(v==='nouser') return say('aDevM',L.nouser); if(v==='owner') return say('aDevM',L.own);
     await devPanel(el,say); say('aDevM',on?L.ok:L.rm,true); }
   box.querySelector('#aDevGo').onclick=function(){ run(box.querySelector('#aDevId').value.trim(),true); };
-  box.querySelectorAll('[data-u]').forEach(function(b){ b.onclick=function(){ run(b.dataset.u,false); }; });
+  async function unset(id){ var r=await sb.rpc('ff_dev_unset',{p_id:id}); if(r.error||!r.data||r.data!=='ok') return say('aDevM',L.err); await devPanel(el,say); say('aDevM',L.rm,true); }
+  box.querySelectorAll('[data-u]').forEach(function(b){ b.onclick=function(){ if(b.dataset.u) run(b.dataset.u,false); else unset(b.dataset.i); }; });
 }
 
 function closeAcct(){ var el=document.getElementById('ffaAcct'); if(el) el.style.display='none'; }
