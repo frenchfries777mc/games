@@ -432,7 +432,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.6<br>build 213</p>
+    <p class="foot">v0.6<br>build 214</p>
   </nav>
 </div>
 
@@ -474,7 +474,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
 
 <script>
 /* 배경음악 (N 키로 켜기/끄기)
-   · 곡: 로비·여름은 파일 안의 곡, 봄·가을·겨울은 계절 곡, 화산섬·얼음섬·정글섬(맹그로브섬 포함)·사막섬(메사섬 포함)에 있으면 그 섬의 곡
+   · 곡: 로비·여름은 파일 안의 곡, 봄·가을·겨울은 계절 곡, 화산섬·얼음섬·정글섬(맹그로브섬 포함)·사막섬(메사섬 포함)·Deep Void에 있으면 그 곳의 곡
    · 밤에는 음악을 줄이고 파도·풀벌레 소리, 비·폭풍우에는 빗소리가 겹쳐요
    · 소리 크기는 Web Audio로 조절해요 (iPad는 <audio>의 음량을 바꿀 수 없어서). 곡은 게임 옆의 mp3를 불러오고, 못 불러오면 사이트 주소에서 받아요 */
 const BGM=(()=>{
@@ -482,7 +482,7 @@ const BGM=(()=>{
   let on=true;try{const v=localStorage.getItem('stranded.bgm');if(v==='0')on=false;}catch(e){}
   const BASE='bgm-summer.mp3',ALT='https://frenchfries777.com/games/beaconfall/';
   const SEASON=['bgm-spring.mp3','base','bgm-autumn.mp3','bgm-winter.mp3'];          // seasonNow 순서
-  const ISLE={2:'bgm-desert.mp3',3:'bgm-volcano.mp3',4:'bgm-jungle.mp3',5:'bgm-desert.mp3',7:'bgm-jungle.mp3',8:'bgm-ice.mp3',9:'bgm-volcano.mp3'};   // BIOME_NAME 번호
+  const ISLE={2:'bgm-desert.mp3',3:'bgm-volcano.mp3',4:'bgm-jungle.mp3',5:'bgm-desert.mp3',7:'bgm-jungle.mp3',8:'bgm-ice.mp3',9:'bgm-void.mp3'};   // BIOME_NAME 번호
   const LEVEL={'bgm-battle.mp3':1,'bgm-startagain.mp3':2.1,base:0.4,'bgm-night.mp3':0.9,'bgm-volcano.mp3':1.8,'bgm-storm.mp3':0.9};   // 파일 안의 곡은 원래 소리가 커서 줄여요
   const AMB={'bgm-night.mp3':1,'bgm-rain.mp3':1,'bgm-storm.mp3':1};
   let ctx=null,master=null,isle=0,isleT=0;const ch={};let PACK={};
