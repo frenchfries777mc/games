@@ -11,7 +11,7 @@ function lang(){ try{ var l=(window.FFLang&&FFLang.get&&FFLang.get())||document.
 function build(){
   if(document.querySelector('.ffhb-strip')) return;
   var acc=document.querySelector('[data-ff-account]'); if(!acc||!acc.parentNode) return;
-  if(!document.getElementById('ffhbCss')){ var l=document.createElement('link'); l.id='ffhbCss'; l.rel='stylesheet'; l.href=B+'games/ff-hubbar.css?v=2'; document.head.appendChild(l); }
+  if(!document.getElementById('ffhbCss')){ var l=document.createElement('link'); l.id='ffhbCss'; l.rel='stylesheet'; l.href=B+'games/ff-hubbar.css?v=3'; document.head.appendChild(l); }
   var t=LB[lang()]||LB.en;
   var bar=document.createElement('div'); bar.className='ffhb-strip'; bar.setAttribute('data-notr','');
   bar.innerHTML='<div class="ffhb-in"><a class="ffhb-logo" href="'+B+'games/"><i>🍟</i><span>FRENCHFRIES<b>777</b></span></a>'+
