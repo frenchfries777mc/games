@@ -11,7 +11,7 @@ function lang(){ try{ var l=(window.FFLang&&FFLang.get&&FFLang.get())||document.
 function build(){
   if(document.querySelector('.ffhb-strip')) return;
   var acc=document.querySelector('[data-ff-account]'); if(!acc||!acc.parentNode) return;
-  if(!document.getElementById('ffhbCss')){ var l=document.createElement('link'); l.id='ffhbCss'; l.rel='stylesheet'; l.href=B+'games/ff-hubbar.css?v=3'; document.head.appendChild(l); }
+  if(!document.getElementById('ffhbCss')){ var l=document.createElement('link'); l.id='ffhbCss'; l.rel='stylesheet'; l.href=B+'games/ff-hubbar.css?v=5'; document.head.appendChild(l); }
   var t=LB[lang()]||LB.en;
   var bar=document.createElement('div'); bar.className='ffhb-strip'; bar.setAttribute('data-notr','');
   bar.innerHTML='<div class="ffhb-in"><a class="ffhb-logo" href="'+B+'games/"><i>🍟</i><span>FRENCHFRIES<b>777</b></span></a>'+
@@ -20,6 +20,13 @@ function build(){
     '<nav class="ffhb-nav"><a href="'+B+'wiki/">'+t[0]+'</a><a href="'+B+'community/">'+t[1]+'</a><a href="'+B+'lounge/">'+t[2]+'</a><a href="'+B+'settings/">'+t[3]+'</a></nav>'+
     '<span class="tb"><span class="cchip"><button type="button" class="cc-b" id="coinChip" title="Hub Coin" aria-haspopup="true"><img class="hci" src="'+B+'games/hubicons/coin.svg?v=20261103a" alt="" width="20" height="20" draggable="false"><b id="coinChipN" data-notr>0</b></button>'+
     '<div class="cc-dd" id="coinDd" hidden><div class="coinbar" id="coinBar"></div></div></span></span></div>';
+  /* left menu (the same menu as the hub); on narrow screens the same links scroll inside the top bar */
+  var ML=[['Hub',B,0],['Games',B+'games/',1],['Educations',B+'educations/',0],['Tools',B+'tools/',0],[t[0],B+'wiki/',0],[t[1],B+'community/',0],[t[2],B+'lounge/',0],['Prototypes',B+'prototypes/',0],[t[3],B+'settings/',0]];
+  var mh=ML.map(function(m){ return '<a class="ffhb-m'+(m[2]?' on':'')+'" href="'+m[1]+'"'+(m[2]?' aria-current="page"':'')+'><i></i>'+m[0]+'</a>'; }).join('');
+  var side=document.createElement('aside'); side.className='ffhb-side'; side.setAttribute('data-notr','');
+  side.innerHTML='<a class="ffhb-slogo" href="'+B+'"><span>FRENCH</span><span>FRIES</span><span>777</span></a>'+mh;
+  document.body.insertBefore(side,document.body.firstChild);
+  var mm=document.createElement('nav'); mm.className='ffhb-mmenu'; mm.innerHTML=mh; bar.querySelector('.ffhb-in').insertBefore(mm,bar.querySelector('.ffhb-sp'));
   document.body.insertBefore(bar,document.body.firstChild); document.documentElement.classList.add('ffhb-on');
   bar.querySelector('.tb').appendChild(acc);
   /* the hub script drives the coin chip and the search box */
