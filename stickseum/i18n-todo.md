@@ -23,3 +23,5 @@ patchnotes.json | v795 title | 폰 화면 맞춤 | build 795 | 2026-11-16
 patchnotes.json | v795 items[0] | 폰을 가로로 돌렸을 때 로비의 로고와 버튼이 겹치던 것을 고쳤어요 | build 795 | 2026-11-16
 patchnotes.json | v795 items[1] | 치장품 상점의 탭 글자가 겹치던 것, 뒤로가기 버튼이 제목과 코인 표시를 가리던 것을 고쳤어요 | build 795 | 2026-11-16
 patchnotes.json | v795 items[2] | 소개·밸런스·순위·도감 페이지의 위쪽 메뉴가 폰에서 잘리던 것을 고쳤어요 | build 795 | 2026-11-16
+patchnotes.json | v796 title | 폐허 도시 발판 | build 796 | 2026-11-16
+patchnotes.json | v796 items[0] | 폐허 도시에서 옆 발판에서 위 발판으로 올라갈 수 없던 것을 고쳤어요 (발판 높이를 낮춰서 한 번 점프로 올라갈 수 있어요) | build 796 | 2026-11-16
