@@ -12,8 +12,32 @@
   /* the light theme flips the whole page with a filter, so these colours are what comes out as amber with dark text */
   'html[data-ff-theme=light] aside[style*="flex:0 0 232px"] a.ffsm.on,html[data-ff-theme=light] aside[style*="flex:0 0 232px"] a.ffsm.on:hover{background:#965a00!important;color:#fff!important}'+
   'a.ffsm svg{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}';
+  /* body font and footer links: the same on every hub-side page */
+  var css2=
+  'html body{font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;font-weight:400}'+
+  /* the online bar: ff-online.js (educations, tools) draws a dot and a pill that the other pages do not have */
+  'html body #onlineBar{margin:0!important;font-size:14px!important;color:#fff!important}'+
+  'html body #onlineBar .on-dot{width:0!important;height:0!important;margin:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;animation:none!important}'+
+  'html body #onlineBar .on-n,html body #onlineBar .on-c,html body #onlineBar .on-c>span,html body #onlineBar .on-c b{color:#fff!important;font-size:14px!important}'+
+  'html body #onlineBar .on-c{padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;height:auto!important}'+
+  '.ffx-foot nav{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px}';
+  /* the four menu names that are written in Korean in every page */
+  var LB={'위키':{en:'Wiki',es:'Wiki',fr:'Wiki',de:'Wiki',ja:'Wiki',zh:'Wiki',pt:'Wiki',ru:'Wiki',tr:'Wiki',it:'Wiki',pl:'Wiki',ar:'Wiki',nw:'Truthbook'},
+    '커뮤니티':{en:'Community',es:'Comunidad',fr:'Communauté',de:'Community',ja:'コミュニティ',zh:'社区',pt:'Comunidade',ru:'Сообщество',tr:'Topluluk',it:'Community',pl:'Społeczność',ar:'المجتمع',nw:'Comradehall'},
+    '라운지':{en:'Lounge',es:'Sala',fr:'Salon',de:'Lounge',ja:'ラウンジ',zh:'休息室',pt:'Lounge',ru:'Лаунж',tr:'Dinlenme salonu',it:'Lounge',pl:'Strefa relaksu',ar:'الاستراحة',nw:'Joycamp'},
+    '설정':{en:'Settings',es:'Ajustes',fr:'Réglages',de:'Einstellungen',ja:'設定',zh:'设置',pt:'Configurações',ru:'Настройки',tr:'Ayarlar',it:'Impostazioni',pl:'Ustawienia',ar:'الإعدادات',nw:'Rules'}};
+  function names(side){
+    var l=''; try{ if(window.FFLang&&FFLang.get) l=FFLang.get()||''; }catch(e){}
+    if(!l) l=String(navigator.language||'ko').slice(0,2).toLowerCase();      /* nothing saved: the browser language, like the pages' own translators */
+    if(!LB['위키'][l])return;
+    var as=side.querySelectorAll('a');
+    for(var i=0;i<as.length;i++){ var n=as[i].lastChild; if(!n||n.nodeType!==3)continue; var k=n.nodeValue.trim(), t=LB[k]&&LB[k][l]; if(t)n.nodeValue=t; }
+  }
   function run(){
+    var st2=document.createElement('style'); st2.textContent=css2; document.head.appendChild(st2);
+    var rail=document.querySelector('nav.rail'); if(rail)names(rail);      /* prototypes page */
     var side=document.querySelector('aside[style*="flex:0 0 232px"]'); if(!side||side.__ffsm)return; side.__ffsm=1;
+    names(side);
     var st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
     var as=side.querySelectorAll(':scope>a');
     for(var i=0;i<as.length;i++){
