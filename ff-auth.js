@@ -649,13 +649,14 @@ async function devPanel(el,say){ var L=DL(), box=el.querySelector('#aDevBox'); i
   var ids=Object.keys(devMap).filter(function(i){ return devMap[i]==='dev'; }), nm={};
   if(ids.length){ try{ var r=await sb.from('profiles').select('id,username,display_name').in('id',ids); ((r&&r.data)||[]).forEach(function(p){ nm[p.id]=p.username; }); }catch(e){} }
   box.innerHTML='<h4>'+esc(L.h)+'</h4><input type="text" id="aDevId" maxlength="16" autocapitalize="off" spellcheck="false" placeholder="'+esc(L.ph)+'"><button type="button" class="ffa-btn" id="aDevGo">'+esc(L.add)+'</button><div class="m" id="aDevM"></div><p>'+esc(L.note)+'</p>'+
-   '<div id="aDevList">'+(ids.length?ids.map(function(i){ return '<div class="row" style="align-items:center;margin-bottom:6px"><span style="flex:1;font-size:14px">🛠️ '+esc(nm[i]||'???')+'</span><button type="button" class="ffa-btn" data-u="'+esc(nm[i]||'')+'" style="flex:0 0 auto">'+esc(L.del)+'</button></div>'; }).join(''):'<p>'+esc(L.none)+'</p>')+'</div>';
+   '<div id="aDevList">'+(ids.length?ids.map(function(i){ return '<div class="row" style="align-items:center;margin-bottom:6px"><span style="flex:1;font-size:14px">🛠️ '+esc(nm[i]||'???')+'</span><button type="button" class="ffa-btn" data-u="'+esc(nm[i]||'')+'" data-i="'+esc(i)+'" style="flex:0 0 auto">'+esc(L.del)+'</button></div>'; }).join(''):'<p>'+esc(L.none)+'</p>')+'</div>';
   async function run(u,on){ if(!u) return; var r=await sb.rpc('ff_dev_set',{p_username:u,p_on:on}), v=r&&r.data;
     if(r.error||(v!=='ok'&&v!=='nouser'&&v!=='owner')) return say('aDevM',L.err);
     if(v==='nouser') return say('aDevM',L.nouser); if(v==='owner') return say('aDevM',L.own);
     await devPanel(el,say); say('aDevM',on?L.ok:L.rm,true); }
   box.querySelector('#aDevGo').onclick=function(){ run(box.querySelector('#aDevId').value.trim(),true); };
-  box.querySelectorAll('[data-u]').forEach(function(b){ b.onclick=function(){ run(b.dataset.u,false); }; });
+  async function unset(id){ var r=await sb.rpc('ff_dev_unset',{p_id:id}); if(r.error||!r.data||r.data!=='ok') return say('aDevM',L.err); await devPanel(el,say); say('aDevM',L.rm,true); }
+  box.querySelectorAll('[data-u]').forEach(function(b){ b.onclick=function(){ if(b.dataset.u) run(b.dataset.u,false); else unset(b.dataset.i); }; });
 }
 
 function closeAcct(){ var el=document.getElementById('ffaAcct'); if(el) el.style.display='none'; }
