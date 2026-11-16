@@ -3,6 +3,8 @@
    Add to a game site page:  <script src="https://frenchfries777.com/games/ff-hubbar.js?v=1" defer></script>
    The page needs the usual <span data-ff-account></span> in its top bar (the box is built around it). Styles: ff-hubbar.css. */
 (function(){
+  /* a picture that failed once (flaky network, deploy in progress) gets one retry with a fresh address */
+  if(!window.__ffImgRetry){ window.__ffImgRetry=1; document.addEventListener('error',function(e){ var i=e.target; if(!i||i.tagName!=='IMG'||i.__ffr||!i.src||/^(data|blob):/.test(i.src)) return; i.__ffr=1; var s=i.src; setTimeout(function(){ i.src=s+(s.indexOf('?')<0?'?':'&')+'r='+Date.now(); },1500); },true); }
 'use strict';
 var B='https://frenchfries777.com/';
 var LB={ko:['위키','커뮤니티','라운지','설정','검색'],en:['Wiki','Community','Lounge','Settings','Search'],ja:['Wiki','コミュニティ','ラウンジ','設定','検索'],
