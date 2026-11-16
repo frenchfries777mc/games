@@ -911,6 +911,7 @@ async function syncHub(sb, uid, d){
 /* ---- under the card: every achievement of every game, which ones this player earned, and how many of all players earned each ---- */
 var catCache={}, rateCache=null;
 function catalog(game){
+  if(game==='gatecrash'||game==='tumblecrown') return Promise.resolve(null); /* no ach json for these games */
   if(!catCache[game]) catCache[game]=fetch(BASE+'ach/'+game+'.json',{cache:'no-cache'}).then(function(r){ return r.ok?r.json():null; }).then(function(j){ return j&&Array.isArray(j.list)?j.list:null; },function(){ return null; });
   return catCache[game];
 }

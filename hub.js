@@ -58,7 +58,7 @@ function siteDict(g){ return fetch(GAMES[g].site+'i18n.js',{cache:'no-cache'}).t
 function loadNews(){
   var box=$('#newsList'); if(!box) return Promise.resolve();
   return Promise.all(Object.keys(NSRC).map(function(g){
-    return Promise.all([window.FF_REG_NOTES(NSRC[g]).then(function(l){ return l?{notes:l}:null; }), LANG==='ko'||!GAMES[g]||g==='stickseum'?null:siteDict(g)])
+    return Promise.all([window.FF_REG_NOTES(NSRC[g]).then(function(l){ return l?{notes:l}:null; }), LANG==='ko'||!GAMES[g]||g==='stickseum'||g==='dummyparty'||g==='gatecrash'||g==='tumblecrown'?null:siteDict(g)])
       .then(function(x){ var d=x[0]; return ((d&&d.notes)||[]).map(function(n,i){ var t=trNote(n,x[1]); return {g:g, i:i, date:n.date||'', build:n.build||'', title:t.title, items:t.items, key:(n.date||'')+'|'+(n.build||'')+'|'+(n.title||'')}; }); });
   })).then(function(all){ hubNotes=all[0]; all.forEach(function(l){ if(l[0]) notesBy[l[0].g]=l.map(function(n){ return n.key; }); }); news=[].concat.apply([],all).sort(function(a,b){ return (b.date>a.date?1:b.date<a.date?-1:0)||(a.i-b.i); }); paintNews(); paintFollow(); });
 }
@@ -397,7 +397,7 @@ function watchChat(){
 
 /* ---- 친구 소식: 친구가 최근 2주 동안 달성한 도전과제 · 처음 시작한 게임 · 쓴 글 ---- */
 var achCat={};
-function achMap(g){ if(!achCat[g]) achCat[g]=fetch(ROOT+'ach/'+g+'.json').then(function(r){ return r.ok?r.json():null; }).then(function(j){ var m={}; ((j&&j.list)||[]).forEach(function(a){ m[a.id]=a; }); return m; }).catch(function(){ return {}; }); return achCat[g]; }
+function achMap(g){ if(g==='gatecrash'||g==='tumblecrown') return Promise.resolve({}); /* no ach json for these games */ if(!achCat[g]) achCat[g]=fetch(ROOT+'ach/'+g+'.json').then(function(r){ return r.ok?r.json():null; }).then(function(j){ var m={}; ((j&&j.list)||[]).forEach(function(a){ m[a.id]=a; }); return m; }).catch(function(){ return {}; }); return achCat[g]; }
 function feedTag(g){ return g==='hub'?'<span class="tag">허브</span>':gameTag(g); }
 async function feed(){
   var p=$('.cm-p[data-p=feed]'); if(!p||!sb) return;
