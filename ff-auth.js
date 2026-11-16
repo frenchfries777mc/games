@@ -457,6 +457,8 @@ CSS+=
  W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) h3:after{display:none!important}'+
  W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) :is(h4,h5){color:var(--fry,#d9b45f)}'+
  W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) :is(input,textarea,select){background:transparent;color:var(--text,#ece6d8);border:1px solid var(--fry,#d9b45f);border-radius:12px}'+
+ W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) select{background:var(--ffw-bg,#171717);color:var(--ffw-tx,#ece6d8)}'+
+ W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) :is(option,optgroup){background:var(--ffw-bg,#171717);color:var(--ffw-tx,#ece6d8)}'+
  W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) :is(input,textarea)::placeholder{color:var(--dim,#a39c8c)}'+
  W+':is(#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep,#ffaAcct) :is(input,textarea):focus{box-shadow:0 0 0 1px var(--fry,#d9b45f)}'+
  W+'#ffaModal .ffa-btn,'+W+'#ffaSetup .ffa-btn{padding:12px;font-size:16px}'+
