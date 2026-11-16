@@ -1,6 +1,101 @@
 {
  "notes": [
   {
+   "date": "2026-11-16",
+   "build": "v0.2 build 98",
+   "title": "모바일 화면 잘림 수정",
+   "items": [
+    "휴대폰에서 조이스틱과 행동 버튼이 노치나 둥근 모서리에 가리지 않게 했어요",
+    "가로 화면에서 연구 창의 닫기 버튼이 잘리지 않게 했어요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Mobile cut-off fixes",
+     "items": [
+      "Joystick and action button no longer hide under notches or rounded corners on phones",
+      "The Research window close button is no longer cut off in landscape"
+     ]
+    },
+    "ja": {
+     "title": "Mobile cut-off fixes",
+     "items": [
+      "Joystick and action button no longer hide under notches or rounded corners on phones",
+      "The Research window close button is no longer cut off in landscape"
+     ]
+    },
+    "es": {
+     "title": "Mobile cut-off fixes",
+     "items": [
+      "Joystick and action button no longer hide under notches or rounded corners on phones",
+      "The Research window close button is no longer cut off in landscape"
+     ]
+    },
+    "fr": {
+     "title": "Mobile cut-off fixes",
+     "items": [
+      "Joystick and action button no longer hide under notches or rounded corners on phones",
+      "The Research window close button is no longer cut off in landscape"
+     ]
+    },
+    "de": {
+     "title": "Mobile cut-off fixes",
+     "items": [
+      "Joystick and action button no longer hide under notches or rounded corners on phones",
+      "The Research window close button is no longer cut off in landscape"
+     ]
+    },
+    "zh": {
+     "title": "Mobile cut-off fixes",
+     "items": [
+      "Joystick and action button no longer hide under notches or rounded corners on phones",
+      "The Research window close button is no longer cut off in landscape"
+     ]
+    },
+    "pt": {
+     "title": "Mobile cut-off fixes",
+     "items": [
+      "Joystick and action button no longer hide under notches or rounded corners on phones",
+      "The Research window close button is no longer cut off in landscape"
+     ]
+    },
+    "ru": {
+     "title": "Mobile cut-off fixes",
+     "items": [
+      "Joystick and action button no longer hide under notches or rounded corners on phones",
+      "The Research window close button is no longer cut off in landscape"
+     ]
+    },
+    "tr": {
+     "title": "Mobile cut-off fixes",
+     "items": [
+      "Joystick and action button no longer hide under notches or rounded corners on phones",
+      "The Research window close button is no longer cut off in landscape"
+     ]
+    },
+    "it": {
+     "title": "Mobile cut-off fixes",
+     "items": [
+      "Joystick and action button no longer hide under notches or rounded corners on phones",
+      "The Research window close button is no longer cut off in landscape"
+     ]
+    },
+    "pl": {
+     "title": "Mobile cut-off fixes",
+     "items": [
+      "Joystick and action button no longer hide under notches or rounded corners on phones",
+      "The Research window close button is no longer cut off in landscape"
+     ]
+    },
+    "ar": {
+     "title": "Mobile cut-off fixes",
+     "items": [
+      "Joystick and action button no longer hide under notches or rounded corners on phones",
+      "The Research window close button is no longer cut off in landscape"
+     ]
+    }
+   }
+  },
+  {
    "date": "2026-11-13",
    "build": "v0.2 build 97",
    "title": "오류 수정",
