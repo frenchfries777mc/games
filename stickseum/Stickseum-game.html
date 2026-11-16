@@ -3536,14 +3536,17 @@ function ppProj0(b,cp){
     if(b.wid==='wizard'){ drawTrail(b); if(Math.random()<0.7) addP({x:b.x+RND(-4,4),y:b.y+RND(-4,4),vx:RND(-40,40),vy:RND(-40,40),life:RND(.3,.55),size:RND(1.4,2.6),color:Math.random()<.5?'#ffffff':'#ffe9a8',glow:1,drag:2});
       ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(a); ctx.save(); ctx.globalCompositeOperation='lighter'; const g=ctx.createRadialGradient(8,0,0,8,0,15); g.addColorStop(0,'rgba(255,245,210,0.75)'); g.addColorStop(1,'rgba(255,220,150,0)'); ctx.fillStyle=g; ctx.beginPath(); ctx.arc(8,0,15,0,7); ctx.fill(); ctx.restore();
       ppBar(ctx,-10,24,4.2,coat,{coatFrac:0.72,dots:['#6b4a2f','#6b4a2f','#6b4a2f']}); ctx.restore(); return true; }
-    if(b.wid==='bow'){ drawTrail(b); ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(a);
-      ctx.lineCap='round'; ppBar(ctx,-12,25,3.4,'#4b2a18',{coatFrac:0.3});                           // a plain (nude) pepero with a chocolate tip
+    if(b.wid==='bow'){ drawTrail(b); if(b.fire && Math.random()<0.8) addP({x:b.x-Math.cos(a)*14+RND(-3,3),y:b.y-Math.sin(a)*14+RND(-3,3),vx:RND(-30,30),vy:RND(-60,-10),life:RND(.25,.5),size:RND(3,6),color:['#4b2a18','#ff9a3a','#ffd34d'][Math.floor(Math.random()*3)],shape:'fire',grav:-50,drag:1.2});
+      ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(a);
+      ctx.lineCap='round'; ppBar(ctx,-12,25,3.4,'#4b2a18',{coatFrac:b.fire?0.62:0.3});                           // a plain (nude) pepero with a chocolate tip
       ctx.fillStyle='#fff2d6'; ctx.strokeStyle='#3a2212'; ctx.lineWidth=0.6; for(const s of [-1,1]){ ctx.beginPath(); ctx.moveTo(-12,0); ctx.lineTo(-17,s*3.6); ctx.lineTo(-8,s*1.6); ctx.closePath(); ctx.fill(); ctx.stroke(); }
       ctx.restore(); return true; }
     if(b.wid==='shuriken'){ drawTrail(b); ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(t*0.02);
       for(let i=0;i<4;i++){ ctx.save(); ctx.rotate(i*Math.PI/2); ppStick(ctx,0,0,10,0,i%2?'#6b3a1f':'#4b2a18',{w:3.2,coatFrac:0.82}); ctx.restore(); } ctx.restore(); return true; }
     if(b.wid==='gambler'){ drawTrail(b); ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(t/60); const s=b.ult?1.7:1.15; ctx.scale(s,s); ppChip(ctx,8); ctx.restore(); return true; }
     if(b.wid==='magiccard'){ drawTrail(b); ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(t*0.012); ppBoxCard(ctx,12,18); ctx.restore(); return true; }
+    if(b.wid==='pirate_ball'){ drawTrail(b); if(Math.random()<0.6) ppCrumb(b.x,b.y,crumbs,1);      // the cannon shell: a bundle of pepero bars tied with a gold band
+      ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(t*0.01); for(let i=-2;i<=2;i++) ppStick(ctx,i*3.6,9,20,0,i%2?'#6b3a1f':'#4b2a18',{w:3.4,coatFrac:0.7}); ctx.fillStyle='#ffd34d'; ctx.fillRect(-9,-3,18,3.4); ctx.restore(); return true; }
     return false;
   }
   if(swing){
@@ -3576,6 +3579,87 @@ function ppProj0(b,cp){
 
 function ppHeld(c,w,k){ const o=PP_LINE; PP_LINE='#ffe6bd'; try{ return ppHeld0(c,w,k); } finally{ PP_LINE=o; } }
 function ppProj(b,k){ const o=PP_LINE; PP_LINE='#ffe6bd'; try{ return ppProj0(b,k); } finally{ PP_LINE=o; } }
+
+/* ===== 빼빼로 스킨: skills + ultimates drawn as pepero (visuals only; damage, cooldown and range are untouched) ===== */
+function ppIs(p){ const c=conceptOfP(p); return (c&&c.indexOf('pp_')===0)?c:''; }
+function ppCast(p,k,tMs,o){ if(!p||!ppIs(p)) return; o=o||{}; pushFx('ppfx', o.x!==undefined?o.x:p.x, o.y!==undefined?o.y:p.y-34, tMs, {w:o.w||p.weapon, k:k, a:o.a||0, pid:p.id}); }
+function ppBars(x,y,n,o){ for(let i=0;i<n;i++){ const a=RND(o.a0,o.a1), sp=RND(o.s0,o.s1);
+  addP({x:x,y:y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:RND(o.l0||.5,o.l1||.9),shape:'pbar',add:false,rot:RND(0,6.28),vr:RND(-12,12),grav:o.grav===undefined?500:o.grav,drag:o.drag===undefined?0.8:o.drag,len:RND(o.z0||11,o.z1||17),bw:o.bw||3.2,coat:o.cols[i%o.cols.length],dots:o.dots,nuts:o.nuts}); } }
+function ppFxPlay(e,x,y){
+  const w=e.w, k=e.k, a=e.a||0, q=(fxQuality>=1)?1:0.6, n=v=>Math.max(2,Math.round(v*q));
+  const CH=['#4b2a18','#6b3a1f','#e3bd7c','#fff2d6'], PK=['#ff7fa6','#ffffff','#ffe3ef'], WH=['#fff4e2','#ffffff','#e3bd7c'], DR=['#4b2a18','#6b3a1f','#8a5a34'];
+  const crumbs=(cx,cy,cols,m,sp)=>burst(cx,cy,n(m),{a0:0,a1:6.28,s0:40,s1:sp||320,l0:.4,l1:.9,z0:1.6,z1:3.4,colors:cols,grav:420,drag:1.1,add:false});
+  switch(w+':'+k){
+    case 'shuriken:skill':      // 그림자 이동: he vanishes in a scatter of crumbs and wrapper bits
+      ppBars(x,y,n(7),{a0:0,a1:6.28,s0:80,s1:300,l0:.5,l1:.9,z0:9,z1:13,bw:2.8,cols:['#4b2a18','#6b3a1f'],grav:380});
+      crumbs(x,y,CH,22,340);
+      burst(x,y,n(12),{a0:0,a1:6.28,s0:60,s1:300,l0:.5,l1:1.0,z0:2,z1:3.6,colors:['#ffd34d','#d62a30','#ffffff'],grav:240,drag:1,shape:'square',add:false});
+      addP({x:x,y:y,life:.3,color:'#4b2a18',shape:'ring',r0:6,r1:60,lw:4}); break;
+    case 'shuriken:ult': {      // 회심의 일격: two 11-shaped pepero bars slash crosswise
+      for(const sg of [-1,1]){ const ang=Math.atan2(360,sg*600);
+        for(const off of [-5,5]) addP({x:x-sg*92-Math.sin(ang)*off,y:y-70+Math.cos(ang)*off,vx:sg*600,vy:360,life:.34,shape:'pbar',add:false,rot:ang+Math.PI/2,vr:0,len:44,bw:5.2,coat:off<0?'#4b2a18':'#6b3a1f',nuts:0});
+        addP({x:x-sg*110,y:y-80,x2:x+sg*110,y2:y+30,life:.32,color:'#fff2d6',shape:'slash',size:12}); }
+      crumbs(x,y-20,CH,18,420); addP({x:x,y:y,life:.3,color:'#e3bd7c',shape:'flash',size:140}); shakeFrom(x,y,4,500); break; }
+    case 'pistol:skill':        // 속사: chocolate drops spray out along the aim
+      for(let i=0;i<n(24);i++){ const aa=a+RND(-0.45,0.45), sp=RND(300,720); addP({x:x+Math.cos(aa)*20,y:y+Math.sin(aa)*20,vx:Math.cos(aa)*sp,vy:Math.sin(aa)*sp,life:RND(.4,.8),size:RND(2,4.4),color:DR[i%3],shape:'dot',add:false,grav:700,drag:.6}); }
+      ppBars(x+Math.cos(a)*24,y+Math.sin(a)*24,n(3),{a0:a-0.25,a1:a+0.25,s0:380,s1:620,l0:.3,l1:.5,z0:10,z1:14,bw:3.4,cols:['#4b2a18'],grav:200,drag:1.6});
+      addP({x:x,y:y,life:.3,color:'#6b3a1f',shape:'ring',r0:6,r1:46,lw:4}); break;
+    case 'pistol:ult':
+      for(let i=0;i<n(12);i++){ const aa=a+RND(-0.3,0.3), sp=RND(200,520); addP({x:x,y:y,vx:Math.cos(aa)*sp,vy:Math.sin(aa)*sp,life:RND(.4,.7),size:RND(2.5,5),color:DR[i%3],shape:'dot',add:false,grav:500,drag:.8}); }
+      addP({x:x,y:y,life:.35,color:'#e3bd7c',shape:'flash',size:130}); addP({x:x,y:y,life:.4,color:'#6b3a1f',shape:'ring',r0:8,r1:80,lw:6}); break;
+    case 'pistol:hit':          // the thick chocolate bullet bursts into chocolate
+      for(let i=0;i<n(34);i++){ const aa=RND(0,6.28), sp=RND(100,560); addP({x:x,y:y,vx:Math.cos(aa)*sp,vy:Math.sin(aa)*sp,life:RND(.5,1.0),size:RND(2.5,6.5),color:DR[i%3],shape:'dot',add:false,grav:620,drag:.7}); }
+      ppBars(x,y,n(6),{a0:0,a1:6.28,s0:120,s1:420,z0:12,z1:18,bw:3.6,cols:['#4b2a18','#6b3a1f'],grav:520});
+      addP({x:x,y:y,life:.4,color:'#6b3a1f',shape:'ring',r0:8,r1:100,lw:9}); addP({x:x,y:y,life:.25,color:'#e3bd7c',shape:'flash',size:150}); shakeFrom(x,y,5,500); break;
+    case 'sword:skill':         // 돌진 베기: almond pieces fly while a pepero spins around him
+      for(let i=0;i<2;i++) addP({x:x,y:y,life:(typeof SWORD_CHARGE_SEC!=='undefined'?SWORD_CHARGE_SEC:0.9),shape:'pbar',add:false,fid:e.pid,orbR:36,orbA:i*Math.PI,orbW:15,len:34,bw:5.4,coat:'#5a3320',nuts:6,cf:0.84});
+      burst(x,y,n(16),{a0:0,a1:6.28,s0:80,s1:340,l0:.4,l1:.8,z0:1.8,z1:3.4,colors:['#d7a867','#5a3320','#e3bd7c'],grav:420,drag:1.1,add:false});
+      addP({x:x,y:y,life:.3,color:'#d7a867',shape:'ring',r0:6,r1:56,lw:4}); break;
+    case 'sword:ult':
+      crumbs(x,y,['#d7a867','#5a3320','#e3bd7c'],14,280); addP({x:x,y:y,life:.35,color:'#d7a867',shape:'ring',r0:8,r1:80,lw:5}); break;
+    case 'bat:skill':           // 반사 스윙: a ring of strawberry sticks as a shield
+      for(let i=0;i<6;i++) addP({x:x,y:y,life:.72,shape:'pbar',add:false,fid:e.pid,orbR:42,orbA:i*Math.PI/3,orbW:9,len:22,bw:5,coat:'#ff7fa6',dots:['#fff','#ffe3ef','#fff'],cf:0.8});
+      addP({x:x,y:y,life:.45,color:'#ff9fbd',shape:'ring',r0:10,r1:52,lw:4});
+      burst(x,y,n(12),{a0:0,a1:6.28,s0:60,s1:220,l0:.4,l1:.8,z0:2,z1:4,colors:PK,grav:200,drag:1.2,add:false}); break;
+    case 'bat:ult':
+      addP({x:x,y:y,life:.4,color:'#ff7fa6',shape:'flash',size:140}); burst(x,y,n(16),{a0:-2.8,a1:-0.3,s0:100,s1:420,l0:.5,l1:1,z0:2.5,z1:5,colors:PK,grav:480,drag:1,add:false}); break;
+    case 'bat:hit':             // 홈런: a burst of strawberry cream
+      for(let i=0;i<n(44);i++){ const aa=RND(0,6.28), sp=RND(120,620); addP({x:x,y:y,vx:Math.cos(aa)*sp,vy:Math.sin(aa)*sp,life:RND(.5,1.1),size:RND(3,8),color:PK[i%3],shape:'dot',add:false,grav:520,drag:.8}); }
+      ppBars(x,y,n(8),{a0:0,a1:6.28,s0:140,s1:480,z0:14,z1:20,bw:5,cols:['#ff7fa6'],dots:['#fff','#ffe3ef','#fff'],grav:540});
+      addP({x:x,y:y,life:.45,color:'#ff7fa6',shape:'ring',r0:10,r1:170,lw:10}); addP({x:x,y:y,life:.3,color:'#ffffff',shape:'flash',size:200}); shakeFrom(x,y,8,700); break;
+    case 'wizard:skill':        // 충격파: a wave of white powder
+      for(let r=0;r<2;r++) addP({x:x,y:y,life:.45+r*.12,color:r?'#ffe9a8':'#fff4e2',shape:'ring',r0:12,r1:170,lw:7-r*2});
+      burst(x,y,n(26),{a0:0,a1:6.28,s0:100,s1:420,l0:.5,l1:1,z0:7,z1:14,colors:['#fff4e2','#ffffff'],drag:2.2,shape:'smoke',add:false});
+      ppBars(x,y,n(6),{a0:0,a1:6.28,s0:200,s1:420,z0:12,z1:17,bw:3.4,cols:WH,dots:['#6b4a2f','#6b4a2f','#6b4a2f'],grav:300}); break;
+    case 'wizard:ult':
+      ppBars(x,y,n(7),{a0:-2.9,a1:-0.25,s0:140,s1:380,z0:12,z1:17,bw:3.4,cols:WH,dots:['#6b4a2f','#6b4a2f','#6b4a2f'],grav:420});
+      addP({x:x,y:y,life:.4,color:'#fff4e2',shape:'ring',r0:8,r1:70,lw:5}); break;
+    case 'bow:skill':           // 갈고리 화살: a candy rope
+      burst(x,y,n(12),{a0:a-0.5,a1:a+0.5,s0:120,s1:360,l0:.3,l1:.6,z0:2,z1:3.6,colors:PK,grav:120,drag:1.4,add:false});
+      addP({x:x,y:y,life:.3,color:'#ff9fbd',shape:'ring',r0:6,r1:42,lw:4}); break;
+    case 'bow:ult':             // 불화살: chocolate flames
+      burst(x+Math.cos(a)*26,y+Math.sin(a)*26,n(22),{a0:a-0.45,a1:a+0.45,s0:150,s1:520,l0:.3,l1:.7,z0:4,z1:8,colors:['#4b2a18','#ff9a3a','#ffd34d'],grav:-60,drag:1.3,shape:'fire'});
+      ppBars(x+Math.cos(a)*26,y+Math.sin(a)*26,n(3),{a0:a-0.15,a1:a+0.15,s0:500,s1:760,l0:.25,l1:.4,z0:14,z1:18,bw:3.2,cols:['#4b2a18'],grav:60,drag:1.5}); break;
+    case 'pirate:skill': case 'pirate:ult': {   // the pepero-box cannon: bars and red box pieces
+      const big=(k==='skill');
+      ppBars(x,y,n(big?9:6),{a0:-2.7,a1:-0.45,s0:160,s1:520,z0:12,z1:18,bw:3.4,cols:['#4b2a18','#6b3a1f'],grav:520});
+      burst(x,y,n(big?16:10),{a0:-3.1,a1:0,s0:100,s1:420,l0:.5,l1:1,z0:2.4,z1:4.4,colors:['#d62a30','#fff2d6','#ffd34d'],grav:520,drag:1,shape:'square',add:false});
+      burst(x,y,n(8),{a0:-2.6,a1:-0.5,s0:30,s1:120,l0:.6,l1:1.1,z0:7,z1:12,colors:['#fff2d6','#e8e0d0'],grav:-30,drag:1.6,shape:'smoke',add:false}); break; }
+    case 'gambler:skill':       // 동전 던지기: an 11-shaped coin flips up
+      for(const off of [-4.5,4.5]) addP({x:x+off,y:y-24,vx:0,vy:-430,grav:900,life:.85,shape:'pbar',add:false,rot:0,vr:14,len:26,bw:4.6,coat:'#6b3a1f'});
+      addP({x:x,y:y,life:.4,color:'#ffd34d',shape:'ring',r0:6,r1:50,lw:4}); break;
+    case 'gambler:ult': {       // 삼중 도박: three pepero bars instead of cards
+      const cc=['#4b2a18','#ff7fa6','#fff4e2'];
+      for(let i=0;i<3;i++) addP({x:x+(i-1)*34,y:y-14,vx:(i-1)*40,vy:-250,grav:420,life:1.3,shape:'pbar',add:false,rot:(i-1)*0.5,vr:(i-1)*2.4,len:32,bw:5.8,coat:cc[i],dots:i===1?['#fff','#ffe3ef','#fff']:undefined});
+      burst(x,y-20,n(14),{a0:-3.1,a1:0,s0:60,s1:260,l0:.5,l1:1,z0:2,z1:3.6,colors:['#ffd34d','#ffffff'],grav:200,drag:1.2}); break; }
+    case 'magiccard:skill':     // 카드 일렬 발사: pepero cards fly out in a line
+      ppBars(x,y,n(5),{a0:a-0.04,a1:a+0.04,s0:700,s1:900,l0:.28,l1:.4,z0:16,z1:20,bw:3.6,cols:['#4b2a18','#ff7fa6','#fff4e2'],grav:0,drag:3});
+      addP({x:x,y:y,life:.3,color:'#c17bff',shape:'ring',r0:6,r1:44,lw:4}); break;
+    case 'magiccard:tp':        // 탈출 마법: he comes apart into crumbs
+      ppBars(x,y,n(6),{a0:0,a1:6.28,s0:100,s1:340,z0:12,z1:17,bw:3.2,cols:['#4b2a18','#ff7fa6','#fff4e2'],grav:300});
+      crumbs(x,y,CH,20,300); addP({x:x,y:y,life:.35,color:'#e3bd7c',shape:'ring',r0:6,r1:64,lw:5}); break;
+  }
+}
 
 function drawWeaponPersona(c,wid,hx,hy,r,shy,tint,concept){
   if(concept && String(concept).indexOf('pp_')===0){ ppPersona(c,wid,concept,hx,hy,r,shy,tint); return; }
@@ -6315,7 +6399,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-16-v796';
+const GAME_BUILD='build 2026-11-16-v797';
 const GAME_VERSION='1.0.1', GAME_VERSION_NAME='네온 시티';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -13735,13 +13819,13 @@ const ULT_IMPL = {
     const origX=p.x, origY=p.y;
     p.lastShot=-9999; // resets the normal-attack cooldown
     p.freeVolleys=WEAPONS.magiccard.freeVolleys; p.freeUntil=tSec+1;   // while it is over there: 3 volleys that ignore the cooldown
-    pushFx('blink', p.x, p.y-30, tMs, {color:'#c17bff'});
+    pushFx('blink', p.x, p.y-30, tMs, {color:'#c17bff'}); ppCast(p,'tp',tMs,{w:'magiccard'});
     p.x=tg.x; p.y=tg.y; p.vx=0; p.vy=0; p.kbX=0;
-    pushFx('blink', p.x, p.y-30, tMs, {color:'#c17bff'});
+    pushFx('blink', p.x, p.y-30, tMs, {color:'#c17bff'}); ppCast(p,'tp',tMs,{w:'magiccard'});
     hostTimers.push({au:curAur, ta:fxActor, at:tSec+1, fn:(tt)=>{
       if(!p.alive) return;
       p.x=origX; p.y=origY; p.vx=0; p.vy=0; p.kbX=0;
-      pushFx('blink', p.x, p.y-30, tt, {color:'#c17bff'});
+      pushFx('blink', p.x, p.y-30, tt, {color:'#c17bff'}); ppCast(p,'tp',tt,{w:'magiccard'});
     }});
   },
   bat(p,tSec){ p.ultPending='bat'; p.batRunUntil=tSec+BAT_ULT_HASTE_SEC; skillSetBuff(p,'haste',BAT_ULT_HASTE_SEC,tSec); },        // 홈런: the next hit knocks 7.5x as far, and 2.5 s of 100% more speed
@@ -13800,7 +13884,7 @@ const ULT_IMPL = {
     hostTimers.push({au:curAur, ta:fxActor, at:tSec+0.1+(list.length+1)*0.22, fn:(tt)=>{ if(!p.alive) return; if(skillSpotFree(home.x,home.y)){ pushFx('blink', p.x, p.y-30, tt, {color:'#eef2f8'}); pushFx('iai', p.x, p.y-34, tt, {x2:home.x, y2:home.y-34}); pushFx('samfin', home.x, home.y, tt, {}); p.x=home.x; p.y=home.y; p.vx=p.vy=p.kbX=0; } }});
     return true; },
   pirate(p,tSec,tMs){ turrets=turrets.filter(z=>z.owner!==p.id); turrets.push({owner:p.id, team:p.team, x:p.x, y:p.y, until:tSec+PIRATE_TURRET_SEC, next:tSec+0.7, ang:(Math.cos(p.angle||0)>=0)?-0.6:Math.PI+0.6}); pushFx('skillring', p.x, p.y-24, tMs, {color:'#ffb347', r:60}); pushFx('sfx', p.x, p.y-30, tMs, {name:'explosion'}); },
-  wizard(p,tSec,tMs,ax,ay){ const sp=wizardCircleSpot(p, ax, ay); magicCircles.push({owner:p.id, team:p.team, x:sp.x, y:sp.y, r:WIZ_CIRCLE_R, until:tSec+WIZ_CIRCLE_SEC}); pushFx('magiccircle', sp.x, sp.y, tMs, {}); },
+  wizard(p,tSec,tMs,ax,ay){ const sp=wizardCircleSpot(p, ax, ay); magicCircles.push({owner:p.id, team:p.team, x:sp.x, y:sp.y, r:WIZ_CIRCLE_R, until:tSec+WIZ_CIRCLE_SEC}); pushFx('magiccircle', sp.x, sp.y, tMs, {pp:ppIs(p)?1:0}); },
   horemheb(p,tSec,tMs,ax){         // the sandstorm: a gust far in front of him (1725 long, 360 high): 36 damage, a strong push (about 300 px), a 2 second stun, and 70% less speed for 3.5 s
     const dir=skillAimDir(p, ax), x0=p.x, x1=p.x+dir*SANDSTORM_LEN, cy=p.y-PLAYER_H/2;
     for(const id in players){
@@ -13830,7 +13914,7 @@ const ULT_IMPL = {
   sword(p,tSec,tMs,ax,ay){
     const spot=swordFallSpot(p, ax, ay); if(!spot) return false;
     const sx=spot.x, iy=spot.y, dur=0.7;
-    pushFx('swordfall', sx, iy, tMs, {dur:dur, gold:conceptOfP(p)==='gold'?1:0, thor:conceptOfP(p)==='thor'?1:0});
+    pushFx('swordfall', sx, iy, tMs, {dur:dur, gold:conceptOfP(p)==='gold'?1:0, thor:conceptOfP(p)==='thor'?1:0, pp:ppIs(p)?1:0});
     hostTimers.push({au:curAur, ta:fxActor, at:tSec+dur, fn:(tt)=>{
       let slain=0;
       for(const o of enemiesOf(p)){
@@ -13842,7 +13926,7 @@ const ULT_IMPL = {
         }
       }
       if(slain>(p.ultMulti||0)) p.ultMulti=slain;      // the most players one sword fall has killed this match (the 'sword_triple' achievement)
-      pushFx('swordhit', sx, iy, tt, {gold:conceptOfP(p)==='gold'?1:0});
+      pushFx('swordhit', sx, iy, tt, {gold:conceptOfP(p)==='gold'?1:0, pp:ppIs(p)?1:0});
     }});
   },
   bow(p,tSec,tMs,ax,ay){ const w=WEAPONS.bow, a=aimAngleOf(p,ax,ay); for(const off of [-0.11,0,0.11]) spawnBullet(p, a+off, w, {fire:true, burn:{dps:9,dur:4}, dmg:25, ult:true}); },
@@ -14134,7 +14218,8 @@ function tryUltimate0(p, tMs, aimX, aimY, viaClick){
   if(viaClick && ARM_FIRE_ULTS[ulW(p)] && hasAim(aimX,aimY)) hostTimers.push({au:curAur, ta:fxActor, at:tSec+0.05, fn:(tt)=>{ if(p.alive && p.ultPending) tryFire(p, aimAngleOf(p,aimX,aimY), tt); }});   // (one tick later, so the armed shot is the one that flies)
   recordReplayEvent(p.id, 'ult', {weapon:ulW(p)});
   pushFx('ult', p.x, p.y-40, tMs, {color:p.color, name:(ULTS[ulW(p)]||{}).name||''});
-  { const uw=ulW(p); if(uw!=='samurai' && uw!=='sword' && uw!=='bazooka' && uw!=='grenade' && uw!=='kurus' && uw!=='harald') pushFx('ultfx', p.x, p.y-34, tMs, {w:uw}); }
+  if(ppIs(p) && ulW(p)!=='magiccard') ppCast(p,'ult',tMs,{w:ulW(p), a:hasAim(aimX,aimY)?aimAngleOf(p,aimX,aimY):(p.angle||0)});     // 빼빼로 스킨: the ultimate in pepero
+  { const uw=ulW(p); if(uw!=='samurai' && uw!=='sword' && uw!=='bazooka' && uw!=='grenade' && uw!=='kurus' && uw!=='harald' && !ppIs(p)) pushFx('ultfx', p.x, p.y-34, tMs, {w:uw}); }
   if(ULT_SFX[ulW(p)]) pushFx('sfx', p.x, p.y-40, tMs, {name:ULT_SFX[ulW(p)]}); // cast sound, heard by everyone like the weapon sounds
 }
 
@@ -14956,6 +15041,7 @@ function trySkill0(p, tMs, aimX, aimY){
   if(isGmSkin(p)) pushFx('aurora', p.x, p.y-34, tMs, {big:0}); else if(auraKind(p)===2) pushFx('smellburst', p.x, p.y-34, tMs, {big:0});
   const sd=SKILLS[skBefore];
   pushFx('skill', p.x, p.y-40, tMs, {color:p.color, name:pullNeedle?SEW_PULL_NAME:(tioName||sd.name)});
+  if(ppIs(p)) ppCast(p,'skill',tMs,{w:skBefore, a:hasAim(aimX,aimY)?aimAngleOf(p,aimX,aimY):(p.angle||0)});     // 빼빼로 스킨: the skill in pepero
   pushFx('sfx', p.x, p.y-40, tMs, {name:SKILL_SFX[sd.kind]});
 }
 /* ================= ABILITY PREVIEW (the mint-coloured aim while an ability key is held) =================
@@ -15396,7 +15482,7 @@ function meleeAttack(p, angle, w, tMs){
         pushFx('heal', p.x, p.y-70, tMs, {v:Math.round(heal)});
         if(batBoost) p.batDamageDealt=(p.batDamageDealt||0)+dmg;
       }
-      if(homerun) pushFx('explosion', target.x, cy, tMs, {});
+      if(homerun){ pushFx('explosion', target.x, cy, tMs, {}); ppCast(p,'hit',tMs,{w:'bat',x:target.x,y:cy}); }
       if(target.hp<=0) handleDeath(target, p, tMs, p.name);
     }
   }
@@ -17687,6 +17773,7 @@ function hostTickCore(dt,t){
               }
             }
           }
+          if(b.ult && b.wid==='pistol'){ const ow0=players[b.owner]; if(ow0) ppCast(ow0,'hit',t,{w:'pistol',x:p.x,y:p.y-34}); }
           if(b.pierce || b.passPlayers){ b.hitSet[id]=true; b.nHit=(b.nHit||0)+1; if(b.pierceHits && b.nHit>b.pierceHits){ hit=true; hitWho=p; break; } if(b.wid==='wizard' && !b.wzHalf){ b.dmg*=0.5; b.wzHalf=1; } } else { hit=true; hitWho=p; break; }
         }
       }
@@ -19882,6 +19969,7 @@ function spawnFx0(e){
       addP({x:x,y:y,x2:x,y2:y2,life:.5,color:'#ff5fb8',shape:'slash',size:58}); addP({x:x,y:y,x2:x,y2:y2,life:.42,color:'#ffe9a8',shape:'slash',size:28}); addP({x:x,y:y,x2:x,y2:y2,life:.3,color:'#ffffff',shape:'slash',size:11});
       addP({x:x,y:gy,life:.4,color:'#ffffff',shape:'flash',size:200}); addP({x:x,y:gy,life:.5,color:'#ff7ac8',shape:'ring',r0:10,r1:150,lw:7});
       bu(x,gy,24,{a0:-3.1,a1:-0.05,s0:120,s1:560,l0:.4,l1:.9,z0:2,z1:5,colors:['#ff7ac8','#ffd34d','#ffffff'],grav:300,drag:1.3,shape:'streak'}); shakeFrom(x,gy,5*FQ,900); break; }
+    case 'ppfx': ppFxPlay(e,x,y); break;
     case 'ultfx': {                                                        // every character's ultimate: a themed burst on top of the ability itself
       const T=ULT_THEMES[e.w]||ULT_THEMES._, c=T.c;
       for(let r=0;r<(fxQuality>=2?2:1);r++) addP({x:x,y:y,life:.45+r*0.15,color:c[r%3],shape:'ring',r0:10,r1:170+r*70,lw:7-r*2});
@@ -20087,6 +20175,7 @@ function spawnFx0(e){
       burst(x,y,16,{a0:0,a1:6.28,s0:80,s1:280,l0:.4,l1:.7,z0:2,z1:4,colors:['#ffd34d','#ffffff'],drag:1.8});
       break;
     case 'magiccircle':
+      if(e.pp) ppBars(x,y,10,{a0:-3.1,a1:-0.05,s0:140,s1:460,z0:12,z1:17,bw:3.4,cols:['#fff4e2','#ffffff','#e3bd7c'],dots:['#6b4a2f','#6b4a2f','#6b4a2f'],grav:420});
       addP({x:x,y:y,life:.6,color:'#c85aff',shape:'ring',r0:10,r1:WIZ_CIRCLE_R,lw:6});
       addP({x:x,y:y,life:.3,color:'#ffd34d',shape:'flash',size:120});
       burst(x,y,24,{a0:0,a1:6.28,s0:100,s1:380,l0:.5,l1:.9,z0:2,z1:4,colors:['#c85aff','#ffd34d','#ffffff'],drag:1.5});
@@ -20145,7 +20234,7 @@ function spawnFx0(e){
       shakeFrom(x,y,10,600);
       break;
     case 'swordfall':
-      addP({x:x,y:y,life:e.dur||0.7,color:e.gold?'#fff0b0':'#dfe9ff',shape:e.thor?'bighammer':'bigsword',add:false,gold:!!e.gold,thor:!!e.thor});
+      addP({x:x,y:y,life:e.dur||0.7,color:e.gold?'#fff0b0':'#dfe9ff',shape:e.thor?'bighammer':'bigsword',add:false,gold:!!e.gold,thor:!!e.thor,pp:!!e.pp});
       addP({x:x,y:y,life:e.dur||0.7,color:e.gold?'#ffd34d':'#7c9eff',shape:'warn'});
       break;
     case 'applebreak': {      // 빌헬름 텔: the apple is hit and bursts - two halves fly apart, chunks of red skin and white flesh, juice and a leaf
@@ -20160,6 +20249,11 @@ function spawnFx0(e){
       addP({x:x,y:y,life:.4,color:'#ff5a4a',shape:'ring',r0:6,r1:70,lw:6});
       shakeFrom(x,y,5,700); break; }
     case 'swordhit':
+      if(e.pp){       // 천검 in pepero: the giant bar sticks in the ground in a spray of almond
+        addP({x:x,y:y+4,vx:0,vy:0,life:1.6,shape:'pbar',big:1,add:false,rot:0,vr:0,len:150,bw:26,coat:'#5a3320',nuts:12,cf:0.84});
+        burst(x,y,36,{a0:-3.3,a1:0.15,s0:120,s1:620,l0:.5,l1:1.1,z0:2,z1:5,colors:['#d7a867','#5a3320','#e3bd7c','#fff2d6'],grav:560,drag:1.1,add:false});
+        ppBars(x,y,5,{a0:-3.0,a1:-0.15,s0:160,s1:520,z0:14,z1:20,bw:4,cols:['#5a3320'],nuts:3,grav:560});
+      }
       addP({x:x,y:y,life:.28,color:'#ffffff',shape:'flash',size:160});
       addP({x:x,y:y,life:.55,color:e.gold?'#ffd34d':'#9fc2ff',shape:'ring',r0:8,r1:SKY_SWORD_HALF*2,lw:9});
       if(e.gold) burst(x,y,40,{a0:-3.3,a1:0.15,s0:100,s1:700,l0:.6,l1:1.3,z0:2,z1:5,colors:['#ffd34d','#fff3b0','#ffffff'],grav:500,drag:1.1});
@@ -20486,6 +20580,12 @@ function drawTurrets(list){
     AURA=gmOwner(z.owner);
     const fade=Math.min(1,(z.rem===undefined?1:z.rem)/0.5), ang=(z.a!==undefined?z.a:z.ang)||0;
     ctx.save(); ctx.globalAlpha=fade; ctx.translate(z.x, z.y);
+    const ppT=z.owner&&players[z.owner]&&ppIs(players[z.owner]);
+    if(ppT){ ctx.fillStyle='#d62a30'; ctx.strokeStyle='#3a2212'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(-24,-2); ctx.lineTo(24,-2); ctx.lineTo(24,-26); ctx.lineTo(-24,-26); ctx.closePath(); ctx.fill(); ctx.stroke();      // a pepero box as the carriage
+      ctx.fillStyle='#fff2d6'; ctx.fillRect(-24,-17,48,7); ctx.fillStyle='#ffd34d'; for(const bx of [-14,0,14]){ ctx.beginPath(); ctx.arc(bx,-13.5,1.6,0,7); ctx.fill(); }
+      ctx.save(); ctx.translate(0,-34); ctx.rotate(ang); const plT=PP_LINE; PP_LINE='#ffe6bd'; for(let i=-1;i<=1;i++){ ctx.save(); ctx.translate(0,i*7); ppBar(ctx,-6,44,6,i%2?'#6b3a1f':'#4b2a18',{coatFrac:0.7}); ctx.restore(); } PP_LINE=plT; ctx.restore();
+      if(z.rem!==undefined){ ctx.fillStyle='rgba(255,255,255,0.8)'; ctx.fillRect(-18,-60,36*clamp(z.rem/PIRATE_TURRET_SEC,0,1),3); }
+      ctx.restore(); continue; }
     ctx.fillStyle='#6b4423'; ctx.strokeStyle='#2c1a0a'; ctx.lineWidth=2;                      // carriage
     ctx.beginPath(); ctx.moveTo(-22,-4); ctx.lineTo(22,-4); ctx.lineTo(16,-22); ctx.lineTo(-16,-22); ctx.closePath(); ctx.fill(); ctx.stroke();
     ctx.save(); ctx.translate(0,-34); ctx.rotate(ang);                                         // barrel
@@ -20545,6 +20645,13 @@ function drawMagicCircles(list){
     ctx.beginPath(); ctx.ellipse(z.x,z.y,z.r,z.r*0.28,0,0,7); ctx.stroke();
     ctx.strokeStyle='rgba(255,211,77,0.75)'; ctx.lineWidth=1.5;
     const spin=now/1400;
+    if(z.owner&&players[z.owner]&&ppIs(players[z.owner])){ ctx.restore(); ctx.save(); ctx.globalAlpha=0.95*fade;      // 화이트 쿠키 빼빼로: a star circle drawn with white pepero bars
+      const sp0=now/2600, R0=z.r*0.92, pts=[]; for(let i=0;i<5;i++){ const aa=sp0+i*Math.PI*2/5-Math.PI/2; pts.push([z.x+Math.cos(aa)*R0, z.y+Math.sin(aa)*R0*0.28]); }
+      ctx.lineCap='round'; ctx.strokeStyle='rgba(255,244,226,0.25)'; ctx.lineWidth=14; ctx.beginPath(); ctx.ellipse(z.x,z.y,z.r,z.r*0.28,0,0,7); ctx.stroke();
+      for(const [lw,col] of [[7.5,'#8a7a5a'],[5.4,'#fff4e2']]){ ctx.strokeStyle=col; ctx.lineWidth=lw; for(let i=0;i<5;i++){ const A=pts[i], B=pts[(i+2)%5]; ctx.beginPath(); ctx.moveTo(A[0],A[1]); ctx.lineTo(B[0],B[1]); ctx.stroke(); } }
+      ctx.fillStyle='#e3bd7c'; for(const A of pts){ ctx.beginPath(); ctx.arc(A[0],A[1],3.6,0,7); ctx.fill(); }
+      ctx.fillStyle='#6b4a2f'; for(let i=0;i<8;i++){ const aa=sp0*2+i*Math.PI/4; ctx.beginPath(); ctx.arc(z.x+Math.cos(aa)*z.r*0.55, z.y+Math.sin(aa)*z.r*0.16, 2.2, 0, 7); ctx.fill(); }
+      ctx.restore(); continue; }
     ctx.beginPath(); ctx.ellipse(z.x,z.y,z.r*0.72,z.r*0.2,0,spin,spin+5.4); ctx.stroke();
     for(let i=0;i<8;i++){
       const a=spin*0.6+i*Math.PI/4;
@@ -20632,6 +20739,8 @@ function drawParticles(){
           ctx.fillStyle='#d62828'; ctx.strokeStyle='#8a1a1a'; ctx.lineWidth=1.6; ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI); ctx.closePath(); ctx.fill(); ctx.stroke();
           ctx.fillStyle='#fff1c9'; ctx.beginPath(); ctx.ellipse(0,0,r*0.93,r*0.22,0,0,7); ctx.fill();
           ctx.fillStyle='#5a3a1c'; ctx.beginPath(); ctx.arc(0,r*0.08,1.4,0,7); ctx.fill(); ctx.restore(); break; }
+        case 'pbar': { let px=q.x, py=q.y, rr=q.rot; if(q.fid){ const ow=players[q.fid]; if(ow && ow.x!==undefined){ const oa=(q.orbA||0)+(q.orbW||0)*(q.max-q.life); px=ow.x+Math.cos(oa)*q.orbR; py=ow.y-30+Math.sin(oa)*q.orbR; rr=oa+Math.PI/2; } else break; }
+          ctx.save(); ctx.globalAlpha=Math.min(1,a*2.2); ctx.translate(px,py); ctx.rotate(rr); if(!q.big) ctx.scale(1.45,1.45); const pl0=PP_LINE; PP_LINE='#ffe6bd'; ppStick(ctx,0,0,q.len||14,0,q.coat||'#4b2a18',{w:q.bw||3.4,coatFrac:q.cf||0.72,dots:q.dots,nuts:q.nuts}); PP_LINE=pl0; ctx.restore(); break; }
         case 'dot': ctx.globalAlpha=a; ctx.fillStyle=q.color; ctx.beginPath(); ctx.arc(q.x,q.y,q.size*(1-0.5*t),0,7); ctx.fill(); break;
         case 'fire': ctx.globalAlpha=Math.min(1,a*1.3); ctx.fillStyle=q.color; ctx.beginPath(); ctx.arc(q.x,q.y,q.size*(1-0.75*t),0,7); ctx.fill(); break;
         case 'streak': ctx.globalAlpha=a; ctx.strokeStyle=q.color; ctx.lineWidth=q.size*(1-0.4*t); ctx.beginPath(); ctx.moveTo(q.x,q.y); ctx.lineTo(q.x-q.vx*0.045,q.y-q.vy*0.045); ctx.stroke(); break;
@@ -20656,6 +20765,8 @@ function drawParticles(){
           ctx.rotate(-Math.PI/2); ctx.translate(-8,0); ctx.scale(-1,1); ctx.scale(6.2,6.2); ctx.translate(-30,0); drawMjolnir(ctx,1); ctx.restore();
           ctx.save(); ctx.globalAlpha=Math.min(1,0.2+t*1.2); ctx.strokeStyle='#ffe66b'; ctx.lineWidth=3; ctx.beginPath(); let zx=q.x, zy=tipY-340; ctx.moveTo(zx,zy); for(let i=0;i<7;i++){ zx+=(i%2?-1:1)*(14+((i*37)%11)); zy+=40; ctx.lineTo(zx,zy); } ctx.stroke(); ctx.restore(); break; }
         case 'bigsword': { const ease=Math.pow(t,1.6); const tipY=q.y-620*(1-ease); ctx.save(); ctx.translate(q.x,tipY); ctx.globalAlpha=Math.min(1,0.25+t*1.4);
+          if(q.pp){ const gp=ctx.createRadialGradient(0,-160,10,0,-160,190); gp.addColorStop(0,'rgba(215,168,103,0.5)'); gp.addColorStop(1,'rgba(215,168,103,0)'); ctx.globalCompositeOperation='lighter'; ctx.fillStyle=gp; ctx.beginPath(); ctx.arc(0,-160,190,0,7); ctx.fill(); ctx.globalCompositeOperation='source-over';
+            ctx.translate(0,-300); ctx.rotate(Math.PI); const pl1=PP_LINE; PP_LINE='#ffe6bd'; ppStick(ctx,0,0,300,0,'#5a3320',{w:50,nuts:12,coatFrac:0.84}); PP_LINE=pl1; ctx.restore(); break; }
           const gl=ctx.createRadialGradient(0,-160,10,0,-160,190); gl.addColorStop(0,q.gold?'rgba(255,211,77,0.55)':'rgba(159,194,255,0.45)'); gl.addColorStop(1,q.gold?'rgba(255,211,77,0)':'rgba(159,194,255,0)');
           ctx.globalCompositeOperation='lighter'; ctx.fillStyle=gl; ctx.beginPath(); ctx.arc(0,-160,190,0,7); ctx.fill(); ctx.globalCompositeOperation='source-over';
           ctx.fillStyle=q.gold?'#ffd34d':'#e9f0ff'; ctx.strokeStyle=q.gold?'#b8860b':'#7c9eff'; ctx.lineWidth=3;
@@ -21504,7 +21615,8 @@ function drawStickman(p){
   if(p.kw && p.alive!==false) drawKanWings(ctx, luxNow);
   if(p.pp && players[p.pp] && p.alive!==false){ const q=players[p.pp], dx=(q.x-p.x), dy=(q.y-p.y); ctx.save(); ctx.strokeStyle='#ffd0e6'; ctx.lineWidth=1.6; ctx.globalAlpha=0.9; ctx.setLineDash([6,4]); ctx.lineDashOffset=-performance.now()/40; ctx.beginPath(); ctx.moveTo(0,-34); ctx.quadraticCurveTo(dx/2, Math.min(-34,dy-60)-24, dx, dy-60); ctx.stroke(); ctx.restore(); }   // 인형술사: the strings to his puppet
   if(p.sw && players[p.sw] && p.alive!==false){ const q=players[p.sw], dx=(q.x-p.x), dy=(q.y-p.y); ctx.save(); const cy2=Math.min(-34,dy-60)+Math.sin(performance.now()/160)*6; ctx.lineCap='round'; for(const [lw,col,al] of [[9,'#ffffff',0.25],[3.5,'#ffffff',1]]){ ctx.strokeStyle=col; ctx.lineWidth=lw; ctx.globalAlpha=al; ctx.beginPath(); ctx.moveTo(0,-34); ctx.quadraticCurveTo(dx/2, cy2, dx, dy-60); ctx.stroke(); } ctx.restore(); }   // 바느질: a white thread to the one it holds (it used to sit behind the comment above and was never drawn)
-  if(p.hk && p.alive!==false){ const ex=p.hk[0]-p.x, ey=p.hk[1]-p.y; ctx.save(); ctx.strokeStyle='#d9b77a'; ctx.lineWidth=2.4; ctx.beginPath(); ctx.moveTo(0,-40); ctx.lineTo(ex,ey); ctx.stroke();      // 갈고리 화살: the rope and the arrow stuck under the platform
+  if(p.hk && p.alive!==false){ const ex=p.hk[0]-p.x, ey=p.hk[1]-p.y; ctx.save(); ctx.strokeStyle='#d9b77a'; ctx.lineWidth=2.4; ctx.beginPath(); ctx.moveTo(0,-40); ctx.lineTo(ex,ey); ctx.stroke();
+      if(ppIs(p)){ ctx.strokeStyle='#ff7fa6'; ctx.lineWidth=4.4; ctx.beginPath(); ctx.moveTo(0,-40); ctx.lineTo(ex,ey); ctx.stroke(); ctx.strokeStyle='#ffffff'; ctx.lineWidth=4.4; ctx.setLineDash([5,7]); ctx.lineDashOffset=-performance.now()/30; ctx.beginPath(); ctx.moveTo(0,-40); ctx.lineTo(ex,ey); ctx.stroke(); ctx.setLineDash([]); }      // 갈고리 화살: the rope and the arrow stuck under the platform
     ctx.translate(ex,ey); ctx.rotate(-Math.PI/2); ctx.strokeStyle='#8a5f2b'; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(-18,0); ctx.lineTo(6,0); ctx.stroke(); ctx.fillStyle='#e6e6e6'; ctx.beginPath(); ctx.moveTo(14,0); ctx.lineTo(4,-5); ctx.lineTo(4,5); ctx.closePath(); ctx.fill(); ctx.restore(); }
   if(p.pvi && p.alive!==false){ ctx.save(); ctx.font='bold 15px sans-serif'; ctx.textAlign='left'; ctx.textBaseline='middle'; ctx.lineWidth=3; ctx.strokeStyle='#1b1b26'; ctx.strokeText(p.pvi, 22, -92); ctx.fillStyle='#fff'; ctx.fillText(p.pvi, 22, -92); ctx.restore(); }      // a passive that is running: a small sign next to the head
   if(p.pm && p.alive!==false) drawPizarroMark(ctx, luxNow);
