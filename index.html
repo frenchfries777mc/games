@@ -262,7 +262,7 @@ html[data-ff-theme=light] .nw.g3 .ng,html[data-ff-theme=light] .nw.g0 .ng{color:
   var gameB=document.getElementById('gameN'), achB=document.getElementById('achN'), GL=(window.FF_GAMES&&FF_GAMES.list)||null;
   function setN(b,n){ if(!b||!(n>0)) return; b.setAttribute('data-n',n); if(b.getAttribute('data-done')) b.textContent=n; }
   if(GL){ setN(gameB,GL.length);
-    try{ Promise.all(['hub'].concat(GL).map(function(g){ return fetch('ach/'+g+'.json',{cache:'no-cache'}).then(function(r){ return r.ok?r.json():null; },function(){ return null; }).then(function(j){ return (j&&j.list&&j.list.length)||0; }); })).then(function(a){ setN(achB,a.reduce(function(x,y){ return x+y; },0)); }); }catch(e){}
+    try{ Promise.all(['hub'].concat(GL.filter(function(g){ return g!=='gatecrash'&&g!=='tumblecrown'; })).map(function(g){ return fetch('ach/'+g+'.json',{cache:'no-cache'}).then(function(r){ return r.ok?r.json():null; },function(){ return null; }).then(function(j){ return (j&&j.list&&j.list.length)||0; }); })).then(function(a){ setN(achB,a.reduce(function(x,y){ return x+y; },0)); }); }catch(e){}
   }
   try{ fetch('skins.json',{cache:'no-cache'}).then(function(r){ return r.ok?r.json():null; }).then(function(j){ if(j&&j.total>0&&skinB){ skinB.setAttribute('data-n',j.total); if(skinDone) skinB.textContent=j.total; } }).catch(function(){}); }catch(e){}
   if(st){ var bs=[].slice.call(st.querySelectorAll('b'));

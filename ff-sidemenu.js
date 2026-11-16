@@ -11,7 +11,18 @@
   'aside[style*="flex:0 0 232px"] a.ffsm.on,aside[style*="flex:0 0 232px"] a.ffsm.on:hover{background:#ffd54a!important;color:#000!important;font-weight:700!important}'+
   /* the light theme flips the whole page with a filter, so these colours are what comes out as amber with dark text */
   'html[data-ff-theme=light] aside[style*="flex:0 0 232px"] a.ffsm.on,html[data-ff-theme=light] aside[style*="flex:0 0 232px"] a.ffsm.on:hover{background:#965a00!important;color:#fff!important}'+
-  'a.ffsm svg{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}';
+  'a.ffsm svg{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}'+
+  '#onlineBar .on-dot{flex:0 0 9px;width:9px;height:9px;border-radius:50%;background:#3fe0c5}html[data-ff-theme=light] #onlineBar .on-dot{background:#0f9e88}'+
+  /* touch: bigger tap area for the small logo and footer links (no layout change) */
+  '@media(pointer:coarse){.ffx-root>aside>a:first-child,.ffx-foot a{position:relative}.ffx-root>aside>a:first-child::after{content:"";position:absolute;inset:-12px -6px}.ffx-foot a::after{content:"";position:absolute;inset:-10px -4px}}';
+  function ffScrollHint(sc,sel){
+    function hz(){ return sc.scrollWidth>sc.clientWidth+4&&getComputedStyle(sc).overflowX!=='visible'; }
+    function fade(){ var m=''; if(hz()){ var r=sc.scrollLeft+sc.clientWidth<sc.scrollWidth-4;
+        m='linear-gradient(90deg,'+'#000 0,#000 28px'+','+(r?'#000 calc(100% - 28px),transparent 100%':'#000 calc(100% - 28px),#000 100%')+')'; }
+      sc.style.webkitMaskImage=m; sc.style.maskImage=m; }
+    function center(){ var on=sc.querySelector(sel); if(on&&hz()) sc.scrollLeft+=on.getBoundingClientRect().left-sc.getBoundingClientRect().left-(sc.clientWidth-on.offsetWidth)/2; fade(); }
+    sc.addEventListener('scroll',fade,{passive:true}); addEventListener('resize',fade); center(); addEventListener('load',center);
+  }
   function run(){
     var side=document.querySelector('aside[style*="flex:0 0 232px"]'); if(!side||side.__ffsm)return; side.__ffsm=1;
     var st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
@@ -24,6 +35,7 @@
       var s=document.createElementNS('http://www.w3.org/2000/svg','svg'); s.setAttribute('viewBox','0 0 24 24'); s.innerHTML=k;
       a.replaceChild(s,sp);
     }
+    ffScrollHint(side,'a.ffsm.on');
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();
 })();
