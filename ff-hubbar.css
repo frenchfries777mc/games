@@ -253,13 +253,20 @@ html.ffhb-on .top{top:62px!important}
 
 /* left menu like the hub (replaces the Hub | Games | Educations | Tools switch and the text links at the top) */
 .ffhb-strip .sw,.ffhb-strip .ffhb-nav{display:none!important}
-.ffhb-side{position:fixed;z-index:2147481500;left:0;top:0;bottom:0;width:232px;box-sizing:border-box;background:#141414;border-right:1px solid #2e2b25;padding:24px 16px;display:flex;flex-direction:column;gap:6px;overflow-y:auto;font-family:'Noto Sans KR','Apple SD Gothic Neo',system-ui,sans-serif}
-.ffhb-slogo{display:block;padding:4px 10px 22px;font-family:'Oswald',sans-serif;font-size:21px;line-height:1;letter-spacing:.03em;white-space:nowrap;color:#ece6d8;text-decoration:none}
-.ffhb-slogo span:nth-child(1){font-weight:500}.ffhb-slogo span:nth-child(2){font-weight:700}.ffhb-slogo span:nth-child(3){font-weight:700;color:#d9b45f}
-.ffhb-m{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;font-size:15px;font-weight:500;color:#c9c2b0;text-decoration:none;background:transparent;white-space:nowrap}
-.ffhb-m i{width:8px;height:8px;border-radius:2px;background:#4a463d;flex:0 0 auto}
-.ffhb-m:hover{background:#1c1a16;color:#ece6d8}
-.ffhb-m.on{background:#26221a;color:#f0cf7e}.ffhb-m.on i{background:#d9b45f}
+.ffhb-side{position:fixed;z-index:2147481500;left:0;top:0;bottom:0;width:232px;box-sizing:border-box;background:#000;border-right:1px solid #262626;padding:24px 16px;display:flex;flex-direction:column;gap:4px;overflow-y:auto;font-family:'Noto Sans KR','Apple SD Gothic Neo',system-ui,sans-serif}
+.ffhb-slogo{display:block;padding:4px 10px 22px;font-family:'Oswald',sans-serif;font-size:21px;line-height:1;letter-spacing:.03em;white-space:nowrap;color:#fff;text-decoration:none}
+.ffhb-slogo span:nth-child(1){font-weight:500}.ffhb-slogo span:nth-child(2){font-weight:700}.ffhb-slogo span:nth-child(3){font-weight:700;color:#ffd54a}
+.ffhb-m{display:flex;align-items:center;gap:11px;padding:10px 16px;border-radius:999px;font-size:15px;font-weight:500;color:#9a9a9a;text-decoration:none;background:transparent;white-space:nowrap}
+.ffhb-m i{display:inline-flex;width:18px;height:18px;flex:0 0 auto}
+.ffhb-m svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.ffhb-m:hover{background:#0d0d0d;color:#fff}
+.ffhb-m.on,.ffhb-m.on:hover{background:#ffd54a;color:#000;font-weight:700}
+html[data-ff-theme=light] .ffhb-side{background:#fff;border-right-color:#e0e0e0}
+html[data-ff-theme=light] .ffhb-slogo{color:#000}
+html[data-ff-theme=light] .ffhb-slogo span:nth-child(3){color:#e0a800}
+html[data-ff-theme=light] .ffhb-m{color:#6b6b6b}
+html[data-ff-theme=light] .ffhb-m:hover{background:#f5f5f5;color:#000}
+html[data-ff-theme=light] .ffhb-m.on,html[data-ff-theme=light] .ffhb-m.on:hover{background:#ffd54a;color:#000}
 .ffhb-mmenu{display:none}
 @media(min-width:861px){
   html.ffhb-on{padding-left:232px}
@@ -272,7 +279,7 @@ html.ffhb-on .top{top:62px!important}
   .ffhb-strip .ffhb-logo{display:none}
   .ffhb-mmenu{display:flex;flex:1 1 0;min-width:0;align-items:center;gap:2px;overflow-x:auto;scrollbar-width:none}
   .ffhb-mmenu::-webkit-scrollbar{display:none}
-  .ffhb-mmenu .ffhb-m{padding:8px 11px;font-size:14px;gap:8px;flex:0 0 auto}
+  .ffhb-mmenu .ffhb-m{padding:7px 12px;font-size:14px;gap:7px;flex:0 0 auto}.ffhb-mmenu .ffhb-m i,.ffhb-mmenu .ffhb-m svg{width:16px;height:16px}
   .ffhb-strip .ffhb-sp{display:none}
 }
 @media(min-width:861px){html.ffhb-on body{overflow-x:clip}}
