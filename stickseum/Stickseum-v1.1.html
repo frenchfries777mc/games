@@ -3674,6 +3674,26 @@ function ppIs(p){ const c=conceptOfP(p); return (c&&c.indexOf('pp_')===0)?c:''; 
 function ppCast(p,k,tMs,o){ if(!p||!ppIs(p)) return; o=o||{}; pushFx('ppfx', o.x!==undefined?o.x:p.x, o.y!==undefined?o.y:p.y-34, tMs, {w:o.w||p.weapon, k:k, a:o.a||0, pid:p.id}); }
 function ppBars(x,y,n,o){ for(let i=0;i<n;i++){ const a=RND(o.a0,o.a1), sp=RND(o.s0,o.s1);
   addP({x:x,y:y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:RND(o.l0||.5,o.l1||.9),shape:'pbar',add:false,rot:RND(0,6.28),vr:RND(-12,12),grav:o.grav===undefined?500:o.grav,drag:o.drag===undefined?0.8:o.drag,len:RND(o.z0||11,o.z1||17),bw:o.bw||3.2,coat:o.cols[i%o.cols.length],dots:o.dots,nuts:o.nuts}); } }
+/* ===== concept skins (신화·컨셉): the 2스킬 (E) and the skills of the 구성 get their own look, one per kind of skill (이동 / 강화 / 공격), in the style of the skin ===== */
+const CPT_STYLE={zeus:'bolt', thor:'bolt', odin:'bolt', poseidon:'water', breath:'fire', kdred:'fire', kdhell:'fire', kdvoid:'void', nnpink:'void', nnplasma:'void', nnrain:'void', starlight:'star', banana:'star', cupid:'star', gold:'star', fry:'star', gilga:'star', envy:'star', janus:'star', manga:'star', babycart:'star', diaper:'star'};
+function cptIs(p){ const c=conceptOfP(p); return (c && c.indexOf('pp_')!==0 && CONCEPT_COLOR[c]!==undefined || (c && c.indexOf('pp_')!==0 && CPT_STYLE[c]))?c:''; }
+function cptCast(p,k,tMs,o){ const c=cptIs(p); if(!c) return; o=o||{}; pushFx('cptfx', p.x, p.y-34, tMs, {c:c, k:k, a:o.a||0, pid:p.id}); }
+function cptFxPlay(e,x,y){
+  const c=e.c, k=e.k, a=e.a||0, col=CONCEPT_COLOR[c]||'#ffd34d', st=CPT_STYLE[c]||'star', q=(fxQuality>=1)?1:0.6, n=v=>Math.max(2,Math.round(v*q));
+  const cols={bolt:[col,'#ffffff','#ffe14d'], water:[col,'#bfeaff','#ffffff'], fire:[col,'#ffd34d','#ff4a1a'], void:[col,'#ffffff','#2a1a55'], star:[col,'#ffffff','#fff2b0']}[st];
+  const grav={bolt:0,water:520,fire:-160,void:0,star:120}[st];
+  if(k==='move'){
+    burst(x,y,n(18),{a0:0,a1:6.28,s0:80,s1:340,l0:.4,l1:.8,z0:2,z1:4,colors:cols,grav:grav,drag:1.1,add:st!=='water'});
+    addP({x:x,y:y,life:.32,color:col,shape:'ring',r0:6,r1:62,lw:4}); addP({x:x,y:y,life:.22,color:cols[1],shape:'flash',size:90});
+  } else if(k==='buff'){
+    for(let i=0;i<2;i++) addP({x:x,y:y,life:.55+i*.2,color:col,shape:'ring',r0:8+i*10,r1:70+i*16,lw:5-i*2});
+    burst(x,y,n(14),{a0:0,a1:6.28,s0:40,s1:200,l0:.6,l1:1.1,z0:2,z1:4,colors:cols,grav:(st==='fire'?-260:-80),drag:.9,add:true});
+  } else {
+    burst(x+Math.cos(a)*24,y+Math.sin(a)*24,n(20),{a0:a-0.55,a1:a+0.55,s0:200,s1:620,l0:.3,l1:.7,z0:2,z1:4.4,colors:cols,grav:grav,drag:1.1,add:st!=='water'});
+    if(st==='bolt') for(let i=0;i<3;i++) addP({x:x,y:y,x2:x+Math.cos(a+RND(-.5,.5))*RND(90,170),y2:y+Math.sin(a+RND(-.5,.5))*RND(90,170),life:.22,color:cols[1],shape:'slash',size:5});
+    addP({x:x,y:y,life:.3,color:col,shape:'flash',size:110});
+  }
+}
 function ppFxPlay(e,x,y){
   const w=e.w, k=e.k, a=e.a||0, q=(fxQuality>=1)?1:0.6, n=v=>Math.max(2,Math.round(v*q));
   const CH=['#4b2a18','#6b3a1f','#e3bd7c','#fff2d6'], PK=['#ff7fa6','#ffffff','#ffe3ef'], WH=['#fff4e2','#ffffff','#e3bd7c'], DR=['#4b2a18','#6b3a1f','#8a5a34'];
@@ -6549,7 +6569,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-17-v870';
+const GAME_BUILD='build 2026-11-17-v871';
 const GAME_VERSION='1.1', GAME_VERSION_NAME='Shadows of London';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -16973,6 +16993,7 @@ function trySkillAlt(p, tMs, ax, ay, slot){      // a skill that was made for th
   pushFx('skill', p.x, p.y-40, tMs, {color:p.color, name:ss.def.name});
   pushFx('sfx', p.x, p.y-40, tMs, {name:SKILL_SFX[ss.def.kind]});
   if(ppIs(p)) ppCast(p,'e:'+(ss.def.kind||'hit'),tMs,{w:w, a:hasAim(ax,ay)?aimAngleOf(p,ax,ay):(p.angle||0)});      // 빼빼로 스킨: a skill from the 구성 (either slot) in pepero
+  else if(cptIs(p)) cptCast(p,ss.def.kind||'hit',tMs,{a:hasAim(ax,ay)?aimAngleOf(p,ax,ay):(p.angle||0)});      // 신화·컨셉 스킨
 }
 function trySkill2(p, tMs, aimX, aimY){ const o=curAur; curAur=auraKind(p); try{ return trySkill2b(p, tMs, aimX, aimY); } finally{ curAur=o; } }
 function trySkill2b(p, tMs, aimX, aimY){
@@ -16990,6 +17011,7 @@ function trySkill2b(p, tMs, aimX, aimY){
   pushFx('skill', p.x, p.y-40, tMs, {color:p.color, name:sd.name});
   pushFx('sfx', p.x, p.y-40, tMs, {name:SKILL_SFX[sd.kind]});
   if(ppIs(p)) ppCast(p,'e:'+(sd.kind||'hit'),tMs,{w:w, a:hasAim(aimX,aimY)?aimAngleOf(p,aimX,aimY):(p.angle||0)});      // 빼빼로 스킨: the 2스킬 in pepero
+  else if(cptIs(p)) cptCast(p,sd.kind||'hit',tMs,{a:hasAim(aimX,aimY)?aimAngleOf(p,aimX,aimY):(p.angle||0)});      // 신화·컨셉 스킨
 }
 function skill2Tick(p, t){      // the skills that last a while: the knight's leap, the assassin's jump, the magician's pigeon ...
   const tSec=t/1000;
@@ -22993,6 +23015,7 @@ function spawnFx0(e){
       addP({x:x,y:gy,life:.4,color:'#ffffff',shape:'flash',size:200}); addP({x:x,y:gy,life:.5,color:'#ff7ac8',shape:'ring',r0:10,r1:150,lw:7});
       bu(x,gy,24,{a0:-3.1,a1:-0.05,s0:120,s1:560,l0:.4,l1:.9,z0:2,z1:5,colors:['#ff7ac8','#ffd34d','#ffffff'],grav:300,drag:1.3,shape:'streak'}); shakeFrom(x,gy,5*FQ,900); break; }
     case 'ppfx': ppFxPlay(e,x,y); break;
+    case 'cptfx': cptFxPlay(e,x,y); break;
     case 'ultfx': {                                                        // every character's ultimate: a themed burst on top of the ability itself
       const T=ULT_THEMES[e.w]||ULT_THEMES._, c=T.c;
       for(let r=0;r<(fxQuality>=2?2:1);r++) addP({x:x,y:y,life:.45+r*0.15,color:c[r%3],shape:'ring',r0:10,r1:170+r*70,lw:7-r*2});
