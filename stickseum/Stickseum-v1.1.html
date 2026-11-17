@@ -6534,7 +6534,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-17-v868';
+const GAME_BUILD='build 2026-11-17-v869';
 const GAME_VERSION='1.1', GAME_VERSION_NAME='Shadows of London';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -9355,6 +9355,8 @@ function applyCloudSave(s){
   saveData.missions=(s.missions&&typeof s.missions==='object')?s.missions:null; saveData.season=(s.season&&typeof s.season==='object')?s.season:null; saveData.trailerSeen=s.trailerSeen?1:0; saveData.newsClaimed=Array.isArray(s.newsClaimed)?s.newsClaimed.filter(w=>typeof w==='string').slice(-30):[]; saveData.seenNews=(typeof s.seenNews==='string')?s.seenNews.slice(0,60):'';
   if(Array.isArray(s.favChars)) saveData.favChars=s.favChars.filter(w=>typeof w==='string').slice(0,60);
   if(typeof s.chosenChar==='string' && WEAPONS[s.chosenChar]) saveData.chosenChar=s.chosenChar;
+  if(typeof s.chosenChar2==='string' && WEAPONS[s.chosenChar2]) saveData.chosenChar2=s.chosenChar2;
+  if(typeof s.chosenBan==='string' && WEAPONS[s.chosenBan]) saveData.chosenBan=s.chosenBan;
   if(s.loadout && typeof s.loadout==='object'){ const lo={}; for(const k of Object.keys(s.loadout).slice(0,80)){ const v=s.loadout[k]; if(Array.isArray(v) && typeof v[0]==='string' && typeof v[1]==='string') lo[k]=[v[0].slice(0,40), v[1].slice(0,40)]; } saveData.loadout=lo; }
   persistSave(); updateGoldUI();
 }
@@ -13329,7 +13331,7 @@ function addWeaponFavStar(el, wid){
   st.onclick=e=>{ e.stopPropagation(); toggleFavChar(wid); };
 }
 let loadoutPick=null, loadoutMsg='';
-function chosenCharOf(){ const c=(typeof saveData!=='undefined' && saveData) ? saveData.chosenChar : null; return (c && WEAPONS[c] && SELECTABLE_WEAPONS.includes(c)) ? c : null; }
+function chosenCharOf(n){ const k=(n===2)?'chosenChar2':(n==='ban'?'chosenBan':'chosenChar'); const c=(typeof saveData!=='undefined' && saveData) ? saveData[k] : null; return (c && WEAPONS[c] && SELECTABLE_WEAPONS.includes(c)) ? c : null; }      // 1선택 (also the one tournament uses), 2선택 (duel / team, round 2), 'ban' (the character to ban first)
 let lobbyCharTimer=null;
 function lobbyCharPlace(){      // the feet stand on the bottom edge of the 캐릭터 button
   const box=document.getElementById('lobbyChar'), cv=document.getElementById('lobbyCharCanvas'), btn=document.getElementById('goCharBtn'); if(!box || !cv || !btn) return;
@@ -13384,10 +13386,13 @@ function renderLoadoutPanel(wid){
   const nm=id=>{ const e=skillEntry(wid,id); return e?e.def.name:'-'; };
   h+='<div class="lslots"><button type="button" class="lslot" data-slot="1" style="border-color:#4fd1a1"><span class="lk" style="background:#4fd1a1">'+escapeHtmlText(k1)+'</span><span style="min-width:0"><div class="lt" style="color:#4fd1a1">1스킬 · 쿨타임 '+SKILL_CD+'초</div><div class="lv" style="display:flex; align-items:center; gap:6px;">'+skillIconImg(cur[0],24)+'<span>'+escapeHtmlText(nm(cur[0]))+'</span></div></span></button>'
     +'<button type="button" class="lslot" data-slot="2" style="border-color:#ee8274"><span class="lk" style="background:#ee8274">'+escapeHtmlText(k2)+'</span><span style="min-width:0"><div class="lt" style="color:#ee8274">2스킬 · 쿨타임 '+TELEPORT_CD+'초</div><div class="lv" style="display:flex; align-items:center; gap:6px;">'+skillIconImg(cur[1],24)+'<span>'+escapeHtmlText(nm(cur[1]))+'</span></div></span></button></div>'
-    +'<button type="button" id="lcChoose" style="border:2px solid '+(isChosen?'#ffd34d':'#4fd1a1')+'; background:'+(isChosen?'#3a3120':'#14301f')+'; color:#fff; font:800 14px inherit; border-radius:12px; padding:10px 14px; cursor:pointer;">'+(isChosen?'✔ 선택한 캐릭터 · 누르면 해제':'이 캐릭터로 선택하기')+'</button>'
+    +'<div id="lcChooseRow" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">'+[['1','1선택'],['2','2선택'],['ban','🚫 금지']].map(([k,l])=>{ const on=(k==='1'?chosenCharOf():chosenCharOf(k==='2'?2:'ban'))===wid, col=k==='ban'?'#ff6b6b':'#4fd1a1'; return '<button type="button" class="lcChoose" data-k="'+k+'" style="border:2px solid '+(on?'#ffd34d':col)+'; background:'+(on?'#3a3120':'#14301f')+'; color:#fff; font:800 14px inherit; border-radius:12px; padding:10px 6px; cursor:pointer;">'+(on?'✔ '+l:l+'로 선택')+'</button>'; }).join('')+'</div>'
+    +'<div class="lmsg" style="margin-top:-4px;">1선택은 첫 라운드와 토너먼트 매 라운드, 2선택은 듀얼·팀전 2라운드에 먼저 골라져요 · 금지는 금지 단계에서 먼저 골라져요 (확정은 직접 눌러요)</div>'
     +'<div class="lmsg">'+escapeHtmlText(loadoutMsg||(loadoutPick?'“'+nm(loadoutPick)+'”을(를) 넣을 칸을 누르세요':'카드 오른쪽의 1스킬·2스킬 버튼을 누르면 바로 장착돼요'))+'</div>';
   box.innerHTML=h;
-  { const cb=document.getElementById('lcChoose'); if(cb) cb.onclick=()=>{ if(chosenCharOf()===wid) delete saveData.chosenChar; else saveData.chosenChar=wid; persistSave(); lobbyCharRender(); renderLoadoutPanel(wid); }; }
+  box.querySelectorAll('.lcChoose').forEach(cb=>{ cb.onclick=()=>{ const k=cb.dataset.k, f=(k==='2')?'chosenChar2':(k==='ban'?'chosenBan':'chosenChar'), was=(saveData[f]===wid);
+    if(was) delete saveData[f]; else { saveData[f]=wid; if(k==='1' && saveData.chosenChar2===wid) delete saveData.chosenChar2; if(k==='2' && saveData.chosenChar===wid) delete saveData.chosenChar; if(k==='ban'){ /* a ban is separate from the characters I play */ } }
+    persistSave(); lobbyCharRender(); renderLoadoutPanel(wid); }; });
   { const go=d=>{ const o=weaponOrder(SELECTABLE_WEAPONS), i=o.indexOf(wid), n=o[(i+d+o.length)%o.length]; weaponUI.selected=n; loadoutPick=null; loadoutMsg=''; weaponShowDetail(true); renderWeaponUI(); };
     const pb=document.getElementById('lcPrev'), nb=document.getElementById('lcNext'); if(pb) pb.onclick=()=>go(-1); if(nb) nb.onclick=()=>go(1); }
   box.querySelectorAll('.lcard[data-id] .lq [data-q]').forEach(q=>{ q.onclick=ev=>{ ev.stopPropagation(); const id=q.closest('.lcard').dataset.id, slot=+q.dataset.q, e=skillEntry(wid,id); let a=cur[0], b=cur[1];
@@ -13485,14 +13490,18 @@ function enterWeaponPhase(deadline, wmode, offer, banEnds){
   document.getElementById('weaponLockBtn').onclick=lockWeapon;
   { const si=document.getElementById('weaponSearch'); if(si){ si.value=''; si.oninput=weaponSearchApply; } }
   renderWeaponUI();
-  { const pre=chosenCharOf();      // a character picked in the lobby: no picking here, the game just waits
-    if(pre && (!weaponUI.offer || weaponUI.offer.includes(pre))){
+  { const rn=(gameMode==='duel')?(Object.values(duelScores||{}).reduce((x,y)=>x+(+y||0),0)+1):(gameMode==='team'?(Object.values(teamRoundScores||{}).reduce((x,y)=>x+(+y||0),0)+1):1);
+    const pre=(gameMode==='duel'||gameMode==='team') ? (rn===1?chosenCharOf():(rn===2?chosenCharOf(2):null)) : chosenCharOf();      // the character set in the 캐릭터 screen is picked for me (1선택 for round 1, 2선택 for round 2 of a duel or team match, 1선택 every round of a tournament); 선택 확정 is left for me to press
+    const banPre=chosenCharOf('ban');
+    if(pre || banPre){
       let tries=0; const tmr=setInterval(()=>{
-        if(++tries>40 || weaponUI.mode!=='pick' || weaponUI.locked){ clearInterval(tmr); return; }
-        if(weaponBanMode()) return;
+        if(++tries>120 || weaponUI.mode!=='pick' || weaponUI.locked){ clearInterval(tmr); return; }
+        if(weaponBanMode()){ const sb=weaponUI.state&&weaponUI.state.ban; if(banPre && sb && sb.can && !sb.mine && !weaponUI.banSel && !(sb.tm||[]).includes(banPre)){ weaponUI.banSel=banPre; weaponShowDetail(true); renderWeaponUI(); } return; }
+        if(!pre){ clearInterval(tmr); return; }
+        if(weaponUI.offer && !weaponUI.offer.includes(pre)){ clearInterval(tmr); return; }
         const st=weaponUI.state; if(st && ((st.dup && st.picks.some(p=>p.id!==myId && p.pick===pre)) || (st.banned && st.banned.includes(pre)) || (st.ob && st.ob.includes(pre)))){ clearInterval(tmr); return; }      // taken / banned: pick another one by hand
         if(weaponUI.hiddenUntil && performance.now()<weaponUI.hiddenUntil) return;
-        pickWeapon(pre); clearInterval(tmr);      // picked for him, but 선택 확정 is left for him to press (it still locks by itself when the time runs out)
+        pickWeapon(pre); clearInterval(tmr);
       }, 300);
     } }
   if(weaponCountdownTimer) clearInterval(weaponCountdownTimer);
