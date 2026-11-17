@@ -3678,6 +3678,21 @@ function ppFxPlay(e,x,y){
   const w=e.w, k=e.k, a=e.a||0, q=(fxQuality>=1)?1:0.6, n=v=>Math.max(2,Math.round(v*q));
   const CH=['#4b2a18','#6b3a1f','#e3bd7c','#fff2d6'], PK=['#ff7fa6','#ffffff','#ffe3ef'], WH=['#fff4e2','#ffffff','#e3bd7c'], DR=['#4b2a18','#6b3a1f','#8a5a34'];
   const crumbs=(cx,cy,cols,m,sp)=>burst(cx,cy,n(m),{a0:0,a1:6.28,s0:40,s1:sp||320,l0:.4,l1:.9,z0:1.6,z1:3.4,colors:cols,grav:420,drag:1.1,add:false});
+  if(k.indexOf('e:')===0){      // the 2스킬 (E) of a pepero skin: one look per kind of skill (이동 / 강화 / 공격), in the colours of that skin
+    const PAL={bat:PK, wizard:WH, sword:DR, pirate:['#d62a30','#ffffff','#4b2a18'], bow:['#e3bd7c','#d7a867','#fff2d6']}, pal=PAL[w]||CH, kind=k.slice(2);
+    if(kind==='move'){
+      ppBars(x,y,n(8),{a0:0,a1:6.28,s0:90,s1:320,l0:.5,l1:.9,z0:10,z1:15,bw:3,cols:pal.slice(0,2),grav:380});
+      crumbs(x,y,pal,18,320); addP({x:x,y:y,life:.3,color:pal[0],shape:'ring',r0:6,r1:56,lw:4});
+    } else if(kind==='buff'){
+      for(let i=0;i<5;i++) addP({x:x,y:y,life:.9,shape:'pbar',add:false,fid:e.pid,orbR:40,orbA:i*Math.PI*2/5,orbW:8,len:20,bw:4.6,coat:pal[i%pal.length],nuts:3,cf:0.8});
+      addP({x:x,y:y,life:.5,color:pal[0],shape:'ring',r0:10,r1:60,lw:5}); crumbs(x,y,pal,10,220);
+    } else {
+      ppBars(x+Math.cos(a)*26,y+Math.sin(a)*26,n(7),{a0:a-0.5,a1:a+0.5,s0:300,s1:640,l0:.35,l1:.65,z0:11,z1:16,bw:3.4,cols:pal.slice(0,2),grav:240,drag:1.2});
+      burst(x,y,n(16),{a0:a-0.6,a1:a+0.6,s0:120,s1:520,l0:.4,l1:.8,z0:1.8,z1:3.6,colors:pal,grav:420,drag:1.1,add:false});
+      addP({x:x,y:y,life:.32,color:pal[0],shape:'flash',size:110});
+    }
+    return;
+  }
   switch(w+':'+k){
     case 'shuriken:skill':      // 그림자 이동: he vanishes in a scatter of crumbs and wrapper bits
       ppBars(x,y,n(7),{a0:0,a1:6.28,s0:80,s1:300,l0:.5,l1:.9,z0:9,z1:13,bw:2.8,cols:['#4b2a18','#6b3a1f'],grav:380});
@@ -6534,7 +6549,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-17-v869';
+const GAME_BUILD='build 2026-11-17-v870';
 const GAME_VERSION='1.1', GAME_VERSION_NAME='Shadows of London';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -16957,6 +16972,7 @@ function trySkillAlt(p, tMs, ax, ay, slot){      // a skill that was made for th
   else { p.lastTeleport=tSec; p.skill2Uses=(p.skill2Uses||0)+1; }
   pushFx('skill', p.x, p.y-40, tMs, {color:p.color, name:ss.def.name});
   pushFx('sfx', p.x, p.y-40, tMs, {name:SKILL_SFX[ss.def.kind]});
+  if(ppIs(p)) ppCast(p,'e:'+(ss.def.kind||'hit'),tMs,{w:w, a:hasAim(ax,ay)?aimAngleOf(p,ax,ay):(p.angle||0)});      // 빼빼로 스킨: a skill from the 구성 (either slot) in pepero
 }
 function trySkill2(p, tMs, aimX, aimY){ const o=curAur; curAur=auraKind(p); try{ return trySkill2b(p, tMs, aimX, aimY); } finally{ curAur=o; } }
 function trySkill2b(p, tMs, aimX, aimY){
@@ -16973,6 +16989,7 @@ function trySkill2b(p, tMs, aimX, aimY){
   p.lastTeleport=tSec; p.skill2Uses=(p.skill2Uses||0)+1;
   pushFx('skill', p.x, p.y-40, tMs, {color:p.color, name:sd.name});
   pushFx('sfx', p.x, p.y-40, tMs, {name:SKILL_SFX[sd.kind]});
+  if(ppIs(p)) ppCast(p,'e:'+(sd.kind||'hit'),tMs,{w:w, a:hasAim(aimX,aimY)?aimAngleOf(p,aimX,aimY):(p.angle||0)});      // 빼빼로 스킨: the 2스킬 in pepero
 }
 function skill2Tick(p, t){      // the skills that last a while: the knight's leap, the assassin's jump, the magician's pigeon ...
   const tSec=t/1000;
