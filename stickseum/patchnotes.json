@@ -7,7 +7,93 @@
    "items": [
     "영매사가 영혼으로 공격할 때 본체도 지팡이를 휘두르던 모습을 없앴어요",
     "영매사 영혼의 공격 피해 36 → 24"
-   ]
+   ],
+   "tr": {
+    "ar": {
+     "title": "هجوم أشباح الوسيط",
+     "items": [
+      "أُزيلت حركة تلويح الوسيط بعصاه أثناء الهجوم بالروح.",
+      "ضرر هجوم روح الوسيط من 36 إلى 24"
+     ]
+    },
+    "de": {
+     "title": "Geisterangriff des Mediums",
+     "items": [
+      "Wenn das Medium mit seinem Geist angreift, schwingt der Körper nicht mehr den Stab.",
+      "Schaden des Geistangriffs des Mediums: 36 → 24"
+     ]
+    },
+    "en": {
+     "title": "Medium ghost attack",
+     "items": [
+      "Removed the Medium's body swinging its staff when it attacks with its spirit.",
+      "Medium spirit attack damage 36 → 24"
+     ]
+    },
+    "es": {
+     "title": "Ataque fantasma del médium",
+     "items": [
+      "Se ha quitado la imagen del cuerpo del médium blandiendo su bastón al atacar con su espíritu.",
+      "Daño del ataque espiritual del médium: 36 → 24"
+     ]
+    },
+    "fr": {
+     "title": "Attaque fantôme du médium",
+     "items": [
+      "Le corps du médium ne brandit plus son bâton lorsqu'il attaque avec son esprit.",
+      "Dégâts de l'attaque spirituelle du médium : 36 → 24"
+     ]
+    },
+    "it": {
+     "title": "Attacco spettrale del medium",
+     "items": [
+      "Rimosso il corpo del medium che agita il bastone quando attacca con lo spirito.",
+      "Danno dell'attacco spirituale del medium: 36 → 24"
+     ]
+    },
+    "ja": {
+     "title": "霊媒師の幽霊攻撃",
+     "items": [
+      "霊媒師が霊魂で攻撃するとき、本体が杖を振る動きをなくしました。",
+      "霊媒師の霊魂攻撃のダメージ 36 → 24"
+     ]
+    },
+    "pl": {
+     "title": "Atak duchów Media",
+     "items": [
+      "Usunięto widok ciała Media, które macha laską, gdy atakuje duchem.",
+      "Obrażenia ataku duchem Media: 36 → 24"
+     ]
+    },
+    "pt": {
+     "title": "Ataque fantasma do médium",
+     "items": [
+      "Removida a imagem do corpo do médium balançando o cajado ao atacar com o espírito.",
+      "Dano do ataque espiritual do médium: 36 → 24"
+     ]
+    },
+    "ru": {
+     "title": "Призрачная атака медиума",
+     "items": [
+      "Убрано движение тела медиума с посохом, когда он атакует духом.",
+      "Урон духовной атаки медиума: 36 → 24"
+     ]
+    },
+    "tr": {
+     "title": "Medyumun hayalet saldırısı",
+     "items": [
+      "Medyum ruhuyla saldırırken bedeninin asasını sallama görüntüsü kaldırıldı.",
+      "Medyumun ruh saldırısı hasarı 36 → 24"
+     ]
+    },
+    "zh": {
+     "title": "灵媒幽灵攻击",
+     "items": [
+      "灵媒用灵魂攻击时，本体挥动法杖的画面已移除。",
+      "灵媒灵魂攻击伤害 36 → 24"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-17",
@@ -15,7 +101,81 @@
    "title": "신화·컨셉 스킨 2스킬 연출",
    "items": [
     "신화·컨셉 스킨(제우스·토르·오딘·포세이돈·길가메시·질투·네온·카다스 등)에서도 2스킬(E)과 스킬 구성으로 바꾼 스킬에 스킨 색과 모양의 연출이 나와요 (이동·강화·공격 종류마다 다르게)"
-   ]
+   ],
+   "tr": {
+    "ar": {
+     "title": "تأثيرات المهارة الثانية لمظاهر الأساطير والمفاهيم",
+     "items": [
+      "تظهر تأثيرات بألوان وأشكال المظهر في المهارة الثانية (E) وفي المهارات المعدّلة بإعداد المهارات لمظاهر الأساطير والمفاهيم (زيوس وثور وأودين وبوسيدون وجلجامش والغيرة ونيون وكادس وغيرهم)، ويختلف الشكل حسب نوع الحركة أو التعزيز أو الهجوم."
+     ]
+    },
+    "de": {
+     "title": "Effekte der 2. Fähigkeit der Mythos- und Konzept-Skins",
+     "items": [
+      "Bei Mythos- und Konzept-Skins (Zeus, Thor, Odin, Poseidon, Gilgamesch, Eifersucht, Neon, Kadas u. a.) zeigen auch die 2. Fähigkeit (E) und per Skill-Konfiguration geänderte Fähigkeiten Effekte in Farbe und Form des Skins (je nach Bewegung, Verstärkung oder Angriff verschieden)."
+     ]
+    },
+    "en": {
+     "title": "Myth and concept skin 2nd skill effects",
+     "items": [
+      "Myth and concept skins (Zeus, Thor, Odin, Poseidon, Gilgamesh, Jealousy, Neon, Kadas and more) also show effects in the skin's colors and shapes on the 2nd skill (E) and on skills changed through the skill setup (different for movement, enhancement and attack types)."
+     ]
+    },
+    "es": {
+     "title": "Efectos de la 2.ª habilidad de los aspectos mitológicos y conceptuales",
+     "items": [
+      "En los aspectos mitológicos y conceptuales (Zeus, Thor, Odín, Poseidón, Gilgamesh, Celos, Neón, Kadas y otros), la 2.ª habilidad (E) y las habilidades cambiadas con la configuración de habilidades también muestran efectos con los colores y formas del aspecto (distintos para movimiento, mejora o ataque)."
+     ]
+    },
+    "fr": {
+     "title": "Effets de la 2e compétence des apparences mythe et concept",
+     "items": [
+      "Avec les apparences mythe et concept (Zeus, Thor, Odin, Poséidon, Gilgamesh, Jalousie, Néon, Kadas, etc.), la 2e compétence (E) et les compétences modifiées dans la configuration affichent aussi des effets aux couleurs et formes de l'apparence (différents selon le déplacement, l'amélioration ou l'attaque)."
+     ]
+    },
+    "it": {
+     "title": "Effetti della 2ª abilità delle skin mitiche e concept",
+     "items": [
+      "Con le skin mitiche e concept (Zeus, Thor, Odino, Poseidone, Gilgamesh, Gelosia, Neon, Kadas e altre), anche la 2ª abilità (E) e le abilità cambiate nella configurazione mostrano effetti con i colori e le forme della skin (diversi per movimento, potenziamento e attacco)."
+     ]
+    },
+    "ja": {
+     "title": "神話・コンセプトスキンの2スキル演出",
+     "items": [
+      "神話・コンセプトスキン（ゼウス・トール・オーディン・ポセイドン・ギルガメッシュ・嫉妬・ネオン・カダスなど）でも、2スキル（Eキー）とスキル構成で変えたスキルに、スキルの色と形の演出が出ます（移動・強化・攻撃の種類ごとに違う）。"
+     ]
+    },
+    "pl": {
+     "title": "Efekty drugiej umiejętności skórek mitologicznych i koncepcyjnych",
+     "items": [
+      "W skórkach mitologicznych i koncepcyjnych (Zeus, Thor, Odyn, Posejdon, Gilgamesz, Zazdrość, Neon, Kadas i inne) druga umiejętność (E) oraz umiejętności zmienione w konfiguracji również pokazują efekty w kolorach i kształtach skórki (inne dla ruchu, wzmocnienia i ataku)."
+     ]
+    },
+    "pt": {
+     "title": "Efeitos da 2ª habilidade das skins mítica e conceito",
+     "items": [
+      "Nas skins mítica e conceito (Zeus, Thor, Odin, Poseidon, Gilgamesh, Ciúme, Neon, Kadas e outras), a 2ª habilidade (E) e as habilidades alteradas na configuração também mostram efeitos nas cores e formas da skin (diferentes para movimento, reforço e ataque)."
+     ]
+    },
+    "ru": {
+     "title": "Эффекты второго навыка мифических и концептуальных скинов",
+     "items": [
+      "У мифических и концептуальных скинов (Зевс, Тор, Один, Посейдон, Гильгамеш, Ревность, Неон, Кадас и другие) второй навык (E) и навыки, изменённые в настройке, тоже показывают эффекты в цветах и формах скина (разные для перемещения, усиления и атаки)."
+     ]
+    },
+    "tr": {
+     "title": "Mitolojik ve konsept kostümlerin 2. yetenek efektleri",
+     "items": [
+      "Mitolojik ve konsept kostümlerde (Zeus, Thor, Odin, Poseidon, Gilgamesh, Kıskançlık, Neon, Kadas ve diğerleri) 2. yetenek (E) ile yetenek düzeninde değiştirilen yetenekler de kostümün renk ve şekillerinde efektler gösterir (hareket, güçlendirme ve saldırı türlerine göre farklı)."
+     ]
+    },
+    "zh": {
+     "title": "神话·概念皮肤2技能特效",
+     "items": [
+      "神话和概念皮肤（宙斯、雷神、奥丁、波塞冬、吉尔伽美什、嫉妒、霓虹、卡达斯等）的2技能（E键）以及在技能配置中改动的技能，也会显示皮肤颜色和造型的特效（移动、强化、攻击各不相同）。"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-17",
@@ -23,7 +183,81 @@
    "title": "빼빼로 스킨 2스킬 연출",
    "items": [
     "빼빼로 스킨 9종의 2스킬(E)과 스킬 구성으로 바꾼 스킬도 빼빼로 연출이 나와요 (이동·강화·공격 종류마다 다른 모양)"
-   ]
+   ],
+   "tr": {
+    "ar": {
+     "title": "تأثيرات المهارة الثانية لمظهر بيبيرو",
+     "items": [
+      "تظهر تأثيرات بيبيرو أيضًا في المهارة الثانية (E) لـ 9 مظاهر بيبيرو، وفي المهارات التي غيّرتها بإعداد المهارات (شكل مختلف لكل نوع: حركة، وتعزيز، وهجوم)."
+     ]
+    },
+    "de": {
+     "title": "Effekte der 2. Fähigkeit des Pepero-Skins",
+     "items": [
+      "Die 2. Fähigkeit (E) der 9 Pepero-Skins sowie Fähigkeiten, die du über die Skill-Konfiguration geändert hast, zeigen ebenfalls den Pepero-Effekt (unterschiedliche Optik für Bewegung, Verstärkung und Angriff)."
+     ]
+    },
+    "en": {
+     "title": "Pepero skin 2nd skill effects",
+     "items": [
+      "The 2nd skill (E) of the 9 Pepero skins, and skills changed through the skill setup, also show Pepero effects (a different look for movement, enhancement and attack types)."
+     ]
+    },
+    "es": {
+     "title": "Efectos de la 2.ª habilidad del aspecto Pepero",
+     "items": [
+      "La 2.ª habilidad (E) de las 9 skins Pepero y las habilidades cambiadas con la configuración de habilidades también muestran el efecto Pepero (aspecto distinto según sea de movimiento, mejora o ataque)."
+     ]
+    },
+    "fr": {
+     "title": "Effets de la 2e compétence de l'apparence Pepero",
+     "items": [
+      "La 2e compétence (E) des 9 apparences Pepero, ainsi que les compétences modifiées dans la configuration des compétences, affichent aussi l'effet Pepero (apparence différente selon le type : déplacement, amélioration ou attaque)."
+     ]
+    },
+    "it": {
+     "title": "Effetti della 2ª abilità dell'aspetto Pepero",
+     "items": [
+      "La 2ª abilità (E) delle 9 skin Pepero e le abilità cambiate con la configurazione delle abilità mostrano anch'esse l'effetto Pepero (aspetto diverso per movimento, potenziamento e attacco)."
+     ]
+    },
+    "ja": {
+     "title": "ペペロスキンの2スキル演出",
+     "items": [
+      "ペペロスキン9種の2スキル（Eキー）と、スキル構成で変えたスキルにもペペロの演出が出ます（移動・強化・攻撃の種類ごとに違う見た目）。"
+     ]
+    },
+    "pl": {
+     "title": "Efekty drugiej umiejętności wyglądu Pepero",
+     "items": [
+      "Druga umiejętność (E) 9 skórek Pepero oraz umiejętności zmienione w konfiguracji umiejętności również pokazują efekt Pepero (inny wygląd dla ruchu, wzmocnienia i ataku)."
+     ]
+    },
+    "pt": {
+     "title": "Efeitos da 2ª habilidade da skin Pepero",
+     "items": [
+      "A 2ª habilidade (E) das 9 skins Pepero e as habilidades alteradas na configuração de habilidades também mostram o efeito Pepero (aparência diferente para movimento, reforço e ataque)."
+     ]
+    },
+    "ru": {
+     "title": "Эффекты второго навыка скина Пероро",
+     "items": [
+      "Второй навык (E) 9 скинов Пероро, а также навыки, изменённые в настройке навыков, тоже показывают эффект Пероро (разный вид для перемещения, усиления и атаки)."
+     ]
+    },
+    "tr": {
+     "title": "Pepero kostümünün 2. yetenek efektleri",
+     "items": [
+      "9 Pepero kostümünün 2. yeteneği (E) ve yetenek düzeninde değiştirilen yetenekler de Pepero efektini gösterir (hareket, güçlendirme ve saldırı türlerine göre farklı görünüm)."
+     ]
+    },
+    "zh": {
+     "title": "Pepero皮肤2技能特效",
+     "items": [
+      "9款Pepero皮肤的2技能（E键）以及在技能配置中改动的技能，也会显示Pepero特效（移动、强化、攻击各不相同）。"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-17",
@@ -32,7 +266,93 @@
    "items": [
     "캐릭터 도감에서 1선택·2선택·금지할 캐릭터를 미리 골라 둘 수 있어요. 듀얼·팀전은 1선택이 첫 라운드, 2선택이 둘째 라운드에, 금지는 금지 단계에서 먼저 골라져요 (선택 확정은 직접 눌러요)",
     "토너먼트는 매 라운드가 끝나고 캐릭터를 고를 때마다 1선택 캐릭터가 확정 안 된 상태로 먼저 골라져 있어요"
-   ]
+   ],
+   "tr": {
+    "ar": {
+     "title": "اختيار مسبق للاختيار الأول والثاني والحظر",
+     "items": [
+      "يمكنك في موسوعة الشخصيات اختيار الشخصيات مسبقًا للاختيار الأول والثاني والحظر. في المبارزات والفرق يُستخدم الاختيار الأول في الجولة الأولى والثاني في الجولة الثانية، ويُختار الحظر أولًا في مرحلة الحظر (يجب أن تؤكد الاختيار بنفسك).",
+      "في البطولات، عند كل اختيار للشخصية بعد انتهاء الجولة، يكون مُختار الاختيار الأول محددًا مسبقًا دون تأكيد."
+     ]
+    },
+    "de": {
+     "title": "Vorauswahl für 1. Wahl, 2. Wahl und Verbot",
+     "items": [
+      "Im Charakter-Codex kannst du die Charaktere für 1. Wahl, 2. Wahl und Verbot vorab auswählen. In Duellen und Teamkämpfen gilt die 1. Wahl für die erste Runde und die 2. Wahl für die zweite Runde, das Verbot wird zuerst in der Verbotsphase gewählt (die Auswahl bestätigst du selbst).",
+      "In Turnieren ist nach jeder beendeten Runde beim Charakterwählen die 1. Wahl bereits vorausgewählt, aber noch nicht bestätigt."
+     ]
+    },
+    "en": {
+     "title": "Pre-pick 1st pick, 2nd pick and ban",
+     "items": [
+      "In the character codex you can pre-pick the characters for your 1st pick, 2nd pick and ban. In duels and team matches, the 1st pick applies to round one and the 2nd pick to round two, and the ban is picked first in the ban step (you still confirm the choice yourself).",
+      "In tournaments, each time you pick a character after a round ends, your 1st pick character is pre-selected but not yet confirmed."
+     ]
+    },
+    "es": {
+     "title": "Elegir de antemano 1.ª elección, 2.ª elección y prohibición",
+     "items": [
+      "En el códice de personajes puedes elegir de antemano los personajes de tu 1.ª elección, 2.ª elección y prohibición. En duelos y partidas por equipos, la 1.ª elección es para la primera ronda, la 2.ª para la segunda, y la prohibición se elige primero en la fase de prohibición (tú confirmas la elección).",
+      "En los torneos, cada vez que eliges personaje al terminar una ronda, el personaje de tu 1.ª elección ya aparece preseleccionado, sin confirmar."
+     ]
+    },
+    "fr": {
+     "title": "Présélection du 1er choix, du 2e choix et de l'interdiction",
+     "items": [
+      "Dans le codex, tu peux présélectionner les personnages de ton 1er choix, de ton 2e choix et ton interdiction. En duels et en équipes, le 1er choix sert à la première manche, le 2e à la deuxième, et l'interdiction est choisie en premier à l'étape d'interdiction (tu confirmes toi-même le choix).",
+      "En tournoi, à chaque choix de personnage après une manche, le personnage de ton 1er choix est déjà présélectionné, sans être confirmé."
+     ]
+    },
+    "it": {
+     "title": "Scelta in anticipo di 1ª scelta, 2ª scelta e ban",
+     "items": [
+      "Nel codice dei personaggi puoi scegliere in anticipo i personaggi per 1ª scelta, 2ª scelta e ban. In duelli e squadre la 1ª scelta vale per il primo round e la 2ª per il secondo, e il ban viene scelto per primo nella fase di ban (confermi tu la scelta).",
+      "Nei tornei, ogni volta che scegli un personaggio dopo la fine di un round, il personaggio per la 1ª scelta è già selezionato ma non ancora confermato."
+     ]
+    },
+    "ja": {
+     "title": "1選択・2選択・禁止を事前に選ぶ",
+     "items": [
+      "キャラクター図鑑で、1選択・2選択・禁止にするキャラクターを事前に選んでおけます。デュエル・チーム戦では1選択が1ラウンド目、2選択が2ラウンド目に使われ、禁止は禁止の段階で先に選ばれます（選択の確定は自分で押します）。",
+      "トーナメントでは、ラウンドが終わって毎回キャラクターを選ぶとき、1選択のキャラクターが確定していない状態で先に選ばれています。"
+     ]
+    },
+    "pl": {
+     "title": "Wcześniejszy wybór 1. i 2. postaci oraz zakazu",
+     "items": [
+      "W kodeksie postaci możesz wcześniej wybrać postacie na 1. wybór, 2. wybór i zakaz. W pojedynkach i meczach drużynowych 1. wybór dotyczy pierwszej rundy, a 2. wybór drugiej, a zakaz jest wybierany najpierw w fazie zakazów (wybór potwierdzasz sam).",
+      "W turniejach, po każdej zakończonej rundzie przy wyborze postaci, postać z 1. wyboru jest już wstępnie wybrana, ale jeszcze nie potwierdzona."
+     ]
+    },
+    "pt": {
+     "title": "Escolha antecipada de 1ª escolha, 2ª escolha e banimento",
+     "items": [
+      "No códice de personagens você pode escolher antecipadamente os personagens da 1ª escolha, 2ª escolha e banimento. Em duelos e partidas por equipe, a 1ª escolha vale para a primeira rodada e a 2ª para a segunda, e o banimento é escolhido primeiro na fase de banimento (você confirma a escolha).",
+      "Nos torneios, cada vez que você escolhe um personagem depois de uma rodada, o personagem da sua 1ª escolha já vem pré-selecionado, mas ainda não confirmado."
+     ]
+    },
+    "ru": {
+     "title": "Предвыбор 1-го и 2-го выбора и бана",
+     "items": [
+      "В каталоге персонажей можно заранее выбрать персонажей для 1-го выбора, 2-го выбора и бана. В дуэлях и командных боях 1-й выбор действует в первом раунде, 2-й — во втором, а бан выбирается первым на этапе банов (выбор подтверждаете вы сами).",
+      "В турнирах каждый раз, когда вы выбираете персонажа после окончания раунда, персонаж 1-го выбора уже предварительно выбран, но ещё не подтверждён."
+     ]
+    },
+    "tr": {
+     "title": "1. seçim, 2. seçim ve yasak için önceden seçim",
+     "items": [
+      "Karakter kodeksinde 1. seçim, 2. seçim ve yasak karakterlerini önceden seçebilirsin. Düellolarda ve takım maçlarında 1. seçim birinci tura, 2. seçim ikinci tura uygulanır ve yasak, yasak aşamasında önce seçilir (seçimi kendin onaylarsın).",
+      "Turnuvalarda, bir tur bittikten sonra her karakter seçtiğinde 1. seçim karakterin önceden seçili gelir ama henüz onaylanmamış olur."
+     ]
+    },
+    "zh": {
+     "title": "提前选择1选、2选和禁用",
+     "items": [
+      "在角色图鉴中，可以提前选好1选、2选和禁用的角色。在决斗和团队赛中，1选用于第一回合，2选用于第二回合，禁用会在禁用阶段先被选出（选择仍需自己确认）。",
+      "在锦标赛中，每回合结束后选择角色时，1选角色会先被预选好，但尚未确认。"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-17",
@@ -43,7 +363,117 @@
     "얻는 마스터리가 1.5배가 되고, 소수점은 모두 올림해요",
     "빼빼로 기사 회전베기: 회전이 끝나면 빼빼로도 바로 사라져요",
     "듀얼·팀전·토너먼트에서 다음 라운드에 이전 라운드의 해적 포탑·벽·마법진·장판·소환수가 남지 않고, 스킬 쿨타임도 새로 시작해요"
-   ]
+   ],
+   "tr": {
+    "ar": {
+     "title": "نافذة الموسوعة والإتقان وتنظيم الجولات",
+     "items": [
+      "تبقى نافذة موسوعة الشخصيات بالحجم نفسه في القائمة وشاشة الشخصية، وتم تنظيم الجزء المقطوع أسفل القائمة.",
+      "تصبح الإتقان المكتسب 1.5 ضعف، ويُقرّب كل الكسور العشرية إلى الأعلى.",
+      "ضربة الفارس بيبيرو الدوّارة: عند انتهاء الدوران يختفي بيبيرو فورًا أيضًا.",
+      "في المبارزات والفرق والبطولات، لا تبقى أبراج القراصنة والجدران والدوائر السحرية والمناطق والمستدعيات من الجولة السابقة في الجولة التالية، وتبدأ فترات انتظار المهارات من جديد."
+     ]
+    },
+    "de": {
+     "title": "Codex-Fenster, Meisterschaft und Runden aufgeräumt",
+     "items": [
+      "Das Charakter-Codex-Fenster behält auf der Liste und auf der Charakterseite dieselbe Größe, und die Stellen, die unter der Liste abgeschnitten wirkten, sind bereinigt.",
+      "Die gewonnene Meisterschaft wird auf das 1,5-Fache erhöht, und alle Dezimalstellen werden aufgerundet.",
+      "Pepero-Ritter Rundhieb: Wenn die Drehung endet, verschwindet auch der Pepero sofort.",
+      "In Duellen, Teamkämpfen und Turnieren bleiben in der nächsten Runde keine Piratentürme, Mauern, Magiekreise, Bodenzonen und Beschwörungen der vorigen Runde mehr stehen, und die Abklingzeiten der Fähigkeiten starten neu."
+     ]
+    },
+    "en": {
+     "title": "Codex window, mastery and round cleanup",
+     "items": [
+      "The character codex window keeps the same size on the list and character screens, and the parts that looked cut off below the list are tidied up.",
+      "Mastery gained is now 1.5x, and all decimals are rounded up.",
+      "Pepero knight spinning slash: when the spin ends, the Pepero also disappears right away.",
+      "In duels, team matches and tournaments, pirate turrets, walls, magic circles, ground zones and summons from the previous round no longer carry over into the next round, and skill cooldowns start fresh."
+     ]
+    },
+    "es": {
+     "title": "Ventana del códice, maestría y orden de las rondas",
+     "items": [
+      "La ventana del códice de personajes mantiene el mismo tamaño en la lista y en la pantalla del personaje, y se ha corregido lo que aparecía cortado debajo de la lista.",
+      "La maestría obtenida pasa a ser 1,5 veces mayor, y todos los decimales se redondean hacia arriba.",
+      "Tajo giratorio del caballero Pepero: cuando termina el giro, el Pepero también desaparece al instante.",
+      "En duelos, partidas por equipos y torneos, las torretas piratas, muros, círculos mágicos, zonas en el suelo e invocaciones de la ronda anterior ya no permanecen en la siguiente, y los tiempos de recarga de las habilidades empiezan de nuevo."
+     ]
+    },
+    "fr": {
+     "title": "Fenêtre du codex, maîtrise et rangement des manches",
+     "items": [
+      "La fenêtre du codex des personnages garde la même taille dans la liste et sur l'écran du personnage, et les parties qui semblaient coupées sous la liste ont été rangées.",
+      "La maîtrise gagnée passe à 1,5 fois, et toutes les décimales sont arrondies au supérieur.",
+      "Taillade tourbillonnante du chevalier Pepero : quand la rotation se termine, le Pepero disparaît aussi aussitôt.",
+      "En duels, en équipes et en tournois, les tourelles pirates, murs, cercles magiques, zones au sol et invocations de la manche précédente ne restent plus à la manche suivante, et les délais de recharge des compétences repartent de zéro."
+     ]
+    },
+    "it": {
+     "title": "Finestra del codice, maestria e ordine dei round",
+     "items": [
+      "La finestra del codice dei personaggi mantiene la stessa dimensione nell'elenco e nella schermata del personaggio, e sono state sistemate le parti che sembravano tagliate sotto l'elenco.",
+      "La maestria ottenuta diventa 1,5 volte, e tutti i decimali vengono arrotondati per eccesso.",
+      "Fendente rotante del cavaliere Pepero: quando la rotazione finisce, anche il Pepero scompare subito.",
+      "In duelli, squadre e tornei, torrette pirata, muri, cerchi magici, zone a terra ed evocazioni del round precedente non restano più nel round successivo, e i tempi di recupero delle abilità ripartono da zero."
+     ]
+    },
+    "ja": {
+     "title": "図鑑ウィンドウ・マスタリー・ラウンドの整理",
+     "items": [
+      "キャラクター図鑑ウィンドウが一覧とキャラクター画面で同じサイズを保つようになり、一覧の下で切れて見えていた部分も整えました。",
+      "獲得するマスタリーが1.5倍になり、小数点以下はすべて切り上げになります。",
+      "ペペロ騎士の回転斬り：回転が終わると、ペペロもすぐに消えるようになりました。",
+      "デュエル・チーム戦・トーナメントで、前のラウンドの海賊タレット・壁・魔法陣・床の範囲・召喚獣が次のラウンドに残らなくなり、スキルのクールタイムも新しく始まります。"
+     ]
+    },
+    "pl": {
+     "title": "Okno kodeksu, biegłość i porządek w rundach",
+     "items": [
+      "Okno kodeksu postaci zachowuje ten sam rozmiar na liście i na ekranie postaci, a elementy wyglądające na ucięte pod listą zostały uporządkowane.",
+      "Zdobywana biegłość wynosi teraz 1,5 razy więcej, a wszystkie ułamki są zaokrąglane w górę.",
+      "Obrotowe cięcie rycerza Pepero: gdy obrót się kończy, Pepero również od razu znika.",
+      "W pojedynkach, meczach drużynowych i turniejach wieże piratów, mury, kręgi magiczne, strefy na ziemi i przyzwania z poprzedniej rundy nie zostają w następnej, a czasy odnowienia umiejętności zaczynają się od nowa."
+     ]
+    },
+    "pt": {
+     "title": "Janela do códice, maestria e organização das rodadas",
+     "items": [
+      "A janela do códice de personagens mantém o mesmo tamanho na lista e na tela do personagem, e as partes que pareciam cortadas abaixo da lista foram arrumadas.",
+      "A maestria ganha passa a ser 1,5 vez maior, e todas as casas decimais são arredondadas para cima.",
+      "Golpe giratório do cavaleiro Pepero: quando o giro termina, o Pepero também desaparece logo.",
+      "Em duelos, partidas por equipe e torneios, as torres piratas, muros, círculos mágicos, zonas no chão e invocações da rodada anterior não permanecem na próxima, e os tempos de recarga das habilidades começam do zero."
+     ]
+    },
+    "ru": {
+     "title": "Окно каталога, мастерство и порядок раундов",
+     "items": [
+      "Окно каталога персонажей сохраняет одинаковый размер в списке и на экране персонажа, а части, которые выглядели обрезанными под списком, приведены в порядок.",
+      "Получаемое мастерство увеличено в 1,5 раза, а все дробные значения теперь округляются вверх.",
+      "Вращающийся удар рыцаря Пероро: когда вращение заканчивается, Пероро тоже сразу исчезает.",
+      "В дуэлях, командных боях и турнирах пиратские турели, стены, магические круги, зоны на земле и призванные существа предыдущего раунда больше не остаются в следующем, а перезарядка навыков начинается заново."
+     ]
+    },
+    "tr": {
+     "title": "Kodeks penceresi, ustalık ve tur düzeni",
+     "items": [
+      "Karakter kodeks penceresi listede ve karakter ekranında aynı boyutta kalıyor, listenin altında kesik görünen kısımlar düzenlendi.",
+      "Kazanılan ustalık 1,5 kat olur ve tüm ondalıklar yukarı yuvarlanır.",
+      "Pepero şövalyesinin dönen kesişi: dönüş bittiğinde Pepero de hemen kaybolur.",
+      "Düellolarda, takım maçlarında ve turnuvalarda önceki turdaki korsan kuleleri, duvarlar, büyü çemberleri, yerdeki alanlar ve çağrılan varlıklar sonraki tura kalmaz, yetenek bekleme süreleri de yeniden başlar."
+     ]
+    },
+    "zh": {
+     "title": "图鉴窗口、熟练度与回合整理",
+     "items": [
+      "角色图鉴窗口在列表和角色界面中保持相同大小，列表下方看起来被截断的部分也已整理。",
+      "获得的熟练度变为1.5倍，所有小数均向上取整。",
+      "Pepero骑士旋转斩：旋转结束时，Pepero也会立即消失。",
+      "在决斗、团队赛和锦标赛中，上一回合的海盗炮塔、墙、魔法阵、地面区域和召唤物不会再保留到下一回合，技能冷却也会重新开始。"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-17",
@@ -53,7 +483,105 @@
     "빅토리아 시대 런던이 배경이에요. 새 인트로·로비·방 매칭 배경과 새 로고, 새 로비곡이 들어갔어요.",
     "새 캐릭터 역병 의사·에드워드·영매사·탐정이 들어왔고, 모든 캐릭터에 두 번째 스킬(E 키)이 생겼어요. 기본 체력은 450(하랄드 650)이에요.",
     "로비 버튼이 아르누보 모양으로 바뀌고, 스크롤바가 숨겨졌어요. 마스터리 얻는 양이 1.25배로 늘었어요."
-   ]
+   ],
+   "tr": {
+    "ar": {
+     "title": "1.1 Shadows of London",
+     "items": [
+      "الخلفية هي لندن في العصر الفيكتوري. أُضيفت مقدمة جديدة، وخلفيات جديدة للردهة ولمطابقة الغرف، وشعار جديد، وموسيقى ردهة جديدة.",
+      "وصلت شخصيات جديدة: طبيب الطاعون وإدوارد والوسيط والمحقق، ولكل الشخصيات مهارة ثانية (زر E). الصحة الأساسية 450 (هارالد 650).",
+      "تغيّرت أزرار الردهة إلى شكل الفن الحديث (آرت نوفو)، وأُخفيت أشرطة التمرير. زادت كمية الإتقان المكتسبة إلى 1.25 ضعف."
+     ]
+    },
+    "de": {
+     "title": "1.1 Shadows of London",
+     "items": [
+      "Der Hintergrund ist das viktorianische London. Neue Intro-, Lobby- und Raumsuche-Hintergründe, ein neues Logo und neue Lobby-Musik sind dazugekommen.",
+      "Neue Charaktere Pestarzt, Edward, Medium und Detektiv sind da, und jeder Charakter hat eine zweite Fähigkeit (E-Taste). Basis-HP 450 (Harald 650).",
+      "Die Lobby-Knöpfe haben jetzt die Form des Jugendstils, und die Scrollbalken sind ausgeblendet. Die gewonnene Meisterschaft wurde auf das 1,25-Fache erhöht."
+     ]
+    },
+    "en": {
+     "title": "1.1 Shadows of London",
+     "items": [
+      "The background is Victorian London. A new intro, lobby and room-matching background, a new logo and a new lobby track have been added.",
+      "New characters Plague Doctor, Edward, Medium and Detective have arrived, and every character has a second skill (E key). Base HP is 450 (Harald 650).",
+      "Lobby buttons now have an Art Nouveau shape, and scrollbars are hidden. Mastery gained is increased to 1.25x."
+     ]
+    },
+    "es": {
+     "title": "1.1 Shadows of London",
+     "items": [
+      "El fondo es el Londres victoriano. Se han añadido una nueva introducción, nuevos fondos para el vestíbulo y la búsqueda de salas, un nuevo logo y una nueva música de vestíbulo.",
+      "Llegan los nuevos personajes Médico de la peste, Edward, Médium y Detective, y todos los personajes tienen una segunda habilidad (tecla E). La vida base es 450 (Harald 650).",
+      "Los botones del vestíbulo ahora tienen forma Art Nouveau y las barras de desplazamiento están ocultas. La maestría obtenida aumenta a 1,25 veces."
+     ]
+    },
+    "fr": {
+     "title": "1.1 Shadows of London",
+     "items": [
+      "Le décor est le Londres victorien. Une nouvelle intro, de nouveaux fonds pour le hall et la recherche de salon, un nouveau logo et une nouvelle musique de hall ont été ajoutés.",
+      "Les nouveaux personnages Médecin de la peste, Edward, Médium et Détective sont arrivés, et chaque personnage a une deuxième compétence (touche E). PV de base : 450 (Harald 650).",
+      "Les boutons du hall ont désormais une forme Art nouveau, et les barres de défilement sont masquées. La maîtrise gagnée passe à 1,25 fois."
+     ]
+    },
+    "it": {
+     "title": "1.1 Shadows of London",
+     "items": [
+      "Lo sfondo è la Londra vittoriana. Sono arrivati una nuova intro, nuovi sfondi per la lobby e per l'abbinamento delle stanze, un nuovo logo e una nuova musica della lobby.",
+      "Arrivano i nuovi personaggi Medico della peste, Edward, Medium e Detective, e ogni personaggio ha una seconda abilità (tasto E). PV base 450 (Harald 650).",
+      "I pulsanti della lobby hanno ora una forma Art Nouveau e le barre di scorrimento sono nascoste. La maestria ottenuta è aumentata a 1,25 volte."
+     ]
+    },
+    "ja": {
+     "title": "1.1 Shadows of London",
+     "items": [
+      "舞台はヴィクトリア朝のロンドンです。新しいイントロ・ロビー・部屋マッチングの背景、新しいロゴ、新しいロビー曲が入りました。",
+      "新キャラクター「ペストドクター」「エドワード」「霊媒師」「探偵」が登場し、全キャラクターに2つ目のスキル（Eキー）が追加されました。基本体力は450（ハラルド650）です。",
+      "ロビーのボタンがアール・ヌーヴォー風の形に変わり、スクロールバーは非表示になりました。マスタリーの獲得量が1.25倍になりました。"
+     ]
+    },
+    "pl": {
+     "title": "1.1 Shadows of London",
+     "items": [
+      "Tłem jest wiktoriański Londyn. Dodano nowe intro, nowe tła lobby i dopasowywania pokoi, nowe logo oraz nową muzykę w lobby.",
+      "Pojawili się nowe postacie: Lekarz dżumy, Edward, Medium i Detektyw, a każda postać ma drugą umiejętność (klawisz E). Bazowe HP to 450 (Harald 650).",
+      "Przyciski w lobby mają teraz kształt secesyjny, a paski przewijania są ukryte. Zdobywana biegłość wzrosła 1,25 razy."
+     ]
+    },
+    "pt": {
+     "title": "1.1 Shadows of London",
+     "items": [
+      "O cenário é a Londres vitoriana. Foram adicionados uma nova introdução, novos fundos para o lobby e para a busca de salas, um novo logotipo e uma nova música de lobby.",
+      "Chegam os novos personagens Médico da peste, Edward, Médium e Detetive, e todos os personagens ganham uma segunda habilidade (tecla E). HP base 450 (Harald 650).",
+      "Os botões do lobby agora têm forma Art Nouveau e as barras de rolagem foram ocultadas. A maestria ganha aumentou para 1,25 vezes."
+     ]
+    },
+    "ru": {
+     "title": "1.1 Shadows of London",
+     "items": [
+      "Фон — викторианский Лондон. Добавлены новое вступление, новые фоны лобби и подбора комнат, новый логотип и новая музыка лобби.",
+      "Новые персонажи: Чумной доктор, Эдвард, Медиум и Детектив, а у всех персонажей появилась вторая способность (клавиша E). Базовое здоровье 450 (Харальд 650).",
+      "Кнопки лобби теперь в стиле модерн, полосы прокрутки скрыты. Получаемое мастерство увеличено в 1,25 раза."
+     ]
+    },
+    "tr": {
+     "title": "1.1 Shadows of London",
+     "items": [
+      "Arka plan Victoria dönemi Londra'sı. Yeni giriş, lobi ve oda eşleştirme arka planları, yeni logo ve yeni lobi müziği eklendi.",
+      "Yeni karakterler Veba Doktoru, Edward, Medyum ve Dedektif geldi ve tüm karakterlerin ikinci yeteneği oldu (E tuşu). Temel can 450 (Harald 650).",
+      "Lobi düğmeleri Art Nouveau biçimine geçti ve kaydırma çubukları gizlendi. Kazanılan ustalık 1,25 kat artırıldı."
+     ]
+    },
+    "zh": {
+     "title": "1.1 Shadows of London",
+     "items": [
+      "背景是维多利亚时代的伦敦。新增了开场动画、大厅和房间匹配的背景、新logo以及新的大厅音乐。",
+      "新角色瘟疫医生、爱德华、灵媒和侦探登场，所有角色都新增了第二技能（E键）。基础生命值450（哈拉尔德650）。",
+      "大厅按钮改为新艺术运动风格，滚动条已隐藏。获得的熟练度提高到1.25倍。"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-16",
