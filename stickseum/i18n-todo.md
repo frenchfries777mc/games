@@ -36,3 +36,6 @@ patchnotes.json | v870 title | 빼빼로 스킨 2스킬 연출 | build 870 | 202
 patchnotes.json | v870 items[0] | 빼빼로 스킨 9종의 2스킬(E)과 스킬 구성으로 바꾼 스킬도 빼빼로 연출이 나와요 (이동·강화·공격 종류마다 다른 모양) | build 870 | 2026-11-17
 patchnotes.json | v871 title | 신화·컨셉 스킨 2스킬 연출 | build 871 | 2026-11-17
 patchnotes.json | v871 items[0] | 신화·컨셉 스킨(제우스·토르·오딘·포세이돈·길가메시·질투·네온·카다스 등)에서도 2스킬(E)과 스킬 구성으로 바꾼 스킬에 스킨 색과 모양의 연출이 나와요 (이동·강화·공격 종류마다 다르게) | build 871 | 2026-11-17
+patchnotes.json | v872 title | 영매사 유령 공격 | build 872 | 2026-11-17
+patchnotes.json | v872 items[0] | 영매사가 영혼으로 공격할 때 본체도 지팡이를 휘두르던 모습을 없앴어요 | build 872 | 2026-11-17
+patchnotes.json | v872 items[1] | 영매사 영혼의 공격 피해 36 → 24 | build 872 | 2026-11-17

@@ -6569,7 +6569,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-17-v871';
+const GAME_BUILD='build 2026-11-17-v872';
 const GAME_VERSION='1.1', GAME_VERSION_NAME='Shadows of London';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -14457,6 +14457,7 @@ function drawAttackPreview(){}      // (owner 11-03: no preview for the normal a
 const MELEE_ANIM={medium:'slash', plague:'staff', sword:'slash', samurai:'slash', shade:'slash', lightsaber:'slash', pirate:'slash', dracula:'slash', dagger:'slash', pizarro:'thrust', guard:'thrust', horemheb:'thrust', gloves:'thrust'};
 function meleeArmPose(p, A){
   const kind=MELEE_ANIM[p.weapon]; if(!kind || p.alive===false) return null;
+  if(p.weapon==='medium' && typeof mdSoulEnt==='function' && mdSoulEnt(p)) return null;      // 영매사: while the soul attacks, the body does not swing its cane too
   const w=WEAPONS[p.weapon]; if(!w) return null;
   const T=clamp(w.cd,0.22,0.5), age=hrAge(p); if(!(age>=0) || age>=T) return null;
   const f=Math.cos(A)>=0?1:-1, S=0.4*T;
@@ -17832,7 +17833,7 @@ function mediumAttack(p, ang, w, tSec, tMs){
   if(!s){ meleeAttack(p, ang, w, tMs); return; }                 // the body: the cane
   p.lastShot=tSec-0.1;                                          // the soul orb: a little slower (0.8 s)
   const n0=bullets.length, ax=Math.cos(ang), ay=Math.sin(ang);
-  spawnBullet(p, ang, {id:'medium', kind:'gun', dmg:36, bulletSpeed:900, shape:'soulorb', hitR:12, life:1.6}, {pierce:true, pierceHits:1});
+  spawnBullet(p, ang, {id:'medium', kind:'gun', dmg:24, bulletSpeed:900, shape:'soulorb', hitR:12, life:1.6}, {pierce:true, pierceHits:1});
   for(let i=n0;i<bullets.length;i++){ const b=bullets[i]; b.x=b.spawnX=s.x+ax*20; b.y=b.spawnY=(s.y-40)+ay*20; }      // it leaves from the soul, not from the body
   pushFx('sfx', s.x, s.y-40, tMs, {name:'wizard'});
 }
