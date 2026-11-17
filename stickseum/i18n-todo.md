@@ -24,3 +24,8 @@ patchnotes.json | v867 items[0] | 빅토리아 시대 런던이 배경이에요.
 patchnotes.json | v867 items[1] | 새 캐릭터 역병 의사·에드워드·영매사·탐정이 들어왔고, 모든 캐릭터에 두 번째 스킬(E 키)이 생겼어요. 기본 체력은 450(하랄드 650)이에요. | build v867 | 2026-11-17
 patchnotes.json | v867 items[2] | 로비 버튼이 아르누보 모양으로 바뀌고, 스크롤바가 숨겨졌어요. 마스터리 얻는 양이 1.25배로 늘었어요. | build v867 | 2026-11-17
 versions.json | 1.1 summary | 4 lines | build v867 | 2026-11-17
+patchnotes.json | v868 title | 도감 창·마스터리·라운드 정리 | build 868 | 2026-11-17
+patchnotes.json | v868 items[0] | 캐릭터 도감 창이 목록과 캐릭터 화면에서 같은 크기로 유지되고, 목록 아래에서 잘려 보이던 부분을 정리했어요 | build 868 | 2026-11-17
+patchnotes.json | v868 items[1] | 얻는 마스터리가 1.5배가 되고, 소수점은 모두 올림해요 | build 868 | 2026-11-17
+patchnotes.json | v868 items[2] | 빼빼로 기사 회전베기: 회전이 끝나면 빼빼로도 바로 사라져요 | build 868 | 2026-11-17
+patchnotes.json | v868 items[3] | 듀얼·팀전·토너먼트에서 다음 라운드에 이전 라운드의 해적 포탑·벽·마법진·장판·소환수가 남지 않고, 스킬 쿨타임도 새로 시작해요 | build 868 | 2026-11-17
