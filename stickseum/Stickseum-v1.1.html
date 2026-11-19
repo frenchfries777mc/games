@@ -969,6 +969,38 @@ h1,h2{ text-shadow:0 0 10px rgba(63,224,197,.55), 0 0 26px rgba(63,224,197,.25);
   #weaponLockBtn{ margin-top:6px !important; } #weaponChosenCount{ margin-top:4px !important; font-size:11px; }
 }
   html,body{ touch-action:manipulation; }      /* no zoom by double tap, on the phone's menu screens too */
+/* phones in landscape, v874: every panel fits the VISIBLE height (dvh, not vh: Safari's toolbars hide part of vh), scrolls with the finger, and nothing overlaps */
+@media (pointer:coarse) and (max-height:520px) and (orientation:landscape){
+  #profileScreen, #recordScreen, #mstatScreen, #codexScreen, #missionScreen, #achievementScreen, #practiceScreen, #settingsScreen, #rankedScreen{ height:calc(100vh - 16px) !important; height:calc(100dvh - 16px) !important; max-height:none !important; }
+  #newsScreen, #clanScreen, #cmScreen, #privateSetupScreen, #privateJoinScreen, #feedbackScreen, #roomScreen, #privateScreen{ max-height:calc(100vh - 16px) !important; max-height:calc(100dvh - 16px) !important; }
+  #profileScreen, #recordScreen, #mstatScreen, #codexScreen, #missionScreen, #achievementScreen, #practiceScreen, #settingsScreen, #rankedScreen, #newsScreen, #clanScreen, #cmScreen, #privateSetupScreen, #privateJoinScreen, #feedbackScreen, #roomScreen, #privateScreen{ overflow-y:auto !important; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; touch-action:pan-y; }
+  #privateSetupScreen, #privateJoinScreen{ margin-top:0 !important; height:calc(100vh - 16px) !important; height:calc(100dvh - 16px) !important; }
+  #missionScreen{ width:min(760px,92vw) !important; padding:10px 14px !important; }
+  #missionScreen h2{ font-size:15px; padding-right:96px; }
+  #missionBackBtn{ top:8px !important; right:10px !important; padding:4px 10px !important; font-size:11px !important; }
+  /* 온라인 플레이: title beside the back button, mode names visible, cards fit the height, long hint small */
+  #modeListScreen{ width:calc(100vw - 16px) !important; height:calc(100vh - 16px) !important; height:calc(100dvh - 16px) !important; max-height:none !important; overflow:hidden; }
+  #modeListBackBtn{ top:8px !important; left:8px !important; padding:5px 10px !important; font-size:11px !important; }
+  #modeListScreen h2{ margin:2px 0 0 92px !important; font-size:15px !important; line-height:24px; }
+  #modeResetNote{ margin:0 0 4px 92px !important; font-size:11px !important; line-height:14px; }
+  #modeListBody{ flex:1 1 auto; overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch; overscroll-behavior-x:contain; touch-action:pan-x; gap:8px; padding:4px 4px 6px; }
+  #modeListScreen .modeRow{ height:auto !important; min-width:104px; padding:8px 6px 10px; gap:4px; }
+  #modeListScreen .modeRow .mrIcon{ font-size:26px; line-height:1; }
+  #modeListScreen .modeRow .mrIcon img, #modeListScreen .modeRow .mrIcon canvas{ max-height:44px !important; width:auto !important; max-width:80% !important; }
+  #modeListScreen .modeRow .mrName{ font-size:13px; line-height:1.2; }
+  #modeListScreen .modeRow .mrDesc{ font-size:10px; line-height:1.3; margin-top:3px; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
+  #partyBar{ flex:none; margin-top:2px !important; font-size:11px; }
+  #partyBar button{ padding:4px 10px !important; font-size:11px !important; }
+  #lobbyFoot{ font-size:9px !important; bottom:2px !important; }
+  #shopTabs{ display:flex !important; flex-wrap:nowrap !important; overflow-x:auto; -webkit-overflow-scrolling:touch; gap:6px; margin:4px 0 6px !important; }
+  #shopTabs .shopTab{ flex:0 0 auto !important; width:auto !important; height:30px !important; font-size:12px !important; padding:0 12px !important; }
+  #shopScreen{ height:calc(100vh - 66px) !important; height:calc(100dvh - 66px) !important; max-height:none !important; margin-top:50px !important; }
+  /* main menu: logo below the button row, the tip text under the logo, menu clear of both */
+  body .brand{ top:25%; }
+  body .brand h1 .brandLogo{ width:clamp(200px,36vw,360px); max-height:34vh; }
+  body .brand .splash{ left:50% !important; top:100% !important; transform:translate(-50%,2px) !important; animation:none !important; font-size:11px !important; }
+  #menuScreen.menu-floating{ width:min(260px,34vw) !important; }
+}
 </style>
 </head>
 <body>
@@ -6569,7 +6601,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-17-v873';
+const GAME_BUILD='build 2026-11-19-v874';
 const GAME_VERSION='1.1', GAME_VERSION_NAME='Shadows of London';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -7959,7 +7991,7 @@ function showScreen(id){
   const brand=document.getElementById('brandDisplay');
   if(brand) brand.classList.toggle('show', id==='menuScreen');
   try{ lobbyCharRender(); }catch(e){}
-  { const lf=document.getElementById('lobbyFoot'); if(lf) lf.style.display=(id==='menuScreen'||id==='shopScreen'||id==='roomScreen'||id==='modeListScreen')?'block':'none'; }      // (build number and copyright, small at the edge of the lobby)
+  { const lf=document.getElementById('lobbyFoot'); if(lf) lf.style.display=(id==='menuScreen'||(!phoneShort()&&(id==='shopScreen'||id==='roomScreen'||id==='modeListScreen')))?'block':'none'; }      // (build number and copyright, small at the edge of the lobby)
   try{ refreshDailyBadge(id); }catch(e){}
   if(id==='menuScreen') refreshNewDot();
   if(id==='shopScreen'){ shopMaxGridHeight=0; renderShop(); }
@@ -10011,13 +10043,14 @@ function partyRefreshUi(){
   const ml=document.getElementById('modeListScreen'); if(ml && ml.classList.contains('active')) buildModeList();
   const pp=document.getElementById('partyPicker'); if(pp) openPartyPicker();
 }
+function phoneShort(){ try{ return matchMedia('(pointer:coarse) and (max-height:520px)').matches; }catch(e){ return false; } }
 function renderPartyBar(){
   const el=document.getElementById('partyBar'); if(!el) return;
   el.innerHTML='';
   const txt=(s, cls)=>{ const d=document.createElement('span'); d.className=cls||'pbText'; d.textContent=s; el.appendChild(d); return d; };
   const btn=(s, fn)=>{ const b=document.createElement('button'); b.textContent=s; b.onclick=fn; el.appendChild(b); return b; };
   if(!sb || !sbUser){ txt('👥 로그인하면 친구와 파티를 맺을 수 있어요'); return; }
-  if(!party){ txt('👥 친구와 파티를 맺으면 '+partyModeNames()+'에서 같은 팀으로 함께해요'); btn('파티 초대', openPartyPicker); return; }
+  if(!party){ txt(phoneShort()?'👥 친구와 파티를 맺어 같은 팀으로 해요':'👥 친구와 파티를 맺으면 '+partyModeNames()+'에서 같은 팀으로 함께해요'); btn('파티 초대', openPartyPicker); return; }
   txt('👥 파티 '+party.members.length+'/'+PARTY_MAX);
   for(const m of party.members) txt((m.id===party.leader?'👑 ':'')+m.name, 'pbChip');
   const lead=partyIsLeader();
