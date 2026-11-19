@@ -1000,6 +1000,26 @@ h1,h2{ text-shadow:0 0 10px rgba(63,224,197,.55), 0 0 26px rgba(63,224,197,.25);
   body .brand h1 .brandLogo{ width:clamp(200px,36vw,360px); max-height:34vh; }
   body .brand .splash{ left:50% !important; top:100% !important; transform:translate(-50%,2px) !important; animation:none !important; font-size:11px !important; }
   #menuScreen.menu-floating{ width:min(260px,34vw) !important; }
+  /* v875: one back-button size and place on every panel; the title row never sits under it */
+  .backlink{ padding:5px 10px !important; font-size:11px !important; margin:0 0 4px !important; }
+  .backlink[style*="position:fixed"]{ top:8px !important; left:8px !important; }
+  .backlink[style*="position:absolute"]{ top:8px !important; right:10px !important; }
+  .card > .backlink[style*="position:absolute"] ~ h2{ min-height:26px; line-height:26px; margin-bottom:8px !important; padding-right:92px; }
+  #rankedScreen h2, #clanScreen h2{ margin:0 0 6px 92px !important; font-size:15px !important; line-height:24px; }
+  #rankedScreen, #clanScreen{ padding:8px 12px !important; }
+  /* settings in two columns so far fewer rows scroll */
+  #settingsScreen{ width:min(800px,94vw) !important; }
+  #settingsScreen.active{ display:grid !important; grid-template-columns:1fr 1fr; column-gap:22px; align-content:start; }
+  #settingsScreen > :not(.profRow){ grid-column:1 / -1; }
+  #settingsScreen > h2{ margin:0 0 4px !important; }
+  #settingsScreen > div[style*="margin:16px"], #settingsScreen > div[style*="margin:20px"]{ margin-top:8px !important; }
+  #settingsScreen .profRow{ padding:5px 0; }
+  #feedbackScreen{ width:min(560px,94vw) !important; }
+  #feedbackText{ height:64px; rows:3; }
+  #feedbackScreen select{ padding:5px 8px !important; }
+  body #menuScreen .menu-float-btn{ padding:8px 18px !important; margin-bottom:9px !important; font-size:13px !important; }
+  #privateScreen .btn-full, #privateScreen .btn-primary{ padding:7px 14px !important; font-size:14px !important; margin-bottom:6px !important; }
+  #privateScreen{ padding:6px 14px 8px !important; }
 }
 </style>
 </head>
@@ -6601,7 +6621,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-19-v874';
+const GAME_BUILD='build 2026-11-19-v875';
 const GAME_VERSION='1.1', GAME_VERSION_NAME='Shadows of London';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
