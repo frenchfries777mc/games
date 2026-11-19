@@ -8,7 +8,105 @@
     "폰 가로: 설정이 두 줄 배치로 바뀌어 스크롤이 절반으로 줄었어요",
     "폰 가로: 뒤로가기 버튼 크기·위치를 모든 창에서 통일하고 제목과 안 겹쳐요",
     "폰 가로: 메인 메뉴·비공개 플레이·피드백 창이 낮은 화면에서도 한 화면에 들어와요"
-   ]
+   ],
+   "tr": {
+    "ar": {
+     "title": "تنسيق شاشة الهاتف الأفقية",
+     "items": [
+      "الهاتف الأفقي: تم تغيير الإعدادات إلى تخطيط من سطرين، فقلّ التمرير إلى النصف",
+      "الهاتف الأفقي: تم توحيد حجم زر الرجوع وموضعه في جميع النوافذ ولم يعد يتداخل مع العناوين",
+      "الهاتف الأفقي: القائمة الرئيسية واللعب الخاص ونافذة الملاحظات تتسع في شاشة واحدة حتى على الشاشات القصيرة"
+     ]
+    },
+    "de": {
+     "title": "Feinschliff Querformat Handy",
+     "items": [
+      "Handy quer: Einstellungen sind jetzt zweizeilig angeordnet, das Scrollen ist um die Hälfte kürzer",
+      "Handy quer: Größe und Position des Zurück-Buttons sind in allen Fenstern gleich und überdecken keine Titel mehr",
+      "Handy quer: Hauptmenü, Privatspiel und Feedback-Fenster passen auch auf niedrigen Bildschirmen auf eine Seite"
+     ]
+    },
+    "en": {
+     "title": "Landscape phone screen polish",
+     "items": [
+      "Landscape phone: settings now sit in two rows, so scrolling is about half as long",
+      "Landscape phone: the back button has the same size and position in every window and no longer covers titles",
+      "Landscape phone: the main menu, private play and feedback windows fit on one screen, even on short displays"
+     ]
+    },
+    "es": {
+     "title": "Pulido de pantalla horizontal del móvil",
+     "items": [
+      "Móvil en horizontal: los ajustes pasan a dos filas y el desplazamiento se reduce a la mitad",
+      "Móvil en horizontal: el botón de volver tiene el mismo tamaño y posición en todas las ventanas y ya no tapa el título",
+      "Móvil en horizontal: el menú principal, la partida privada y la ventana de comentarios caben en una sola pantalla, incluso en pantallas bajas"
+     ]
+    },
+    "fr": {
+     "title": "Finitions du mode paysage sur téléphone",
+     "items": [
+      "Téléphone en paysage : les paramètres passent sur deux lignes, le défilement est deux fois plus court",
+      "Téléphone en paysage : taille et position du bouton retour identiques dans toutes les fenêtres, il ne masque plus le titre",
+      "Téléphone en paysage : le menu principal, la partie privée et la fenêtre de retour tiennent sur un seul écran, même sur les petits écrans"
+     ]
+    },
+    "it": {
+     "title": "Rifinitura dello schermo orizzontale del telefono",
+     "items": [
+      "Telefono in orizzontale: le impostazioni sono su due righe e si scorre circa la metà",
+      "Telefono in orizzontale: il pulsante indietro ha dimensione e posizione uguali in tutte le finestre e non copre più il titolo",
+      "Telefono in orizzontale: menu principale, partita privata e finestra feedback entrano in un solo schermo anche su schermi bassi"
+     ]
+    },
+    "ja": {
+     "title": "スマホ横画面の仕上げ",
+     "items": [
+      "スマホ横：設定が2行に並び、スクロールが半分になりました",
+      "スマホ横：すべての画面で戻るボタンのサイズと位置をそろえ、タイトルと重なりません",
+      "スマホ横：低い画面でもメインメニュー・非公開プレイ・フィードバック画面が1画面に収まります"
+     ]
+    },
+    "pl": {
+     "title": "Dopracowanie poziomego ekranu telefonu",
+     "items": [
+      "Telefon w poziomie: ustawienia są w dwóch rzędach, przewijanie jest o połowę krótsze",
+      "Telefon w poziomie: przycisk wstecz ma ten sam rozmiar i położenie we wszystkich oknach i nie zasłania tytułów",
+      "Telefon w poziomie: menu główne, gra prywatna i okno opinii mieszczą się na jednym ekranie, nawet na niskich ekranach"
+     ]
+    },
+    "pt": {
+     "title": "Ajustes de tela horizontal no celular",
+     "items": [
+      "Celular na horizontal: as configurações agora ficam em duas linhas e a rolagem diminuiu pela metade",
+      "Celular na horizontal: o botão voltar tem o mesmo tamanho e posição em todas as janelas e não cobre mais o título",
+      "Celular na horizontal: o menu principal, a partida privada e a janela de feedback cabem em uma só tela, mesmo em telas baixas"
+     ]
+    },
+    "ru": {
+     "title": "Доработка горизонтального экрана телефона",
+     "items": [
+      "Телефон в альбомной ориентации: настройки в две строки, прокрутка стала вдвое короче",
+      "Телефон в альбомной ориентации: кнопка «назад» одинакового размера и на одном месте во всех окнах, не перекрывает заголовок",
+      "Телефон в альбомной ориентации: главное меню, приватная игра и окно отзыва помещаются на одном экране, даже на низких экранах"
+     ]
+    },
+    "tr": {
+     "title": "Yatay telefon ekranı düzenlemesi",
+     "items": [
+      "Telefon yatay: ayarlar iki satıra geçti, kaydırma yarıya indi",
+      "Telefon yatay: geri düğmesinin boyutu ve konumu tüm pencerelerde eşitlendi, başlığı artık kapatmıyor",
+      "Telefon yatay: ana menü, özel oyun ve geri bildirim pencereleri kısa ekranlarda bile tek ekrana sığıyor"
+     ]
+    },
+    "zh": {
+     "title": "手机横屏界面打磨",
+     "items": [
+      "手机横屏：设置改为两行排列，滚动距离减半",
+      "手机横屏：所有窗口的返回按钮大小和位置统一，不再遮挡标题",
+      "手机横屏：即使屏幕较矮，主菜单、私人对局和反馈窗口也能在一屏内显示"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-19",
@@ -18,7 +116,105 @@
     "폰 가로: 미션·프로필·설정·랭크전·클랜 창이 보이는 화면 높이에 맞고 손가락으로 끝까지 스크롤돼요",
     "폰 가로: 온라인 플레이 모드 이름이 보이고 뒤로가기가 제목을 가리지 않아요",
     "폰 가로: 메인 메뉴 로고·팁 글·버튼이 겹치지 않아요, 상점 탭은 한 줄로"
-   ]
+   ],
+   "tr": {
+    "ar": {
+     "title": "ترتيب شاشة الهاتف الأفقية",
+     "items": [
+      "الهاتف الأفقي: نوافذ المهام والملف الشخصي والإعدادات والتصنيف والعشيرة تناسب ارتفاع الشاشة المرئية وتتمرّر بالإصبع حتى النهاية",
+      "الهاتف الأفقي: اسم وضع اللعب الأونلاين ظاهر، ولا يغطي زر الرجوع العنوان",
+      "الهاتف الأفقي: شعار القائمة الرئيسية ونص التلميح والأزرار لا تتداخل، وتبويبات المتجر في سطر واحد"
+     ]
+    },
+    "de": {
+     "title": "Querformat-Bildschirm aufgeräumt",
+     "items": [
+      "Handy quer: Missionen, Profil, Einstellungen, Rangkampf und Clan-Fenster passen in die sichtbare Bildschirmhöhe und lassen sich mit dem Finger bis zum Ende scrollen",
+      "Handy quer: Der Name des Online-Spielmodus ist sichtbar und der Zurück-Button verdeckt den Titel nicht",
+      "Handy quer: Logo, Tipp-Text und Buttons im Hauptmenü überlappen nicht, die Shop-Tabs stehen in einer Zeile"
+     ]
+    },
+    "en": {
+     "title": "Landscape phone screen cleanup",
+     "items": [
+      "Landscape phone: mission, profile, settings, ranked and clan windows fit the visible screen height and scroll all the way with a finger",
+      "Landscape phone: the online play mode name is visible and the back button no longer covers the title",
+      "Landscape phone: the main menu logo, tip text and buttons no longer overlap, and the shop tabs fit on one line"
+     ]
+    },
+    "es": {
+     "title": "Orden de pantalla horizontal del móvil",
+     "items": [
+      "Móvil en horizontal: misiones, perfil, ajustes, clasificatorias y clan se ajustan a la altura visible y se desplazan con el dedo hasta el final",
+      "Móvil en horizontal: se ve el nombre del modo de juego en línea y el botón de volver no tapa el título",
+      "Móvil en horizontal: el logo, el texto de consejos y los botones del menú principal no se superponen; las pestañas de la tienda van en una línea"
+     ]
+    },
+    "fr": {
+     "title": "Mise en ordre du mode paysage sur téléphone",
+     "items": [
+      "Téléphone en paysage : missions, profil, paramètres, classé et clan tiennent dans la hauteur visible et se font défiler jusqu'au bout au doigt",
+      "Téléphone en paysage : le nom du mode de jeu en ligne est visible et le bouton retour ne couvre plus le titre",
+      "Téléphone en paysage : le logo, le texte d'astuce et les boutons du menu principal ne se chevauchent plus, les onglets de la boutique tiennent sur une ligne"
+     ]
+    },
+    "it": {
+     "title": "Sistemazione dello schermo orizzontale del telefono",
+     "items": [
+      "Telefono in orizzontale: missioni, profilo, impostazioni, classificata e clan rientrano nell'altezza visibile e si scorrono fino in fondo con il dito",
+      "Telefono in orizzontale: il nome della modalità online è visibile e il pulsante indietro non copre il titolo",
+      "Telefono in orizzontale: logo, testo dei suggerimenti e pulsanti del menu principale non si sovrappongono; le schede del negozio stanno su una riga"
+     ]
+    },
+    "ja": {
+     "title": "スマホ横画面の整理",
+     "items": [
+      "スマホ横：ミッション・プロフィール・設定・ランクマッチ・クランの画面が見える高さに収まり、指で最後までスクロールできます",
+      "スマホ横：オンラインプレイのモード名が見え、戻るボタンがタイトルを隠しません",
+      "スマホ横：メインメニューのロゴ・ヒント文・ボタンが重ならず、ショップのタブは1行に収まります"
+     ]
+    },
+    "pl": {
+     "title": "Porządek na poziomym ekranie telefonu",
+     "items": [
+      "Telefon w poziomie: okna misji, profilu, ustawień, rankingu i klanu mieszczą się w widocznej wysokości ekranu i przewijają się palcem do końca",
+      "Telefon w poziomie: nazwa trybu gry online jest widoczna, a przycisk wstecz nie zasłania tytułu",
+      "Telefon w poziomie: logo, tekst podpowiedzi i przyciski w menu głównym się nie nakładają, zakładki sklepu są w jednym rzędzie"
+     ]
+    },
+    "pt": {
+     "title": "Organização da tela horizontal no celular",
+     "items": [
+      "Celular na horizontal: missões, perfil, configurações, ranqueada e clã cabem na altura visível da tela e rolam com o dedo até o fim",
+      "Celular na horizontal: o nome do modo de jogo online aparece e o botão voltar não cobre o título",
+      "Celular na horizontal: logo, texto de dica e botões do menu principal não se sobrepõem; as abas da loja ficam em uma linha"
+     ]
+    },
+    "ru": {
+     "title": "Порядок на горизонтальном экране телефона",
+     "items": [
+      "Телефон в альбомной ориентации: окна заданий, профиля, настроек, рейтинга и клана помещаются по высоте экрана и прокручиваются пальцем до конца",
+      "Телефон в альбомной ориентации: название онлайн-режима видно, кнопка «назад» не закрывает заголовок",
+      "Телефон в альбомной ориентации: логотип, текст подсказки и кнопки главного меню не перекрываются, вкладки магазина в одну строку"
+     ]
+    },
+    "tr": {
+     "title": "Yatay telefon ekranı toparlama",
+     "items": [
+      "Telefon yatay: görevler, profil, ayarlar, dereceli maç ve klan pencereleri görünen ekran yüksekliğine sığıyor ve parmakla sonuna kadar kaydırılabiliyor",
+      "Telefon yatay: çevrimiçi oyun modunun adı görünüyor ve geri düğmesi başlığı kapatmıyor",
+      "Telefon yatay: ana menü logosu, ipucu yazısı ve düğmeleri üst üste binmiyor, mağaza sekmeleri tek satırda"
+     ]
+    },
+    "zh": {
+     "title": "手机横屏界面整理",
+     "items": [
+      "手机横屏：任务、个人资料、设置、排位赛和战队窗口适配可见屏幕高度，可用手指滚动到底",
+      "手机横屏：可以看到在线对战模式名称，返回按钮不再遮挡标题",
+      "手机横屏：主菜单的徽标、提示文字和按钮不再重叠，商店标签页改为一行"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-17",
