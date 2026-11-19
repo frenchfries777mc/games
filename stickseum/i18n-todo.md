@@ -24,3 +24,7 @@ patchnotes.json | v874 title | 폰 가로 화면 정리 | build 874 | 2026-11-19
 patchnotes.json | v874 items[0] | 폰 가로: 미션·프로필·설정·랭크전·클랜 창이 보이는 화면 높이에 맞고 손가락으로 끝까지 스크롤돼요 | build 874 | 2026-11-19
 patchnotes.json | v874 items[1] | 폰 가로: 온라인 플레이 모드 이름이 보이고 뒤로가기가 제목을 가리지 않아요 | build 874 | 2026-11-19
 patchnotes.json | v874 items[2] | 폰 가로: 메인 메뉴 로고·팁 글·버튼이 겹치지 않아요, 상점 탭은 한 줄로 | build 874 | 2026-11-19
+patchnotes.json | v875 title | 폰 가로 화면 다듬기 | build 875 | 2026-11-19
+patchnotes.json | v875 items[0] | 폰 가로: 설정이 두 줄 배치로 바뀌어 스크롤이 절반으로 줄었어요 | build 875 | 2026-11-19
+patchnotes.json | v875 items[1] | 폰 가로: 뒤로가기 버튼 크기·위치를 모든 창에서 통일하고 제목과 안 겹쳐요 | build 875 | 2026-11-19
+patchnotes.json | v875 items[2] | 폰 가로: 메인 메뉴·비공개 플레이·피드백 창이 낮은 화면에서도 한 화면에 들어와요 | build 875 | 2026-11-19
