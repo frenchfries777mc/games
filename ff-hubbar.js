@@ -48,7 +48,7 @@ function build(){
   bar.querySelector('.tb').appendChild(acc);
   ffScrollHint(mm,'.ffhb-m.on');
   /* the hub script drives the online chip and the search box */
-  if(!window.__ffHubJs&&!document.querySelector('script[src*="/hub.js"]')){ window.__ffHubJs=1; var s=document.createElement('script'); s.src=B+'games/hub.js?v=20261116a'; document.body.appendChild(s); }
+  if(!window.__ffHubJs&&!document.querySelector('script[src*="/hub.js"]')){ window.__ffHubJs=1; var s=document.createElement('script'); s.src=B+'games/hub.js?v=20261120c'; document.body.appendChild(s); }
 }
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',build); else build();
 })();

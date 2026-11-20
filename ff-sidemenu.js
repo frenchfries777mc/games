@@ -59,10 +59,11 @@
     names(side);
     var st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
     var as=side.querySelectorAll(':scope>a');
+    var want=(function(){ var p=(location.pathname||'/').replace(/^\/hub(?=\/)/,''); var m=/^\/(games|educations|tools|prototypes|lounge|community|wiki)(\/|$)/.exec(p); if(m) return '/'+m[1]+'/'; if(/^\/(music|gallery)(\/|$)/.test(p)) return '/lounge/'; if(/^\/(patchnotes)?\/?$/.test(p)) return '/'; return null; })();
     for(var i=0;i<as.length;i++){
       var a=as[i], sp=a.querySelector(':scope>span[style*="width:8px"]'); if(!sp)continue;
       var h=(a.getAttribute('href')||'').replace(/^https?:\/\/[^\/]+/,''); var k=IC[h]; if(!k)continue;
-      var on=/#26221a/i.test(a.getAttribute('style')||'');
+      var on=want?(h===want):/#26221a/i.test(a.getAttribute('style')||'');   /* 주소로 정해요: 패치노트·AI Chat 에 Lounge 가 켜져 있던 것 */
       a.classList.add('ffsm'); if(on)a.classList.add('on');
       var s=document.createElementNS('http://www.w3.org/2000/svg','svg'); s.setAttribute('viewBox','0 0 24 24'); s.innerHTML=k;
       a.replaceChild(s,sp);

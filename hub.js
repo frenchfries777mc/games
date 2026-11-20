@@ -523,7 +523,7 @@ async function ranking(){
 /* Stickseum 랭킹은 둘로 나눠 보여 줘요: 왼쪽 = 이번 시즌 랭크 레이팅(ranked_ratings), 오른쪽 = 캐릭터 마스터리 점수(profiles.stats.cp, 없으면 ck*10; stickseum/chars.json 에 캐릭터 이름) */
 var rkChars=null;
 async function rankingStk(box){
-  var season=new Date(Date.now()+9*36e5).toISOString().slice(0,7), n=function(v){ try{ return Number(v).toLocaleString(); }catch(e){ return v; } };
+  var season=new Date(Date.now()+9*36e5).toISOString().slice(0,7), n=function(v){ try{ return window.FFFmt?FFFmt.num(v):Number(v).toLocaleString(); }catch(e){ return v; } };
   var res=await Promise.all([
     sb.from('ranked_ratings').select('user_id,rating').eq('season',season).order('rating',{ascending:false}).order('wins',{ascending:false}).limit(20),
     sb.from('profiles').select('id,ck:stats->ck,cp:stats->cp').not('stats->ck','is',null).limit(3000),
@@ -552,7 +552,7 @@ async function rankingBf(box){
   var D=res[0], T=res[1], drows=(D&&!D.error&&D.data)||[], trows=(T&&!T.error&&T.data)||[];
   await loadNames(drows.map(function(x){ return x.user_id; }).concat(trows.map(function(x){ return x.user_id; })));
   if(rkGame!=='beaconfall') return;
-  var n=function(v){ try{ return Number(v).toLocaleString(); }catch(e){ return v; } }, p2=function(v){ return (v<10?'0':'')+v; },
+  var n=function(v){ try{ return window.FFFmt?FFFmt.num(v):Number(v).toLocaleString(); }catch(e){ return v; } }, p2=function(v){ return (v<10?'0':'')+v; },
       tm=function(sec){ sec=Math.max(0,sec|0); return Math.floor(sec/3600)+':'+p2(Math.floor(sec%3600/60))+':'+p2(sec%60); },
       medal=function(i){ return i<3?['🥇','🥈','🥉'][i]:i+1; }, mine=function(x){ return me&&x.user_id===me.id?' me':''; };
   var lh='<table class="rkt"><tr><th></th><th>닉네임</th><th>최장 생존 일수</th></tr>'+(D&&D.error?'<tr><td colspan="3" class="cm-e">생존 순위는 서버 준비 중이에요.</td></tr>':drows.length?drows.map(function(x,i){ return '<tr class="'+(i<3?'t'+(i+1):'')+mine(x)+'"><td>'+medal(i)+'</td><td>'+who(x.user_id)+'</td><td class="pt" data-notr>'+esc(F('{0}일',n(x.days)))+'</td></tr>'; }).join(''):'<tr><td colspan="3" class="cm-e">아직 생존 기록을 보낸 사람이 없어요.</td></tr>')+'</table>';
@@ -571,7 +571,7 @@ async function rankingBy(g,box){
   if(r.error){ box.innerHTML='<div class="cm-e">'+esc(st?errText(r.error):bf?'생존 순위는 서버 준비 중이에요.':'재산 순위는 서버 준비 중이에요.')+'</div>'; return; }
   var rows=r.data||[]; await loadNames(rows.map(function(x){ return x.user_id; }));
   if(!rows.length){ box.innerHTML='<div class="cm-e">'+(st?'이번 시즌 랭크전 기록이 아직 없어요.':bf?'아직 생존 기록을 보낸 사람이 없어요.':'아직 재산을 보낸 사람이 없어요.')+'</div>'; return; }
-  var n=function(v){ try{ return Number(v).toLocaleString(); }catch(e){ return v; } };
+  var n=function(v){ try{ return window.FFFmt?FFFmt.num(v):Number(v).toLocaleString(); }catch(e){ return v; } };
   var h='<table class="rkt"><tr><th></th><th>닉네임</th><th>'+(st?'랭크 점수':bf?'최장 생존 일수':'재산')+'</th>'+(st?'<th>승</th><th>패</th>':'')+'</tr>';
   rows.forEach(function(x,i){ h+='<tr class="'+(i<3?'t'+(i+1):'')+(me&&x.user_id===me.id?' me':'')+'"><td>'+(i<3?['🥇','🥈','🥉'][i]:i+1)+'</td><td>'+who(x.user_id)+'</td><td class="pt" data-notr>'+(bf?esc(F('{0}일',n(x[col]))):n(x[col]))+'</td>'+(st?'<td data-notr>'+x.wins+'</td><td data-notr>'+x.losses+'</td>':'')+'</tr>'; });
   h+='</table>';

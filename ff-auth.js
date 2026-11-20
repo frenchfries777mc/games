@@ -535,7 +535,7 @@ async function chipBorder(root){ try{ if(!sb||!user) return; var uid=user.id;
   if(!window.FFBorders) await loadScript(BASE+'ff-borders.js?v=20261104a', function(){ return !!window.FFBorders; });
   if(!window.FFBorders||!user||user.id!==uid) return; var id=await window.FFBorders.equipped(sb,uid), b=window.FFBorders.get(id); if(!b) return;
   var col=b.a==='rainbow'?'#ffd23f':b.a, im=root.querySelector('.ffa-av'); if(im){ im.style.borderRadius='6px'; im.style.boxShadow='0 0 0 2px '+col+',0 0 8px '+col+'99'; } }catch(e){} }
-function profileLib(){ return loadScript(BASE+'ff-profile.js?v=20261115c', function(){ return !!window.FFProfile; }); }
+function profileLib(){ return loadScript(BASE+'ff-profile.js?v=20261120c', function(){ return !!window.FFProfile; }); }
 /* 프로필은 창이 아니라 허브의 프로필 페이지로 열어요. 게임 안, 도전과제 창, 카드 창(o.modal)만 예전처럼 창으로 열어요 */
 function profilePage(uid, o){ try{
   if((o&&(o.modal||o.openAch||o.game||o.noDeco!=null))||window.FF_INGAME) return null;
