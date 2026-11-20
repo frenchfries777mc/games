@@ -1003,3 +1003,5 @@
 - 새 문구(한국어만, prototypes/kitchendefense/index.html): 컴퓨터 · 가볍게, 느려서 자동으로 바꿨어요(설정)
 
 - [tumblecrown b316] 새 문구 없음 (온라인 안정성 보강)
+
+- [tumblecrown b318] 새 문구 없음 (맞고 때릴 때 진동)
