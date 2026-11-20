@@ -977,7 +977,7 @@ function setPaint(){
 }
 function setFill(p){
   var cur=FFTheme.get();
-  p.innerHTML='<b>'+esc(S_.theme)+'</b><div class="g">'+['dark','yellow','red','blue','light'].map(function(k){ return '<button type="button" data-th="'+k+'">'+esc(S_[k])+'</button>'; }).join('')+'</div>'+
+  p.innerHTML='<b>'+esc(S_.theme)+'</b><div class="g">'+['dark','light'].map(function(k){ return '<button type="button" data-th="'+k+'">'+esc(S_[k])+'</button>'; }).join('')+'</div>'+
     '<b>'+esc(S_.size)+'</b><div class="g">'+FFTheme.sizes.map(function(z){ return '<button type="button" data-sz="'+z+'">'+esc(S_[z])+'</button>'; }).join('')+'</div>'+
     '<b>'+esc(S_.lang)+'</b><div class="g ffa-lg">'+lgBtns(0)+'</div><b>'+esc(S_.vlang||'Fictional languages')+'</b><div class="g ffa-lg">'+lgBtns(1)+'</div><small>'+esc(S_.note)+'</small>';
   [].forEach.call(p.querySelectorAll('[data-lg]'),function(x){ var l=x.getAttribute('data-lg'); var cur=(window.FFLang&&FFLang.pick)?FFLang.pick():lang(); x.classList.toggle('on',l===cur); x.onclick=function(){ if(l===cur) return; try{ localStorage.setItem('arenaClashLang',l); }catch(e){} try{ if(window.FFLang) FFLang.set(l); }catch(e){} location.reload(); }; });
