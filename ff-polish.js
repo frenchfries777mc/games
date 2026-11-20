@@ -96,6 +96,11 @@ window.FFFmt={ lang:curLang,
 /* ---- 화면 꺼짐 방지 ---- */
 var wl=null;
 function hold(){ try{ if(wl||!navigator.wakeLock||document.visibilityState!=='visible') return; navigator.wakeLock.request('screen').then(function(s){ wl=s; s.addEventListener('release',function(){ wl=null; }); }).catch(function(){}); }catch(e){} }
+/* 슬라이드 발표 중(#present.on)에도 화면이 꺼지지 않게 */
+if(/\/tools\/slides\//i.test(P)){ var pw=function(){ var el=document.getElementById('present'); if(!el){ setTimeout(pw,800); return; }
+    var chk=function(){ if(el.classList.contains('on')) hold(); else if(wl){ try{ wl.release(); }catch(e){} wl=null; } };
+    new MutationObserver(chk).observe(el,{attributes:true,attributeFilter:['class']}); document.addEventListener('visibilitychange',function(){ if(el.classList.contains('on')) hold(); }); chk(); };
+  pw(); }
 if(GAME||EDU){ hold(); document.addEventListener('visibilitychange',hold); ['pointerdown','keydown'].forEach(function(ev){ document.addEventListener(ev,hold,{passive:true}); }); }
 /* ---- 게임 전체화면 버튼 ---- */
 if(GAME){ document.addEventListener('DOMContentLoaded',function(){
