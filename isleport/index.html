@@ -17,9 +17,6 @@ html,body{touch-action:manipulation}
 @font-face{font-family:Galmuri;src:url(Galmuri11-Bold.woff2) format('woff2');font-weight:700;font-display:swap}
 :root{--bg:#0d1018;--bg2:#10141f;--panel:#171b28;--panel2:#1e2434;--line:#3d4668;--tx:#eef0f5;--mu:#a3acc0;--gold:#ffc93c;--gold2:#c79320;--btn:#f3e4b0;--btn2:#b89a5a;--btnink:#3a2314;--dark:#2a3048;--dark2:#3d4668;--ink:var(--bg)}
 html[data-ff-theme=light]{--bg:#f6f3ec;--bg2:#efebe0;--panel:#fffdf8;--panel2:#f3eee2;--line:#cfc6ae;--tx:#1d2130;--mu:#5f6678;--gold:#b06a00;--gold2:#8a5300;--btn:#ffffff;--btn2:#cfc6ae;--btnink:#1d2130;--dark:#e8e1cf;--dark2:#cfc6ae}
-html[data-ff-accent=yellow]{--bg:#efe2ad;--bg2:#e8d99c;--panel:#faf3d2;--panel2:#f3e8b8;--line:#d6c780;--tx:#2b2410;--mu:#6b6240;--gold:#8a5a00;--gold2:#6b4600;--btn:#fffbe6;--btn2:#d6c780;--btnink:#2b2410;--dark:#e6d79b;--dark2:#d6c780}
-html[data-ff-accent=red]{--bg:#3f1a20;--bg2:#46202a;--panel:#2f1317;--panel2:#3a181e;--line:#6a2f38;--tx:#f8ecec;--mu:#c9a3a8;--dark:#4a2026;--dark2:#6a2f38}
-html[data-ff-accent=blue]{--bg:#2d4b78;--bg2:#325282;--panel:#243f67;--panel2:#2b4a78;--line:#4b6b9d;--tx:#eef3fb;--mu:#b8c7de;--dark:#2f5384;--dark2:#4b6b9d}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:60px;background:var(--bg)}
 body{margin:0;color:var(--tx);font-family:Galmuri,'Noto Sans KR','Hiragino Sans','Malgun Gothic',monospace;font-size:15px;line-height:1.75;
@@ -241,7 +238,7 @@ fetch('patchnotes.json',{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject
 fetch('versions.json',{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject()).then(render).catch(()=>{});
 window.addEventListener('scroll',()=>document.getElementById('topbar').classList.toggle('solid',scrollY>window.innerHeight*.6),{passive:true});
 </script>
-<script src="https://frenchfries777.com/games/ff-auth.js?v=20261120a"></script>
+<script src="https://frenchfries777.com/games/ff-auth.js?v=20261120b"></script>
 <script>document.addEventListener('gesturestart',function(e){e.preventDefault();});</script>
 </body>
 </html>
