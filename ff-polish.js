@@ -6,6 +6,7 @@
    - 뒤로가기: 열린 팝업·창만 닫기 (window.FFBack)
    - 사진 크게 보기 (위키 사진, 채팅 사진 등)
    - 언어에 맞는 날짜·숫자 형식 (window.FFFmt)
+   - 짧은 진동 (window.FFHaptic.hit(), 모바일에서만)
    - 화면 꺼짐 방지: 교육 프로그램 / 게임 (+ 게임 전체화면 버튼) */
 (function(){
 'use strict';
@@ -93,6 +94,15 @@ window.FFFmt={ lang:curLang,
   num:function(v,o){ try{ return new Intl.NumberFormat(curLang(),o).format(+v); }catch(e){ return String(v); } },
   date:function(d,o){ try{ return new Intl.DateTimeFormat(curLang(),o||{year:'numeric',month:'long',day:'numeric'}).format(new Date(d)); }catch(e){ return String(d); } },
   time:function(d,o){ try{ return new Intl.DateTimeFormat(curLang(),o||{hour:'numeric',minute:'2-digit'}).format(new Date(d)); }catch(e){ return String(d); } } };
+/* ---- 짧은 진동: 맞거나 때릴 때 (모바일에서만, 게임이 FFHaptic.hit() 을 불러요) ---- */
+(function(){
+  var last=0;
+  function on(){ try{ if(!navigator.vibrate) return false; if(localStorage.getItem('ff_haptic')==='0') return false;
+    var dv=localStorage.getItem('ff_device'); if(dv) return dv==='mobile';
+    return !!(window.matchMedia&&matchMedia('(pointer:coarse)').matches); }catch(e){ return false; } }
+  window.FFHaptic={ hit:function(ms){ var t=Date.now(); if(t-last<90||!on()) return; last=t; try{ navigator.vibrate(ms||22); }catch(e){} },
+    big:function(){ var t=Date.now(); if(t-last<90||!on()) return; last=t; try{ navigator.vibrate([30,30,45]); }catch(e){} } };
+})();
 /* ---- 화면 꺼짐 방지 ---- */
 var wl=null;
 function hold(){ try{ if(wl||!navigator.wakeLock||document.visibilityState!=='visible') return; navigator.wakeLock.request('screen').then(function(s){ wl=s; s.addEventListener('release',function(){ wl=null; }); }).catch(function(){}); }catch(e){} }
