@@ -1,4 +1,5 @@
-/* © 2026 Frenchfries777. CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)
+/* SPDX-License-Identifier: CC-BY-NC-ND-4.0
+   © 2026 Frenchfries777. CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)
    모든 페이지 공통 다듬기 (ff-lang.js 가 불러와요). 페이지는 따로 할 일이 없어요.
    - 스크롤바 숨김, 숫자 자리 맞춤(tabular-nums), 큰 제목 줄바꿈 균형, 움직임 줄이기(허브 타일 포함)
    - 페이지 이동 부드러운 전환 + 링크 미리 받기
@@ -19,7 +20,7 @@ function isGame(){
   if(/\/isleport\//i.test(P)&&/^IslandTrade[^/]*\.html$/i.test(F)) return 1;
   if(/\/(prototypes\/dummyparty|dummyparty\/play|prototypes\/vowkeep|vowkeep\/play|prototypes\/gatecrash|gatecrash\/play|prototypes\/tumblecrown|prototypes\/kitchendefense)\//i.test(P)) return 1;
   return 0; }
-var GAME=isGame(), EDU=/\/educations\/[^\/]+\/?/i.test(P)&&!/\/educations\/(index\.html)?$/i.test(P);
+var GAME=isGame(); window.__ffGame=GAME; var EDU=/\/educations\/[^\/]+\/?/i.test(P)&&!/\/educations\/(index\.html)?$/i.test(P);
 /* ---- 콘솔 한 줄 ---- */
 try{ console.log('%cCreated by Frenchfries777','color:#ffd54a;font:700 14px system-ui,sans-serif'); }catch(e){}
 /* ---- 스타일 ---- */
@@ -118,4 +119,31 @@ if(GAME){ document.addEventListener('DOMContentLoaded',function(){
   var b=document.createElement('button'); b.id='ffFs'; b.type='button'; b.title='Fullscreen'; b.setAttribute('aria-label','Fullscreen'); b.textContent='⛶';
   b.onclick=function(){ try{ if(document.fullscreenElement||document.webkitFullscreenElement){ (document.exitFullscreen||document.webkitExitFullscreen).call(document); } else { (de.requestFullscreen||de.webkitRequestFullscreen).call(de); } }catch(e){} };
   document.body.appendChild(b); }); }
+})();
+
+/* ---- 저작권 표기: CC 마크 4개 + 라이선스 안내 링크 (게임 화면 안은 건드리지 않아요) ---- */
+(function(){
+  if(window.__ffGame) return;
+  var LIC='https://frenchfries777.com/license/', ko=/^ko/i.test(document.documentElement.lang||navigator.language||'ko');
+  function chips(){ var w=document.createElement('span'); w.className='ffcc'; w.setAttribute('aria-hidden','true'); w.setAttribute('data-notr','');
+    ['cc','by','nc','nd'].forEach(function(t){ var i=document.createElement('i'); i.textContent=t; w.appendChild(i); }); return w; }
+  function css(){ if(document.getElementById('ffccCss')) return; var s=document.createElement('style'); s.id='ffccCss';
+    s.textContent='.ffcc{display:inline-flex;gap:2px;margin-right:6px;vertical-align:-3px}.ffcc i{display:inline-grid;place-items:center;width:15px;height:15px;border:1px solid currentColor;border-radius:50%;font:700 7.5px/1 system-ui,sans-serif;font-style:normal;text-transform:uppercase;opacity:.85;letter-spacing:0}.ffcclic{margin-left:8px;white-space:nowrap}';
+    (document.head||document.documentElement).appendChild(s); }
+  function run(){
+    css();
+    var as=document.querySelectorAll('a[href*="licenses/by-nc-nd"]');
+    for(var k=0;k<as.length;k++){ var a=as[k]; if(a.__ffcc||a.closest('#ffLb')) continue; a.__ffcc=1;
+      if(!a.previousElementSibling||!a.previousElementSibling.classList.contains('ffcc')) a.parentNode.insertBefore(chips(),a);
+      var box=a.closest('.ff-copy')||a.parentNode;
+      if(!box.querySelector('.ffcclic')){ var l=document.createElement('a'); l.className='ffcclic'; l.href=LIC; l.textContent=ko?'라이선스 안내':'License info'; l.style.cssText='color:inherit;text-decoration:underline'; l.setAttribute('data-notr',''); box.appendChild(l); } }
+    var sp=document.querySelectorAll('aside span,footer span');
+    for(var j=0;j<sp.length;j++){ var e=sp[j]; if(e.__ffcc||e.children.length) continue;
+      if(/^©\s*2026 Frenchfries777\s*·\s*CC BY-NC-ND 4\.0$/.test((e.textContent||'').trim())){ e.__ffcc=1;
+        var l2=document.createElement('a'); l2.href=LIC; l2.textContent=e.textContent.trim(); l2.style.cssText='color:inherit;text-decoration:none'; l2.title=ko?'라이선스 안내':'License info';
+        e.textContent=''; e.appendChild(chips()); e.appendChild(l2); } }
+  }
+  function go(){ try{ run(); }catch(e){} }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go();
+  setTimeout(go,1200); setTimeout(go,3500);
 })();
