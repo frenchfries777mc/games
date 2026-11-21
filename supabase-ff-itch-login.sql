@@ -1,4 +1,4 @@
--- itch.io 판 Google 로그인 넘기기용 (한 번 실행). 로그인 정보를 최대 5분만 맡기고, 한 번 받아 가면 지워요.
+-- itch.io 판 Google · GitHub · Discord 로그인 넘기기용 (한 번 실행). 로그인 정보를 최대 5분만 맡기고, 한 번 받아 가면 지워요.
 create table if not exists public.ff_itch_handoff(
   code text primary key check (code ~ '^[a-f0-9]{48}$'),
   access_token text not null,
