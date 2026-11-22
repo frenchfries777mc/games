@@ -1146,6 +1146,7 @@ export class View {
     if (this.fxL && this.fxLI > 0) { this.fxLI = Math.max(0, this.fxLI - dt * this.fxLI * 5 - dt * 10); this.fxL.intensity = this.fxLI; }
     for (const f of this.fx) { f.t += dt; f.up(f, dt); }
     this.fx = this.fx.filter(f => { if (f.t >= f.T) { this.scene.remove(f.m); freeObj(f.m); return false; } return true; });
+    if (this.fx.length > 700) { const cut = this.fx.splice(0, this.fx.length - 700); for (const f of cut) { this.scene.remove(f.m); freeObj(f.m); } } // 효과 조각이 한꺼번에 너무 많이 쌓이면 오래된 것부터 지워요
   }
   render() { if (this.comp) this.comp.render(); }
   // 카메라를 픽셀 칸에 딱 맞춰 움직여요. 반 칸씩 밀리면 화면 전체가 지글거려요.
