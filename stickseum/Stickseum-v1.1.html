@@ -969,6 +969,15 @@ h1,h2{ text-shadow:0 0 10px rgba(63,224,197,.55), 0 0 26px rgba(63,224,197,.25);
   #weaponLockBtn{ margin-top:6px !important; } #weaponChosenCount{ margin-top:4px !important; font-size:11px; }
 }
   html,body{ touch-action:manipulation; }      /* no zoom by double tap, on the phone's menu screens too */
+/* v878, every screen size: nothing is covered by the version line at the bottom, mode cards fit the height, words are not broken in the middle */
+  #shopScreen{ height:calc(100vh - 130px); height:calc(100dvh - 130px); max-height:1000px; }
+  .shopItem .nm, .shopItem .wk{ word-break:keep-all; }
+  #shopTabs .shopTab{ word-break:keep-all; overflow-wrap:normal; }
+  #modeListScreen{ height:calc(100vh - 100px); height:calc(100dvh - 100px); max-height:none !important; justify-content:flex-start; }
+  #modeListBody{ flex:0 1 min(78vh,640px); height:min(78vh,640px); min-height:0; }
+  #modeListBody .modeRow{ height:auto; min-height:0; overflow:hidden; }
+  #partyBar{ flex:none; }
+  @media (orientation:portrait) and (max-width:700px){ body .brand{ top:68px; } #shopScreen{ height:calc(100vh - 175px); height:calc(100dvh - 175px); } #modeListScreen{ height:calc(100vh - 150px); height:calc(100dvh - 150px); } #lobbyFoot{ font-size:11px !important; line-height:1.5; padding:0 6px; } }
 /* phones in landscape, v874: every panel fits the VISIBLE height (dvh, not vh: Safari's toolbars hide part of vh), scrolls with the finger, and nothing overlaps */
 @media (pointer:coarse) and (max-height:520px) and (orientation:landscape){
   #profileScreen, #recordScreen, #mstatScreen, #codexScreen, #missionScreen, #achievementScreen, #practiceScreen, #settingsScreen, #rankedScreen{ height:calc(100vh - 16px) !important; height:calc(100dvh - 16px) !important; max-height:none !important; }
@@ -1015,6 +1024,8 @@ h1,h2{ text-shadow:0 0 10px rgba(63,224,197,.55), 0 0 26px rgba(63,224,197,.25);
   #settingsScreen > div[style*="margin:16px"], #settingsScreen > div[style*="margin:20px"]{ margin-top:8px !important; }
   #settingsScreen .profRow{ padding:5px 0; }
   #feedbackScreen{ width:min(560px,94vw) !important; }
+  #authGateScreen{ max-height:calc(100vh - 16px) !important; max-height:calc(100dvh - 16px) !important; overflow-y:auto !important; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; touch-action:pan-y; padding:8px 14px !important; }
+  #authGateScreen h2{ margin:0 0 2px !important; } #authGateScreen .hint{ font-size:10px !important; margin:0 0 4px !important; line-height:1.3; } #authGateScreen input[type=text], #authGateScreen input[type=password]{ padding:5px 8px !important; margin-bottom:4px !important; } #authGateScreen button{ padding:5px 10px !important; } #authGateScreen label{ margin:4px 0 !important; }
   #feedbackText{ height:64px; rows:3; }
   #feedbackScreen select{ padding:5px 8px !important; }
   body #menuScreen .menu-float-btn{ padding:8px 18px !important; margin-bottom:9px !important; font-size:13px !important; }
@@ -6622,7 +6633,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-22-v877';
+const GAME_BUILD='build 2026-11-22-v878';
 const GAME_VERSION='1.1', GAME_VERSION_NAME='Shadows of London';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */

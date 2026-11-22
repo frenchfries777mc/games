@@ -1759,6 +1759,11 @@ body.playing #emoBar{display:flex}
 #emoBar button:active{transform:scale(.9);background:rgba(255,255,255,.35)}
 #emoBar canvas{width:100%;height:100%;display:block}
 @media(max-height:480px){#emoBar{bottom:3px;gap:4px}#emoBar button{width:30px;height:30px;opacity:.55}}
+/* b108 화면 크기 맞춤 */
+.lobCtl .pb,.ruleItem{white-space:nowrap}
+@media(max-width:400px){.ruleItem{font-size:12px;padding:9px 2px;letter-spacing:-.4px}.lobCtl .pb{padding:7px 8px;font-size:12px}#lobEmo{min-width:0}}
+@media(min-width:901px) and (max-width:1180px){#sHome{padding-right:300px}}
+@media(min-width:901px){.menuR{max-height:calc(100dvh - 16px);overflow-y:auto;justify-content:flex-start}}
 </style>
 <script>window.FF_INGAME=true</script>
 <script src="https://frenchfries777.com/games/ff-auth.js?v=20261120b"></script>
@@ -1793,7 +1798,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b107)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b108)</summary>
+   <b>2026-11-22 · v0.1 · b108 · 화면 크기 맞춤</b>
+   <ul><li>폰·태블릿·노트북·큰 모니터 크기에서 글자가 두 줄로 꺾이거나 서로 겹치던 곳을 고쳤어요: 대기실 점프·던지기 버튼, 미니게임 고르기·연습장 목록의 긴 이름</li><li>가로로 낮은 화면(노트북 창을 줄였을 때 등)에서 메인 화면 오른쪽 메뉴가 위아래로 잘려 못 누르던 것을 스크롤로 내려서 누를 수 있게 했어요</li><li>화면 폭이 1000px 안팎일 때 제목이 오른쪽 메뉴에 가려지던 것을 고쳤어요</li></ul>
    <b>2026-11-22 · v0.1 · b107 · 봇 균형</b>
    <ul><li>핫도그 먹기 대회: 봇이 너무 느리고 뜨거울 때 자주 사레들려서, 아무렇게나 눌러도 이기던 것을 고쳤어요. 이제 사람이 마구 누르는 속도에 가깝게 먹고 뜨거울 땐 대부분 멈춰요</li><li>병맛 미로: 첫 번째 사람만 가장 먼 곳에서 시작하던 것을 고쳤어요. 모두 가운데까지 비슷한 거리에서, 자리는 무작위로 시작해요</li><li>닭 몰이: 닭장이 한쪽에 몰려 있으면 바깥 닭장 봇이 거의 못 이기던 것을 고쳤어요. 닭장을 좌우·위아래 대칭으로 채우고 사람이 많으면 닭이 더 넓게 나와요</li></ul>
    <b>2026-11-20 · v0.1 · b106 · 맞을 때 진동</b>
@@ -2004,7 +2011,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 · b1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 42개 미니게임 중 7개 · v0.1 b107 · <a href="../">← Dummy Party 사이트로</a></p>
+  <p class="foot">2~8명 · 판마다 42개 미니게임 중 7개 · v0.1 b108 · <a href="../">← Dummy Party 사이트로</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -8502,7 +8509,7 @@ var PREFIX = 'ff-dummyparty-', CODE_CH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', MAX
 var PTS = [5, 3, 2, 1];
 var T_INTRO = 6, T_COUNT = 3, T_END = 4.0, T_RESULT = 6;
 // 게임 버전(0.x)과 빌드. 버전이 다르면 같은 방에 못 들어와요 (빌드가 달라도 괜찮아요). dp_config 의 min_build 보다 낮은 빌드는 dC를 못 받아요
-var DP_VER = '0.1', DP_BUILD = 107;
+var DP_VER = '0.1', DP_BUILD = 108;
 function dpNotice(msg) { dpAsk(msg, '확인', function () { }); }
 var BOT_NAMES = ['방귀쟁이', '홀쭉이', '바보1', '멍청이', '10급 공무원', '교무실 단골', '벌점부자', '말썽이', '김개똥'];
 var qs = new URLSearchParams(location.search);
