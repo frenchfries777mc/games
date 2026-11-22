@@ -2726,7 +2726,9 @@ function drawTitleTag(ctx, p, HEADCY){
 }
 // ---- dates and a small seeded random (so every device makes the same missions for the same day) ----
 function weekKeyOf(d){ d=d||new Date(); const t=new Date(d.getFullYear(), d.getMonth(), d.getDate()); t.setDate(t.getDate()-((t.getDay()+6)%7)); return todayKey(t); }       // the Monday of this week
-function seasonKeyOf(d){ d=d||new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-r'; }                                                              // a season is one calendar month
+function seasonKeyOf(){ let v='1.1'; try{ v=GAME_VERSION; }catch(e){} const m=/^(\d+)\.(\d+)/.exec(String(v)); return (m?m[1]+'.'+m[2]:'1.1')+'-r'; }      // a season is one game version of the form x.y: it resets only when x.y goes up (1.1.1 stays in the 1.1 season)
+function seasonRank(key){ const m=/^(\d+)\.(\d+)-r$/.exec(String(key||'')); return m ? (+m[1])*1000+(+m[2]) : 0; }
+function seasonNorm(s){ if(s && typeof s==='object' && /^\d{4}-\d{2}-r$/.test(String(s.key||''))){ return (s.key==='2026-11-r') ? Object.assign({}, s, {key:'1.1-r'}) : {key:'0.0-r', xp:0, claimed:{}}; } return s; }      // old monthly keys: this month's progress becomes the 1.1 season, older months are dropped
 function seededRand(str){ let h=2166136261; for(let i=0;i<str.length;i++){ h^=str.charCodeAt(i); h=Math.imul(h,16777619); } return ()=>{ h+=0x6D2B79F5; let t=h; t=Math.imul(t^(t>>>15),t|1); t^=t+Math.imul(t^(t>>>7),t|61); return ((t^(t>>>14))>>>0)/4294967296; }; }
 function msToNextMonth(now){ now=now||new Date(); return new Date(now.getFullYear(), now.getMonth()+1, 1)-now; }
 // ---- missions ----
@@ -2815,8 +2817,8 @@ const SEASON_REWARDS=[
   }
 })();
 function ensureSeason(){
-  const k=seasonKeyOf(); let s=saveData.season;
-  if(!s || typeof s!=='object' || (s.key!==k && !(s.key && k<s.key))){ s={key:k, xp:0, claimed:{}}; saveData.season=s; persistSave(); }
+  const k=seasonKeyOf(); let s=seasonNorm(saveData.season); if(s!==saveData.season && s && typeof s==='object'){ saveData.season=s; persistSave(); }
+  if(!s || typeof s!=='object' || (s.key!==k && seasonRank(k)>=seasonRank(s.key))){ s={key:k, xp:0, claimed:{}}; saveData.season=s; persistSave(); }
   if(!s.claimed || typeof s.claimed!=='object') s.claimed={};
   return s;
 }
@@ -2920,8 +2922,7 @@ function renderMissionScreen(center){
   msBox('daily','📋 오늘의 미션 ('+(hh>=1?hh+'시간 남음':mm+'분 남음')+')');
   const wkMs=(function(){ const n=new Date(), d=(8-((n.getDay()+6)%7+1)); return new Date(n.getFullYear(), n.getMonth(), n.getDate()+d)-n; })(), wd=Math.floor(wkMs/86400000), wh=Math.floor((wkMs%86400000)/3600000);
   msBox('weekly','🗓️ 주간 미션 ('+(wd>=1?wd+'일 남음':wh+'시간 남음')+')');
-  const mo=msToNextMonth(), md=Math.floor(mo/86400000);
-  sec('🎫 시즌 패스 · '+s.key.replace('-r','')+' 시즌 ('+md+'일 남음)');
+  sec('🎫 시즌 패스 · '+s.key.replace('-r','')+' 시즌 (다음 0.1 버전 업데이트 전까지)');
   const head=document.createElement('div'); head.style.cssText='padding:10px; border:1px solid var(--line); border-radius:10px; background:var(--panel-2); margin-bottom:8px;';
   const into=s.xp-seasonXpForTier(tier), need=seasonTierCost(tier+1);
   head.innerHTML='<div style="font-weight:800; font-size:15px; margin-bottom:6px;">'+(tier>=SEASON_LAST?'Last 단계 (마지막)':tier+' / 60 단계')+' · 시즌 XP '+s.xp+'</div>'+barHtml(tier>=SEASON_TIERS?1:into/need,'#c17bff')+'<div style="font-size:11px; color:var(--text-dim); margin-top:5px;">경기 완료 +20 · 승리 +20 · 킬 +5 · 미션 보상 · 단계마다 '+SEASON_TIER_XP+' XP (31단계부터 '+SEASON_LATE_XP+' XP)</div>';
@@ -6621,7 +6622,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-19-v875';
+const GAME_BUILD='build 2026-11-22-v876';
 const GAME_VERSION='1.1', GAME_VERSION_NAME='Shadows of London';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -9425,8 +9426,9 @@ function mergeMissionState(a, b){
   return out;
 }
 function mergeSeasonState(a, b){
+  a=seasonNorm(a); b=seasonNorm(b);
   if(!a || typeof a!=='object') return b||null; if(!b || typeof b!=='object') return a;
-  if(a.key!==b.key) return ((b.key||'')>(a.key||'')) ? b : a;
+  if(a.key!==b.key) return (seasonRank(b.key)>seasonRank(a.key)) ? b : a;
   return {key:a.key, xp:Math.max(+a.xp||0, +b.xp||0), claimed:Object.assign({}, a.claimed||{}, b.claimed||{})};
 }
 function applyCloudSave(s){
