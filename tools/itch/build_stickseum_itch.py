@@ -21,8 +21,9 @@ end = fn.rindex('\n}')
 
 
 # 2. no hub account script, no 'back to site' button
-tag = '<script src="https://frenchfries777.com/games/ff-auth.js"></script>'
-assert tag in html
+m = re.search(r'<script src="https://frenchfries777\.com/games/ff-auth\.js(?:\?[^"]*)?"></script>', html)      # (the hub adds a ?v= cache value to this tag, so it is matched with or without it)
+assert m, 'ff-auth.js script tag not found'
+tag = m.group(0)
 html = html.replace(tag, '<style>#settingsToSiteBtn{display:none!important}#ffItchTag{position:fixed;left:6px;bottom:4px;z-index:2147483000;font:600 10px/1 system-ui,sans-serif;color:#fff;opacity:.45;pointer-events:none;text-shadow:0 0 3px #000}</style><div id="ffItchTag">ItchEdition</div>')
 
 open(os.path.join(out, 'index.html'), 'w', encoding='utf-8').write(html)

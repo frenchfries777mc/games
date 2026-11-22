@@ -112,7 +112,7 @@ function talkTick(dt, on) {
 
 /* ---------- 로그인 ---------- */
 function loggedIn() { try { return !!(window.FFAuth && FFAuth.user()); } catch (e) { return false; } }
-function myName() { try { const n = window.FFAuth && FFAuth.user() && FFAuth.nickname(); if (n) return String(n).slice(0, 12); } catch (e) { } return '기사'; }
+function myName() { try { const n = window.FFAuth && FFAuth.user() && FFAuth.nickname(); if (n) return String(n).slice(0, 15); } catch (e) { } return '기사'; }
 function paintWho() {
   const lv = roleLevel(SAVE.xp[SAVE.role] || 0);
   $('who').innerHTML = '';

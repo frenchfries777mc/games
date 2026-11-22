@@ -12626,7 +12626,7 @@ function winPoseStart(){
       if(f.win) drawWinPose(c, f.pose, t, f.wid, f.tint); else drawLosePose(c, t, f.wid, f.tint);                  // the winner's own pose (만세 when none is equipped), the loser slumps
       if(shn){ c.shadowBlur=0; drawShineGlints(c, now, 0); }
       c.restore();
-      c.save(); c.font='700 13px Rajdhani, sans-serif'; c.textAlign='center'; c.fillStyle=f.q.id===myId?'#ffd34d':'#dfe6f5'; c.fillText(String(wp.name||'').slice(0,12), f.x, H-8); c.restore();
+      c.save(); c.font='700 13px Rajdhani, sans-serif'; c.textAlign='center'; c.fillStyle=f.q.id===myId?'#ffd34d':'#dfe6f5'; c.fillText(String(wp.name||'').slice(0,15), f.x, H-8); c.restore();
     }
     requestAnimationFrame(frame);
   })(last);
