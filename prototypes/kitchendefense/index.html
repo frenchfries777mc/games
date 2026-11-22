@@ -54,9 +54,9 @@ function emit(e){if(netOn())NET.ev.push(e)}
 
 /* ===== 저장 ===== */
 const SK='kitchenDefense_v1';
-const DEF=()=>({best:0,kills:0,bossSet:{},mapBest:[0,0,0],ach:{},title:'',pinged:0,seen:{},dev:'',perf:'',perfAuto:0,perfManual:0,pt:0,towers:{pan:1,freezer:1,chef:1,oven:0,mixer:0,toaster:0,cooker:0,pressure:0},recipes:{egg_roll:1,carrot_juice:1,mushroom_grill:0,veg_stirfry:0,fruit_salad:0},vol:.6,speed:1});
+const DEF=()=>({best:0,kills:0,bossSet:{},mapBest:[0,0,0,0,0,0],ach:{},title:'',pinged:0,seen:{},dev:'',perf:'',perfAuto:0,perfManual:0,pt:0,towers:{pan:1,freezer:1,chef:1,oven:0,mixer:0,toaster:0,cooker:0,pressure:0},recipes:{egg_roll:1,carrot_juice:1,mushroom_grill:0,veg_stirfry:0,fruit_salad:0},vol:.6,speed:1});
 let save=DEF();
-try{const s=JSON.parse(localStorage.getItem(SK)||'null');if(s){save=Object.assign(DEF(),s);save.towers=Object.assign(DEF().towers,s.towers);save.recipes=Object.assign(DEF().recipes,s.recipes);if(!Array.isArray(save.mapBest)||save.mapBest.length<3)save.mapBest=[0,0,0];if(!save.bossSet||typeof save.bossSet!=='object')save.bossSet={};if(!save.ach||typeof save.ach!=='object')save.ach={};if(!save.seen||typeof save.seen!=='object')save.seen={}}}catch(e){}
+try{const s=JSON.parse(localStorage.getItem(SK)||'null');if(s){save=Object.assign(DEF(),s);save.towers=Object.assign(DEF().towers,s.towers);save.recipes=Object.assign(DEF().recipes,s.recipes);if(!Array.isArray(save.mapBest))save.mapBest=[];while(save.mapBest.length<6)save.mapBest.push(0);if(!save.bossSet||typeof save.bossSet!=='object')save.bossSet={};if(!save.ach||typeof save.ach!=='object')save.ach={};if(!save.seen||typeof save.seen!=='object')save.seen={}}}catch(e){}
 let LOW=save.dev==='mobile'||save.perf==='low',RS=LOW?.75:1;cv.width=Math.round(W*RS);cv.height=Math.round(H*RS);
 function applyDev(){LOW=save.dev==='mobile'||save.perf==='low';RS=LOW?.75:1;cv.width=Math.round(W*RS);cv.height=Math.round(H*RS);SPS=LOW?1:2;SPR.clear();TOW.clear();MAPC=null;BGC=null}
 function persist(){try{localStorage.setItem(SK,JSON.stringify(save))}catch(e){}}
@@ -177,9 +177,16 @@ const TD={
   toaster:{n:'토스터',cost:170,range:150,dmg:26,rate:1.3},
   cooker:{n:'전기밥솥',cost:190,range:115,dmg:0,rate:1},
   pressure:{n:'압력솥',cost:230,range:120,dmg:140,rate:4},
+  kettle:{n:'주전자',cost:150,range:110,dmg:9,rate:.4},
+  grill:{n:'그릴',cost:190,range:95,dmg:12,rate:.7},
+  icemaker:{n:'제빙기',cost:160,range:130,dmg:8,rate:1.3},
+  microwave:{n:'전자레인지',cost:240,range:175,dmg:85,rate:2.6},
+  fryer:{n:'튀김기',cost:270,range:100,dmg:55,rate:1.8},
 };
-const TORDER=Object.keys(TD);
-const SKILL={pan:'프라이팬 강타',freezer:'절대영도',chef:'칼 난사',oven:'대폭발',mixer:'블렌딩',toaster:'빵 폭풍',cooker:'풍년 잔치',pressure:'긴급 방출'};
+const TORDER=Object.keys(TD),ORIG=TORDER.slice(0,8);
+const NEWT=['kettle','grill','icemaker','microwave','fryer'];/* 맵 1~5 클리어 보상 */
+const CW=10;/* 맵 클리어 = 웨이브 10 클리어 */
+const SKILL={pan:'프라이팬 강타',freezer:'절대영도',chef:'칼 난사',oven:'대폭발',mixer:'블렌딩',toaster:'빵 폭풍',cooker:'풍년 잔치',pressure:'긴급 방출',kettle:'증기 폭발',grill:'불맛 폭발',icemaker:'얼음 비',microwave:'최대 출력',fryer:'기름 폭탄'};
 const SK_CD=25*1.25;
 const RCP={
   egg_roll:{n:'매운 달걀말이',a:['pepper',8],b:['egg',8],d:'범위 폭발'},
@@ -223,7 +230,18 @@ const MAPS=[
   {n:'창고',d:'긴 길 · 상자 미로',wp:[[-1,0],[2,0],[2,7],[5,7],[5,1],[8,1],[8,6],[12,6],[12,2],[14,2],[14,5]],
    obs:[[0,3,'crate'],[0,4,'crate'],[4,3,'crate'],[4,4,'crate'],[7,3,'crate'],[7,4,'crate'],[10,3,'crate'],[10,4,'crate'],[13,0,'crate'],[13,7,'crate']],
    tile:['#a3a9b0','#949aa2'],pat:'concrete',path:['#25272b','#4a4d52','#6c7076','rgba(0,0,0,.35)','rgba(255,205,60,.7)'],frame:['#3a3f46','#1c1f24'],dc:['rgba(255,255,255,.35)','rgba(30,30,30,.3)','rgba(190,110,50,.3)']},
+  {n:'빵집',d:'두 갈래 굽이 · 진열대',wp:[[-1,3],[4,3],[4,6],[9,6],[9,2],[12,2],[12,5],[14,5]],
+   obs:[[1,1,'table'],[6,4,'table'],[7,4,'table'],[11,4,'table'],[6,0,'crate'],[14,1,'crate']],
+   tile:['#f3dcc2','#e8ccab'],pat:'',path:['#7a4a22','#c08850','#e0aa6c','rgba(120,70,30,.4)','rgba(255,240,200,.6)'],frame:['#6a4630','#36231a'],dc:['rgba(255,255,255,.5)','rgba(200,140,80,.25)','rgba(150,90,40,.2)']},
+  {n:'야시장',d:'짧은 길 · 좁은 자리',wp:[[-1,1],[7,1],[7,5],[14,5]],
+   obs:[[2,3,'table'],[3,3,'table'],[4,4,'crate'],[9,3,'crate'],[10,3,'crate'],[11,7,'table'],[5,6,'table'],[12,2,'crate']],
+   tile:['#4a4e6a','#41455e'],pat:'concrete',path:['#1c1a24','#a8432f','#d4573c','rgba(0,0,0,.35)','rgba(255,214,120,.8)'],frame:['#26283a','#121320'],dc:['rgba(255,220,140,.35)','rgba(255,120,80,.2)','rgba(120,200,255,.2)']},
+  {n:'냉동실',d:'짧은 길 · 상자 많음',wp:[[-1,6],[3,6],[3,2],[9,2],[9,5],[14,5]],
+   obs:[[1,4,'crate'],[5,4,'crate'],[6,4,'crate'],[7,4,'crate'],[11,3,'crate'],[12,3,'crate'],[6,0,'crate'],[12,7,'crate'],[1,1,'crate']],
+   tile:['#dcecf5','#cfe3ee'],pat:'concrete',path:['#2c4a63','#5b87a8','#82add0','rgba(20,50,80,.35)','rgba(255,255,255,.75)'],frame:['#3c5a70','#1a2c3a'],dc:['rgba(255,255,255,.6)','rgba(120,180,220,.3)','rgba(80,140,190,.2)']},
 ];
+const mapOpen=i=>i===0||(save.mapBest[i-1]||0)>=CW||(save.mapBest[i]||0)>0;
+function towersUnl(){const o=Object.assign({},save.towers);NEWT.forEach((id,i)=>{o[id]=(save.mapBest[i]||0)>=CW?1:0});return o}
 let MAP=MAPS[0],PTS=[],CUM=[],TOTAL=0,BLOCK=new Set();
 function setMap(i){
   MAP=MAPS[i]||MAPS[0];
@@ -469,6 +487,38 @@ function drawTower(t,x,y,alpha){
     if(ch>.7){g.fillStyle='rgba(255,255,255,'+(.3+.4*Math.sin(G.t*20))+')';g.beginPath();g.arc(0,-34-ch*4,3+ch*3,0,7);g.fill()}
     eyes(0,2,.9);
     g.fillStyle='rgba(255,255,255,.35)';g.fillRect(-17,-8,3,22);
+  }else if(ty==='kettle'){
+    g.strokeStyle='#3e5a70';g.lineWidth=4;g.beginPath();g.arc(0,-6,15,Math.PI*1.1,Math.PI*1.9);g.stroke();
+    g.beginPath();g.moveTo(16,2);g.lineTo(30,-12);g.lineTo(33,-9);g.lineTo(20,10);g.closePath();g.fillStyle='#7fa3bd';g.fill();g.strokeStyle='#3e5a70';g.lineWidth=2;g.stroke();
+    g.beginPath();g.ellipse(0,6,21,17,0,0,7);g.fillStyle=lg(-21,0,21,0,'#d8e8f2','#9fbfd4','#6f93ad');g.fill();g.strokeStyle='#3e5a70';g.lineWidth=3;g.stroke();
+    g.beginPath();g.ellipse(0,-9,11,4,0,0,7);g.fillStyle='#8fb1c8';g.fill();g.stroke();
+    g.fillStyle='#3e5a70';g.beginPath();g.arc(0,-13,3,0,7);g.fill();
+    eyes(0,6,.9);g.fillStyle='rgba(255,255,255,.45)';g.fillRect(-15,0,3,14);
+    if(t.fx>0){g.fillStyle='rgba(240,248,255,.7)';g.beginPath();g.arc(34,-16,4+t.fx*20,0,7);g.fill()}
+  }else if(ty==='grill'){
+    g.strokeStyle='#2a2a2a';g.lineWidth=3;g.beginPath();g.moveTo(-14,8);g.lineTo(-18,22);g.moveTo(14,8);g.lineTo(18,22);g.moveTo(0,10);g.lineTo(0,23);g.stroke();
+    g.beginPath();g.ellipse(0,0,24,14,0,0,7);g.fillStyle=lg(0,-14,0,14,'#4a4a4a','#1c1c1c');g.fill();g.strokeStyle='#111';g.lineWidth=2.5;g.stroke();
+    const hot=t.fx>0?'#ffb04a':'#e0552a';g.strokeStyle=hot;g.lineWidth=2.5;for(const dx of[-12,-4,4,12]){g.beginPath();g.moveTo(dx,-9);g.lineTo(dx,9);g.stroke()}
+    g.fillStyle='#ff8a1f';for(const dx of[-9,0,9]){const h=6+Math.sin(G.t*10+dx)*2;g.beginPath();g.moveTo(dx-3,-8);g.quadraticCurveTo(dx,-8-h*2,dx+3,-8);g.fill()}
+    eyes(0,-20,.8);
+  }else if(ty==='icemaker'){
+    g.beginPath();g.roundRect(-20,-18,40,40,6);g.fillStyle=lg(-20,0,20,0,'#ffffff','#d6eef9','#a9d3ea');g.fill();g.strokeStyle='#4a90b8';g.lineWidth=3;g.stroke();
+    g.fillStyle='#2b5f80';g.beginPath();g.roundRect(-12,4,24,12,3);g.fill();
+    g.fillStyle='rgba(210,240,255,.95)';g.strokeStyle='#7fbddb';g.lineWidth=1.5;for(const[cx,cy]of[[-9,-27],[1,-30],[10,-26]]){g.beginPath();g.roundRect(cx-5,cy-5,10,10,2);g.fill();g.stroke()}
+    eyes(0,-6,.85);g.fillStyle='rgba(255,255,255,.6)';g.fillRect(-16,-14,3,16);
+  }else if(ty==='microwave'){
+    g.beginPath();g.roundRect(-26,-18,52,36,5);g.fillStyle=lg(0,-18,0,18,'#f2f2f0','#c9ccd0');g.fill();g.strokeStyle='#5a5f66';g.lineWidth=3;g.stroke();
+    g.fillStyle=t.fx>0?'#ffe98a':'#2a2e33';g.beginPath();g.roundRect(-21,-13,30,26,3);g.fill();
+    if(t.fx>0){g.fillStyle='rgba(255,250,200,.6)';g.beginPath();g.arc(-6,0,8,0,7);g.fill()}
+    g.fillStyle='#8a9098';g.fillRect(13,-12,9,6);g.beginPath();g.arc(17.5,4,3,0,7);g.arc(17.5,12,2,0,7);g.fill();
+    eyes(-6,-1,.8);
+  }else if(ty==='fryer'){
+    g.beginPath();g.roundRect(-24,-10,48,30,6);g.fillStyle=lg(-24,0,24,0,'#d0d5da','#9aa1a8','#6c737a');g.fill();g.strokeStyle='#3a3f45';g.lineWidth=3;g.stroke();
+    g.beginPath();g.ellipse(0,-10,22,7,0,0,7);g.fillStyle='#e8b23a';g.fill();g.strokeStyle='#8a6010';g.lineWidth=1.5;g.stroke();
+    g.fillStyle='#fff3b0';for(const dx of[-10,2,11]){g.beginPath();g.arc(dx,-11+Math.sin(G.t*8+dx)*1.5,2,0,7);g.fill()}
+    g.strokeStyle='#3a3f45';g.lineWidth=3;g.beginPath();g.moveTo(14,-14);g.lineTo(30,-28);g.stroke();
+    g.fillStyle='#2a2e33';g.beginPath();g.roundRect(26,-32,8,8,2);g.fill();
+    eyes(0,6,.9);g.fillStyle='rgba(255,255,255,.4)';g.fillRect(-20,-4,3,18);
   }
   if(t.buff>1){g.fillStyle='#8dff8d';g.strokeStyle='#2a7a2a';g.lineWidth=1.5;g.beginPath();g.moveTo(24,-18);g.lineTo(30,-8);g.lineTo(18,-8);g.closePath();g.fill();g.stroke()}
   if(t.type==='pressure'&&t.charge>0){g.strokeStyle='#ffd23c';g.lineWidth=4;g.beginPath();g.arc(0,0,31,-Math.PI/2,-Math.PI/2+6.283*t.charge);g.stroke()}
@@ -528,15 +578,15 @@ const ACH=[
  {id:'kills500',ic:'🔪',n:'칼질 연습',d:'식재료 500개를 쓰러뜨려요',t:'칼질 달인',ok:s=>s.kills>=500,p:s=>[Math.min(500,s.kills),500]},
  {id:'kills3000',ic:'🥵',n:'식재료 학살자',d:'식재료 3000개를 쓰러뜨려요',t:'식재료 학살자',ok:s=>s.kills>=3000,p:s=>[Math.min(3000,s.kills),3000]},
  {id:'clean10',ic:'🧊',n:'철벽 냉장고',d:'체력을 잃지 않고 웨이브 10을 클리어해요',t:'철벽 냉장고',ok:s=>s.cl>=10&&s.hp>=20},
- {id:'towers',ic:'🍲',n:'주방 풀세트',d:'타워 8종을 모두 해금해요',t:'주방 장인',ok:s=>s.towers,p:s=>[TORDER.filter(id=>save.towers[id]).length,TORDER.length]},
+ {id:'towers',ic:'🍲',n:'주방 풀세트',d:'타워 8종을 모두 해금해요',t:'주방 장인',ok:s=>s.towers,p:s=>[ORIG.filter(id=>save.towers[id]).length,ORIG.length]},
  {id:'coop',ic:'🤝',n:'함께 지키기',d:'친구와 함께 웨이브 5를 클리어해요',t:'든든한 동료',ok:s=>s.coop&&s.cl>=5},
  {id:'team4',ic:'👨‍🍳',n:'사수대 집합',d:'4명이 함께 웨이브 10을 클리어해요',t:'사수대장',ok:s=>s.coop&&s.np>=4&&s.cl>=10},
  {id:'ping',ic:'📍',n:'여기야 여기',d:'협동에서 핑을 한 번 찍어요',t:'길잡이',ok:()=>!!save.pinged},
- {id:'maps',ic:'🗺️',n:'세 주방 탐험',d:'세 맵 모두에서 웨이브 10을 클리어해요',t:'주방 탐험가',ok:()=>save.mapBest.every(v=>v>=10),p:()=>[save.mapBest.filter(v=>v>=10).length,3]},
+ {id:'maps',ic:'🗺️',n:'세 주방 탐험',d:'세 맵 모두에서 웨이브 10을 클리어해요',t:'주방 탐험가',ok:()=>save.mapBest.slice(0,3).every(v=>v>=10),p:()=>[save.mapBest.slice(0,3).filter(v=>v>=10).length,3]},
 ];
 function achState(){
   const run=!!(G&&scene==='play'),cl=run?Math.max(0,G.wave-(G.active?1:0)):0;
-  return{cl,hp:run?G.hp:0,coop:run&&G.coop,np:run&&G.coop?NET.ids.length:1,kills:save.kills+(run&&!G.ended?G.kills:0),bosses:Object.keys(save.bossSet).length,best:Math.max(save.best,cl),towers:TORDER.every(id=>save.towers[id])};
+  return{cl,hp:run?G.hp:0,coop:run&&G.coop,np:run&&G.coop?NET.ids.length:1,kills:save.kills+(run&&!G.ended?G.kills:0),bosses:Object.keys(save.bossSet).length,best:Math.max(save.best,cl),towers:ORIG.every(id=>save.towers[id])};
 }
 let achQ=[],achShow=null,achT=0,achCd=0;
 function achCheck(dt){
@@ -603,7 +653,7 @@ function newGame(map,opts={}){
   G={coins:260,hp:20,wave:0,active:false,waveT:0,spawn:[],enemies:[],towers:[],proj:[],parts:[],floats:[],rings:[],
      res:{egg:0,carrot:0,juice:0,pepper:0,mushroom:0,cabbage:0},sel:null,selT:null,speed:save.speed,over:null,
      kills:0,t:0,next:20,shake:0,hpMul:1,confirmExit:false,ended:false,pt:0,hit:0,cleared:0,nid:1,map,bossM:a,bossF:b,
-     unl:{towers:save.towers,recipes:save.recipes},feast:0,cursors:[],coop:!!opts.coop,corpses:[],says:[],banner:null,pings:[],pingMode:0,pcd:{},bestAt:save.best,dmgBy:{},rem:0,insp:0,inspT:0};
+     unl:{towers:towersUnl(),recipes:save.recipes},mb0:save.mapBest[map]||0,clr:0,feast:0,cursors:[],coop:!!opts.coop,corpses:[],says:[],banner:null,pings:[],pingMode:0,pcd:{},bestAt:save.best,dmgBy:{},rem:0,insp:0,inspT:0};
   G.rings.push=function(r){Array.prototype.push.call(this,r);emit({k:'r',r})};
   G.floats.push=function(f){Array.prototype.push.call(this,f);emit({k:'fl',f})};
 }
@@ -692,6 +742,7 @@ boss:['양배추는 영원하리','이게 끝이라고?','나는 겉잎일 뿐',
 boss_ramen:['불어버렸다...','면치기 당했다','스프를 넣었어야 했는데','3분만 더 기다려줄래?','꼬들면이 좋았는데','국물까지 다 마시지 마!'],
 boss_cake:['생일 축하해...','촛불 꺼졌다','내 크림이!','당 떨어진다','한 입만 달라고 했잖아','칼로리로 승부했는데']};
 const TQ={
+kettle:['삐이이익!','물 끓는다','차 한잔 할래?','김이 모락모락'],grill:['지글지글','불맛 좀 볼래?','고기 어디 갔어','숯불 장인'],icemaker:['얼음 나와요','시원하지?','딸그락','빙수 각'],microwave:['띵!','30초만 기다려','데워 드릴게요','전자파 발사'],fryer:['바삭바삭','기름 온도 180도','튀겨 버린다','치킨 아님'],
 pan:['나는 후라이팬이다','계란은 내 친구야','기름 튀긴다!','눌러붙지 않는다고 했잖아','손잡이가 쓸쓸해'],
 freezer:['나가고 싶다','문 좀 닫아줘','얼음장같은 사이','냉동만두 가져와','내 안에 비밀이 있어'],
 chef:['칼퇴하고 싶다','오늘 하루도 썰어보자','손맛이 살아있네','칼질엔 자신 있어','웨이터! 아니 요리사!','요리는 장비빨'],
@@ -701,7 +752,7 @@ toaster:['빵이 튀어나온다!','식빵 대신 적 주세요','탁! 빵!','�
 cooker:['쿠쿠가 밥을 합니다','밥 다 됐습니다','맛있는 밥 냄새','취사 시작!','보온 중입니다'],
 pressure:['칙칙폭폭','치이이이익','터질 것 같아!','압력이 높아...','나 폭발한다 진짜로']};
 const EQ=['냉장고 문 열어줘','나 배고파','어디로 가야 하지?','이 길 맞나요?','주방은 처음이야','내일이 유통기한이야','먹히기 싫어요','냉장고 속은 따뜻할까','형 나 무서워','안녕 타워들','가자 가자!','신발 한쪽 잃어버림','나 좀 업어줘','핸드폰 두고 왔다','헉헉 힘들다','엄마가 가지 말랬는데'];
-const SKQ={pan:['후라이팬 강타!!','계란후라이 맛 좀 봐라!','지글지글 풀파워!'],freezer:['절대영도!!','얼어붙어라 얼음땡!','렛잇고~'],chef:['칼 난사!!','김밥 썰듯 썰어주마!','칼칼칼칼칼!'],oven:['대폭발!!','굽자! 태우자!','예열 끝, 폭발!'],mixer:['블렌딩!!','갈아 마셔주마!','믹서 최대 출력!'],toaster:['빵 폭풍!!','식빵 소나기!','빵빵빵빵빵!'],cooker:['풍년 잔치!!','공깃밥 무료 제공!','밥심으로 간다!'],pressure:['긴급 방출!!','치이이익 꽝!','압력 해제!!']};
+const SKQ={kettle:['증기 폭발!!','펄펄 끓는다!'],grill:['불맛 폭발!!','활활 타라!'],icemaker:['얼음 비!!','꽁꽁 얼어라!'],microwave:['최대 출력!!','띵띵띵!'],fryer:['기름 폭탄!!','바삭하게 튀겨주마!'],pan:['후라이팬 강타!!','계란후라이 맛 좀 봐라!','지글지글 풀파워!'],freezer:['절대영도!!','얼어붙어라 얼음땡!','렛잇고~'],chef:['칼 난사!!','김밥 썰듯 썰어주마!','칼칼칼칼칼!'],oven:['대폭발!!','굽자! 태우자!','예열 끝, 폭발!'],mixer:['블렌딩!!','갈아 마셔주마!','믹서 최대 출력!'],toaster:['빵 폭풍!!','식빵 소나기!','빵빵빵빵빵!'],cooker:['풍년 잔치!!','공깃밥 무료 제공!','밥심으로 간다!'],pressure:['긴급 방출!!','치이이익 꽝!','압력 해제!!']};
 const WORDS=['퍽!','쾅!','챙!','빡!','뿅!','철썩!','와장창!'];
 const TITLES=['달걀의 역습','당근 대행진','식재료 반란','주방 대혼란','냉장고를 사수하라','오늘의 메뉴는 너희','밥상 뒤집기','양념 폭발','유통기한 지난 분노'];
 function say(x,y,t){emit({k:'y',x,y,s:t});if(G.says.length<(LOW?2:6))G.says.push({x,y,s:t,t:2.3})}
@@ -763,7 +814,7 @@ function applyStatus(e,t){
 function calc(t){
   const d=TD[t.type],L=t.lv,cb=L.cabbage,m=1+.3*cb,R=t.recipe,proj=t.type==='chef'||t.type==='toaster';
   let rate=d.rate/(1+.2*L.egg)/m,range=d.range*(1+.15*L.carrot)*(1+.08*cb),dmg=d.dmg*(1+.25*L.juice)*m;
-  let burn=L.pepper*6+(t.type==='oven'?5:0),poison=L.mushroom*3,hb=L.mushroom>0,slow=t.type==='freezer'?.4:0,splash=0,multi=1,aura=0;
+  let burn=L.pepper*6+(t.type==='oven'?5:0)+(t.type==='grill'?9:0),poison=L.mushroom*3,hb=L.mushroom>0,slow=t.type==='freezer'?.4:t.type==='icemaker'?.5:t.type==='kettle'?.2:0,splash=0,multi=1,aura=0;
   if(t.type==='cooker'){aura=(.25+.08*L.egg+.06*L.juice)*(1+.5*cb)*(R?1.3:1);dmg=0;burn=0;poison=0;hb=false}
   else{
     if(R==='carrot_juice'){range*=1.3;dmg*=1.3}
@@ -835,6 +886,17 @@ function useSkill(t,say){
       G.feast=6;ring(160,'140,255,140',.7);fx(t.x,t.y,'#fff3a0',30,{v0:60,v1:200,l0:.5,l1:1,r0:2,r1:5});
       for(const o of G.towers)fx(o.x,o.y-10,'#8dff8d',6,{a:-1.57,spread:.6,v0:30,v1:80,l0:.5,l1:.9,r0:2,r1:4,g:-20});break;
     case 'pressure':releasePressure(t,inr);break;
+    case 'kettle':case 'grill':case 'fryer':{
+      const col=t.type==='kettle'?'235,245,255':t.type==='grill'?'255,120,40':'255,210,90';
+      for(const e of inr){damage(e,st.dmg*(t.type==='fryer'?5:6));if(!e.dead){applyStatus(e,t);if(t.type==='kettle'){e.slowT=3;e.slowV=Math.max(e.slowV,.4)}}fx(e.x,e.y,'rgb('+col+')',8,{v0:40,v1:150,g:-40,l0:.3,l1:.7,r0:3,r1:6})}
+      ring(st.range,col,.6);fx(t.x,t.y-10,'rgb('+col+')',24,{v0:60,v1:200,l0:.4,l1:.8,r0:3,r1:6,g:-30});break}
+    case 'icemaker':
+      for(const e of inr){damage(e,st.dmg*3);if(!e.dead){e.stopT=Math.max(e.stopT,isBoss(e)?.8:2);applyStatus(e,t)}fx(e.x,e.y-20,'#e6f7ff',6,{a:1.57,spread:.3,v0:120,v1:220,l0:.2,l1:.4,r0:3,r1:5})}
+      ring(st.range,'170,225,255',.6);break;
+    case 'microwave':{
+      const tops=[...inr].sort((a,b)=>b.hp-a.hp).slice(0,3);
+      for(const e of tops){damage(e,st.dmg*5);fx(e.x,e.y,'#fff6a0',14,{v0:60,v1:200,l0:.3,l1:.6,r0:2,r1:5})}
+      ring(st.range,'255,240,140',.5);break}
   }
   G.shake=Math.max(G.shake,.35);sfx(260,.35,'sawtooth',.3,300);say(t.x,t.y-46,pick(SKQ[t.type]));
 }
@@ -1036,6 +1098,30 @@ function updTowers(dt,A){
       case 'pressure':
         t.charge=Math.min(1,t.charge+sp/st.rate);
         if(t.charge>=1)releasePressure(t,inr);
+        break;
+      case 'kettle':
+        if(t.cd<=0){const tg=inr[0];for(const e of inr)if(Math.hypot(e.x-tg.x,e.y-tg.y)<45){damage(e,st.dmg);if(!e.dead)applyStatus(e,t)}
+          fx(tg.x,tg.y-6,'rgba(235,245,255,.85)',4,{v0:20,v1:60,g:-50,l0:.4,l1:.8,r0:4,r1:8,glow:false});
+          fx(t.x+Math.cos(t.ang)*24,t.y-8+Math.sin(t.ang)*24,'rgba(235,245,255,.8)',2,{a:t.ang,spread:.3,v0:90,v1:160,l0:.2,l1:.4,r0:3,r1:5,glow:false});
+          t.cd=st.rate;t.fx=.15}
+        break;
+      case 'grill':
+        if(t.cd<=0){for(const e of inr){damage(e,st.dmg);if(!e.dead)applyStatus(e,t)}
+          fx(t.x,t.y-6,'#ff7a2a',6,{a:-1.57,spread:.8,v0:30,v1:90,g:-40,l0:.3,l1:.6,r0:2,r1:4});
+          t.cd=st.rate;t.fx=.2;G.rings.push({x:t.x,y:t.y,r:rng,t:.3,mt:.3,col:'255,120,40'})}
+        break;
+      case 'icemaker':
+        if(t.cd<=0){for(const e of inr.slice(0,3)){damage(e,st.dmg);if(!e.dead)applyStatus(e,t);fx(e.x,e.y,'#e6f7ff',5,{v0:30,v1:90,l0:.3,l1:.6,r0:2,r1:4})}
+          t.cd=st.rate;t.fx=.2;sfx(1100,.05,'sine',.12,-400)}
+        break;
+      case 'microwave':
+        if(t.cd<=0){let tg=inr[0];for(const e of inr)if(e.hp>tg.hp)tg=e;damage(tg,st.dmg);if(!tg.dead)applyStatus(tg,t);
+          const n=8;for(let i=1;i<=n;i++)fx(t.x+(tg.x-t.x)*i/n,t.y-6+(tg.y-t.y+6)*i/n,'#fff6a0',1,{v0:5,v1:20,l0:.15,l1:.3,r0:3,r1:5});
+          G.rings.push({x:tg.x,y:tg.y,r:30,t:.3,mt:.3,col:'255,240,140'});t.cd=st.rate;t.fx=.35;sfx(900,.12,'sine',.2,-500)}
+        break;
+      case 'fryer':
+        if(t.cd<=0){for(const e of inr){damage(e,st.dmg);if(!e.dead)applyStatus(e,t);fx(e.x,e.y,'#ffd25a',4,{v0:40,v1:120,g:120,l0:.3,l1:.6,r0:2,r1:4})}
+          t.cd=st.rate;t.fx=.3;G.rings.push({x:t.x,y:t.y,r:rng,t:.35,mt:.35,col:'255,210,90'});G.shake=Math.max(G.shake,.08);sfx(180,.12,'sawtooth',.18,-60)}
         break;
     }
   }
@@ -1358,7 +1444,7 @@ function sMaps(){
   setMap(0);tilesBG();
   heading('맵 선택',W/2,90,72);
   MAPS.forEach((m,i)=>{
-    const cw=270,ch=280,x=W/2-435+i*300,y=150,hov=mouse.x>=x&&mouse.x<=x+cw&&mouse.y>=y&&mouse.y<=y+ch;
+    const open=mapOpen(i),cw=270,ch=200,x=W/2-435+(i%3)*300,y=138+Math.floor(i/3)*214,hov=open&&mouse.x>=x&&mouse.x<=x+cw&&mouse.y>=y&&mouse.y<=y+ch;
     if(hov)hoverAny=true;
     g.save();g.beginPath();g.roundRect(x,y+(hov?-3:0),cw,ch,18);g.fillStyle=hov?'rgba(40,24,12,.86)':'rgba(18,10,5,.62)';g.fill();g.lineWidth=hov?2.5:1.5;g.strokeStyle=hov?'#ffcf6b':'rgba(255,220,170,.22)';g.stroke();
     const u=15,mx=x+15,my=y+15+(hov?-3:0);
@@ -1370,18 +1456,21 @@ function sMaps(){
     g.lineJoin='round';g.beginPath();pts.forEach((p,k)=>k?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));
     g.strokeStyle=m.path[0];g.lineWidth=13;g.stroke();g.strokeStyle=m.path[2];g.lineWidth=10;g.stroke();
     g.fillStyle='#eef4f8';g.strokeStyle='#7f98ac';g.lineWidth=1.5;g.beginPath();g.roundRect(mx+226,my+46,12,44,3);g.fill();g.stroke();
+    if(!open){g.fillStyle='rgba(20,12,6,.72)';g.fillRect(mx,my,240,120);
+      g.strokeStyle='#e3b98a';g.lineWidth=4;g.beginPath();g.arc(mx+120,my+52,11,Math.PI,0);g.stroke();g.fillStyle='#e3b98a';g.beginPath();g.roundRect(mx+105,my+52,30,24,5);g.fill()}
     g.restore();
     const ty=y+(hov?-3:0);
-    txt(m.n,x+cw/2,ty+182,34,'#fff','center','#3b1d0a',6,true);
-    txt(m.d,x+cw/2,ty+222,14,'#d9c3a0','center','');
-    if(save.mapBest[i]>0)txt('최고 웨이브  '+save.mapBest[i],x+cw/2,ty+262,16,'#ffe27a','center','');
+    txt(m.n,x+cw/2,ty+158,30,open?'#fff':'#a39685','center',open?'#3b1d0a':'',open?6:0,true);
+    txt(open?m.d:MAPS[i-1].n+' 웨이브 '+CW+' 클리어 시 열림',x+cw/2,ty+186,14,open?'#d9c3a0':'#a39685','center','');
+    if(open&&save.mapBest[i]>0){g.fillStyle='rgba(20,12,6,.75)';g.beginPath();g.roundRect(x+20,ty+20,92,24,12);g.fill();txt('최고 '+save.mapBest[i],x+66,ty+33,14,'#ffe27a','center','')}
+    if(save.mapBest[i]>=CW)txt('✔',x+cw-26,ty+24,20,'#8dff8d','center','#1a3a1a',4);
     if(click&&hov&&!NET.busy){
       click=null;blip();
       if(NET.pend==='solo'){resetNet();newGame(i);scene='play'}
       else createRoom(i);
     }
   });
-  if(NET.busy)txt('방 만드는 중…',W/2,530,24,'#ffe27a','center','');
+  if(NET.busy)txt('방 만드는 중…',W/2,590,24,'#ffe27a','center','');
   if(btn(40,H-100,180,64,'뒤로',{ghost:1})){if(NET.busy)resetNet();scene='mode'}
 }
 function sLobby(){
@@ -1626,7 +1715,16 @@ function resultStats(y){
     txt(Math.round(p*100)+'%',x0+420,yy,16,'#ffe27a','right','');
   });
 }
+function checkClear(){
+  if(!G||G.clr)return;
+  const cl=G.wave-(G.active?1:0);if(cl<CW)return;
+  G.clr=1;if(cl>(save.mapBest[G.map]||0)){save.mapBest[G.map]=cl;persist()}
+  if(G.mb0>=CW)return;
+  const nt=NEWT[G.map],nm=MAPS[G.map+1];if(nt)G.unl.towers[nt]=1;
+  G.banner={s:'맵 클리어!',sub:[nt?'새 타워 '+TD[nt].n:'',nm?'다음 맵 '+nm.n:''].filter(Boolean).join(' · '),t:3,boss:false};tune('clear');
+}
 function playUI(dt){
+  checkClear();
   drawBars();
   if(G.banner){
     const b=G.banner,p=1-b.t/2.4,a=Math.min(1,p*6,b.t*2),pop=1+Math.max(0,.25-p)*3,sh=b.boss?Math.sin(G.t*50)*4:0;
@@ -1694,12 +1792,12 @@ function playUI(dt){
     return;
   }
   if(!G.selT){
-    let x=10;
-    for(const id of TORDER){
-      if(!G.unl.towers[id])continue;
+    const TS2={pan:'팬',freezer:'냉동고',chef:'요리사',oven:'오븐',mixer:'믹서',toaster:'토스터',cooker:'밥솥',pressure:'압력솥',kettle:'주전자',grill:'그릴',icemaker:'제빙기',microwave:'레인지',fryer:'튀김기'};
+    let x=10;const ul=TORDER.filter(id=>G.unl.towers[id]),bw=ul.length>8?Math.floor(736/ul.length)-4:88;
+    for(const id of ul){
       const d=TD[id];
-      if(btn(x,by+6,88,50,d.n+'\n'+d.cost,{on:G.sel===id,dim:(G.coins<d.cost||tFull())&&G.sel!==id,fs:17,ghost:1,c2:'#ffd36b'})){if(tFull()&&G.sel!==id)toast('타워는 최대 '+TMAX+'개까지예요');else G.sel=G.sel===id?null:id}
-      x+=92;
+      if(btn(x,by+6,bw,50,(bw<88?TS2[id]:d.n)+'\n'+d.cost,{on:G.sel===id,dim:(G.coins<d.cost||tFull())&&G.sel!==id,fs:bw<88?Math.min(17,Math.floor(bw/Math.max(2,TS2[id].length)*.92)):17,ghost:1,c2:'#ffd36b'})){if(tFull()&&G.sel!==id)toast('타워는 최대 '+TMAX+'개까지예요');else G.sel=G.sel===id?null:id}
+      x+=bw+4;
     }
     const eb=earlyBonus(),wl=G.active?'진행 중…':'웨이브 '+(G.wave+1)+' 바로 시작\n'+Math.ceil(Math.max(0,G.next))+'초 후 자동'+(eb?' · 코인 +'+eb:'');
     if(btn(752,by+6,198,50,wl,{fs:19,col:'#7bbf5a',dim:G.active})){if(G.active)toast('웨이브가 진행 중이에요');else act({k:'start'})}
