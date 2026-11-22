@@ -854,14 +854,14 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
     margin-left:auto; font-size:12px; color:var(--text-dim);
     line-height:1.6; font-weight:600; text-align:right;
   }
-#introScr{position:fixed;inset:0;z-index:99999;background:#000;transition:opacity .7s}
+#introScr{position:fixed;inset:0;z-index:99999;background:#000;transition:opacity .7s;--ilw:min(58vw,820px,106vh);--ilb:calc(4vh + var(--ilw)*.47 + 16px)}      /* --ilw: width of the logo, --ilb: where the logo ends: the 'Made by' / 'With' texts live below it so they never overlap the logo at any screen size */
 #introScr.hold,#introScr.hold *{animation-play-state:paused!important}
 #introHold{position:absolute;left:0;right:0;bottom:9vh;text-align:center;color:#fff;font:700 clamp(15px,2.4vw,22px) system-ui,sans-serif;letter-spacing:.06em;text-shadow:0 2px 10px #000;z-index:5;animation:itHold 1.4s ease-in-out infinite alternate;animation-play-state:running!important}
 @keyframes itHold{from{opacity:.45}to{opacity:1}}
 #introScr.out{opacity:0;pointer-events:none}
-#introScr .sc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;color:#fff;text-align:center;text-shadow:0 2px 10px rgba(0,0,0,.8)}
-#introScr .sm{font:600 clamp(16px,3.2vw,26px)/1.2 system-ui,sans-serif;letter-spacing:.2em;margin-bottom:10px}
-#introScr .bg{font:900 clamp(40px,10vw,110px)/1.05 system-ui,sans-serif;letter-spacing:.03em;display:flex;align-items:center;gap:.25em}
+#introScr .sc{position:absolute;inset:var(--ilb) 0 0 0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;color:#fff;text-align:center;text-shadow:0 2px 10px rgba(0,0,0,.8)}
+#introScr .sm{font:600 clamp(13px,min(3.2vw,5vh),26px)/1.2 system-ui,sans-serif;letter-spacing:.2em;margin-bottom:10px}
+#introScr .bg{font:900 clamp(26px,min(10vw,15vh),110px)/1.05 system-ui,sans-serif;letter-spacing:.03em;display:flex;align-items:center;gap:.25em}
 #introScr .bg img{height:1.15em;width:auto;filter:drop-shadow(0 2px 8px rgba(0,0,0,.7))}
 #introScr .bg svg{width:.9em;height:.9em;filter:drop-shadow(0 2px 8px rgba(0,0,0,.7))}
 #introArt{object-fit:cover;position:absolute;inset:0;width:100%;height:100%;animation:iaZoom 10s linear forwards}
@@ -875,7 +875,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
 @keyframes itTitleIn{to{opacity:1;transform:scale(1)}}
 @keyframes itShine{from{background-position:0% 0}to{background-position:-240% 0}}
 #introTitle .ut{display:block;margin-top:10px;font:900 clamp(18px,2.6vw,40px)/1.1 'Cinzel','Rajdhani',serif;letter-spacing:.3em}
-#introTitle .ilogo{display:block;margin:0 auto;width:min(58vw,820px);height:auto;filter:drop-shadow(0 4px 10px rgba(0,0,0,.55))}
+#introTitle .ilogo{display:block;margin:0 auto;width:var(--ilw);height:auto;filter:drop-shadow(0 4px 10px rgba(0,0,0,.55))}
 #introTitle small{display:flex;align-items:center;justify-content:center;gap:.6em;margin-top:10px;font:900 clamp(20px,3.4vw,46px)/1 'Cinzel','Rajdhani',serif;letter-spacing:.45em;padding-left:.45em}
 #introScr .is{margin-top:14px;color:#8a94a8;font:600 14px system-ui,sans-serif;opacity:0;animation:itFade .6s 7.4s forwards}
 #introScr svg.fg{width:min(360px,80vw);height:auto;margin-bottom:18px}
@@ -6622,7 +6622,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-22-v876';
+const GAME_BUILD='build 2026-11-22-v877';
 const GAME_VERSION='1.1', GAME_VERSION_NAME='Shadows of London';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
