@@ -2,6 +2,101 @@
  "notes": [
   {
    "date": "2026-11-22",
+   "build": "v0.2 build 102",
+   "title": "그래픽·성능 다듬기",
+   "items": [
+    "위쪽 금화·계급·계절 표시를 바뀔 때만 다시 그려서 느린 컴퓨터와 폰에서 더 가볍게 했어요",
+    "폰 세로 화면 바다에서 오른쪽 끝 섬 이름이 잘리던 것을 고쳤어요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Graphics and performance polish",
+     "items": [
+      "The top gold, rank and season display now redraws only when it changes, so slow computers and phones run lighter",
+      "Fixed the island name at the right edge being cut off on the sea map on a portrait phone"
+     ]
+    },
+    "ja": {
+     "title": "Graphics and performance polish",
+     "items": [
+      "The top gold, rank and season display now redraws only when it changes, so slow computers and phones run lighter",
+      "Fixed the island name at the right edge being cut off on the sea map on a portrait phone"
+     ]
+    },
+    "es": {
+     "title": "Graphics and performance polish",
+     "items": [
+      "The top gold, rank and season display now redraws only when it changes, so slow computers and phones run lighter",
+      "Fixed the island name at the right edge being cut off on the sea map on a portrait phone"
+     ]
+    },
+    "fr": {
+     "title": "Graphics and performance polish",
+     "items": [
+      "The top gold, rank and season display now redraws only when it changes, so slow computers and phones run lighter",
+      "Fixed the island name at the right edge being cut off on the sea map on a portrait phone"
+     ]
+    },
+    "de": {
+     "title": "Graphics and performance polish",
+     "items": [
+      "The top gold, rank and season display now redraws only when it changes, so slow computers and phones run lighter",
+      "Fixed the island name at the right edge being cut off on the sea map on a portrait phone"
+     ]
+    },
+    "zh": {
+     "title": "Graphics and performance polish",
+     "items": [
+      "The top gold, rank and season display now redraws only when it changes, so slow computers and phones run lighter",
+      "Fixed the island name at the right edge being cut off on the sea map on a portrait phone"
+     ]
+    },
+    "pt": {
+     "title": "Graphics and performance polish",
+     "items": [
+      "The top gold, rank and season display now redraws only when it changes, so slow computers and phones run lighter",
+      "Fixed the island name at the right edge being cut off on the sea map on a portrait phone"
+     ]
+    },
+    "ru": {
+     "title": "Graphics and performance polish",
+     "items": [
+      "The top gold, rank and season display now redraws only when it changes, so slow computers and phones run lighter",
+      "Fixed the island name at the right edge being cut off on the sea map on a portrait phone"
+     ]
+    },
+    "tr": {
+     "title": "Graphics and performance polish",
+     "items": [
+      "The top gold, rank and season display now redraws only when it changes, so slow computers and phones run lighter",
+      "Fixed the island name at the right edge being cut off on the sea map on a portrait phone"
+     ]
+    },
+    "it": {
+     "title": "Graphics and performance polish",
+     "items": [
+      "The top gold, rank and season display now redraws only when it changes, so slow computers and phones run lighter",
+      "Fixed the island name at the right edge being cut off on the sea map on a portrait phone"
+     ]
+    },
+    "pl": {
+     "title": "Graphics and performance polish",
+     "items": [
+      "The top gold, rank and season display now redraws only when it changes, so slow computers and phones run lighter",
+      "Fixed the island name at the right edge being cut off on the sea map on a portrait phone"
+     ]
+    },
+    "ar": {
+     "title": "Graphics and performance polish",
+     "items": [
+      "The top gold, rank and season display now redraws only when it changes, so slow computers and phones run lighter",
+      "Fixed the island name at the right edge being cut off on the sea map on a portrait phone"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-11-22",
    "build": "v0.2 build 101",
    "title": "화면 크기별 잘림 수정",
    "items": [
