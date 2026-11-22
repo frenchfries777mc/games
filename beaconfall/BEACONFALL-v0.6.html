@@ -432,7 +432,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.6<br>build 215</p>
+    <p class="foot">v0.6<br>build 216</p>
   </nav>
 </div>
 
@@ -588,8 +588,10 @@ const BIO_GROUND=[
   ['#4a4d58','#575a66','#656876','#757885','#868996','#9a9dab'],
   ['#2a4a3c','#325a46','#3c6a50','#4a7a5a','#5a8a64','#6a9a70'],
   ['#9fc4e0','#b4d4ea','#c8e0f2','#dcecf8','#eef6fc','#ffffff'],
-  ['#1a0f33','#221442','#2b1a54','#352066','#412a7a','#52368f']   // 9 Deep Void: 짙은 보라
+  ['#1a0f35','#25154a','#311c60','#402577','#51308f','#6a3fae']   // 9 Deep Void: 짙은 보라 (바탕)
 ].map(a=>a&&a.map(rgb));
+const BIO_GV=[['#0d1f3d','#122a52','#193766','#21457c','#2c5693','#3b6bb0'],['#2b0f3d','#3b1452','#4d1a69','#62227f','#7a2c97','#9638b0']].map(a=>a.map(rgb));   // Deep Void 얼룩: 청남색 · 자홍색
+const BIO_VCRY=['#d8c0ff','#9a78e8','#4a2e90','#2e1a66'].map(rgb),BIO_VF=['#7be8ff','#ff8ae0','#a8ffe8','#e8d0ff'].map(rgb);   // Deep Void: 보랏빛 수정 조각 · 빛나는 꽃
 const BIO_ROCK=[null,null,['#e0b078','#c99860','#b08050','#8f6640','#6f4c30'],['#4a4856','#3c3a48','#2e2c3a','#222030','#181624'],null,['#d08a5a','#b87048','#9a5a38','#7a4428','#5a321e'],null,null,['#e8f4ff','#c8e0f2','#a0c4e0','#78a0c8','#5878a8'],['#4a3a78','#3c2e64','#2e2250','#22183c','#170f2a']].map(a=>a&&a.map(rgb));
 const BIO_SAND=[null,null,null,['#4a4858','#3a3846','#2e2c3a'],null,['#e4a070','#d08a58','#b87446'],['#9a9dab','#868996','#757885'],['#8a9a6a','#788a5a','#667a4c'],['#dcecf8','#c8e0f2','#a8c8e4'],['#2b1a54','#241546','#1d1038']].map(a=>a&&a.map(rgb));
 const LAVA=['#7a1408','#a8200a','#d8420e','#ff6a1e','#ffa030','#ffd060'].map(rgb);
@@ -971,7 +973,9 @@ function colorR(c,lx,ly){
       const m=(f8[i]&127)/127,t=0.42-L*0.45+(m-0.5)*0.8+e*0.25;
       let l=(clamp01(t)*5+b)|0;
       const sp=hash2(x,y);if(sp<0.05)l++;else if(sp>0.985)l--;
-      col=((CU&&CU.gp)||BIO_GROUND[bid]||PAL.grass)[l<0?0:l>5?5:l];
+      let gpal=(CU&&CU.gp)||BIO_GROUND[bid]||PAL.grass;
+      if(bid===9&&!(CU&&CU.gp)){const mj=m+(hash2(x+5,y+9)-0.5)*0.08;if(mj<0.42)gpal=BIO_GV[0];else if(mj>0.6)gpal=BIO_GV[1];}   // Deep Void: 땅이 한 가지 색이 아니게
+      col=gpal[l<0?0:l>5?5:l];
     }
     const dx=x-camp.x,dy=y-camp.y;
     if(dx>=-12&&dx<=12&&dy>=-12&&dy<=12&&hv>=SEA+0.02&&Math.hypot(dx,dy*1.3)+hash2(x,y)*3.5<9.5)col=PAL.dirt[(dx+dy)&1];
@@ -994,6 +998,11 @@ function colorR(c,lx,ly){
       const j=(ay-c.y0)*RGN+(ax-c.x0),hh=h[j];
       return !(hh<SEA+0.02||hh>0.95||rv[j]>0||(bio[j]&128));
     };
+    if(bid===9){
+      const vf=(ax,ay)=>hs(ax,ay,41)<0.0075?((hs(ax,ay,42)*4)|0):-1;
+      let q=vf(x,y);if(q>=0)col=BIO_VF[q];else{q=vf(x-1,y);if(q>=0&&hs(x-1,y,43)<0.5)col=BIO_VF[q];}
+      if(rk(x,y))col=BIO_VCRY[0];else if(rk(x-1,y))col=BIO_VCRY[1];else if(rk(x,y-1))col=BIO_VCRY[2];else if(rk(x-1,y-1))col=BIO_VCRY[3];
+    }else
     if(rk(x,y))col=PAL.rock[0];else if(rk(x-1,y))col=PAL.rock[1];else if(rk(x,y-1))col=PAL.rock[3];else if(rk(x-1,y-1))col=PAL.rock[4];
   }
   if(c.sm[i]&&hv>=SEA&&r===0)col=darkPx(col);
@@ -5852,10 +5861,20 @@ const BOULDER_V=[
 ];
 BOULDER[10]=makeSprite(fleck(fleck(BIG_ROWS,FLK,'q'),[[5,5],[2,5]],'w'),Object.assign({q:'#7a3cff',w:'#ffffff'},BPAL),0);
 BOULDER_V[10]=makeSprite(fleck(fleck(BIG_ROWS,FLK,'q'),[[5,5],[2,5]],'w'),Object.assign({q:'#7a3cff',w:'#ffffff'},BPAL_V),0);
+const BPAL_D={d:'#1a0f33',L:'#a58cf0',M:'#6f50c0',S:'#44297f'};   // Deep Void 바위: 보랏빛 수정암
+const BOULDER_D=[
+  makeSprite(["..ddd..",".dLLMd.","dLMMMSd","dMMSSSd",".ddddd."],BPAL_D,0),
+  makeSprite(BIG_ROWS,BPAL_D,0),
+  makeSprite(fleck(BIG_ROWS,FLK,'f'),Object.assign({f:'#f0d0a8'},BPAL_D),0),
+  makeSprite(fleck(BIG_ROWS,FLK,'g'),Object.assign({g:'#f2c75a'},BPAL_D),0),
+  makeSprite(fleck(fleck(BIG_ROWS,FLK,'c'),[[5,5],[2,5]],'v'),Object.assign({c:'#e8742c',v:'#3fb9a0'},BPAL_D),0),
+  makeSprite(fleck(fleck(BIG_ROWS,FLK,'z'),[[5,5],[2,5]],'y'),Object.assign({z:'#8ec4ff',y:'#e8f6ff'},BPAL_D),0)
+];
+BOULDER_D[10]=makeSprite(fleck(fleck(BIG_ROWS,FLK,'q'),[[5,5],[2,5]],'w'),Object.assign({q:'#35e8ff',w:'#ffffff'},BPAL_D),0);   // 공허석: 보라 바위 속에서 눈에 띄게 청록빛
 const VOLC_B=new Map();
 const isVolcRock=k=>{let v=VOLC_B.get(k);if(v===undefined){if(VOLC_B.size>20000)VOLC_B.clear();v=((bioRaw(world.boulders.x[k],world.boulders.y[k])&127)===3)?1:0;VOLC_B.set(k,v);}return v===1;};
 function drawBoulder(g,k){
-  const B=world.boulders,x=B.x[k],y=B.y[k],sp=(isVolcRock(k)?BOULDER_V:BOULDER)[B.t[k]];
+  const B=world.boulders,x=B.x[k],y=B.y[k],sp=(TER&&TER.dv?BOULDER_D:isVolcRock(k)?BOULDER_V:BOULDER)[B.t[k]];
   const ox=(P.workKind==='b'&&P.workKey===k&&P.chopT>0)?((((time*16)|0)&1)?1:-1):0;
   g.fillStyle='rgba(8,12,24,0.3)';g.fillRect(x-(sp.w>>1)+1,y+1,sp.w-2,1);
   g.drawImage(sp.c,x-(sp.w>>1)+ox,y-sp.h+1);
@@ -13648,6 +13667,8 @@ function ambSpawn(kind,VWd,VHd){
     case'fly':ambP.push({k:kind,x:r()*VWd,y:VHd*0.3+r()*VHd*0.7,vx:0,vy:0,l:8+r()*6,c:'#e8f27a',p:r()*6});break;
     case'wisp':ambP.push({k:kind,x:r()*VWd,y:VHd*0.4+r()*VHd*0.6,vx:0,vy:0,l:8+r()*6,c:'#9affd8',p:r()*6});break;
     case'sand':ambP.push({k:kind,x:-4,y:r()*VHd,vx:34+r()*30,vy:-2+r()*4,l:VWd/40,c:'#e8cf90',p:r()*6});break;
+    case'vmote':ambP.push({k:kind,x:r()*VWd,y:VHd+4,vx:-4+r()*8,vy:-7-r()*11,l:9,c:['150,230,255','220,170,255','255,150,230','180,255,235'][(r()*4)|0],p:r()*6});break;
+    case'vorb':ambP.push({k:kind,x:r()*VWd,y:VHd*0.2+r()*VHd*0.7,vx:-3+r()*6,vy:-2-r()*3,l:12,c:['170,140,255','120,220,255','255,140,220'][(r()*3)|0],p:r()*6});break;
     case'bubble':ambP.push({k:kind,x:r()*VWd,y:VHd*0.5+r()*VHd*0.5,vx:0,vy:-5-r()*5,l:4,c:'#8fe0a0',p:r()*6});break;
   }
 }
@@ -13662,6 +13683,13 @@ function drawIsleNight(g,dkn){   // 섬마다 다른 밤: 눈섬 오로라, 화�
       g.fillStyle=`rgba(90,255,170,${(a*0.09).toFixed(3)})`;g.fillRect(x,y0|0,4,hh|0);
       g.fillStyle=`rgba(150,120,255,${(a*0.07).toFixed(3)})`;g.fillRect(x,(y0+hh*0.6)|0,4,(hh*0.7)|0);
       g.fillStyle=`rgba(190,255,220,${(a*0.16).toFixed(3)})`;g.fillRect(x,y0|0,4,2);
+    }
+  }else if(b===9){   // Deep Void: 청록·보라·분홍으로 일렁이는 오로라
+    for(let x=0;x<Wd;x+=4){
+      const y0=Hd*0.08+Math.sin(time*0.35+x*0.018)*Hd*0.06+Math.sin(x*0.009-time*0.25)*Hd*0.05,hh=Hd*0.26*(0.55+0.45*Math.sin(x*0.025+time*0.45)),hue=Math.sin(x*0.008+time*0.15),c1=hue>0.35?'255,120,230':hue>-0.35?'160,110,255':'90,230,255';
+      g.fillStyle=`rgba(${c1},${(a*0.17).toFixed(3)})`;g.fillRect(x,y0|0,4,hh|0);
+      g.fillStyle=`rgba(${c1},${(a*0.10).toFixed(3)})`;g.fillRect(x,(y0+hh*0.5)|0,4,(hh*0.8)|0);
+      g.fillStyle=`rgba(235,215,255,${(a*0.28).toFixed(3)})`;g.fillRect(x,y0|0,4,2);
     }
   }else if(b===3){
     if(ashP.length!==60)ashP=Array.from({length:60},()=>({x:Math.random()*Wd,y:Math.random()*Hd,s:6+Math.random()*10,ph:Math.random()*6}));
@@ -13726,7 +13754,7 @@ function drawAmbient(g,ix,iy,dkn){
   if(gr){g.fillStyle=`rgba(${gr[0]|0},${gr[1]|0},${gr[2]|0},${gr[3].toFixed(3)})`;g.fillRect(0,0,Wd,Hd);}
   // 2) 섬 · 계절
   ambBT-=fr;if(ambBT<=0){ambBT=0.5;ambB=bioAt(P.x,P.y);ambPir=world.pir>=0&&isleNear(P.x,P.y)===world.pir;}
-  const b=ambB,se=seasonNow(),night=dkn>0.3,wet=wetNow();
+  const b=ambB,se=b===9?-1:seasonNow(),night=dkn>0.3,wet=wetNow();   // Deep Void 에는 계절이 없어요
   if(b!==2&&b!==3){
     const st=[[1,0,0.02],[0,0,0],[0,0,0.02],[0,0,0]][se];void st;
     if(se===2){g.fillStyle='rgba(210,120,40,0.045)';g.fillRect(0,0,Wd,Hd);}
@@ -13751,6 +13779,10 @@ function drawAmbient(g,ix,iy,dkn){
     if(b===7&&ambP.filter(q=>q.k==='wisp').length<14&&Math.random()<fr*5)ambSpawn('wisp',Wd,Hd);
     if(b===7&&Math.random()<rate*0.8)ambSpawn('bubble',Wd,Hd);
     if(b===2&&Math.random()<rate*1.5)ambSpawn('sand',Wd,Hd);
+    if(b===9){
+      if(Math.random()<fr*(PERF.mob?3:PERF.fx==='low'?6:11)&&ambP.filter(q=>q.k==='vmote').length<(PERF.mob?8:PERF.fx==='low'?16:34))ambSpawn('vmote',Wd,Hd);
+      if(!PERF.mob&&PERF.fx!=='low'&&Math.random()<fr*1.2&&ambP.filter(q=>q.k==='vorb').length<5)ambSpawn('vorb',Wd,Hd);
+    }
   }
   for(let i=ambP.length-1;i>=0;i--){
     const p=ambP[i];p.l-=fr;p.p+=fr*2;
@@ -13764,12 +13796,14 @@ function drawAmbient(g,ix,iy,dkn){
     else if(p.k==='ember'){g.fillStyle=p.c;g.fillRect(x,y,1,1);g.fillStyle='rgba(255,140,40,0.25)';g.fillRect(x-1,y,3,1);}
     else if(p.k==='ash'){g.fillStyle='rgba(150,150,160,0.75)';g.fillRect(x,y,1,1);}
     else if(p.k==='sand'){g.fillStyle='rgba(235,210,150,0.55)';g.fillRect(x,y,2,1);}
+    else if(p.k==='vmote'){const a=0.35+0.65*Math.max(0,Math.sin(p.p*2.4));g.fillStyle=`rgba(${p.c},${(a*0.22).toFixed(2)})`;g.fillRect(x-1,y-1,3,3);g.fillStyle=`rgba(${p.c},${a.toFixed(2)})`;g.fillRect(x,y,1,1);}
+    else if(p.k==='vorb'){const a=0.5+0.5*Math.sin(p.p*0.9);g.fillStyle=`rgba(${p.c},${(a*0.07).toFixed(3)})`;fillCircle(g,x,y,7);g.fillStyle=`rgba(${p.c},${(a*0.13).toFixed(3)})`;fillCircle(g,x,y,4);g.fillStyle=`rgba(255,255,255,${(a*0.55).toFixed(2)})`;g.fillRect(x,y,1,1);}
     else if(p.k==='bubble'){g.fillStyle='rgba(150,230,170,0.6)';g.fillRect(x,y,1,1);g.fillStyle='rgba(220,255,230,0.5)';g.fillRect(x+1,y-1,1,1);}
   }
   // 안개: 돌섬·맹그로브·정글·해적섬
-  if(b===6||b===7||b===4||ambPir){
-    const al=b===7?0.075:ambPir?0.07:0.05;
-    g.fillStyle=b===7?`rgba(150,210,160,${al})`:ambPir?`rgba(120,110,130,${al})`:`rgba(215,225,235,${al})`;
+  if(b===6||b===7||b===4||b===9||ambPir){
+    const al=b===7?0.075:ambPir?0.07:b===9?0.06:0.05;
+    g.fillStyle=b===9?`rgba(140,100,230,${al})`:b===7?`rgba(150,210,160,${al})`:ambPir?`rgba(120,110,130,${al})`:`rgba(215,225,235,${al})`;
     for(let i=0;i<5;i++){const x=((time*(5+i*2)+i*191)%(Wd+240))-120,y=Hd*(0.15+i*0.18)+Math.sin(time*0.3+i)*12;fillCircle(g,x|0,y|0,38+i*6);fillCircle(g,(x+40)|0,(y+8)|0,26+i*4);}
   }
   // 얼음섬 오로라 (밤)
@@ -13788,6 +13822,8 @@ function drawAmbient(g,ix,iy,dkn){
   }
   // 화산 열기
   if(b===3){g.fillStyle='rgba(255,70,20,0.045)';g.fillRect(0,0,Wd,Hd);}
+  // Deep Void: 은은한 보랏빛 공기
+  if(b===9){g.fillStyle='rgba(90,50,170,0.05)';g.fillRect(0,0,Wd,Hd);}
 }
 function drawNight(g,a,ix,iy){
   if(bufOn('night'))a*=0.4;
