@@ -475,9 +475,11 @@ function render0(t, G, op) {
   x.setTransform(1, 0, 0, 1, 0, 0); x.textAlign = 'center'; x.textBaseline = 'alphabetic';
   const S = (px, py) => [(px - Math.round(cx)) * sc, (py - Math.round(cy)) * sc], fs = Math.max(11, Math.round(sc * 4.4));
   x.font = '700 ' + fs + 'px Galmuri, sans-serif';
+  const tagBox = [];
   for (const r of G.racers) {
-    let near = 0; for (const o of G.racers) { if (o === r) break; if (Math.abs(o.x - r.x) < 44 && Math.abs(o.y - r.y) < 24) near++; }       // 가까이 모여 있으면 이름표를 위로 쌓아요
-    const [X, Y0] = S(r.x + 5, r.y - 9), Y = Y0 - near * (fs + 6), bw = 26 * sc;
+    const [X, Y0] = S(r.x + 5, r.y - 9), bw = 26 * sc; let Y = Y0;
+    const tw = Math.max(bw, x.measureText(r.name).width) + 6; for (let k = 0; k < 6 && tagBox.some(o => Math.abs(o[0] - X) < (o[2] + tw) / 2 && Math.abs(o[1] - Y) < fs + 4); k++) Y -= fs + 6;       // 이름표가 겹치면 위로 쌓아요
+    tagBox.push([X, Y, tw]);
     x.fillStyle = 'rgba(0,0,0,.65)'; x.fillRect(X - bw / 2 - 2, Y - 1, bw + 4, 4 * sc); x.fillStyle = r.hp > 50 ? '#6fe08a' : r.hp > 25 ? '#ffd36b' : '#ff6a5a'; x.fillRect(X - bw / 2, Y, bw * Math.max(0, r.hp) / MAX_HP, 2.4 * sc);
     x.lineWidth = 3; x.strokeStyle = 'rgba(0,0,0,.8)'; x.strokeText(r.name, X, Y - 4); x.fillStyle = r === me ? '#ffd36b' : '#fff'; x.fillText(r.name, X, Y - 4);
   }
