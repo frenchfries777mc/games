@@ -61,7 +61,7 @@ function paintWho() {
 let ffMarked = '';
 function ffProfile() {
   if (window.FFProfile) return Promise.resolve(true);
-  return new Promise(res => { const s = document.createElement('script'); s.src = 'https://frenchfries777.com/games/ff-profile.js?v=20261103e'; s.onload = () => res(!!window.FFProfile); s.onerror = () => res(false); document.head.appendChild(s); });
+  return new Promise(res => { const s = document.createElement('script'); s.src = 'https://frenchfries777.com/games/ff-profile.js?v=20261120c'; s.onload = () => res(!!window.FFProfile); s.onerror = () => res(false); document.head.appendChild(s); });
 }
 async function ffSync() {
   try {
@@ -425,6 +425,7 @@ function replayAt(t) {
 }
 function addFx(e) {
   if (e.t === 'jump' && N.mode !== 'guest') { /* 소리는 sfx에서 */ }
+  if (e.t === 'hit' && (e.id === N.me || e.by === N.me)) { try { window.FFHaptic && FFHaptic.hit(); } catch (x) { } }
   if (e.t === 'hit') fx.push({ t: 'hit', x: e.x, y: e.y, age: 0, life: .3, s: Math.random() * 6 });
   else if (e.t === 'boom') fx.push({ t: 'boom', x: e.x, y: e.y, age: 0, life: .45 });
   else if (e.t === 'ko') fx.push({ t: 'ko', x: e.x, y: e.y, age: 0, life: .6 });

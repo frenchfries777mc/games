@@ -50,6 +50,8 @@ try{ if(!document.getElementById('ffTap')){ var tp=document.createElement('style
 /* 모든 페이지에서 접속 신호(+게임 화면이면 "지금 하는 게임")를 보내는 ff-presence.js 도 불러요 */
 try{ var me=document.currentScript, base=(me&&me.src)?me.src.replace(/[^\/]*$/,''):'https://frenchfries777.com/games/';
   if(!window.FFPresence){ var ps=document.createElement('script'); ps.src=base+'ff-presence.js?v=20261107h'; ps.async=true; (document.head||document.documentElement).appendChild(ps); } }catch(e){}
+/* 공통 다듬기(ff-polish.js): 스크롤바 숨김, 뒤로가기로 팝업 닫기, 사진 크게 보기, 페이지 전환, 숫자 자리, 화면 꺼짐 방지 */
+try{ if(!window.__ffPolish){ var pp=document.createElement('script'); pp.src=base+'ff-polish.js?v=20261120c'; pp.async=true; (document.head||document.documentElement).appendChild(pp); } }catch(e){}
 /* 즐겨찾기(ff-fav.js): 카드 목록(#games)이 있는 첫 화면에서만 동작해요 */
 try{ if(!window.FFFav&&document.getElementById&&/^\/(games|tools|educations)\/?$/.test(location.pathname)){ var fs=document.createElement('script'); fs.src=base+'ff-fav.js?v=20261109c'; fs.async=true; (document.head||document.documentElement).appendChild(fs); } }catch(e){}
 /* 설치 버튼(ff-install.js): frenchfries777.com 에서만 동작해요 */
@@ -57,7 +59,7 @@ try{ if(!window.FFInstall){ var is=document.createElement('script'); is.src=base
 /* 테마(다크 · 라이트)와 글자 크기: 허브나 게임 사이트의 ⚙️ 에서 고르면 모두 같이 바뀌어요.
    <html> 에 data-ff-theme="dark|light" 와 data-ff-size="s|m|l|xl" 를 붙이고, 허브와 게임 사이트(게임 화면은 빼고)는 크기만큼 확대해요.
    라이트 색은 각 페이지 CSS 가 html[data-ff-theme=light] 로 정해요. */
-var TK='ff.theme', SK='ff.size', THEMES=['dark','light','yellow','red','blue'], ZOOM={s:0.9,m:1,l:1.12,xl:1.25};
+var TK='ff.theme', SK='ff.size', THEMES=['dark','light'], ZOOM={s:0.9,m:1,l:1.12,xl:1.25};
 /* game site pages that get a light look here (their own CSS only has the dark one): 'site' or 'site/page' */
 function sitePage(){ var m=/\/(stickseum|crownenvoy|beaconfall)\/(?:(index|codex|ranking|balance|mods)\.html)?$/i.exec(location.pathname||''); return m?m[1].toLowerCase()+'/'+(m[2]||'index').toLowerCase():''; }
 function isSite(){ var p=location.pathname||''; return !/\.html$/i.test(p) || /\/index\.html$/i.test(p) || !!sitePage(); }
@@ -82,22 +84,6 @@ var L='html[data-ff-theme=light]', LIGHT={
     L+' input.q,'+L+' .cats .pb{box-shadow:2px 2px 0 rgba(60,45,10,.28)}'+L+' .card{border-color:rgba(128,97,26,.4)}'+L+' .rc{border-color:rgba(128,97,26,.3)}'+L+' .sl{background:rgba(128,97,26,.12)}'+
     L+' .rn{color:#5a5040}'+L+' .wh.bk{border-color:#c0407a;color:#c0407a}'+L+' #det .box{background:#fffbee;box-shadow:6px 6px 0 rgba(60,45,10,.3)}'+L+' .dh img{background:rgba(128,97,26,.1)}'+L+' .src{background:rgba(0,0,0,.05)}'
 };
-/* background-colour themes on the game site pages (yellow rides on the light rules above, red and blue on the dark ones); same palettes as the hub */
-var A='html[data-ff-accent=', ACC={
-  stickseum: A+'yellow]{--bg:#efe2ad;--bg2:#e6d79b;--panel:#faf3d2;--panel-2:#f3e8b8;--line:#d6c780;--text:#2b2410;--text-dim:#6b6240}'+
-    A+'red]{--bg:#3f1a20;--bg2:#36161b;--panel:#2f1317;--panel-2:#3a181e;--line:#6a2f38;--text:#f8ecec;--text-dim:#c9a3a8}'+
-    A+'blue]{--bg:#2d4b78;--bg2:#27426b;--panel:#243f67;--panel-2:#2b4a78;--line:#4b6b9d;--text:#eef3fb;--text-dim:#b8c7de}'+
-    A+'red] .heroBg::after{background:linear-gradient(90deg,rgba(63,26,32,.82),rgba(63,26,32,.56) 55%,rgba(63,26,32,.34))}'+
-    A+'blue] .heroBg::after{background:linear-gradient(90deg,rgba(45,75,120,.82),rgba(45,75,120,.56) 55%,rgba(45,75,120,.34))}',
-  crownenvoy: A+'yellow]{--ink:#efe2ad;--panel:#faf3d2;--panel2:#f1e4b0;--line:#d6c780;--text:#2b2410;--muted:#6b6240}'+
-    A+'red]{--ink:#3f1a20;--panel:#2f1317;--panel2:#3a181e;--line:#6a2f38;--text:#f8ecec;--muted:#c9a3a8}'+
-    A+'blue]{--ink:#2d4b78;--panel:#243f67;--panel2:#2b4a78;--line:#4b6b9d;--text:#eef3fb;--muted:#b8c7de}'+
-    A+'red] .hero{background-color:#3f1a20}'+A+'red] .hero::after{background:linear-gradient(180deg,#3f1a2099 0%,#3f1a2033 35%,#3f1a20ee 88%,#3f1a20 100%)}'+
-    A+'blue] .hero{background-color:#2d4b78}'+A+'blue] .hero::after{background:linear-gradient(180deg,#2d4b7899 0%,#2d4b7833 35%,#2d4b78ee 88%,#2d4b78 100%)}',
-  beaconfall: A+'yellow]{--ink:#efe2ad;--panel:rgba(250,243,210,.93);--btn:rgba(250,243,210,.92)}'+A+'yellow] #bgshade{background:linear-gradient(180deg,rgba(239,226,173,.4),rgba(239,226,173,.74) 50%,rgba(239,226,173,.9))}'+
-    A+'red]{--ink:#3f1a20;--panel:rgba(47,19,23,.9);--btn:rgba(47,19,23,.82)}'+A+'red] #bgshade{background:linear-gradient(180deg,rgba(63,26,32,.45),rgba(63,26,32,.78) 50%,rgba(63,26,32,.92))}'+
-    A+'blue]{--ink:#2d4b78;--panel:rgba(36,63,103,.9);--btn:rgba(36,63,103,.82)}'+A+'blue] #bgshade{background:linear-gradient(180deg,rgba(45,75,120,.45),rgba(45,75,120,.78) 50%,rgba(45,75,120,.92))}'
-};
 /* top bar: the same places on every site. The language, hub, bell and account buttons stay in ONE row at the right edge whatever the width, login state, nickname or language is;
    menu links that do not fit are hidden (or scroll in their own row), never pushed the buttons to a second line. Written as 'html body ...' so a page's own rules lose ties. */
 function siteName(){ var m=/\/(stickseum|crownenvoy|beaconfall|isleport|educations|tools)\//i.exec(location.pathname||''); return m?m[1].toLowerCase():'hub'; }
@@ -121,10 +107,10 @@ var B='html body ', BAR={
 BAR.educations=BAR.tools=BAR.hub;
 function barCss(){ if(document.getElementById('ff-bar')) return; var n=siteName(); try{ document.documentElement.setAttribute('data-ff-site',n); }catch(e){}
   var css=(BAR.all||'')+(BAR[n]||''); var st=document.createElement('style'); st.id='ff-bar'; st.textContent=css; (document.head||document.documentElement).appendChild(st); }
-function lightCss(){ var k=sitePage(); if(!k||document.getElementById('ff-light')) return; var css=(LIGHT[k.split('/')[0]]||'')+(LIGHT[k]||'')+(ACC[k.split('/')[0]]||''); if(!css) return;
+function lightCss(){ var k=sitePage(); if(!k||document.getElementById('ff-light')) return; var css=(LIGHT[k.split('/')[0]]||'')+(LIGHT[k]||''); if(!css) return;
   var st=document.createElement('style'); st.id='ff-light'; st.textContent=css; (document.head||document.documentElement).appendChild(st); }      // a page's own html[data-ff-theme=light] rules can still override these
-function tget(){ var t='dark', z='m'; try{ var tv=localStorage.getItem(TK); if(THEMES.indexOf(tv)>=0) t=tv; var v=localStorage.getItem(SK); if(ZOOM[v]) z=v; }catch(e){} return {theme:t, size:z}; }
-function tapply(){ var st=tget(), h=document.documentElement; h.setAttribute('data-ff-theme',(st.theme==='light'||st.theme==='yellow')?'light':'dark'); if(st.theme==='yellow'||st.theme==='red'||st.theme==='blue') h.setAttribute('data-ff-accent',st.theme); else h.removeAttribute('data-ff-accent'); h.setAttribute('data-ff-size',st.size); if(isSite()) h.style.zoom=ZOOM[st.size]===1?'':String(ZOOM[st.size]); try{ if(/(^|\.)frenchfries777\.com$/.test(location.hostname)) document.cookie='ffth='+st.theme+';domain=.frenchfries777.com;path=/;max-age=31536000;samesite=lax;secure'; }catch(e){} }
+function tget(){ var t='dark', z='m'; try{ var tv=localStorage.getItem(TK); if(THEMES.indexOf(tv)>=0) t=tv; else if(tv) localStorage.setItem(TK,'dark');   /* 없어진 노랑·빨강·파랑을 골라 둔 사람은 다크로 */ var v=localStorage.getItem(SK); if(ZOOM[v]) z=v; }catch(e){} return {theme:t, size:z}; }
+function tapply(){ var st=tget(), h=document.documentElement; h.setAttribute('data-ff-theme',st.theme==='light'?'light':'dark'); h.removeAttribute('data-ff-accent'); h.setAttribute('data-ff-size',st.size); if(isSite()) h.style.zoom=ZOOM[st.size]===1?'':String(ZOOM[st.size]); try{ if(/(^|\.)frenchfries777\.com$/.test(location.hostname)) document.cookie='ffth='+st.theme+';domain=.frenchfries777.com;path=/;max-age=31536000;samesite=lax;secure'; }catch(e){} }
 /* 새 디자인(2026-11-06): 검정/흰색 바탕 + 황금 포인트. 허브·게임 첫 화면·교육·도구가 같은 변수(--bg --panel --line --text --dim --fry --fry2)를 읽어요. 게임 사이트 안쪽 화면은 자기 색을 써요. */
 function skinCss(){ if(document.getElementById('ff-skin')) return; if(/\/(stickseum|crownenvoy|beaconfall|isleport|vowkeep|tumblecrown|dummyparty|gatecrash|kitchendefense)\//i.test(location.pathname||'')) return;
   var D='html[data-ff-theme=dark]:root', W='html[data-ff-theme=light]:root';

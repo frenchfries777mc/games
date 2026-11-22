@@ -9,14 +9,14 @@
 <meta name="description" content="Frenchfries777이 만든 브라우저 게임 모음. 설치 없이 바로 플레이해요.">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Frenchfries777","item":"https://frenchfries777.com/"},{"@type":"ListItem","position":2,"name":"Games","item":"https://frenchfries777.com/games/"}]}</script>
 <meta property="og:title" content="Games - Frenchfries777"><meta property="og:description" content="설치 없이 브라우저에서 바로 하는 게임들 · Stickseum · Crown Envoy · Beaconfall · Isleport"><meta property="og:type" content="website">
-<meta property="og:url" content="https://frenchfries777.com/games/"><meta property="og:site_name" content="Frenchfries777"><meta property="og:image" content="https://frenchfries777.com/games/og/games.jpg?v=1"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
-<meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://frenchfries777.com/games/og/games.jpg?v=1">
+<meta property="og:url" content="https://frenchfries777.com/games/"><meta property="og:site_name" content="Frenchfries777"><meta property="og:image" content="https://frenchfries777.com/games/og/notice.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://frenchfries777.com/games/og/notice.png">
 <meta name="theme-color" content="#000000">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
-<script src="ff-lang.js?v=20261116e"></script>
+<script src="ff-lang.js?v=20261120c"></script>
 <script id="i18n">
 /* Site translation (same 6 languages and the same saved choice as the game).
    The pages are written in Korean; this file translates their text in place. Whole text nodes are looked up first (S: site strings),
@@ -201,19 +201,47 @@ img{max-width:100%}
 <div style="margin-top:auto;padding:14px 12px;border-top:1px solid #262626;display:flex;flex-direction:column;gap:3px;font-size:12px;color:#9a9a9a"><span>Made by Frenchfries777 with Claude AI</span><span>© 2026 Frenchfries777 · CC BY-NC-ND 4.0</span></div>
 </aside>
 <main style="position:relative;overflow:hidden;flex:1 1 640px;min-width:0;box-sizing:border-box;display:flex;flex-direction:column;background:#000000">
-<img src="https://frenchfries777.com/img/pixel-bg.png" alt="도트 풍경" style="position:absolute;left:0;top:0;width:100%;height:auto;display:block;image-rendering:pixelated">
-<div style="position:absolute;left:0;top:0;width:100%;height:100%;background:linear-gradient(180deg,rgba(14,14,14,.1) 0,rgba(14,14,14,.1) 120px,rgba(14,14,14,.8) 430px,rgba(14,14,14,.78) 100%)"></div>
+<style>#ffGameArt{position:absolute;left:0;top:0;width:100%;aspect-ratio:640/360;overflow:hidden;filter:saturate(.8) brightness(.78)}#ffGameDeck{position:absolute;left:0;right:0;top:0;bottom:0;display:flex;flex-direction:column;pointer-events:none}#ffGameDeck i{display:block;width:100%;aspect-ratio:640/360;flex:none}#ffGameDeck b{display:block;flex:1;background:url(bg/deck.png?v=20261121) 0 0/100% auto repeat-y;image-rendering:pixelated;filter:saturate(.8) brightness(.78)}#ffGArt{position:absolute;top:0;height:100%;aspect-ratio:640/360;left:60%;transform:translateX(-60%)}#ffGArt canvas,#ffGArt img{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;display:block;pointer-events:none}#ffGameArt .scrim{position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,10,14,.78) 0,rgba(10,10,14,.55) 45%,rgba(10,10,14,0) 70%)}@media(max-width:700px){#ffGameDeck{display:none}#ffGameArt{aspect-ratio:auto;height:440px;-webkit-mask-image:linear-gradient(#000 78%,transparent);mask-image:linear-gradient(#000 78%,transparent)}}</style>
+<div id="ffGameDeck" aria-hidden="true"><i></i><b></b></div><div id="ffGameArt" role="img" aria-label="도트 풍경: 바닷가 놀이공원"><div id="ffGArt"></div><div class="scrim"></div></div>
+<script src="ff-sky.js?v=20261121"></script><script>(function(){
+var art=document.getElementById('ffGArt');if(!art||!window.FFSky)return;
+var FS=FFSky.make(4/3),B='https://frenchfries777.com/games/bg/',N=['back','pier','front','wheel','carousel','ship','car','rider'],IM={},left=N.length,still=false,mob=false;
+try{still=matchMedia('(prefers-reduced-motion:reduce)').matches}catch(e){}try{mob=localStorage.getItem('ff_device')==='mobile'}catch(e){}
+N.forEach(function(n){var i=new Image();i.onload=function(){IM[n]=i;if(--left===0)go()};i.src=B+n+'.png?v=20261121'});
+function cv(){var c=document.createElement('canvas');c.width=640;c.height=360;art.appendChild(c);var x=c.getContext('2d');x.imageSmoothingEnabled=false;return x}
+function ly(n){var i=document.createElement('img');i.alt='';i.src=B+n+'.png?v=20261121';art.appendChild(i)}
+function ty(x){var X=x*1.5;return (128+190-Math.floor(120*(.5+.5*Math.sin(X/95+.6))*(.55+.45*Math.sin(X/330+1))))*2/3}
+function go(){
+ var sky=cv(),cl=FS.cloudLayer(art),sea=cv();ly('back');var tr=cv(),wh=cv();ly('pier');var at=cv();ly('front');
+ function paint(){var d=new Date();FS.draw(sky,d,{noClouds:true});cl.paint(d);FS.sea(sea,d,0,223,298)}
+ paint();setInterval(function(){if(!document.hidden)paint()},30000);
+ var lastSea=-1;
+ function frame(t,still0){
+  var d=new Date(),u=((t%26)/14);if(still0)u=.5;
+  tr.clearRect(0,0,640,360);
+  if(u<1){var fx=-16+u*706;for(var k=2;k>=0;k--){var x=fx-k*33;if(x<-40||x>680)continue;var y=ty(x),a=Math.atan2(ty(x+12)-ty(x-12),24);tr.save();tr.translate(x,y);tr.rotate(a);tr.drawImage(IM.car,-17,-20);if(k===0)tr.drawImage(IM.rider,-20,-36);tr.restore()}}
+  wh.clearRect(0,0,640,360);wh.drawImage(IM.wheel,(Math.floor(t*6)%60)*227,0,227,235,347,87,227,235);
+  at.clearRect(0,0,640,360);at.drawImage(IM.carousel,(Math.floor(t*15)%36)*153,0,153,153,316,184,153,153);
+  at.drawImage(IM.ship,Math.round(20+20*Math.sin(t*2*Math.PI/8))*240,0,240,227,443,190,240,227);
+  cl.move(t);var ls=Math.floor(t*5);if(ls!==lastSea){lastSea=ls;FS.sea(sea,d,t,223,298)}
+ }
+ if(still){frame(6,true);return}
+ var t0=performance.now(),last=0,iv=mob?50:33;
+ function loop(now){requestAnimationFrame(loop);if(document.hidden||now-last<iv)return;last=now;frame((now-t0)/1000+6,false)}
+ requestAnimationFrame(loop)}
+})()</script>
+<div style="position:absolute;left:0;top:0;width:100%;height:100%;background:linear-gradient(180deg,rgba(14,14,14,0) 0,rgba(14,14,14,0) 500px,rgba(14,14,14,.8) 700px,rgba(14,14,14,.8) 100%)"></div>
 <div style="position:relative;padding:0 40px;display:flex;flex-direction:column">
-<div id="ffTop"><button type="button" class="srx-btn" id="srxBtn" aria-label="검색" title="검색">🔍</button><div id="onlineBar"></div><div class="tb"><span data-ff-account data-ff-nohub></span></div></div><script>(function(){var b=document.getElementById('srxBtn');if(!b)return;b.addEventListener('click',function f(e){if(b.onclick)return;b.removeEventListener('click',f);e.stopImmediatePropagation();e.preventDefault();var s=document.createElement('script');s.src='https://frenchfries777.com/games/hub.js?v=20261116a';s.onload=function(){setTimeout(function(){if(b.onclick)b.click();},500);};document.head.appendChild(s);},true);})();</script>
+<div id="ffTop"><button type="button" class="srx-btn" id="srxBtn" aria-label="검색" title="검색">🔍</button><div id="onlineBar"></div><div class="tb"><span data-ff-account data-ff-nohub></span></div></div><script>(function(){var b=document.getElementById('srxBtn');if(!b)return;b.addEventListener('click',function f(e){if(b.onclick)return;b.removeEventListener('click',f);e.stopImmediatePropagation();e.preventDefault();var s=document.createElement('script');s.src='https://frenchfries777.com/games/hub.js?v=20261120c';s.onload=function(){setTimeout(function(){if(b.onclick)b.click();},500);};document.head.appendChild(s);},true);})();</script>
 <div style="padding:70px 0 34px;display:flex;flex-direction:column;gap:16px">
-<span style="font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;letter-spacing:.2em;color:#ffd54a">GAMES · 8개</span>
-<h1 style="margin:0;font-family:'Oswald',sans-serif;font-weight:700;font-size:clamp(48px,7vw,96px);line-height:.95;letter-spacing:.01em">Games</h1>
-<p style="margin:0;max-width:640px;min-height:61px;font-size:18px;line-height:1.7;color:#ffffff">설치 없이 링크만 열면 바로 시작해요. 친구에게 주소만 보내면 같이 할 수 있어요.</p>
-<div style="height:60px"></div>
+<span style="font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;letter-spacing:.2em;color:#ffd54a;text-shadow:0 1px 4px rgba(0,0,0,.9)">GAMES · 8개</span>
+<h1 style="margin:0;font-family:'Oswald',sans-serif;font-weight:700;font-size:clamp(48px,7vw,96px);line-height:.95;letter-spacing:.01em;text-shadow:0 2px 6px rgba(0,0,0,.7),0 0 18px rgba(0,0,0,.5)">Games</h1>
+<p style="margin:0;max-width:640px;min-height:61px;font-size:18px;line-height:1.7;color:#ffffff;text-shadow:0 1px 4px rgba(0,0,0,.75),0 0 12px rgba(0,0,0,.5)">설치 없이 링크를 열면 바로 시작해요. 친구에게 주소만 보내면 같이 할 수 있어요.</p>
+<div style="height:210px"></div>
 </div>
 <section style="padding:28px 0 24px;display:flex;flex-direction:column;gap:22px">
 <h2 style="margin:0;font-family:'Oswald','Noto Sans KR',sans-serif;font-weight:600;font-size:28px;letter-spacing:.04em">전체 게임</h2>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(420px,100%),1fr));gap:16px"><a href="/games/stickseum/" style="display:block;border-radius:14px;overflow:hidden;border:1px solid #262626;min-width:0"><img src="/games/og/stickseum.jpg" alt="Stickseum" style="width:100%;aspect-ratio:1200/630;object-fit:cover;display:block"></a><a href="/games/crownenvoy/" style="display:block;border-radius:14px;overflow:hidden;border:1px solid #262626;min-width:0"><img src="/games/og/crownenvoy.jpg" alt="Crown Envoy" style="width:100%;aspect-ratio:1200/630;object-fit:cover;display:block"></a><a href="/games/beaconfall/" style="display:block;border-radius:14px;overflow:hidden;border:1px solid #262626;min-width:0"><img src="/games/og/beaconfall.jpg" alt="Beaconfall" style="width:100%;aspect-ratio:1200/630;object-fit:cover;display:block"></a><a href="/games/isleport/" style="display:block;border-radius:14px;overflow:hidden;border:1px solid #262626;min-width:0"><img src="/games/og/isleport.jpg" alt="Isleport" style="width:100%;aspect-ratio:1200/630;object-fit:cover;display:block"></a><a href="/games/vowkeep/" style="display:block;border-radius:14px;overflow:hidden;border:1px solid #262626;min-width:0"><img src="/games/og/vowkeep.jpg" alt="Vowkeep" style="width:100%;aspect-ratio:1200/630;object-fit:cover;display:block"></a><a href="/games/tumblecrown/" style="display:block;border-radius:14px;overflow:hidden;border:1px solid #262626;min-width:0"><img src="/games/og/tumblecrown.jpg" alt="Tumble Crown" style="width:100%;aspect-ratio:1200/630;object-fit:cover;display:block"></a><a href="/games/dummyparty/" style="display:block;border-radius:14px;overflow:hidden;border:1px solid #262626;min-width:0"><img src="/games/og/dummyparty.jpg" alt="Dummy Party" style="width:100%;aspect-ratio:1200/630;object-fit:cover;display:block"></a><a href="/games/gatecrash/" style="display:block;border-radius:14px;overflow:hidden;border:1px solid #262626;min-width:0"><img src="/games/og/gatecrash.jpg" alt="Gatecrash" style="width:100%;aspect-ratio:1200/630;object-fit:cover;display:block"></a><div style="visibility:hidden;aspect-ratio:1200/630"></div></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(420px,100%),1fr));gap:36px;margin-top:14px"><a href="/games/stickseum/" style="display:block;border-radius:22px;overflow:hidden;border:0;box-shadow:0 10px 30px rgba(0,0,0,.45);min-width:0"><img src="/games/og/stickseum.jpg" alt="Stickseum" style="width:100%;aspect-ratio:1200/630;object-fit:cover;display:block"></a><a href="/games/crownenvoy/" style="display:block;border-radius:22px;overflow:hidden;border:0;box-shadow:0 10px 30px rgba(0,0,0,.45);min-width:0"><img src="/games/og/crownenvoy.jpg" alt="Crown Envoy" style="width:100%;aspect-ratio:1200/630;object-fit:cover;display:block"></a><a href="/games/beaconfall/" style="display:block;border-radius:22px;overflow:hidden;border:0;box-shadow:0 10px 30px rgba(0,0,0,.45);min-width:0"><img src="/games/og/beaconfall.jpg" alt="Beaconfall" style="width:100%;aspect-ratio:1200/630;object-fit:cover;display:block"></a><a href="/games/isleport/" style="display:block;border-radius:22px;overflow:hidden;border:0;box-shadow:0 10px 30px rgba(0,0,0,.45);min-width:0"><img src="/games/og/isleport.jpg" alt="Isleport" style="width:100%;aspect-ratio:1200/630;object-fit:cover;display:block"></a><a href="/games/vowkeep/" style="display:block;border-radius:22px;overflow:hidden;border:0;box-shadow:0 10px 30px rgba(0,0,0,.45);min-width:0"><img src="/games/og/vowkeep.jpg" alt="Vowkeep" style="width:100%;aspect-ratio:1200/630;object-fit:cover;display:block"></a><a href="/games/tumblecrown/" style="display:block;border-radius:22px;overflow:hidden;border:0;box-shadow:0 10px 30px rgba(0,0,0,.45);min-width:0"><img src="/games/og/tumblecrown.jpg" alt="Tumble Crown" style="width:100%;aspect-ratio:1200/630;object-fit:cover;display:block"></a><a href="/games/dummyparty/" style="display:block;border-radius:22px;overflow:hidden;border:0;box-shadow:0 10px 30px rgba(0,0,0,.45);min-width:0"><img src="/games/og/dummyparty.jpg" alt="Dummy Party" style="width:100%;aspect-ratio:1200/630;object-fit:cover;display:block"></a><a href="/games/gatecrash/" style="display:block;border-radius:22px;overflow:hidden;border:0;box-shadow:0 10px 30px rgba(0,0,0,.45);min-width:0"><img src="/games/og/gatecrash.jpg" alt="Gatecrash" style="width:100%;aspect-ratio:1200/630;object-fit:cover;display:block"></a></div>
 </section>
 <section style="padding:28px 0 72px;display:flex;flex-direction:column;gap:22px">
 <h2 style="margin:0;font-family:'Oswald','Noto Sans KR',sans-serif;font-weight:600;font-size:28px;letter-spacing:.04em">이런 점이 좋아요</h2>
@@ -241,8 +269,8 @@ img{max-width:100%}
 </main>
 </div>
 <script src="ff-hate.js?v=20261021r"></script>
-<script src="ff-auth.js?v=20261116d"></script>
-<script src="hub.js?v=20261116a"></script>
+<script src="ff-auth.js?v=20261120b"></script>
+<script src="hub.js?v=20261120c"></script>
 <script src="ff-splash.js?v=20261107a" defer></script>
 <script>
 (function(){
@@ -296,6 +324,6 @@ img{max-width:100%}
   document.addEventListener('visibilitychange',function(){ tab=!document.hidden; upd(); });
 })();
 </script>
-<script src="https://frenchfries777.com/games/ff-sidemenu.js?v=20261116c" defer></script>
+<script src="https://frenchfries777.com/games/ff-sidemenu.js?v=20261120c" defer></script>
 </body>
 </html>

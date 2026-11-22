@@ -2,8 +2,15 @@
    The pages keep their own markup; this adds the style and swaps the little squares for icons. */
 (function(){
   if(window.__ffSideMenu)return; window.__ffSideMenu=1;
-  /* a picture that failed once (flaky network, deploy in progress) gets one retry with a fresh address */
-  if(!window.__ffImgRetry){ window.__ffImgRetry=1; document.addEventListener('error',function(e){ var i=e.target; if(!i||i.tagName!=='IMG'||i.__ffr||!i.src||/^(data|blob):/.test(i.src)) return; i.__ffr=1; var s=i.src; setTimeout(function(){ i.src=s+(s.indexOf('?')<0?'?':'&')+'r='+Date.now(); },1500); },true); }
+  /* a picture that fails to load is fetched again as plain data (not as an <img> request), then from the github mirror */
+  if(!window.__ffImgRetry){ window.__ffImgRetry=1; var MIR='https://frenchfries777mc.github.io', MD=/^\/(games|educations|tools|prototypes|seumarena)\//;
+    var viaFetch=function(u){ return fetch(u,{cache:'reload',credentials:'omit'}).then(function(r){ if(!r.ok) throw 0; return r.blob(); }).then(function(b){ if(!/^image\//.test(b.type)) throw 0; return URL.createObjectURL(b); }); };
+    var fixImg=function(i){ if(!i||i.tagName!=='IMG'||i.__ffr||!i.src||/^(data|blob):/.test(i.src)) return; i.__ffr=1; var s=i.src, u; try{ u=new URL(s); }catch(x){ return; }
+      var mir=/(^|\.)frenchfries777\.com$/.test(u.hostname)?MIR+(MD.test(u.pathname)?'':'/hub')+u.pathname+u.search:null;
+      viaFetch(s).catch(function(){ if(!mir) throw 0; return viaFetch(mir); }).then(function(b){ i.src=b; }).catch(function(){}); };
+    document.addEventListener('error',function(e){ fixImg(e.target); },true);
+    var sweep=function(){ [].forEach.call(document.images,function(i){ if(i.complete&&i.naturalWidth===0&&i.src) fixImg(i); }); };
+    sweep(); document.addEventListener('DOMContentLoaded',sweep); window.addEventListener('load',function(){ sweep(); setTimeout(sweep,1500); }); }
   var IC={'/':'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>','/games/':'<rect x="2.5" y="7" width="19" height="11" rx="4"/><path d="M7 10v5M4.5 12.5h5M16 11.5h.01M18.5 13.5h.01"/>','/educations/':'<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-4.5"/>','/tools/':'<path d="M14.5 6.5a4 4 0 0 0-5 5L3 18l3 3 6.5-6.5a4 4 0 0 0 5-5l-3 3-2.5-2.5z"/>','/wiki/':'<path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/>','/community/':'<path d="M4 5h16v11H9l-5 4z"/>','/lounge/':'<path d="M5 12V9a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3v3"/><path d="M3 12a2 2 0 0 1 2 2v2h14v-2a2 2 0 0 1 4 0v4H1v-4a2 2 0 0 1 2-2zM5 20v1.5M19 20v1.5"/>','/prototypes/':'<path d="M9 3h6M10 3v6L4.5 19a1.5 1.5 0 0 0 1.3 2h12.4a1.5 1.5 0 0 0 1.3-2L14 9V3"/><path d="M7.5 15h9"/>','/settings/':'<circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M18.7 5.3l-2.1 2.1M7.4 16.6l-2.1 2.1"/>'};
   var css='aside[style*="flex:0 0 232px"]{background:#000!important;border-right-color:#262626!important;gap:4px!important}'+
   'aside[style*="flex:0 0 232px"]>a:first-child{color:#fff}'+
@@ -52,10 +59,11 @@
     names(side);
     var st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
     var as=side.querySelectorAll(':scope>a');
+    var want=(function(){ var p=(location.pathname||'/').replace(/^\/hub(?=\/)/,''); var m=/^\/(games|educations|tools|prototypes|lounge|community|wiki)(\/|$)/.exec(p); if(m) return '/'+m[1]+'/'; if(/^\/(music|gallery)(\/|$)/.test(p)) return '/lounge/'; if(/^\/(patchnotes)?\/?$/.test(p)) return '/'; return null; })();
     for(var i=0;i<as.length;i++){
       var a=as[i], sp=a.querySelector(':scope>span[style*="width:8px"]'); if(!sp)continue;
       var h=(a.getAttribute('href')||'').replace(/^https?:\/\/[^\/]+/,''); var k=IC[h]; if(!k)continue;
-      var on=/#26221a/i.test(a.getAttribute('style')||'');
+      var on=want?(h===want):/#26221a/i.test(a.getAttribute('style')||'');   /* 주소로 정해요: 패치노트·AI Chat 에 Lounge 가 켜져 있던 것 */
       a.classList.add('ffsm'); if(on)a.classList.add('on');
       var s=document.createElementNS('http://www.w3.org/2000/svg','svg'); s.setAttribute('viewBox','0 0 24 24'); s.innerHTML=k;
       a.replaceChild(s,sp);

@@ -1761,7 +1761,7 @@ body.playing #emoBar{display:flex}
 @media(max-height:480px){#emoBar{bottom:3px;gap:4px}#emoBar button{width:30px;height:30px;opacity:.55}}
 </style>
 <script>window.FF_INGAME=true</script>
-<script src="https://frenchfries777.com/games/ff-auth.js?v=20261116d"></script>
+<script src="https://frenchfries777.com/games/ff-auth.js?v=20261120b"></script>
 </head>
 <body class="onhome">
 <button class="exitHub" id="exitHub">← 나가기</button>
@@ -8283,7 +8283,7 @@ var ffProfWait = [];
 function ffProf(cb) {
   if (window.FFProfile) return cb();
   ffProfWait.push(cb); if (ffProfWait.length > 1) return;
-  var sc = document.createElement('script'); sc.src = 'https://frenchfries777.com/games/ff-profile.js?v=20261103e';
+  var sc = document.createElement('script'); sc.src = 'https://frenchfries777.com/games/ff-profile.js?v=20261120c';
   sc.onload = function () { var q = ffProfWait; ffProfWait = []; if (window.FFProfile) q.forEach(function (f) { try { f(); } catch (e) { } }); };
   sc.onerror = function () { ffProfWait = []; };
   document.head.appendChild(sc);
@@ -8481,7 +8481,7 @@ var PREFIX = 'ff-dummyparty-', CODE_CH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', MAX
 var PTS = [5, 3, 2, 1];
 var T_INTRO = 6, T_COUNT = 3, T_END = 4.0, T_RESULT = 6;
 // 게임 버전(0.x)과 빌드. 버전이 다르면 같은 방에 못 들어와요 (빌드가 달라도 괜찮아요). dp_config 의 min_build 보다 낮은 빌드는 dC를 못 받아요
-var DP_VER = '0.1', DP_BUILD = 105;
+var DP_VER = '0.1', DP_BUILD = 106;
 function dpNotice(msg) { dpAsk(msg, '확인', function () { }); }
 var BOT_NAMES = ['방귀쟁이', '홀쭉이', '바보1', '멍청이', '10급 공무원', '교무실 단골', '벌점부자', '말썽이', '김개똥'];
 var qs = new URLSearchParams(location.search);
@@ -8683,7 +8683,16 @@ function guestMsg(d) {
     if (d.d && d.d._fx) onFxList(d.d._fx);
   }
 }
-function onFxList(l) { l.forEach(function (e) { var n = typeof e === 'string' ? e : e[0]; funSfx(n); if (typeof e !== 'string') burst(n, e[1], e[2]); funFx(n, typeof e === 'string' ? null : e[1], typeof e === 'string' ? null : e[2]); }); }
+/* 내 캐릭터 가까이에서 맞는 효과(타격·폭발·용암)가 나면 모바일에서만 짧게 진동해요 (공용 FFHaptic, ff-polish.js) */
+function hapNear(n, x, y) {
+  try {
+    if (!window.FFHaptic || x == null || (n !== 'hit' && n !== 'boom' && n !== 'lava')) return;
+    var d = G.snapCur && G.snapCur.d, me = d && d.pl && d.pl[G.me]; if (!me || typeof me.x !== 'number') return;
+    var dx = x - me.x, dy = y - (me.y - 24), r = n === 'boom' ? 70 : 40;
+    if (dx * dx + dy * dy < r * r) { if (n === 'boom') FFHaptic.big(); else FFHaptic.hit(); }
+  } catch (er) { }
+}
+function onFxList(l) { l.forEach(function (e) { var n = typeof e === 'string' ? e : e[0]; funSfx(n); if (typeof e !== 'string') hapNear(n, e[1], e[2]); if (typeof e !== 'string') burst(n, e[1], e[2]); funFx(n, typeof e === 'string' ? null : e[1], typeof e === 'string' ? null : e[2]); }); }
 function cleanName(n) { n = String(n || '').replace(/\s+/g, ' ').trim().slice(0, 15); return n || '마네킹'; }
 function getP(id) { for (var i = 0; i < G.players.length; i++) if (G.players[i].id === id) return G.players[i]; return null; }
 function freeColor() { for (var c = 0; c < COLORS.length; c++) { if (!G.players.some(function (p) { return p.color === c; })) return c; } return 0; }

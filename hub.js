@@ -16,6 +16,9 @@ function gOpts(first){ return (first||'')+GLIST.map(function(g){ return '<option
 function gBtns(){ return GLIST.map(function(g){ return '<button data-f="'+g+'">'+GAMES[g].name+'</button>'; }).join(''); }
 if(!document.getElementById('ffwVars')){ var wv=document.createElement('style'); wv.id='ffwVars'; wv.textContent=':root{--ffw-bg:var(--bg,#000000);--ffw-in:var(--bg,#000000);--ffw-tx:var(--text,#ffffff);--ffw-dim:var(--dim,#9a9a9a);--ffw-ln:color-mix(in srgb,var(--fry,#ffd54a) 50%,transparent);--ffw-hv:color-mix(in srgb,var(--fry,#ffd54a) 16%,transparent);--ffw-ov:color-mix(in srgb,var(--bg,#000000) 80%,transparent);--ffw-err:#ff9b7a;--ffw-ok:#7ddc8a;--ffw-gold:var(--fry,#ffd54a);--ffw-gold2:var(--fry2,#b8923a);--ffw-gt:var(--bg,#000000);--ffw-sh:rgba(0,0,0,.5)}html[data-ff-theme=light]{--ffw-err:#b3261e;--ffw-ok:#1b6e2e;--ffw-sh:rgba(0,0,0,.18)}'; (document.head||document.documentElement).appendChild(wv); }
 /* 허브 창(투표·코인·달력·검색)이 창 모양 스타일이 없는 페이지에서도 화면 가운데 뜨도록 기본 모양을 넣어요. :where 라서 페이지 자체 스타일이 있으면 그쪽이 이겨요 */
+/* 목록 불러오는 동안 보이는 뼈대 화면 */
+if(!document.getElementById('ffSkCss')){ var sk=document.createElement('style'); sk.id='ffSkCss'; sk.textContent='.ffsk{display:flex;flex-direction:column;gap:12px;padding:6px 0}.ffsk i{display:flex;align-items:center;gap:12px}.ffsk i:before{content:"";flex:none;width:38px;height:38px;border-radius:50%;background:#1a1a1a}.ffsk i:after{content:"";flex:1;height:34px;border-radius:8px;background:#1a1a1a;max-width:var(--w,80%)}.ffsk i:before,.ffsk i:after{background-image:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);background-size:220px 100%;background-repeat:no-repeat;background-position:-220px 0;animation:ffskm 1.2s linear infinite}@keyframes ffskm{to{background-position:calc(100% + 220px) 0}}.ffsk b{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}html[data-ff-theme=light] .ffsk i:before,html[data-ff-theme=light] .ffsk i:after{background-color:#e4e4e4}'; document.head.appendChild(sk); }
+function SKL(n){ var h='<div class="ffsk" role="status" aria-busy="true"><b>불러오는 중</b>'; for(var i=0;i<(n||4);i++) h+='<i style="--w:'+(92-i*9)+'%"></i>'; return h+'</div>'; }
 if(!document.getElementById('ffHubModal')){ var hm=document.createElement('style'); hm.id='ffHubModal'; hm.textContent=[':where(.hn-bg){position:fixed;inset:0;z-index:2147482300;background:rgba(5,6,10,.72);display:none;align-items:center;justify-content:center;padding:16px}',':where(.hn-b){width:100%;max-width:560px;max-height:calc(100vh - 32px);overflow-y:auto;background:var(--bg,#000000);color:var(--text,#ffffff);border:1px solid var(--fry,#ffd54a);border-radius:16px;padding:18px 20px;box-sizing:border-box;overscroll-behavior:contain}',':where(.hn-h){display:flex;justify-content:space-between;align-items:center;font-size:19px;margin-bottom:6px}',':where(.hn-x){background:none;border:0;color:var(--fry,#ffd54a);font-size:24px;cursor:pointer;line-height:1}',':where(.pol-b){max-width:540px;max-height:88vh;overflow:auto}',':where(.pl){background:rgba(127,127,127,.12);border-radius:12px;padding:14px;margin-top:10px}',':where(.pl h4){margin:0 0 4px;font-size:16.5px}',':where(.pl .cm-meta,.cm-e){margin:0 0 8px;font-size:13px;opacity:.8}',':where(.po){position:relative;display:block;width:100%;text-align:left;background:transparent;border:1px solid var(--ffw-ln,rgba(217,180,95,.5));border-radius:10px;padding:10px 12px;margin-top:6px;color:inherit;font:inherit;font-size:14.5px;cursor:pointer;overflow:hidden}',':where(.po:disabled){cursor:default}',':where(.po .fill){position:absolute;inset:0 auto 0 0;background:rgba(217,180,95,.2)}',':where(.po.mine){border-color:var(--fry,#ffd54a)}',':where(.po span){position:relative}',':where(.po .pv){float:right;font-weight:800}',':where(.cm-btn,.cm-btn2){background:transparent;color:inherit;border:1px solid var(--fry,#ffd54a);border-radius:99px;padding:8px 14px;font:inherit;font-size:14px;font-weight:700;cursor:pointer;margin-top:10px}',':where(.cm-w){display:flex;flex-direction:column;gap:8px;margin:0 0 12px}',':where(.cm-w input,.cm-w textarea,.cm-w select){width:100%;box-sizing:border-box;background:transparent;color:inherit;border:1px solid var(--fry,#ffd54a);border-radius:9px;padding:10px 12px;font:inherit;font-size:16px}',':where(.cm-acts){display:flex;justify-content:flex-end;gap:8px}'].join('\n'); document.head.appendChild(hm); }
 if(!document.getElementById('ffRichHub')){ var rh=document.createElement('style'); rh.id='ffRichHub'; var H='html[data-ff-theme] ';
   rh.textContent=H+'.hn-bg{background:color-mix(in srgb,var(--bg,#000000) 80%,transparent);-webkit-backdrop-filter:none;backdrop-filter:none}'+
@@ -470,7 +473,7 @@ function feedTag(g){ return g==='hub'?'<span class="tag">허브</span>':gameTag(
 async function feed(){
   var p=$('.cm-p[data-p=feed]'); if(!p||!sb) return;
   if(!me){ p.innerHTML='<div class="cm-e">로그인하면 친구 소식을 볼 수 있어요.</div>'; return; }
-  if(!p.innerHTML) p.innerHTML='<div class="cm-e">불러오는 중...</div>';
+  if(!p.innerHTML) p.innerHTML=SKL(5);
   var fr=await sb.from('friendships').select('requester_id,addressee_id,status').or('requester_id.eq.'+me.id+',addressee_id.eq.'+me.id);
   var ids=((fr&&fr.data)||[]).filter(function(x){ return x.status==='accepted'; }).map(function(x){ return x.requester_id===me.id?x.addressee_id:x.requester_id; }).filter(function(id){ return !blocked(id); });
   if(!ids.length){ p.innerHTML='<div class="cm-e">아직 친구가 없어요. 위쪽 계정 메뉴의 친구 목록에서 친구를 추가해 보세요.</div>'; return; }
@@ -523,7 +526,7 @@ async function ranking(){
 /* Stickseum 랭킹은 둘로 나눠 보여 줘요: 왼쪽 = 이번 시즌 랭크 레이팅(ranked_ratings), 오른쪽 = 캐릭터 마스터리 점수(profiles.stats.cp, 없으면 ck*10; stickseum/chars.json 에 캐릭터 이름) */
 var rkChars=null;
 async function rankingStk(box){
-  var season=new Date(Date.now()+9*36e5).toISOString().slice(0,7), n=function(v){ try{ return Number(v).toLocaleString(); }catch(e){ return v; } };
+  var season=new Date(Date.now()+9*36e5).toISOString().slice(0,7), n=function(v){ try{ return window.FFFmt?FFFmt.num(v):Number(v).toLocaleString(); }catch(e){ return v; } };
   var res=await Promise.all([
     sb.from('ranked_ratings').select('user_id,rating').eq('season',season).order('rating',{ascending:false}).order('wins',{ascending:false}).limit(20),
     sb.from('profiles').select('id,ck:stats->ck,cp:stats->cp').not('stats->ck','is',null).limit(3000),
@@ -552,7 +555,7 @@ async function rankingBf(box){
   var D=res[0], T=res[1], drows=(D&&!D.error&&D.data)||[], trows=(T&&!T.error&&T.data)||[];
   await loadNames(drows.map(function(x){ return x.user_id; }).concat(trows.map(function(x){ return x.user_id; })));
   if(rkGame!=='beaconfall') return;
-  var n=function(v){ try{ return Number(v).toLocaleString(); }catch(e){ return v; } }, p2=function(v){ return (v<10?'0':'')+v; },
+  var n=function(v){ try{ return window.FFFmt?FFFmt.num(v):Number(v).toLocaleString(); }catch(e){ return v; } }, p2=function(v){ return (v<10?'0':'')+v; },
       tm=function(sec){ sec=Math.max(0,sec|0); return Math.floor(sec/3600)+':'+p2(Math.floor(sec%3600/60))+':'+p2(sec%60); },
       medal=function(i){ return i<3?['🥇','🥈','🥉'][i]:i+1; }, mine=function(x){ return me&&x.user_id===me.id?' me':''; };
   var lh='<table class="rkt"><tr><th></th><th>닉네임</th><th>최장 생존 일수</th></tr>'+(D&&D.error?'<tr><td colspan="3" class="cm-e">생존 순위는 서버 준비 중이에요.</td></tr>':drows.length?drows.map(function(x,i){ return '<tr class="'+(i<3?'t'+(i+1):'')+mine(x)+'"><td>'+medal(i)+'</td><td>'+who(x.user_id)+'</td><td class="pt" data-notr>'+esc(F('{0}일',n(x.days)))+'</td></tr>'; }).join(''):'<tr><td colspan="3" class="cm-e">아직 생존 기록을 보낸 사람이 없어요.</td></tr>')+'</table>';
@@ -571,7 +574,7 @@ async function rankingBy(g,box){
   if(r.error){ box.innerHTML='<div class="cm-e">'+esc(st?errText(r.error):bf?'생존 순위는 서버 준비 중이에요.':'재산 순위는 서버 준비 중이에요.')+'</div>'; return; }
   var rows=r.data||[]; await loadNames(rows.map(function(x){ return x.user_id; }));
   if(!rows.length){ box.innerHTML='<div class="cm-e">'+(st?'이번 시즌 랭크전 기록이 아직 없어요.':bf?'아직 생존 기록을 보낸 사람이 없어요.':'아직 재산을 보낸 사람이 없어요.')+'</div>'; return; }
-  var n=function(v){ try{ return Number(v).toLocaleString(); }catch(e){ return v; } };
+  var n=function(v){ try{ return window.FFFmt?FFFmt.num(v):Number(v).toLocaleString(); }catch(e){ return v; } };
   var h='<table class="rkt"><tr><th></th><th>닉네임</th><th>'+(st?'랭크 점수':bf?'최장 생존 일수':'재산')+'</th>'+(st?'<th>승</th><th>패</th>':'')+'</tr>';
   rows.forEach(function(x,i){ h+='<tr class="'+(i<3?'t'+(i+1):'')+(me&&x.user_id===me.id?' me':'')+'"><td>'+(i<3?['🥇','🥈','🥉'][i]:i+1)+'</td><td>'+who(x.user_id)+'</td><td class="pt" data-notr>'+(bf?esc(F('{0}일',n(x[col]))):n(x[col]))+'</td>'+(st?'<td data-notr>'+x.wins+'</td><td data-notr>'+x.losses+'</td>':'')+'</tr>'; });
   h+='</table>';
@@ -792,8 +795,8 @@ async function openCoin(){
   el.innerHTML='<div class="hn-b"><div class="hn-h"><b>🪙 Hub Coin 교환</b><button type="button" class="hn-x" aria-label="닫기">×</button></div>'+
     '<div class="cx-have">갖고 있는 코인 <b data-notr>'+(coin.n||0)+'</b><button type="button" class="cm-btn2 cx-cal" style="float:right">📅 달력</button></div>'+
     '<div class="cx-tabs"><button type="button" data-t="ex">교환</button><button type="button" data-t="q">📋 퀘스트<i class="cx-dot" hidden></i></button><button type="button" data-t="log">기록</button><button type="button" data-t="code">🎁 선물 코드</button></div>'+
-    '<div class="cx-pane" data-p="ex"><div class="cx-games"></div><div class="cx-list"><div class="cm-e">불러오는 중…</div></div><div class="cx-wait"></div></div>'+
-    '<div class="cx-pane" data-p="q"><div class="cx-q"><div class="cm-e">불러오는 중…</div></div></div>'+
+    '<div class="cx-pane" data-p="ex"><div class="cx-games"></div><div class="cx-list">'+SKL(4)+'</div><div class="cx-wait"></div></div>'+
+    '<div class="cx-pane" data-p="q"><div class="cx-q">'+SKL(3)+'</div></div>'+
     '<div class="cx-pane" data-p="log"><div class="cx-log"></div></div>'+
     '<div class="cx-pane" data-p="code"><form class="cx-code"><div class="cx-g"><b>🎁 코드 입력</b><span class="cx-rt">코드 6자리를 넣으면 60 hC를 받아요</span></div><div class="cx-in"><input type="text" class="cx-ci" maxlength="6" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ABC123" style="text-transform:uppercase;letter-spacing:.2em;text-align:center;font-weight:800"><button class="cm-btn">받기</button></div><div class="cm-m"></div></form></div></div>';
   codeBox(el);

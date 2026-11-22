@@ -18,12 +18,12 @@ var SB_LIB='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/s
 var me=document.currentScript, BASE=(me&&me.src)?me.src.replace(/[^\/]*$/,''):'https://frenchfries777.com/games/';
 
 var L={
- ko:{login:'로그인',signup:'계정 만들기',logout:'로그아웃',card:'🪪 프로필 카드',ach:'🏆 도전과제',id:'아이디 (영문/숫자, 3~16자)',pw:'비밀번호 (6자 이상)',busy:'처리 중...',
+ ko:{login:'로그인',signup:'계정 만들기',logout:'로그아웃',card:'🪪 프로필 카드',ach:'🏆 도전과제',id:'아이디 (영문/숫자, 3~16자)',pw:'비밀번호 (10자 이상, 영문+숫자)',busy:'처리 중...',
      title:'Frenchfries777 계정',sub:'Frenchfries777계정을 만들거나 Google/Github로 로그인 하세요. 로그인한 사람은 게임 기록이 저장되고 허브 코인과 친구 기능을 사용할 수 있습니다.',more:'자세히 알아보기',
      badId:'아이디는 영문/숫자/밑줄 3~16자로 해주세요.',badPw:'비밀번호는 6자 이상으로 해주세요.',taken:'이미 있는 아이디예요.',cred:'아이디 또는 비밀번호가 틀렸어요.',
      rate:'로그인을 너무 많이 시도했어요. 몇 분 뒤에 다시 해 주세요.',net:'서버에 연결하지 못했어요. 인터넷을 확인해 주세요.',fail:'로그인하지 못했어요.',
      noAcc:'계정이 없나요?',hasAcc:'이미 계정이 있나요?',close:'닫기',hi:'{0}님',hub:'허브',hubT:'Frenchfries777 허브로 돌아가기'},
- en:{login:'Log in',signup:'Create account',logout:'Log out',card:'🪪 Profile card',ach:'🏆 Achievements',id:'Username (letters/numbers, 3–16)',pw:'Password (6+ characters)',busy:'Working...',
+ en:{login:'Log in',signup:'Create account',logout:'Log out',card:'🪪 Profile card',ach:'🏆 Achievements',id:'Username (letters/numbers, 3–16)',pw:'Password (10+ characters, letters + numbers)',busy:'Working...',
      title:'Frenchfries777 account',sub:'Create a Frenchfries777 account or sign in with Google/GitHub. Signed-in players get saved game records, Hub Coins and friends.',more:'Learn more',
      badId:'Use 3–16 letters, numbers or underscores.',badPw:'Use at least 6 characters.',taken:'That username is taken.',cred:'Wrong username or password.',
      rate:'Too many tries. Please wait a few minutes.',net:'Could not reach the server. Check your connection.',fail:'Could not log in.',
@@ -71,7 +71,7 @@ var SSO_HOSTS=['chat.frenchfries777.com','frenchfries777mc.github.io'], ssoSub=S
 /* 기기 저장 맞추기: github.io 와 frenchfries777.com 은 브라우저 저장소가 따로라서, github.io 가 로그인 페이지를 다녀올 때 두 쪽의 저장값을 주고받아 같게 만들어요.
    마지막으로 맞춘 뒤 한쪽만 바뀐 값은 그쪽 것을, 둘 다 바뀐 값은 더 최근에 쓴 주소의 것을 써요. 로그인 정보(sb-...)와 400KB 를 넘는 부분은 빼요. */
 var GH='frenchfries777mc.github.io', SYNC_MAX=400000;
-function syncOk(k){ return !/^(sb-|ffSso|ffSync|ffLoginLock)/.test(k); }
+function syncOk(k){ return !/^(sb-|ffSso|ffSync|ffLoginLock|arenaClashPw)/.test(k); }
 function syncH(s){ var h=2166136261; for(var i=0;i<s.length;i++) h=Math.imul(h^s.charCodeAt(i),16777619)>>>0; return s.length+':'+h; }
 function syncEnc(o){ return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_'); }
 function syncDec(t){ return JSON.parse(decodeURIComponent(escape(atob(String(t).replace(/-/g,'+').replace(/_/g,'/'))))); }
@@ -149,6 +149,7 @@ async function setUser(u){
   user=u||null; prof=null;
   if(user){ try{ var r=await sb.from('profiles').select('username,display_name').eq('id',user.id).single(); prof=(r&&r.data)||null; }catch(e){} }
   paint(); subs.forEach(function(f){ try{ f(user, prof); }catch(e){} });
+  if(user){ try{ var lk='ffLogged:'+user.id; if(!sessionStorage.getItem(lk)){ sessionStorage.setItem(lk,'1'); Promise.resolve(sb.rpc('ff_log_login')).catch(function(){}); } }catch(e){} }   /* 로그인 기록 (supabase-security-stats-2026-11-20.sql) */
   nickEmit();
   if(onLP){ if((user||lpSso)&&!lpBusy) setTimeout(lpGo,0); return; }   // 로그인 페이지: 이미 로그인돼 있거나 GitHub/Google에서 돌아왔으면 바로 원래 사이트로
   if(user&&!prof&&!isIdAcct(user)) setTimeout(openSetup,0);
@@ -245,10 +246,24 @@ async function signIn(id, pw){
   lkFail(); left=lkLeft(); if(left>0) return {error:lkMsg(left)};
   return {error:errText(err)};
 }
+var CURL={ko:{t:'현재 비밀번호',ph:'아이디·비밀번호를 바꿀 때 먼저 적어 주세요',need:'현재 비밀번호를 먼저 적어 주세요.',bad:'현재 비밀번호가 틀렸어요.'},
+  en:{t:'Current password',ph:'Enter it first to change your username or password',need:'Enter your current password first.',bad:'Current password is wrong.'}};
+function CUR(){ return CURL[lang()]||CURL.en; }
+/* 아이디·비밀번호를 바꾸기 전에 지금 비밀번호를 한 번 더 확인해요 (로그인만 뚫려도 못 바꾸게). 문제 없으면 빈 글, 있으면 안내 글 */
+async function reauth(){ if(!isIdAcct(user)) return '';
+  var i=document.getElementById('aCur'), c=i?i.value:''; if(!c) return CUR().need;
+  var left=lkLeft(); if(left>0) return lkMsg(left);
+  try{ var r=await sb.auth.signInWithPassword({email:user.email,password:c}); if(r.error){ lkFail(); return CUR().bad; } }catch(e){ return CUR().bad; }
+  lkSet({f:[],u:0}); return ''; }
+var PWM={ko:'비밀번호는 10자 이상이고 영문과 숫자를 모두 넣어 주세요. 아이디나 흔한 비밀번호는 안 돼요.',en:'Use at least 10 characters with both letters and numbers. Not your username or a common password.'};
+var PW_COMMON=/^(password|passw0rd|qwerty|asdf|abcd|abc123|1234|0000|1111|iloveyou|frenchfries|stickseum|admin|welcome|letmein)/i;
+function pwWeak(p,id){ p=String(p||''); if(p.length<10||p.length>72) return true; if(!/[A-Za-z]/.test(p)||!/[0-9]/.test(p)) return true;
+  if(id&&p.toLowerCase().indexOf(String(id).toLowerCase())>=0&&String(id).length>=3) return true; if(/^(.)\1+$/.test(p)||PW_COMMON.test(p)) return true; if(/(0123456789|1234567890|9876543210|abcdefg)/i.test(p)) return true; return false; }
+function pwWeakMsg(){ return PWM[lang()]||PWM.en; }
 async function signUp(id, pw, nick){
   id=String(id||'').trim();
   if(!/^[a-zA-Z0-9_]{3,16}$/.test(id)) return {error:T.badId};
-  if(!pw||pw.length<6) return {error:T.badPw};
+  if(pwWeak(pw,id)) return {error:pwWeakMsg()};
   var r=await sb.auth.signUp({email:emailFor(id), password:pw});
   if(r.error) return {error:/already|registered/i.test(r.error.message)?T.taken:errText(r.error)};
   var p=await sb.from('profiles').insert({id:r.data.user.id, username:id, display_name:(String(nick||'').trim()||id).slice(0,15)});
@@ -520,7 +535,7 @@ async function chipBorder(root){ try{ if(!sb||!user) return; var uid=user.id;
   if(!window.FFBorders) await loadScript(BASE+'ff-borders.js?v=20261104a', function(){ return !!window.FFBorders; });
   if(!window.FFBorders||!user||user.id!==uid) return; var id=await window.FFBorders.equipped(sb,uid), b=window.FFBorders.get(id); if(!b) return;
   var col=b.a==='rainbow'?'#ffd23f':b.a, im=root.querySelector('.ffa-av'); if(im){ im.style.borderRadius='6px'; im.style.boxShadow='0 0 0 2px '+col+',0 0 8px '+col+'99'; } }catch(e){} }
-function profileLib(){ return loadScript(BASE+'ff-profile.js?v=20261115c', function(){ return !!window.FFProfile; }); }
+function profileLib(){ return loadScript(BASE+'ff-profile.js?v=20261120c', function(){ return !!window.FFProfile; }); }
 /* 프로필은 창이 아니라 허브의 프로필 페이지로 열어요. 게임 안, 도전과제 창, 카드 창(o.modal)만 예전처럼 창으로 열어요 */
 function profilePage(uid, o){ try{
   if((o&&(o.modal||o.openAch||o.game||o.noDeco!=null))||window.FF_INGAME) return null;
@@ -581,11 +596,11 @@ document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeMen
 var ALT={
  ko:{menu:'👤 내 계정',title:'내 계정',show:'비밀번호 보기',nick:'닉네임 (최대 15자)',id:'아이디 (영문/숫자, 3~16자)',save:'저장',saved:'저장했어요.',same:'바뀐 게 없어요.',
      pwT:'비밀번호',pwNone:'이 기기에는 저장된 비밀번호가 없어요. 다시 로그인하면 저장돼요.',view:'보기',hide:'숨기기',copy:'복사',copied:'복사했어요.',
-     newPw:'새 비밀번호 (6~72자)',chg:'비밀번호 변경',keep:'이 기기에 비밀번호 기억하기',keepN:'서버에는 비밀번호가 저장되지 않아요(볼 수 없음). 이 기기의 브라우저에만 저장돼요.',
+     newPw:'새 비밀번호 (10~72자, 영문+숫자)',chg:'비밀번호 변경',keep:'이 기기에 비밀번호 기억하기',keepN:'서버에는 비밀번호가 저장되지 않아요(볼 수 없음). 이 기기의 브라우저에만 저장돼요.',
      badNick:'닉네임을 입력해 주세요.',badPw:'비밀번호는 6~72자로 해주세요.',idDone:'아이디를 바꿨어요. 다음부터 새 아이디로 로그인해요.',pwDone:'비밀번호를 바꿨어요.',err:'처리하지 못했어요. 잠시 뒤 다시 해 주세요.',idNote:'아이디를 바꾸면 모든 게임에서 새 아이디로 로그인해요.'},
  en:{menu:'👤 My account',title:'My account',show:'Show password',nick:'Nickname (up to 15)',id:'Username (letters/numbers, 3–16)',save:'Save',saved:'Saved.',same:'Nothing changed.',
      pwT:'Password',pwNone:'No password is stored on this device. Log in again to store it.',view:'Show',hide:'Hide',copy:'Copy',copied:'Copied.',
-     newPw:'New password (6–72)',chg:'Change password',keep:'Remember my password on this device',keepN:'The server never stores a readable password. It is kept only in this browser.',
+     newPw:'New password (10–72, letters + numbers)',chg:'Change password',keep:'Remember my password on this device',keepN:'The server never stores a readable password. It is kept only in this browser.',
      badNick:'Type a nickname.',badPw:'Password must be 6–72 characters.',idDone:'Username changed. Use the new one next time.',pwDone:'Password changed.',err:'Something went wrong. Try again soon.',idNote:'The new username works in every game.'},
  es:{menu:'👤 Mi cuenta',title:'Mi cuenta',show:'Mostrar contraseña',nick:'Apodo (máx. 15)',id:'Usuario (letras/números, 3–16)',save:'Guardar',saved:'Guardado.',same:'Sin cambios.',
      pwT:'Contraseña',pwNone:'No hay contraseña guardada en este dispositivo. Inicia sesión de nuevo para guardarla.',view:'Ver',hide:'Ocultar',copy:'Copiar',copied:'Copiado.',
@@ -614,10 +629,11 @@ var ALT={
  gk:{"menu":"👤 나의 계좌","title":"나의 계좌","show":"쇼 통과 단어","nick":"별명 (위로 에게 15)","id":"사용자 이름 (편지들/숫자들, 3–16)","save":"구하다!","saved":"구원받은.","same":"아무것도 바뀐.","pwT":"통과 단어","pwNone":"아니요 통과 단어 이다 저장하했다 위에 이것 장치. 통나무 안에 다시 에게 저장하다 그것.","view":"쇼","hide":"숨다!","copy":"베끼다!","copied":"베껴진.","newPw":"새로운 통과 단어 (6–72)","chg":"잔돈 통과 단어","keep":"Remember 나의 통과 단어 위에 이것 장치","keepN":"그 섬기는 사람 절대 저장하다들 하나의 readable 통과 단어. 그것 이다 유지된 오직 안에 이것 훑어보는 사람.","badNick":"Type 하나의 별명.","badPw":"통과 단어 반드시 이다 6–72 성격들.","idDone":"사용자 이름 바뀐. 사용하다 그 새로운 하나 다음 시간.","pwDone":"통과 단어 바뀐.","err":"무언가 갔다 틀린. 시도하다 다시 곧.","idNote":"그 새로운 사용자 이름 작품들 안에 매 사냥감."}
 };
 function AL(){ var t=(typeof ALT!=='undefined'&&ALT)||null; return t?(t[lang()]||t.en):{menu:'⚙️',show:''}; }
-function pwOn(){ try{ return localStorage.getItem('arenaClashPwOpt')!=='0'; }catch(e){ return true; } }
+function pwOn(){ try{ return localStorage.getItem('arenaClashPwOpt')==='1'; }catch(e){ return false; } }   /* 기본은 저장 안 함: 비밀번호를 기기에 그대로 적어 두지 않아요 (2026-11-20 보안) */
 function pwGet(){ try{ var o=JSON.parse(localStorage.getItem('arenaClashPw')||'null'); return o&&o.p?o:null; }catch(e){ return null; } }
 function pwSave(id,p){ if(!pwOn()) return; try{ localStorage.setItem('arenaClashPw',JSON.stringify({u:String(id||'').trim().toLowerCase(),p:p})); }catch(e){} }
 function pwClear(){ try{ localStorage.removeItem('arenaClashPw'); }catch(e){} }
+try{ if(!pwOn()) localStorage.removeItem('arenaClashPw'); }catch(e){}   /* 예전에 저장된 비밀번호도 지워요 */
 /* per-account local settings: stored as <name>:<user id> so two accounts on one browser never share them. Logged out = the old plain <name> key. The first account to log in after this change adopts the old shared value (nothing is deleted). */
 function userKey(base){
   if(!user) return base;
@@ -679,6 +695,7 @@ function openAcct(host){
    '#ffaAcct label.k{display:flex;gap:8px;align-items:center;font-size:13.5px;margin:10px 0 4px}</style>'+
    '<div class="b"><button type="button" class="x" aria-label="'+esc(T.close)+'">×</button><h3>'+esc(A.title)+'</h3>'+
    '<h4>'+esc(A.nick.replace(/\s*\(.*$/,''))+'</h4>'+(editOk?'<input type="text" id="aNick" maxlength="15" placeholder="'+esc(A.nick)+'"><button type="button" class="ffa-btn" id="aNickGo">'+esc(A.save)+'</button><div class="m" id="aNickM"></div>':hubNote())+
+   (isIdAcct(user)?'<h4>'+esc(CUR().t)+'</h4><input type="password" id="aCur" autocomplete="current-password" placeholder="'+esc(CUR().ph)+'"><div class="m" id="aCurM"></div>':'')+
    '<h4>'+esc(A.id.replace(/\s*\(.*$/,''))+'</h4><input type="text" id="aId" maxlength="16" autocapitalize="off" spellcheck="false" placeholder="'+esc(A.id)+'"><p>'+esc(A.idNote)+'</p><button type="button" class="ffa-btn" id="aIdGo">'+esc(A.save)+'</button><div class="m" id="aIdM"></div>'+
    '<h4>'+esc(A.pwT)+'</h4><div id="aPwBox"></div>'+
    '<div class="pwr"><input type="password" id="aNew" autocomplete="new-password" placeholder="'+esc(A.newPw)+'"><button type="button" class="eye" aria-label="'+esc(A.show)+'">👁</button></div><button type="button" class="ffa-btn" id="aPwGo">'+esc(A.chg)+'</button><div class="m" id="aPwM"></div>'+
@@ -709,6 +726,7 @@ function openAcct(host){
     if(id.toLowerCase()===String(curId).toLowerCase() && id===curId) return say(m,A.same,true);
     this.disabled=true;
     try{
+      var ra=await reauth(); if(ra) return say(m,ra);
       var up=await sb.from('profiles').update({username:id}).eq('id',user.id);
       if(up.error) return say(m,/duplicate|unique|23505/i.test(JSON.stringify(up.error))?T.taken:A.err);
       var ch=isIdAcct(user)?await sb.auth.updateUser({email:emailFor(id)}):{};   // GitHub/Google accounts keep their real e-mail
@@ -718,10 +736,12 @@ function openAcct(host){
       prof=Object.assign({},prof||{},{username:id}); curId=id; paint(); say(m,A.idDone,true);
     }catch(e){ say(m,A.err); } finally{ this.disabled=false; } };
   $('aPwGo').onclick=async function(){ var p=$('aNew').value;
-    if(!p||p.length<6||p.length>72) return say('aPwM',A.badPw);
+    if(pwWeak(p,curId)) return say('aPwM',pwWeakMsg());
     this.disabled=true;
-    try{ var r=await sb.auth.updateUser({password:p});
+    try{ var ra=await reauth(); if(ra) return say('aPwM',ra);
+      var r=await sb.auth.updateUser({password:p});
       if(r.error) return say('aPwM',A.err);
+      try{ await sb.auth.signOut({scope:'others'}); }catch(e){}   /* 비밀번호를 바꾸면 다른 기기의 로그인은 모두 끊어요 */
       pwSave(curId,p); $('aNew').value=''; pwBox(); say('aPwM',A.pwDone,true);
     }catch(e){ say('aPwM',A.err); } finally{ this.disabled=false; } };
 }
@@ -957,7 +977,7 @@ function setPaint(){
 }
 function setFill(p){
   var cur=FFTheme.get();
-  p.innerHTML='<b>'+esc(S_.theme)+'</b><div class="g">'+['dark','yellow','red','blue','light'].map(function(k){ return '<button type="button" data-th="'+k+'">'+esc(S_[k])+'</button>'; }).join('')+'</div>'+
+  p.innerHTML='<b>'+esc(S_.theme)+'</b><div class="g">'+['dark','light'].map(function(k){ return '<button type="button" data-th="'+k+'">'+esc(S_[k])+'</button>'; }).join('')+'</div>'+
     '<b>'+esc(S_.size)+'</b><div class="g">'+FFTheme.sizes.map(function(z){ return '<button type="button" data-sz="'+z+'">'+esc(S_[z])+'</button>'; }).join('')+'</div>'+
     '<b>'+esc(S_.lang)+'</b><div class="g ffa-lg">'+lgBtns(0)+'</div><b>'+esc(S_.vlang||'Fictional languages')+'</b><div class="g ffa-lg">'+lgBtns(1)+'</div><small>'+esc(S_.note)+'</small>';
   [].forEach.call(p.querySelectorAll('[data-lg]'),function(x){ var l=x.getAttribute('data-lg'); var cur=(window.FFLang&&FFLang.pick)?FFLang.pick():lang(); x.classList.toggle('on',l===cur); x.onclick=function(){ if(l===cur) return; try{ localStorage.setItem('arenaClashLang',l); }catch(e){} try{ if(window.FFLang) FFLang.set(l); }catch(e){} location.reload(); }; });

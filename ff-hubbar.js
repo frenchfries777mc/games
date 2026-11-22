@@ -3,8 +3,15 @@
    Add to a game site page:  <script src="https://frenchfries777.com/games/ff-hubbar.js?v=1" defer></script>
    The page needs the usual <span data-ff-account></span> in its top bar (the box is built around it). Styles: ff-hubbar.css. */
 (function(){
-  /* a picture that failed once (flaky network, deploy in progress) gets one retry with a fresh address */
-  if(!window.__ffImgRetry){ window.__ffImgRetry=1; document.addEventListener('error',function(e){ var i=e.target; if(!i||i.tagName!=='IMG'||i.__ffr||!i.src||/^(data|blob):/.test(i.src)) return; i.__ffr=1; var s=i.src; setTimeout(function(){ i.src=s+(s.indexOf('?')<0?'?':'&')+'r='+Date.now(); },1500); },true); }
+  /* a picture that fails to load is fetched again as plain data (not as an <img> request), then from the github mirror */
+  if(!window.__ffImgRetry){ window.__ffImgRetry=1; var MIR='https://frenchfries777mc.github.io', MD=/^\/(games|educations|tools|prototypes|seumarena)\//;
+    var viaFetch=function(u){ return fetch(u,{cache:'reload',credentials:'omit'}).then(function(r){ if(!r.ok) throw 0; return r.blob(); }).then(function(b){ if(!/^image\//.test(b.type)) throw 0; return URL.createObjectURL(b); }); };
+    var fixImg=function(i){ if(!i||i.tagName!=='IMG'||i.__ffr||!i.src||/^(data|blob):/.test(i.src)) return; i.__ffr=1; var s=i.src, u; try{ u=new URL(s); }catch(x){ return; }
+      var mir=/(^|\.)frenchfries777\.com$/.test(u.hostname)?MIR+(MD.test(u.pathname)?'':'/hub')+u.pathname+u.search:null;
+      viaFetch(s).catch(function(){ if(!mir) throw 0; return viaFetch(mir); }).then(function(b){ i.src=b; }).catch(function(){}); };
+    document.addEventListener('error',function(e){ fixImg(e.target); },true);
+    var sweep=function(){ [].forEach.call(document.images,function(i){ if(i.complete&&i.naturalWidth===0&&i.src) fixImg(i); }); };
+    sweep(); document.addEventListener('DOMContentLoaded',sweep); window.addEventListener('load',function(){ sweep(); setTimeout(sweep,1500); }); }
 'use strict';
 var B='https://frenchfries777.com/';
 var LB={ko:['위키','커뮤니티','라운지','설정','검색'],en:['Wiki','Community','Lounge','Settings','Search'],ja:['Wiki','コミュニティ','ラウンジ','設定','検索'],
@@ -41,7 +48,7 @@ function build(){
   bar.querySelector('.tb').appendChild(acc);
   ffScrollHint(mm,'.ffhb-m.on');
   /* the hub script drives the online chip and the search box */
-  if(!window.__ffHubJs&&!document.querySelector('script[src*="/hub.js"]')){ window.__ffHubJs=1; var s=document.createElement('script'); s.src=B+'games/hub.js?v=20261116a'; document.body.appendChild(s); }
+  if(!window.__ffHubJs&&!document.querySelector('script[src*="/hub.js"]')){ window.__ffHubJs=1; var s=document.createElement('script'); s.src=B+'games/hub.js?v=20261120c'; document.body.appendChild(s); }
 }
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',build); else build();
 })();

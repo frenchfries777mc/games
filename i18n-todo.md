@@ -1004,6 +1004,7 @@
 
 - [tumblecrown b316] 새 문구 없음 (온라인 안정성 보강)
 
-## Crown Envoy b199 (2026-11-13)
-- 새 문구(한국어만): 패치노트 b199
-- [tumblecrown b317] 새 문구 없음 (모바일 화면 맞춤)
+
+## Kitchen Defense — maps + towers (2026-11-22)
+- prototypes/kitchendefense/index.html: towers 주전자, 그릴, 제빙기, 전자레인지, 튀김기 (+ short labels 팬, 요리사, 믹서, 밥솥, 레인지); skills 증기 폭발, 불맛 폭발, 얼음 비, 최대 출력, 기름 폭탄; tower/skill speech lines
+- maps 빵집, 야시장, 냉동실 + descriptions; "맵 클리어!", "새 타워 …", "다음 맵 …", "… 웨이브 10 클리어 시 열림", "최고 N"

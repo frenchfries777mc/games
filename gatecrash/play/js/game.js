@@ -319,7 +319,7 @@ function hurt(G, v, from, w, dx, dy, mul) {
   if (v.inv > 0 || v.fin) return;
   const n = Math.hypot(dx, dy) || 1;
   v.hp -= w.dmg * (mul || 1); v.vx = dx / n * w.kb * (mul || 1); v.vy = -w.up - Math.max(0, -dy / n) * 60; v.ground = false; v.stun = Math.max(v.stun, w.stun); v.flash = 0.18;
-  G.ev.push({ t: 'hit', x: v.x + 5, y: v.y + 8 }); if (v.bot && Math.random() < .25) { v.emo = 2; v.emoT = 2; v.lastEmo = 2; addSpray(G, v); }
+  G.ev.push({ t: 'hit', x: v.x + 5, y: v.y + 8, id: v.id, by: from ? from.id : null }); if (v.bot && Math.random() < .25) { v.emo = 2; v.emoT = 2; v.lastEmo = 2; addSpray(G, v); }
   if (v.hp <= 0) { G.ev.push({ t: 'ko', x: v.x + 5, y: v.y + 8, id: v.id }); respawn(G.W, v); }
 }
 function useWeapon(G, r, ang) {

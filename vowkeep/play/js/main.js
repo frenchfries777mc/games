@@ -135,7 +135,7 @@ function paintWho() {
 let ffMarked = '', ffAchT = 0;
 function ffProfile() {
   if (window.FFProfile) return Promise.resolve(true);
-  return new Promise(res => { const s = document.createElement('script'); s.src = 'https://frenchfries777.com/games/ff-profile.js?v=20261103e'; s.onload = () => { regStats(); res(!!window.FFProfile); }; s.onerror = () => res(false); document.head.appendChild(s); });
+  return new Promise(res => { const s = document.createElement('script'); s.src = 'https://frenchfries777.com/games/ff-profile.js?v=20261120c'; s.onload = () => { regStats(); res(!!window.FFProfile); }; s.onerror = () => res(false); document.head.appendChild(s); });
 }
 // 공용 프로필 창: 이름·프로필 변경은 허브에서만, 여기서는 Vowkeep 통계만 아래에 붙여요
 async function openProfile() {
@@ -719,7 +719,7 @@ function onEvent(e) {
     case 'charge': view.ring(e.x, e.z, e.n === 3 ? 2.4 : 1.6, e.n === 3 ? 0xffd36b : 0x9af0a8, 0.4); view.burst(e.x, 1.8, e.z, e.n === 3 ? 0xffd36b : 0x9af0a8, e.n === 3 ? 12 : 6, 3, 0.4, 0.1); if (e.id === S.me) SFX.play(e.n === 3 ? 'clear' : 'clang'); break;
     case 'raising': view.column(e.x, e.z, 0xfff0b0, 1.1); view.ring(e.x, e.z, 6, 0xfff0b0, 1.0); break;
     case 'eshoot': SFX.play('arrow'); break;
-    case 'ehit': view.react(e.id, e.hv || e.crit); if (e.hv) view.spark(e.x, e.z, e.id, true); else view.burst(e.x, 1.6, e.z, 0xe8e0c8, e.crit ? 6 : 3, 4, 0.3, 0.09); { const other = e.by && e.by !== me; num(e.x, e.z, e.v, e.crit ? '#ffd36b' : '#ffffff', (e.crit ? 1.3 : 1) * (other ? 0.7 : 1), 3, other); } SFX.play('hit'); break;
+    case 'ehit': if (e.by === me) { try { const h = window.FFHaptic; if (h) e.hv ? h.big() : h.hit(); } catch (_) { } } view.react(e.id, e.hv || e.crit); if (e.hv) view.spark(e.x, e.z, e.id, true); else view.burst(e.x, 1.6, e.z, 0xe8e0c8, e.crit ? 6 : 3, 4, 0.3, 0.09); { const other = e.by && e.by !== me; num(e.x, e.z, e.v, e.crit ? '#ffd36b' : '#ffffff', (e.crit ? 1.3 : 1) * (other ? 0.7 : 1), 3, other); } SFX.play('hit'); break;
     case 'pdodge': view.ring(e.x, e.z, 2.6, 0x9ad0ff, 0.4); view.streak(e.x, e.z, 0, 0.1, 0x9ad0ff, 0.2, 0.1); view.rise(e.x, e.z, 0x9ad0ff, 10, 1, 0.6, 6); if (e.id === me) { num(e.x, e.z, T('완벽한 회피!'), '#9ad0ff', 1.3, 4.2); view.flash(e.x, e.z, 0x9ad0ff, 120); SFX.play('parry'); if (S.net === 'solo') S.slowT = Math.max(S.slowT || 0, 0.45); } break;
     case 'heavy': { // 내려찍은 자리: 큰 충격파 두 겹, 흙먼지, 땅 문양, 화면 크게 흔들기
       const hp = view.entPos('p' + e.id); if (hp) { view.ring(hp.x + Math.cos(e.a) * 1.4, hp.z + Math.sin(e.a) * 1.4, 3.4, 0xffe08a, 0.4); view.burst(hp.x + Math.cos(e.a) * 1.4, 0.3, hp.z + Math.sin(e.a) * 1.4, 0xbcae94, 26, 9, 0.6, 0.18); }
@@ -733,7 +733,7 @@ function onEvent(e) {
     case 'emote': { const hp = view.entPos('p' + e.id); if (hp) num(hp.x, hp.z, EMO[e.n] || '', '#9af0a8', 1.2, 4.4); SFX.play('click'); break; }
     case 'wkOn': num(e.x, e.z, T('약점이 드러났다!'), '#ffe08a', 1.1, 4.2); view.shock(e.x, e.z, 2.4, 0xffd070, 0.3); break;
     case 'weak': num(e.x, e.z, T('약점!'), '#ff9c4a', 1.4, 3.8); view.shock(e.x, e.z, 3, 0xff7a20, 0.35); view.burst(e.x, 2.4, e.z, 0xffb060, 14, 9, 0.5, 0.14); view.flash(e.x, e.z, 0xff7a20, 90); view.shake = Math.max(view.shake, 0.35); SFX.play('parry'); break;
-    case 'phit': num(e.x, e.z, '-' + e.v, '#ff7a6a', 1); if (e.id === me) { view.shake = Math.max(view.shake, 0.5); SFX.play('phit'); } break;
+    case 'phit': num(e.x, e.z, '-' + e.v, '#ff7a6a', 1); if (e.id === me) { try { const h = window.FFHaptic; if (h) h.hit(); } catch (_) { } view.shake = Math.max(view.shake, 0.5); SFX.play('phit'); } break;
     case 'ekill': {
       const boss = e.en === 'boss', big = boss || e.en === 'elite';
       if (boss) SAVE.bossK = (SAVE.bossK | 0) + 1; else SAVE.kills = (SAVE.kills | 0) + 1; // 통계용 (저장은 장을 마칠 때 같이)

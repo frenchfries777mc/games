@@ -214,7 +214,7 @@ function paintWho() {
 let ffMarked = '', ffAchT = 0;
 function ffProfile() {
   if (window.FFProfile) return Promise.resolve(true);
-  return new Promise(res => { const s = document.createElement('script'); s.src = 'https://frenchfries777.com/games/ff-profile.js?v=20261103e'; s.onload = () => res(!!window.FFProfile); s.onerror = () => res(false); document.head.appendChild(s); });
+  return new Promise(res => { const s = document.createElement('script'); s.src = 'https://frenchfries777.com/games/ff-profile.js?v=20261120c'; s.onload = () => res(!!window.FFProfile); s.onerror = () => res(false); document.head.appendChild(s); });
 }
 function ffSync() {
   clearTimeout(ffAchT); ffAchT = setTimeout(async () => {
@@ -1230,6 +1230,7 @@ function onEvent(e) {
       else num(e.x, e.z, '-' + e.v, '#b8a0a8', 0.8);   // 남들끼리 주고받은 피해: 작고 흐리게
       if (e.id === me) { view.shake = Math.max(view.shake, 0.6 + hv * 0.8); SFX.play('phit'); redFlash(0.25 + hv * 0.3); }
       else if (e.by === me) { view.shake = Math.max(view.shake, 0.3 + hv * 0.5); SFX.play('hit'); }
+      if (e.id === me || e.by === me) { try { window.FFHaptic && FFHaptic.hit(big ? 34 : 20); } catch (er) { } }   // 맞거나 때릴 때 짧은 진동 (폰에서만, 공용 도구)
       if ((e.id === me || e.by === me) && S.net === 'solo') S.slowT = Math.max(S.slowT || 0, big ? 0.1 : 0.05);
       break; }
     case 'ekill': {
