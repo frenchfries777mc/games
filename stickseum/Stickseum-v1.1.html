@@ -6633,7 +6633,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-22-v878';
+const GAME_BUILD='build 2026-11-22-v879';
 const GAME_VERSION='1.1', GAME_VERSION_NAME='Shadows of London';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -13865,7 +13865,7 @@ function finalizeGameplayStart(mte){
     hitStopUntil=0; staggers={}; setTimeout(()=>{ try{ entranceShow(); }catch(e){ console.error('[entrance]', e); } }, 450);
     if(gameMode==='parkour') initParkourItems(); // runs for host and every client alike, so everyone's item-icon rendering starts from the same "all available" state
     if(weaponCountdownTimer){ clearInterval(weaponCountdownTimer); weaponCountdownTimer=null; }
-    document.getElementById('lobby').style.display='none';
+    document.getElementById('lobby').style.display='none'; { const lf=document.getElementById('lobbyFoot'); if(lf) lf.style.display='none'; }
     document.getElementById('hud').style.display='block';
     document.getElementById('hudMapName').textContent=MAP.name+' · '+(practiceMode?'연습 모드':(MODES[gameMode]||MODES.ffa).name);
     if(practiceMode){ for(const id of ['matchTimerLabel','cqLabel','duelScoreLabel','survivalLabel','ctfLabel']){ const el=document.getElementById(id); if(el) el.style.display='none'; } }
@@ -21695,7 +21695,7 @@ function applyDuelWeapons(map){
 }
 function closeDuelPickScreen(map){
   if(weaponCountdownTimer){ clearInterval(weaponCountdownTimer); weaponCountdownTimer=null; }
-  document.getElementById('lobby').style.display='none';
+  document.getElementById('lobby').style.display='none'; { const lf=document.getElementById('lobbyFoot'); if(lf) lf.style.display='none'; }
   document.getElementById('hud').style.display='block';
   applyDuelWeapons(map);
   if(gameMode==='duel'){ setTimeout(()=>{ try{ entranceShow(); }catch(e){ console.error('[entrance]', e); } }, 450); }   // round 2 and later: the character cards show again
