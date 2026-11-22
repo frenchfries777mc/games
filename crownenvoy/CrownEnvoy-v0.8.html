@@ -569,6 +569,17 @@ html #rtov #rtTop{width:auto}
 html #tutbox{left:8px;transform:none;bottom:auto;top:50px;width:min(56vw,400px);font-size:12.5px;line-height:1.4;padding:8px 10px;max-height:calc(100vh - 100px);overflow:auto}html #tutbox .tb{margin-top:6px}
 html #rtov #rtTut{top:50px;max-height:calc(100vh - 60px);overflow:auto;font-size:12px;line-height:1.5;padding:10px 12px;max-width:min(400px,60vw)}
 }
+/* 화면이 작아서 안내창·결과창이 위아래로 잘릴 때 스크롤로 내려볼 수 있게 */
+html :is(#evwin,#menu,#over,#warlog,#summary,#choicebox,#askbox){overflow-y:auto;overscroll-behavior:contain}html :is(#evwin,#menu,#over,#warlog,#summary,#choicebox,#askbox)>:only-child{margin:auto}
+@media (max-width:400px) and (orientation:portrait){html .brand h1{font-size:4.6vw}}
+@media (max-width:480px){html #actionbar{gap:8px;padding:0 8px}html #hint{display:none}html #tabs{overflow-x:auto;scrollbar-width:none}html #tabs::-webkit-scrollbar{display:none}html #tabs button{flex:1 0 auto;white-space:nowrap;padding:12px 10px 10px}}
+html body:has(#menu:not(.hidden)) .tuthl{outline:0!important;z-index:auto!important}
+html .stat small{white-space:nowrap}html #game.ce-mod .seal{white-space:nowrap;flex:none}
+@media (max-width:1200px){html #game.ce-mod #side{bottom:96px}html #game.ce-mod .seal{padding:0 24px}}
+html .edhead{flex-wrap:wrap}html #edSide .edhead h2{white-space:nowrap;font-size:clamp(15px,3.2vw,22px)}
+html body:has(#editor:not(.hidden)) :is(#tutfab,#langBox){display:none!important}
+@media (max-width:480px),(max-height:520px) and (orientation:landscape) and (min-width:761px) and (max-width:1000px){html .score .pc .k{display:none!important}html .score{overflow-x:auto;scrollbar-width:none}html .score::-webkit-scrollbar{display:none}html .score .pc{flex:none}}
+@media (max-width:520px),(max-height:520px) and (orientation:landscape){html .pol{grid-template-columns:1fr}html .pol .seg{display:flex;flex-wrap:wrap;justify-self:start;max-width:100%}html #tabs{overflow-x:auto;scrollbar-width:none}html #tabs::-webkit-scrollbar{display:none}html #tabs button{flex:1 0 auto;white-space:nowrap;padding:12px 10px 10px}}
 </style>
 </head>
 <body>
@@ -632,7 +643,7 @@ if(document.body)arm();else document.addEventListener('DOMContentLoaded',arm);
 </script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.8 · build 201</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.8 · build 202</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div><p class="tagline">사절을 보내 동맹을 맺고, 군대를 보내 왕관을 차지하세요.</p></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -680,7 +691,7 @@ if(document.body)arm();else document.addEventListener('DOMContentLoaded',arm);
    <div id="lobbyRoom" class="lobby-panel hidden">
     <h2 id="roomTitle">대기실</h2>
     <p class="lead" id="roomLead"></p>
-    <div class="row" id="kBox" style="gap:8px;align-items:center;margin:4px 0 12px;flex-wrap:wrap"><b style="font-size:14px">내 나라 이름</b><input type="text" id="kLobby" maxlength="16" placeholder="비워 두면 자동으로 정해져요" style="width:230px"></div>
+    <div class="row" id="kBox" style="gap:8px;align-items:center;margin:4px 0 12px;flex-wrap:wrap"><b style="font-size:14px;white-space:nowrap">내 나라 이름</b><input type="text" id="kLobby" maxlength="16" placeholder="비워 두면 자동으로 정해져요" style="width:230px;max-width:100%;flex:1 1 150px"></div>
     <div class="rscroll">
      <div class="plaque" id="plaque"><div class="code" id="roomCode">-----</div><button class="btn sm" id="btnCopy">코드 복사</button></div>
      <div class="seats" id="seatList"></div>
@@ -8383,7 +8394,7 @@ function blocked(el){for(let e=el;e;e=e.parentElement){if(SKIP[e.tagName]||e.id=
 function fixText(t){const s=t.nodeValue;if(!s||!reT.test(s))return;if(blocked(t.parentElement))return;
   const frag=document.createDocumentFragment();let last=0,m;re.lastIndex=0;
   while((m=re.exec(s))){if(m.index>last)frag.appendChild(document.createTextNode(s.slice(last,m.index)));const sp=document.createElement('span');sp.className='emoL e-'+EMOJI_LOGO[m[1]];sp.textContent=m[0];frag.appendChild(sp);last=m.index+m[0].length;}
-  re.lastIndex=0;if(last<s.length)frag.appendChild(document.createTextNode(s.slice(last)));t.parentNode.replaceChild(frag,t);}
+  re.lastIndex=0;if(last<s.length)frag.appendChild(document.createTextNode(s.slice(last)));if(t.parentNode)t.parentNode.replaceChild(frag,t);}
 function scan(root){if(root.nodeType===3){fixText(root);return;}if(root.nodeType!==1&&root.nodeType!==11)return;if(root.nodeType===1&&blocked(root))return;
   const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,null),list=[];let n;while((n=w.nextNode()))list.push(n);for(const t of list)fixText(t);}
 function start(){if(on||!document.body)return;on=true;css();scan(document.body);

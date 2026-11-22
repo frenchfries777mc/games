@@ -9,7 +9,117 @@
     "치장품 상점: 아래 버전 글씨가 상품을 가리던 것, 상품·탭 이름이 글자 중간에서 줄바꿈되던 것을 고쳤어요",
     "폰 세로: 로고가 위쪽 버튼 줄에 겹치던 것을 고쳤어요",
     "폰 가로: 로그인 창이 아래가 잘리고 스크롤이 안 되던 것을 고쳤어요"
-   ]
+   ],
+   "tr": {
+    "ar": {
+      "title": "إصلاح التداخل والقص حسب حجم الشاشة",
+      "items": [
+        "بطاقات وضع اللعب أونلاين: تم إصلاح قطع الأسماء والأوصاف في الأسفل على الكمبيوتر والهاتف العمودي",
+        "متجر التجميل: لم يعد نص الإصدار في الأسفل يغطي العناصر، ولم تعد أسماء العناصر والتبويبات تنكسر في منتصف الكلمة",
+        "الهاتف العمودي: لم يعد الشعار يتداخل مع صف الأزرار العلوي",
+        "الهاتف الأفقي: نافذة تسجيل الدخول لم تعد تُقطع من الأسفل وأصبح التمرير يعمل"
+      ]
+    },
+    "de": {
+      "title": "Überlappungen und Abschneiden je Bildschirmgröße behoben",
+      "items": [
+        "Karten der Online-Spielmodi: Namen und Beschreibungen unten werden am Computer und auf dem Handy hochkant nicht mehr abgeschnitten",
+        "Kosmetikshop: Die Versionsschrift unten verdeckt die Artikel nicht mehr, und Artikel- und Reiternamen brechen nicht mehr mitten im Wort um",
+        "Handy hochkant: Das Logo überdeckt die obere Tastenreihe nicht mehr",
+        "Handy quer: Das Anmeldefenster wird unten nicht mehr abgeschnitten, und man kann jetzt scrollen"
+      ]
+    },
+    "en": {
+      "title": "Fixed overlap and clipping by screen size",
+      "items": [
+        "Online play mode cards: fixed the names and descriptions below being cut off on computers and in portrait phones",
+        "Cosmetics shop: the version text below no longer covers the items, and item and tab names no longer break in the middle of a word",
+        "Portrait phone: the logo no longer overlaps the top button row",
+        "Landscape phone: the login window no longer cuts off at the bottom and now scrolls"
+      ]
+    },
+    "es": {
+      "title": "Corregidos solapamientos y recortes según el tamaño de pantalla",
+      "items": [
+        "Tarjetas de modo de juego en línea: se corrigió que los nombres y descripciones de abajo se cortaran en el ordenador y en el móvil vertical",
+        "Tienda de cosméticos: el texto de versión de abajo ya no tapa los artículos, y los nombres de artículos y pestañas ya no se parten a mitad de palabra",
+        "Móvil vertical: el logo ya no se superpone con la fila de botones de arriba",
+        "Móvil en horizontal: la ventana de inicio de sesión ya no se corta por abajo y ahora se puede desplazar"
+      ]
+    },
+    "fr": {
+      "title": "Chevauchements et coupures selon la taille de l'écran corrigés",
+      "items": [
+        "Cartes des modes en ligne : les noms et descriptions en bas ne sont plus coupés sur ordinateur et sur téléphone en portrait",
+        "Boutique de cosmétiques : le texte de version en bas ne masque plus les objets, et les noms des objets et des onglets ne coupent plus les mots en plein milieu",
+        "Téléphone en portrait : le logo ne chevauche plus la rangée de boutons du haut",
+        "Téléphone en paysage : la fenêtre de connexion n'est plus coupée en bas et peut maintenant défiler"
+      ]
+    },
+    "it": {
+      "title": "Sistemati sovrapposizioni e tagli in base alle dimensioni dello schermo",
+      "items": [
+        "Schede delle modalità online: corretto il taglio di nomi e descrizioni in basso su computer e telefono verticale",
+        "Negozio di cosmetici: il testo della versione in basso non copre più gli oggetti, e i nomi di oggetti e schede non vanno più a capo a metà parola",
+        "Telefono verticale: il logo non si sovrappone più alla riga dei pulsanti in alto",
+        "Telefono orizzontale: la finestra di accesso non viene più tagliata in basso e ora si può scorrere"
+      ]
+    },
+    "ja": {
+      "title": "画面サイズごとの重なりと切れを整理",
+      "items": [
+        "オンラインプレイのモードカード：パソコンとスマホ縦で、下の名前と説明が切れていたのを直しました",
+        "化粧品ショップ：下のバージョン表示が商品に重なる問題と、商品名・タブ名が文字の途中で改行される問題を直しました",
+        "スマホ縦：ロゴが上のボタン列に重なる問題を直しました",
+        "スマホ横：ログイン画面の下が切れてスクロールできなかった問題を直しました"
+      ]
+    },
+    "pl": {
+      "title": "Poprawiono nakładanie się i obcinanie elementów w zależności od rozmiaru ekranu",
+      "items": [
+        "Karty trybów gry online: naprawiono obcinanie nazw i opisów na dole na komputerze i w pionowym telefonie",
+        "Sklep z kosmetykami: dolny napis wersji już nie zasłania przedmiotów, a nazwy przedmiotów i zakładek nie łamią się w połowie wyrazu",
+        "Telefon w pionie: logo nie nachodzi już na górny rząd przycisków",
+        "Telefon w poziomie: okno logowania nie jest już obcinane na dole i można je przewijać"
+      ]
+    },
+    "pt": {
+      "title": "Sobreposições e cortes por tamanho de tela corrigidos",
+      "items": [
+        "Cards dos modos online: corrigido o corte dos nomes e descrições de baixo no computador e no celular em pé",
+        "Loja de cosméticos: o texto da versão embaixo não cobre mais os itens, e os nomes de itens e abas não quebram mais no meio da palavra",
+        "Celular em pé: o logo não se sobrepõe mais à linha de botões de cima",
+        "Celular na horizontal: a janela de login não corta mais embaixo e agora rola"
+      ]
+    },
+    "ru": {
+      "title": "Исправлены наложения и обрезание элементов на разных размерах экрана",
+      "items": [
+        "Карточки режимов онлайн-игры: исправлено обрезание названий и описаний внизу на компьютере и в портретном телефоне",
+        "Магазин косметики: нижний текст версии больше не закрывает товары, а названия товаров и вкладок не переносятся посреди слова",
+        "Телефон в портрете: логотип больше не накладывается на верхний ряд кнопок",
+        "Телефон в альбомной ориентации: окно входа больше не обрезается снизу и прокручивается"
+      ]
+    },
+    "tr": {
+      "title": "Ekran boyutuna göre çakışma ve kırpılmalar düzeltildi",
+      "items": [
+        "Çevrimiçi oyun modu kartları: bilgisayarda ve dikey telefonda alttaki isim ve açıklamaların kesilmesi düzeltildi",
+        "Kozmetik mağazası: alttaki sürüm yazısı artık ürünlerin üstünü kapatmıyor, ürün ve sekme adları kelimenin ortasından bölünmüyor",
+        "Dikey telefon: logo artık üstteki buton satırının üzerine binmiyor",
+        "Yatay telefon: giriş penceresinin altı artık kesilmiyor ve kaydırılabiliyor"
+      ]
+    },
+    "zh": {
+      "title": "整理各屏幕尺寸下的重叠与截断",
+      "items": [
+        "在线对战模式卡片：修复电脑和竖屏手机上底部名称和说明被截断的问题",
+        "装扮商店：修复下方版本文字遮挡商品，以及商品名、标签名在字中间换行的问题",
+        "竖屏手机：修复标志与上方按钮行重叠的问题",
+        "横屏手机：修复登录窗口底部被截断且无法滚动的问题"
+      ]
+    }
+   }
   },
   {
    "date": "2026-11-22",
@@ -17,7 +127,81 @@
    "title": "인트로 글씨 겹침 수정",
    "items": [
     "인트로에서 STICKSEUM 로고와 Made by·With 글씨, 안내 문구가 어느 화면 크기에서든 겹치지 않아요 (폰 가로·세로, 태블릿, 컴퓨터 확인)"
-   ]
+   ],
+   "tr": {
+    "ar": {
+      "title": "إصلاح تداخل النصوص في المقدمة",
+      "items": [
+        "في المقدمة، لا يتداخل شعار STICKSEUM ونصوص Made by·With ونص الإرشاد في أي حجم شاشة (تم التحقق على الهاتف أفقياً وعمودياً والأجهزة اللوحية والكمبيوتر)"
+      ]
+    },
+    "de": {
+      "title": "Textüberlappung im Intro behoben",
+      "items": [
+        "Im Intro überlappen sich das STICKSEUM-Logo, der Made-by·With-Text und der Hinweistext bei keiner Bildschirmgröße mehr (geprüft auf Handy quer und hoch, Tablet und Computer)"
+      ]
+    },
+    "en": {
+      "title": "Intro text overlap fixed",
+      "items": [
+        "On the intro, the STICKSEUM logo, the Made by·With text and the guide text no longer overlap at any screen size (checked on landscape and portrait phones, tablets and computers)"
+      ]
+    },
+    "es": {
+      "title": "Corregido el solapamiento de textos en la intro",
+      "items": [
+        "En la intro, el logo de STICKSEUM, el texto Made by·With y el mensaje de ayuda ya no se superponen en ningún tamaño de pantalla (probado en móvil horizontal y vertical, tablet y ordenador)"
+      ]
+    },
+    "fr": {
+      "title": "Chevauchement du texte de l'intro corrigé",
+      "items": [
+        "Dans l'intro, le logo STICKSEUM, le texte Made by·With et le message d'aide ne se chevauchent plus quelle que soit la taille de l'écran (vérifié sur téléphone en paysage et en portrait, tablette et ordinateur)"
+      ]
+    },
+    "it": {
+      "title": "Corretta la sovrapposizione del testo nell'intro",
+      "items": [
+        "Nell'intro il logo STICKSEUM, la scritta Made by·With e il testo di aiuto non si sovrappongono più su nessuna dimensione dello schermo (verificato su telefono orizzontale e verticale, tablet e computer)"
+      ]
+    },
+    "ja": {
+      "title": "イントロの文字の重なりを修正",
+      "items": [
+        "イントロで STICKSEUM のロゴ、Made by·With の文字、案内文が、どの画面サイズでも重ならなくなりました（スマホの横・縦、タブレット、パソコンで確認）"
+      ]
+    },
+    "pl": {
+      "title": "Naprawiono nakładanie się tekstu we wstępie",
+      "items": [
+        "We wstępie logo STICKSEUM, napisy Made by·With i tekst wskazówki już się nie nakładają, na żadnym rozmiarze ekranu (sprawdzono na telefonie w poziomie i pionie, tablecie i komputerze)"
+      ]
+    },
+    "pt": {
+      "title": "Corrigida a sobreposição de textos na introdução",
+      "items": [
+        "Na introdução, o logo STICKSEUM, o texto Made by·With e a mensagem de orientação não se sobrepõem mais em nenhum tamanho de tela (verificado em celular na horizontal e na vertical, tablet e computador)"
+      ]
+    },
+    "ru": {
+      "title": "Исправлено наложение текста во вступлении",
+      "items": [
+        "Во вступлении логотип STICKSEUM, надписи Made by·With и текст подсказки больше не накладываются друг на друга ни на одном размере экрана (проверено на телефоне в альбомной и портретной ориентации, планшете и компьютере)"
+      ]
+    },
+    "tr": {
+      "title": "Giriş ekranındaki yazı çakışması düzeltildi",
+      "items": [
+        "Giriş ekranında STICKSEUM logosu, Made by·With yazısı ve yönlendirme metni artık hiçbir ekran boyutunda üst üste binmiyor (yatay ve dikey telefon, tablet ve bilgisayarda kontrol edildi)"
+      ]
+    },
+    "zh": {
+      "title": "修复开场文字重叠",
+      "items": [
+        "开场画面中的 STICKSEUM 标志、Made by·With 文字和提示文字，在任何屏幕尺寸下都不再重叠（已在横屏和竖屏手机、平板和电脑上确认）"
+      ]
+    }
+   }
   },
   {
    "date": "2026-11-22",
@@ -26,7 +210,93 @@
    "items": [
     "시즌 패스가 매달이 아니라 버전(0.1 단위)마다 바뀌어요: 1.1 시즌은 1.2가 나올 때까지 이어지고, 1.1.1처럼 0.0.1이 올라갈 때는 그대로예요",
     "이번 달 시즌 패스 진행(XP, 받은 보상)은 1.1 시즌으로 이어져요"
-   ]
+   ],
+   "tr": {
+    "ar": {
+      "title": "بطاقة الموسم تتغير مع كل إصدار",
+      "items": [
+        "تتغير بطاقة الموسم مع كل إصدار بدلاً من كل شهر: يستمر موسم 1.1 حتى يصدر 1.2، وعند ارتفاع الرقم 0.0.1 مثل 1.1.1 يبقى الموسم كما هو",
+        "يستمر تقدم بطاقة الموسم لهذا الشهر (XP والمكافآت المستلمة) في موسم 1.1"
+      ]
+    },
+    "de": {
+      "title": "Der Saisonpass wechselt mit jeder Version",
+      "items": [
+        "Der Saisonpass wechselt mit jeder Version (in 0,1-Schritten) statt jeden Monat: Saison 1.1 läuft bis Version 1.2 erscheint, und bei einer 0.0.1-Erhöhung wie 1.1.1 bleibt sie gleich",
+        "Der Fortschritt im Saisonpass dieses Monats (XP, erhaltene Belohnungen) läuft in Saison 1.1 weiter"
+      ]
+    },
+    "en": {
+      "title": "Season Pass changes with each version",
+      "items": [
+        "The Season Pass now changes with each version (in 0.1 steps) instead of every month: season 1.1 lasts until 1.2 comes out, and it stays the same when 0.0.1 goes up, like 1.1.1",
+        "Your Season Pass progress this month (XP and rewards received) carries over into season 1.1"
+      ]
+    },
+    "es": {
+      "title": "El pase de temporada cambia con cada versión",
+      "items": [
+        "El pase de temporada cambia con cada versión (en pasos de 0.1) en lugar de cada mes: la temporada 1.1 dura hasta que salga la 1.2, y se mantiene igual cuando sube el 0.0.1, como en 1.1.1",
+        "El progreso del pase de temporada de este mes (XP y recompensas recibidas) pasa a la temporada 1.1"
+      ]
+    },
+    "fr": {
+      "title": "Le pass de saison change à chaque version",
+      "items": [
+        "Le pass de saison change à chaque version (par paliers de 0.1) au lieu de chaque mois : la saison 1.1 dure jusqu'à la sortie de la 1.2, et elle reste la même quand le 0.0.1 augmente, comme en 1.1.1",
+        "La progression du pass de saison de ce mois (XP, récompenses reçues) continue dans la saison 1.1"
+      ]
+    },
+    "it": {
+      "title": "Il pass stagione cambia a ogni versione",
+      "items": [
+        "Il pass stagione cambia a ogni versione (a passi di 0.1) invece che ogni mese: la stagione 1.1 va avanti fino all'uscita della 1.2, e resta uguale quando sale lo 0.0.1, come in 1.1.1",
+        "I progressi del pass stagione di questo mese (XP, ricompense ottenute) proseguono nella stagione 1.1"
+      ]
+    },
+    "ja": {
+      "title": "シーズンパスはバージョンごとに変わります",
+      "items": [
+        "シーズンパスは毎月ではなく、バージョン（0.1単位）ごとに変わります。1.1シーズンは1.2が出るまで続き、1.1.1のように0.0.1が上がるときはそのままです",
+        "今月のシーズンパスの進行（XP、受け取った報酬）は1.1シーズンに引き継がれます"
+      ]
+    },
+    "pl": {
+      "title": "Przepustka sezonowa zmienia się z każdą wersją",
+      "items": [
+        "Przepustka sezonowa zmienia się z każdą wersją (co 0.1), a nie co miesiąc: sezon 1.1 trwa do wydania 1.2, a przy podbiciu 0.0.1, np. 1.1.1, zostaje taki sam",
+        "Postęp w przepustce sezonowej z tego miesiąca (XP, odebrane nagrody) przechodzi do sezonu 1.1"
+      ]
+    },
+    "pt": {
+      "title": "O passe de temporada muda a cada versão",
+      "items": [
+        "O passe de temporada muda a cada versão (em passos de 0.1) em vez de todo mês: a temporada 1.1 continua até a 1.2 sair, e permanece a mesma quando sobe o 0.0.1, como em 1.1.1",
+        "O progresso do passe de temporada deste mês (XP e recompensas recebidas) continua na temporada 1.1"
+      ]
+    },
+    "ru": {
+      "title": "Сезонный пропуск меняется с каждой версией",
+      "items": [
+        "Сезонный пропуск меняется с каждой версией (шагом 0.1), а не каждый месяц: сезон 1.1 идёт до выхода 1.2, а при повышении 0.0.1, например до 1.1.1, он остаётся прежним",
+        "Прогресс сезонного пропуска за этот месяц (опыт и полученные награды) переходит в сезон 1.1"
+      ]
+    },
+    "tr": {
+      "title": "Sezon geçişi her sürümde değişir",
+      "items": [
+        "Sezon geçişi aylık değil, her sürümde (0.1 adımlarıyla) değişir: 1.2 çıkana kadar 1.1 sezonu sürer, 1.1.1 gibi 0.0.1 arttığında ise aynı kalır",
+        "Bu ayki sezon geçişi ilerlemesi (XP, alınan ödüller) 1.1 sezonuna devam eder"
+      ]
+    },
+    "zh": {
+      "title": "赛季通行证每个版本更换",
+      "items": [
+        "赛季通行证不再每月更换，而是按版本（以0.1为单位）更换：1.1赛季一直持续到1.2发布；像1.1.1这样只升0.0.1时保持不变",
+        "本月赛季通行证的进度（XP、已领取的奖励）会延续到1.1赛季"
+      ]
+    }
+   }
   },
   {
    "date": "2026-11-19",
