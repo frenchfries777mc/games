@@ -899,7 +899,7 @@ function paintHud() {
   const sn = S.snap, me = myP();
   $('roomTag').textContent = CH.title + (S.area >= 0 ? ' · ' + MAP.areas[S.area].name : '') + ' · ' + T('남은 적 {0}', sn.w.left);
   const boss = sn.w.boss && !sn.w.bd ? sn.en.find(e => e.k === 'boss') : null;
-  $('bossBar').style.display = boss ? 'block' : 'none'; if (boss && $('bossName').textContent !== CH.boss.name) $('bossName').textContent = CH.boss.name;
+  $('bossBar').style.display = boss ? 'block' : 'none'; $('hud').classList.toggle('boss', !!boss); if (boss && $('bossName').textContent !== CH.boss.name) $('bossName').textContent = CH.boss.name;
   if (boss) { $('bossHp').style.width = Math.max(0, boss.hp / boss.mx * 100) + '%'; $('bossPh').textContent = boss.sn ? T('기절!') : ['', T('1단계'), T('2단계') + ' · ' + CH.boss.ph[0], T('3단계') + ' · ' + CH.boss.ph[1], T('마지막 단계') + ' · ' + (CH.boss.ph[2] || '')][boss.ph] || ''; }
   paintMini(sn, me);
   // 동료 칸

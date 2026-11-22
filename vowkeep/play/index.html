@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap" rel="stylesheet">
 <!-- 새 빌드마다 아래 ?v= 숫자를 BUILD와 같게 올려요 (브라우저가 옛 파일을 쓰지 않게) -->
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=79","./js/main.js":"./js/main.js?v=79","./js/map.js":"./js/map.js?v=79","./js/music.js":"./js/music.js?v=79","./js/render.js":"./js/render.js?v=79","./js/sfx.js":"./js/sfx.js?v=79","./js/sim.js":"./js/sim.js?v=79","./js/tr.js":"./js/tr.js?v=79"}}</script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=80","./js/main.js":"./js/main.js?v=80","./js/map.js":"./js/map.js?v=80","./js/music.js":"./js/music.js?v=80","./js/render.js":"./js/render.js?v=80","./js/sfx.js":"./js/sfx.js?v=80","./js/sim.js":"./js/sim.js?v=80","./js/tr.js":"./js/tr.js?v=80"}}</script>
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script src="https://frenchfries777.com/games/ff-lang.js"></script>
 <script>window.FF_INGAME=true</script>
@@ -221,6 +221,32 @@ body.touch #talk,#talk{top:58px;bottom:auto;left:114px;right:8px;width:auto;tran
 body.touch #prompt.up,#prompt.up{bottom:262px}
 #tbtns{transform:scale(.82);transform-origin:right bottom}
 }
+/* 모든 화면 크기 점검 (b80): 이모트 줄·미니맵, 보스 바·대사·알림, 파티 창과 스킬 버튼이 겹치지 않게 */
+#hud:has(#emoRow.on) #mini,#hud:has(#emoRow.on) #toast{visibility:hidden}
+body.touch #hud.boss #emoRow{top:96px}
+body.touch #emoRow button{padding:4px 8px;font-size:12px}
+body.touch #emoRow.on{display:grid;grid-template-columns:auto auto;gap:4px}
+@media (max-width:860px) and (min-aspect-ratio:1/1){#party{gap:4px}.pf,body.touch .pf{width:100px}}
+@media (max-width:1000px) and (min-height:521px){#hud.boss #roomTag{max-width:calc(50vw - 240px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
+@media (min-aspect-ratio:1/1) and (min-height:521px){body.touch #talk{width:min(620px,max(300px,calc(100vw - 520px)))}}
+@media (max-aspect-ratio:1/1){body.touch #talk,#talk{bottom:250px}#prompt.up{bottom:346px}}
+@media (max-height:520px) and (min-aspect-ratio:1/1){
+body.touch #bossBar{top:6px;width:min(300px,40vw);padding:3px 8px 6px}
+body.touch #bossBar b{font-size:12px}body.touch #bossBar .ph{font-size:10px}body.touch #bossBar .bar{height:6px;margin-top:3px}
+body.touch #hud.boss #roomTag{max-width:calc(50vw - 170px)}
+body.touch #hud.boss #emoRow{top:72px}
+body.touch #hud.boss #talk{top:68px}
+body.touch #talk{width:min(470px,calc(100vw - 370px))}
+body.touch #toast{top:auto;bottom:120px;max-width:calc(100vw - 400px)}
+}
+@media (max-aspect-ratio:1/1) and (max-width:360px){#bossBar{padding:4px 8px 6px}#bossBar b{font-size:13px}#bossBar .ph{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#hud.boss #talk{top:142px}#hud.boss #party{top:142px}body.touch #hud.boss #mini{top:222px}body.touch #hud.boss #emoRow{top:222px}}
+@media (max-height:340px) and (min-aspect-ratio:1/1){body.touch #mini{width:60px;height:60px}#tbtns{transform:scale(.75)}}
+@media (max-aspect-ratio:1/1) and (max-width:520px){
+body.touch #talk,#talk{top:70px;bottom:auto}
+body.touch #emoRow{top:150px}
+#toast{bottom:300px;left:auto;right:8px;transform:none;max-width:calc(100vw - 130px)}
+#hud.boss #talk{top:124px}#hud.boss #party{top:124px}body.touch #hud.boss #mini{top:204px}body.touch #hud.boss #emoRow{top:204px}
+}
 </style>
 </head>
 <body>
@@ -317,6 +343,6 @@ body.touch #prompt.up,#prompt.up{bottom:262px}
 <script>["gesturestart","gesturechange","gestureend"].forEach(function(e){document.addEventListener(e,function(x){x.preventDefault()})});</script>
 <script>/* 옛 빌드가 캐시에서 뜨면: 사이트에 더 새 빌드가 있을 때 그 빌드 번호를 주소에 넣어 한 번만 다시 불러와요 (새 주소는 캐시에서 나오지 않아요) */
 (function(){try{var m=document.querySelector('script[src*="js/main.js"]').src.match(/v=(\d+)/),cur=m?+m[1]:0;fetch('../versions.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){var v=(j.versions||[]).find(function(x){return x.version==='0.2'}),n=v?+String(v.build||'').replace(/\D/g,''):0,u=new URL(location.href);if(n>cur&&u.searchParams.get('b')!==String(n)){u.searchParams.set('b',n);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();</script>
-<script type="module" src="js/main.js?v=79"></script>
+<script type="module" src="js/main.js?v=80"></script>
 </body>
 </html>
