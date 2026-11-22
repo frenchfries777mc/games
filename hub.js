@@ -291,6 +291,7 @@ async function listPosts(){
   await Promise.all([loadNames(uids), loadAvB(uids), loadLv(uids)]);
   var open=bOpen&&every.filter(function(x){ return x.id===bOpen; })[0];
   p.classList.toggle('cm-dtl',!!open);
+  pbSync(!!open);
   if(open){ detail(L,p,open,cnt[open.id]||0); return; }
   if(bOpen) bOpen=null;
   L.innerHTML=every.length?'':'<div class="cm-e">'+(bQuery?'검색 결과가 없어요.':(bFilter==='hot'?'아직 좋아요를 받은 글이 없어요.':bFilter==='mine'?'아직 내가 쓰거나 댓글 단 글이 없어요.':'아직 글이 없어요. 첫 글을 써 보세요!'))+'</div>';
@@ -1018,6 +1019,12 @@ async function refreshUser(){
   if(CMP){ paintSend(); setTab(tab); } loadAnn(); loadFollows(); ranking(); coinDaily(); onlineLoop(); if(location.hash==='#coin') setTimeout(openCoin,400);
 }
 /* 다른 페이지 · 알림에서 열기: ?post=글번호 , #feedback , #hubnotes */
+/* 글을 열면 기록을 한 칸 쌓아서, 뒤로 가기를 누르면 이전 사이트가 아니라 글 목록으로 돌아와요 */
+var pbOn=false, pbSkip=0;
+function pbSync(open){ try{
+  if(open&&!pbOn){ history.pushState({ffpost:1},''); pbOn=true; }
+  else if(!open&&pbOn){ pbOn=false; if(history.state&&history.state.ffpost){ pbSkip++; history.back(); } } }catch(e){} }
+window.addEventListener('popstate',function(){ if(pbSkip>0){ pbSkip--; return; } if(pbOn&&!(history.state&&history.state.ffpost)){ pbOn=false; bOpen=null; listPosts(); } });
 function openPostById(id){ id=+id; if(!id) return; bOpen=id; bScroll=true; if(tab!=='board') setTab('board'); else listPosts(); }
 var CMH={chat:'#chat',fb:'#feedback',lfg:'#lfg',gal:'#gallery',feed:'#friends'};
 window.FFHub={ openPost:function(id){ if(!CMP){ location.href=CMURL+'?post='+encodeURIComponent(id); return; } openPostById(id); scrollToCm(); }, tab:function(t){ if(!CMP){ location.href=CMURL+(CMH[t]||''); return; } setTab(t); scrollToCm(); }, coin:function(){ openCoin(); }, polls:function(){ openPolls(); } };

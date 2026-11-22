@@ -141,7 +141,8 @@ if(GAME){ document.addEventListener('DOMContentLoaded',function(){
     for(var j=0;j<sp.length;j++){ var e=sp[j]; if(e.__ffcc||e.children.length) continue;
       if(/^©\s*2026 Frenchfries777\s*·\s*CC BY-NC-ND 4\.0$/.test((e.textContent||'').trim())){ e.__ffcc=1;
         var l2=document.createElement('a'); l2.href=LIC; l2.textContent=e.textContent.trim(); l2.style.cssText='color:inherit;text-decoration:none'; l2.title=ko?'라이선스 안내':'License info';
-        e.textContent=''; e.appendChild(chips()); e.appendChild(l2); } }
+        e.textContent=''; var cw=chips(); e.appendChild(cw); e.appendChild(l2);
+        if(e.closest('aside')){ e.style.cssText+=';display:flex;flex-direction:column;align-items:flex-start;gap:4px'; cw.style.marginRight='0'; l2.textContent='© 2026 Frenchfries777'; l2.appendChild(document.createElement('br')); l2.appendChild(document.createTextNode('CC BY-NC-ND 4.0')); } } }
   }
   function go(){ try{ run(); }catch(e){} }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go();
