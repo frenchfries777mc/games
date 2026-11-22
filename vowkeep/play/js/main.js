@@ -895,29 +895,32 @@ function paintMini(sn, me) {
   g.fillStyle = '#fff'; g.beginPath(); g.arc(W / 2, W / 2, 3, 0, 6.3); g.fill();
   g.strokeStyle = 'rgba(255,255,255,.35)'; g.lineWidth = 2; g.strokeRect(1, 1, W - 2, W - 2);
 }
+// 매 프레임 불리는 화면 갱신: 값이 그대로면 다시 쓰지 않아요 (불필요한 화면 다시 그리기를 줄여 모바일에서 더 가벼워요)
+function setTx(el, v) { if (el._v !== v) { el._v = v; el.textContent = v; } }
+function setSt(el, k, v) { const q = '_' + k; if (el[q] !== v) { el[q] = v; el.style[k] = v; } }
 function paintHud() {
   const sn = S.snap, me = myP();
-  $('roomTag').textContent = CH.title + (S.area >= 0 ? ' · ' + MAP.areas[S.area].name : '') + ' · ' + T('남은 적 {0}', sn.w.left);
+  setTx($('roomTag'), CH.title + (S.area >= 0 ? ' · ' + MAP.areas[S.area].name : '') + ' · ' + T('남은 적 {0}', sn.w.left));
   const boss = sn.w.boss && !sn.w.bd ? sn.en.find(e => e.k === 'boss') : null;
-  $('bossBar').style.display = boss ? 'block' : 'none'; $('hud').classList.toggle('boss', !!boss); if (boss && $('bossName').textContent !== CH.boss.name) $('bossName').textContent = CH.boss.name;
-  if (boss) { $('bossHp').style.width = Math.max(0, boss.hp / boss.mx * 100) + '%'; $('bossPh').textContent = boss.sn ? T('기절!') : ['', T('1단계'), T('2단계') + ' · ' + CH.boss.ph[0], T('3단계') + ' · ' + CH.boss.ph[1], T('마지막 단계') + ' · ' + (CH.boss.ph[2] || '')][boss.ph] || ''; }
+  setSt($('bossBar'), 'display', boss ? 'block' : 'none'); $('hud').classList.toggle('boss', !!boss); if (boss && $('bossName').textContent !== CH.boss.name) $('bossName').textContent = CH.boss.name;
+  if (boss) { setSt($('bossHp'), 'width', Math.max(0, boss.hp / boss.mx * 100) + '%'); setTx($('bossPh'), (boss.sn ? T('기절!') : ['', T('1단계'), T('2단계') + ' · ' + CH.boss.ph[0], T('3단계') + ' · ' + CH.boss.ph[1], T('마지막 단계') + ' · ' + (CH.boss.ph[2] || '')][boss.ph] || '')); }
   paintMini(sn, me);
   // 동료 칸
   const pb = $('party'); if (pb.children.length !== sn.pl.length) { pb.innerHTML = ''; sn.pl.forEach(() => { const d = document.createElement('div'); d.className = 'pf'; d.innerHTML = '<div class="n"><i></i><b></b><span></span></div><div class="hp"><i></i><em></em></div><div class="st"></div>'; pb.appendChild(d); }); }
   sn.pl.forEach((p, i) => {
     const d = pb.children[i], R = ROLES[p.role];
-    d.querySelector('.n i').style.background = R.color; d.querySelector('.n b').textContent = R.name; d.querySelector('.n span').textContent = p.id === S.me ? T('나') : p.bot ? T('봇') : p.name;
-    d.querySelector('.hp i').style.width = (p.hp / p.mx * 100) + '%'; d.querySelector('.hp em').style.width = Math.min(100, p.sh / p.mx * 100) + '%';
+    setSt(d.querySelector('.n i'), 'background', R.color); setTx(d.querySelector('.n b'), R.name); setTx(d.querySelector('.n span'), p.id === S.me ? T('나') : p.bot ? T('봇') : p.name);
+    setSt(d.querySelector('.hp i'), 'width', (p.hp / p.mx * 100) + '%'); setSt(d.querySelector('.hp em'), 'width', Math.min(100, p.sh / p.mx * 100) + '%');
     d.classList.toggle('down', !!(p.dn || p.dd));
-    d.querySelector('.st').textContent = p.dd ? T('모닥불에서 {0}초 뒤 일어나요', Math.max(1, Math.ceil(p.rs))) : p.dn ? T('쓰러짐 {0}초', Math.ceil(p.bl)) : p.tn ? T('외침') : p.ra ? T('함성') : '';
+    setTx(d.querySelector('.st'), p.dd ? T('모닥불에서 {0}초 뒤 일어나요', Math.max(1, Math.ceil(p.rs))) : p.dn ? T('쓰러짐 {0}초', Math.ceil(p.bl)) : p.tn ? T('외침') : p.ra ? T('함성') : '');
   });
   // 기술 칸
   if (me) {
     const R = ROLES[me.role], sk = $('skills');
     if (sk.dataset.role !== me.role) { sk.dataset.role = me.role; sk.innerHTML = ''; R.skills.concat([{ key: 'Space', name: T('구르기'), cd: 1.2 }]).forEach(s => { const d = document.createElement('div'); d.className = 'sk'; d.innerHTML = `<i class="cd"></i><span class="nm">${s.name}</span><small>${s.key}</small><b class="cn"></b>`; sk.appendChild(d); }); ['tQ', 'tE', 'tR'].forEach((id, i) => $(id).querySelector('span').textContent = R.skills[i].name); }
     const cds = me.cd.concat([me.rc]), maxs = R.skills.map(s => s.cd).concat([1.2]);
-    [...sk.children].forEach((d, i) => { const c = Math.max(0, cds[i]); d.querySelector('.cd').style.height = Math.min(100, c / maxs[i] * 100) + '%'; d.querySelector('.cn').textContent = c > 0.05 ? Math.ceil(c) : ''; d.classList.toggle('cool', c > 0.05); });
-    ['tQ', 'tE', 'tR', 'tRoll'].forEach((id, i) => { const c = Math.max(0, cds[i]); $(id).querySelector('.cd').style.height = Math.min(100, c / maxs[i] * 100) + '%'; });
+    [...sk.children].forEach((d, i) => { const c = Math.max(0, cds[i]); setSt(d.querySelector('.cd'), 'height', Math.min(100, c / maxs[i] * 100) + '%'); setTx(d.querySelector('.cn'), c > 0.05 ? String(Math.ceil(c)) : ''); d.classList.toggle('cool', c > 0.05); });
+    ['tQ', 'tE', 'tR', 'tRoll'].forEach((id, i) => { const c = Math.max(0, cds[i]); setSt($(id).querySelector('.cd'), 'height', Math.min(100, c / maxs[i] * 100) + '%'); });
   }
   // 안내
   let pr = '';
@@ -939,7 +942,7 @@ function paintHud() {
     else if (MAP.fires.some(([x, y], k) => sn.w.fi[k] && Math.hypot(cw(x) - pos.x, cw(y) - pos.z) < 4) && me.hp < me.mx) pr = T('모닥불 곁에서 체력이 차올라요');
     else if (sn.bless && Object.values(sn.bless).some(Boolean) && !(sn.bless[S.me])) pr = T('동료가 축복을 고르는 중이에요');
   }
-  const pe = $('prompt'); pe.textContent = pr; pe.style.display = pr ? 'block' : 'none'; pe.classList.toggle('up', $('talk').classList.contains('on'));
+  const pe = $('prompt'); setTx(pe, pr); setSt(pe, 'display', pr ? 'block' : 'none'); pe.classList.toggle('up', $('talk').classList.contains('on'));
 }
 // 수수께끼 방 안내
 function puzPrompt(sn, pos) {
