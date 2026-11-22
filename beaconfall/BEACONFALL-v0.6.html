@@ -102,6 +102,7 @@ html,body{ height:100%; margin:0; background:#1d3f73; overflow:hidden; color:var
 .modal p{ margin:0 0 16px; font-size:15px; line-height:1.6; color:var(--text); }
 .modal .hint{ color:var(--muted); font-size:13px; }
 .row{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin:0 0 14px; font-size:16px; }
+.row>span:first-child{flex:0 0 auto;max-width:60%}.row .seg{flex-wrap:wrap;justify-content:flex-end;min-width:0}
 .row.col{ display:block; }
 .row.col label{ display:block; margin-bottom:8px; }
 .tog,.seg button,.field{ font:inherit; color:var(--text); }
@@ -432,7 +433,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.6<br>build 216</p>
+    <p class="foot">v0.6<br>build 217</p>
   </nav>
 </div>
 
@@ -14076,16 +14077,16 @@ function showLook(){
   const ownH=settings.hairOwn||[],ownF=settings.faceOwn||[];
   const chip=(k,kind,own)=>{
     const has=!k.id||own.includes(k.id),on=(kind==='h'?settings.hair||'':settings.face||'')===k.id&&(!k.id||has);
-    return `<button class="btn sm${on?' ghost':''}" ${on?'disabled':''} data-lk="${kind}" data-id="${k.id}" style="margin:2px;display:block;width:auto">${k.name}${has?'':' · '+bC(k.price)}</button>`;
+    return `<button class="btn sm${on?' ghost':''}" ${on?'disabled':''} data-lk="${kind}" data-id="${k.id}" style="margin:2px;display:block;width:auto;white-space:nowrap;padding-left:6px;padding-right:6px">${k.name}${has?'':' · '+bC(k.price)}</button>`;
   };
   const sw=HAIRC.map(k=>`<button class="btn sm${(settings.hairc||'')===k.id?' ghost':''}" data-lk="c" data-id="${k.id}" title="${k.name}" style="margin:2px;display:inline-block;width:34px;height:28px;padding:0;background:${k.col};${(settings.hairc||'')===k.id?'outline:2px solid #fff;':''}"></button>`).join('');
   openModal(`<h2>머리·표정 꾸미기<small>HAIR &amp; FACE</small></h2>
     <div class="row"><span>보유 BeaCoin</span><b data-noi18n="1">${bC(settings.bc)}</b></div>
     <div style="text-align:center;margin:6px 0"><canvas id="lkprev" width="12" height="16" style="width:72px;height:96px;image-rendering:pixelated"></canvas></div>
     <div style="max-height:32vh;overflow:auto">
-      <div class="hint">머리 모양</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr))">${HAIRS.map(k=>chip(k,'h',ownH)).join('')}</div>
+      <div class="hint">머리 모양</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr))">${HAIRS.map(k=>chip(k,'h',ownH)).join('')}</div>
       <div class="hint" style="margin-top:6px">머리 색 (무료)</div><div>${sw}</div>
-      <div class="hint" style="margin-top:6px">표정</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr))">${FACES.map(k=>chip(k,'f',ownF)).join('')}</div>
+      <div class="hint" style="margin-top:6px">표정</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr))">${FACES.map(k=>chip(k,'f',ownF)).join('')}</div>
     </div>
     <div class="actions"><button class="btn sm ghost" data-back>스킨 상점으로</button><button class="btn sm ghost" data-close>닫기</button></div>`,m=>{
       m.querySelector('[data-close]').onclick=closeModal;
@@ -15251,7 +15252,7 @@ async function bstRun(d){
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <style>
 #authgate{position:fixed;inset:0;z-index:2147483000;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(6,16,30,.9);backdrop-filter:blur(4px);color:#f4ecd0;font-family:inherit;padding:20px;text-align:center}
-#authgate.show{display:flex}
+#authgate.show{display:flex}#authgate{overflow-y:auto;overflow-x:hidden;justify-content:flex-start;overscroll-behavior:contain}#authgate::before,#authgate::after{content:"";margin:auto}
 #authgate h1{margin:0 0 6px;font-size:clamp(28px,7vw,52px);letter-spacing:.12em}
 #authgate input,#authgate button{width:min(300px,82vw);padding:13px 16px;border:2px solid #e9d9a4;border-radius:10px;background:rgba(14,18,30,.8);color:#f4ecd0;font:700 17px/1.2 inherit;text-align:center;outline:none}
 #authgate input::placeholder{color:#f4ecd088;font-weight:400}
@@ -15259,7 +15260,7 @@ async function bstRun(d){
 #authgate button{cursor:pointer;box-shadow:0 3px 0 #000a}
 #authgate button:hover:not(:disabled){background:rgba(233,217,164,.9);color:#10141f}
 #authgate button:disabled{opacity:.5;cursor:default}
-#authgate button.main{border-color:#9ae0ff}
+#authgate button.main{border-color:#9ae0ff}@media (max-height:460px){#authgate{gap:8px;padding:10px 20px}#authgate h1{font-size:clamp(22px,6vh,36px);margin:0}#authgate input,#authgate button{padding:8px 14px;font-size:15px}}
 #authmsg{min-height:22px;font-size:15px;color:#ffb0a8;max-width:80vw}
 #authmsg.ok{color:#a8ffb8}
 #authme{position:fixed;left:10px;bottom:10px;z-index:2147482000;display:none;width:auto!important;padding:6px 12px;border:2px solid #e9d9a4aa;border-radius:8px;background:rgba(14,18,30,.7);color:#f4ecd0;font:600 13px inherit;cursor:pointer}
