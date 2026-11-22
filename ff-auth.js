@@ -266,8 +266,10 @@ async function signUp(id, pw, nick){
   if(pwWeak(pw,id)) return {error:pwWeakMsg()};
   var r=await sb.auth.signUp({email:emailFor(id), password:pw});
   if(r.error) return {error:/already|registered/i.test(r.error.message)?T.taken:errText(r.error)};
+  /* 세션이 없으면(Supabase 'Confirm email' 이 켜져 있으면) 프로필을 만들 수 없어요. '이미 있는 아이디'로 잘못 보이지 않게 따로 알려요 */
+  if(!r.data||!r.data.user||!r.data.session) return {error:'가입은 됐지만 로그인 상태가 안 돼요. 서버의 이메일 확인 설정이 켜져 있어요. 관리자에게 알려 주세요.'};
   var p=await sb.from('profiles').insert({id:r.data.user.id, username:id, display_name:(String(nick||'').trim()||id).slice(0,15)});
-  if(p.error) return {error:T.taken};
+  if(p.error) return {error:/duplicate|unique|23505/i.test(JSON.stringify(p.error))?T.taken:errText(p.error)};
   pwSave(id,pw); await setUser(r.data.user); return {ok:true};
 }
 /* ---- GitHub / Google login (Supabase OAuth). Providers must be turned on in the Supabase dashboard; a social account
