@@ -47,7 +47,9 @@ const THEMES = {
   studio: { wall: '#1e2038', trim: '#12142a', floor: '#3a3a58', top: '#5a5a78', wain: '#c0306a' },
   control: { wall: '#2a3040', trim: '#181e2c', floor: '#444c60', top: '#646c80', wain: '#2a6a8a' },
   makeup: { wall: '#f4dce8', trim: '#d0a8bc', floor: '#8a6a7a', top: '#aa8a9a', wain: '#e090b8' },
-  factoryB: { wall: '#8e8a84', trim: '#66625c', floor: '#52504c', top: '#76726c', wain: '#8a4a2a' }
+  factoryB: { wall: '#8e8a84', trim: '#66625c', floor: '#52504c', top: '#76726c', wain: '#8a4a2a' },
+  tarmac: { open: true, floor: '#4a4e58', top: '#e8c840' }, roofH: { open: true, floor: '#5a6270', top: '#9aa4b4' }, track: { open: true, floor: '#a8503a', top: '#e8e0d0' },
+  arenaO: { open: true, floor: '#5a6678', top: '#b8c4d8' }, field: { open: true, floor: '#3a7a3a', top: '#7ac860' }, yard: { open: true, floor: '#6a6458', top: '#a89c84' }, tower: { open: true, floor: '#3a4258', top: '#8a96b4' }
 };
 const OBJC = {
   counter: ['#8a5a30', '#c48a50'], plant: ['#2f8a4a', '#6fcf86'], sofa: ['#a8473f', '#d9776d'], gate: ['#566, #aab'], bench: ['#7a5a3a', '#b08a5a'], boxes: ['#b88a50', '#e0b878'],
@@ -72,7 +74,8 @@ const R = (x, c, a, b, w, h) => { x.fillStyle = c; x.fillRect(a | 0, b | 0, w | 
 function bakeWorld(W) {
   const [c, x] = mkCanvas(W.pw, W.ph);
   for (const rm of W.rooms) {
-    const T = THEMES[rm.theme], X = rm.x0 * TS, Y = rm.y0 * TS, w = (rm.x1 - rm.x0 + 1) * TS, h = (rm.y1 - rm.y0 + 1) * TS;
+    const T = THEMES[rm.theme]; if (T.open) continue;      // 야외는 벽을 그리지 않아요
+    const X = rm.x0 * TS, Y = rm.y0 * TS, w = (rm.x1 - rm.x0 + 1) * TS, h = (rm.y1 - rm.y0 + 1) * TS;
     R(x, T.wall, X, Y, w, h);
     const v = rm.theme === 'server' ? 0 : ((rm.y0 / 6 | 0) * 5 + rm.x0) % 4;      // 층마다 벽 모양이 달라요: 0 기본, 1 넓은 창, 2 창 없는 벽(패널), 3 촘촘한 창
     R(x, ['rgba(0,0,0,0)', 'rgba(120,170,255,.09)', 'rgba(255,190,110,.09)', 'rgba(140,230,160,.08)'][v], X, Y, w, h);
@@ -182,6 +185,8 @@ function drawObj(x, W, o) {
     case 'washer': R(x, col[0], X + 1, Y, w - 2, h); R(x, col[1], X + 1, Y, w - 2, 5); x.fillStyle = '#9fb4c4'; x.beginPath(); x.arc(X + w / 2, Y + h / 2 + 3, 8, 0, 7); x.fill(); R(x, '#d8ecf8', X + w / 2 - 4, Y + h / 2 - 1, 8, 5); break;
     case 'sofa': R(x, col[0], X, Y + 4, w, h - 4); R(x, col[1], X + 2, Y, w - 4, 7); break;
     case 'luggage': R(x, col[0], X + 1, Y + 2, w - 2, h - 2); R(x, col[1], X + 3, Y + 4, w - 6, 2); R(x, '#222', X + w / 2 - 2, Y - 2, 4, 3); break;
+    case 'traincar': R(x, col[0], X, Y, w, h); R(x, col[1], X, Y + h - 10, w, 5); for (let i = 0; i < w - 10; i += 28) { R(x, '#10182a', X + 6 + i, Y + 4, 20, Math.max(8, h - 24)); R(x, '#8ac0f0', X + 8 + i, Y + 6, 16, Math.max(5, h - 28)); } break;
+    case 'flag': R(x, '#ddd', X + 6, Y, 3, h); R(x, col[0], X + 9, Y + 2, 20, 12); R(x, col[1], X + 12, Y + 5, 8, 2); break;
     case 'cone': R(x, col[0], X + 3, Y + 2, 10, 14); R(x, '#fff', X + 4, Y + 7, 8, 3); break;
     default: R(x, col[0], X, Y, w, h); R(x, col[1], X + 1, Y + 1, w - 2, 3); R(x, 'rgba(0,0,0,.18)', X, Y + h - 3, w, 3);
   }
@@ -440,7 +445,7 @@ function drawEmo(x, id, px, py) {
 function mapThumb(c, id) {
   const m = MAPS[id].make(), k = 2; c.width = m.w * k; c.height = m.h * k; const x = c.getContext('2d'); x.imageSmoothingEnabled = false;
   x.fillStyle = '#0c1220'; x.fillRect(0, 0, c.width, c.height);
-  for (const rm of m.rooms) { const T = THEMES[rm.theme] || THEMES.office; x.fillStyle = T.wall; x.fillRect(rm.x0 * k, rm.y0 * k, (rm.x1 - rm.x0 + 1) * k, (rm.y1 - rm.y0 + 1) * k); x.fillStyle = T.wain || T.trim; x.fillRect(rm.x0 * k, (rm.y1 - 1) * k, (rm.x1 - rm.x0 + 1) * k, 2 * k); }
+  for (const rm of m.rooms) { const T = THEMES[rm.theme] || THEMES.office; x.fillStyle = T.wall || '#6a8ab8'; x.fillRect(rm.x0 * k, rm.y0 * k, (rm.x1 - rm.x0 + 1) * k, (rm.y1 - rm.y0 + 1) * k); x.fillStyle = T.wain || T.trim; x.fillRect(rm.x0 * k, (rm.y1 - 1) * k, (rm.x1 - rm.x0 + 1) * k, 2 * k); }
   for (let ty = 0; ty < m.h; ty++) for (let tx = 0; tx < m.w; tx++) {
     const ch = m.g[ty][tx]; if (ch === '.') continue;
     x.fillStyle = ch === '#' ? '#3a4458' : ch === 'x' ? '#b88a50' : ch === '=' ? '#c89a5a' : ch === 'I' ? '#9ad4ee' : ch === 'U' ? '#6ab0f0' : '#f2b632'; x.fillRect(tx * k, ty * k, k, k);
