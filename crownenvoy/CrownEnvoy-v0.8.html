@@ -643,7 +643,7 @@ if(document.body)arm();else document.addEventListener('DOMContentLoaded',arm);
 </script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.8 · build 202</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.8 · build 203</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div><p class="tagline">사절을 보내 동맹을 맺고, 군대를 보내 왕관을 차지하세요.</p></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -5156,7 +5156,7 @@ const Battle={_skip:null,skipAll:false,snd:true,_ac:null,
  }catch(e){}},
  play(b,view,opts){return new Promise(resolve=>{
   const BG=!!b.bg,BGF=BG&&!!b.full;const el=$('#battle'),cv=BG?$('#lobbyWar'):$('#bcanvas'),ctx=cv.getContext('2d'),hud=$('#bhud'),pop=$('#bpop'),res=$('#bresult');
-  const W=960,H=BG?(b.bgH||460):460,dpr=BG?1:Dev.dpr(2);cv.width=W*dpr;cv.height=H*dpr;if(!BG)el.classList.remove('hidden');res.className='';res.innerHTML='';pop.className='';
+  const W=960,H=BG?(b.bgH||460):460,dpr=BG?((Dev.lite()||(typeof UI!=='undefined'&&UI.optOn&&UI.optOn()))?1:Math.max(1,Math.min(1.5,Math.max(innerWidth/960,innerHeight/460)*(window.devicePixelRatio||1)))):Dev.dpr(2);cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);if(!BG)el.classList.remove('hidden');res.className='';res.innerHTML='';pop.className='';
   $('#bSound').textContent=Battle.snd?'소리 켬':'소리 끔';$('#bSound').onclick=()=>{Battle.snd=!Battle.snd;$('#bSound').textContent=Battle.snd?'소리 켬':'소리 끔';};
   const A=view.players[b.att],D=b.def!=null?view.players[b.def]:{kingdom:'중립 수비대',color:'#8b8570'};
   const gA=b.aGen?view.gens.find(g=>g.id===b.aGen):null,gD=b.dGen?view.gens.find(g=>g.id===b.dGen):null;const td=TDEF[b.tid],terrName=td.kind==='fort'?'철옹성':TERRAIN[td.terrain].n;
