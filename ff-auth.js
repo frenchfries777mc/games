@@ -506,7 +506,7 @@ function modal(){
     '<div class="pwr"><input name="password" type="password" placeholder="'+esc(T.pw)+'"><button type="button" class="eye" aria-label="'+esc(AL().show)+'">👁</button></div>'+
     '<div class="m"></div><button type="submit" class="ffa-btn go"></button><div class="or">'+esc(OA().or)+'</div>'+'<div class="oas">'+oaBtns()+'</div><div class="sw"><span></span><a></a></div></form>';
   document.body.appendChild(el);
-  el.addEventListener('click',function(e){ if(e.target===el) close(); });
+  /* 로그인 창은 바깥을 눌러도, Esc 를 눌러도 닫히지 않아요. X 버튼으로만 닫아요 */
   el.querySelector('.x').onclick=close;
   el.querySelector('.eye').onclick=function(){ var i=el.querySelector('input[name=password]'); i.type=i.type==='password'?'text':'password'; };
   el.querySelector('.sw a').onclick=function(){ mode=mode==='in'?'up':'in'; fill(); };
@@ -592,7 +592,7 @@ function paint(){
 }
 function closeMenus(){ var ms=document.querySelectorAll('.ffa-menu,.ffa-notes'); for(var i=0;i<ms.length;i++) ms[i].style.display='none'; }
 document.addEventListener('click', closeMenus);
-document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeMenus(); close(); closeAcct(); } });
+document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeMenus(); closeAcct(); } });
 
 /* ---- my account: nickname, login ID, password (same stored-password option as the games: localStorage arenaClashPw / arenaClashPwOpt) ---- */
 var ALT={
