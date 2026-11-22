@@ -92,7 +92,7 @@ var B='html body ', BAR={
   stickseum: B+'.topbar{flex-wrap:nowrap;align-items:flex-start}'+B+'.topbar .right{flex:none;margin-left:auto}'+B+'.topbar .wordmark{min-width:0;white-space:nowrap}'+
     '@media(max-width:620px){'+B+'.topbar{align-items:center}'+B+'.topbar .wordmark{font-size:20px}'+B+'.topbar .right{flex-wrap:nowrap}}',
   crownenvoy: B+'.top .wrap{flex-wrap:nowrap}'+B+'.top .mark{white-space:nowrap}'+B+'.top nav{display:flex;align-items:center;flex:none;white-space:nowrap}'+
-    '@media(max-width:1000px){'+B+'.top nav a{display:none}}'+
+    '@media(max-width:1070px){'+B+'.top nav a{display:none}}'+
     '@media(max-width:620px){'+B+'.top .mark{font-size:18px}'+B+'.lang{max-width:84px;margin-inline-start:0}'+B+'.top nav [data-ff-account]{margin-left:8px!important}'+B+'.ffa-wrap{margin-left:0}}',
   beaconfall: B+'.top .wrap{flex-wrap:wrap;align-items:center;row-gap:8px}'+B+'.top .nav{flex:1 1 0;min-width:240px;flex-wrap:wrap}'+B+'.top .nav .pb{flex:none;white-space:nowrap}'+
     B+'.top .lg{flex:none;flex-wrap:nowrap}'+B+'.top .lg .pb{white-space:nowrap}'+
