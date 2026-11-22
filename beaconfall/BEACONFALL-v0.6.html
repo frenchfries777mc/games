@@ -433,7 +433,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.6<br>build 217</p>
+    <p class="foot">v0.6<br>build 218</p>
   </nav>
 </div>
 
@@ -13826,13 +13826,17 @@ function drawAmbient(g,ix,iy,dkn){
   // Deep Void: 은은한 보랏빛 공기
   if(b===9){g.fillStyle='rgba(90,50,170,0.05)';g.fillRect(0,0,Wd,Hd);}
 }
+// 불빛 그림 미리 만들어 두기: 횃불이 많아도 한 장씩만 찍어서 가벼워요
+const LSPR={},GSPR={};
+function lightSpr(r){let c=LSPR[r];if(c)return c;c=document.createElement('canvas');c.width=c.height=r*2+3;const x=c.getContext('2d');x.fillStyle='rgba(0,0,0,0.3)';for(let k=0;k<4;k++)fillCircle(x,r+1,r+1,Math.round(r*(1-k*0.22)));return LSPR[r]=c;}
+function glowSpr(r,col){const key=r+col;let c=GSPR[key];if(c)return c;c=document.createElement('canvas');c.width=c.height=r*2+3;const x=c.getContext('2d');x.globalCompositeOperation='lighter';x.fillStyle=col;fillCircle(x,r+1,r+1,r);fillCircle(x,r+1,r+1,Math.round(r*0.6));return GSPR[key]=c;}
 function drawNight(g,a,ix,iy){
   if(bufOn('night'))a*=0.4;
   const d=dkc;
   d.globalCompositeOperation='source-over';d.clearRect(0,0,VW,VH);
   d.fillStyle=`rgba(10,18,52,${a.toFixed(3)})`;d.fillRect(0,0,VW,VH);
   d.globalCompositeOperation='destination-out';d.fillStyle='rgba(0,0,0,0.3)';
-  const light=(x,y,r)=>{for(let k=0;k<4;k++)fillCircle(d,Math.round(x-ix),Math.round(y-iy),Math.round(r*(1-k*0.22)));};
+  const light=(x,y,r)=>{r=Math.round(r);d.drawImage(lightSpr(r),Math.round(x-ix)-r-1,Math.round(y-iy)-r-1);};
   light(world.camp.x,world.camp.y-1,50+(((time*9)|0)%3===1?1:0));
   for(const b of world.structs)if((b.id==='oven'||b.id==='furnace'||b.id==='torch'||b.id==='lamp'||(b.id==='ruin'&&(b.k==='brazier'||b.k==='lamp'||b.k==='flag'||b.k==='lava')))&&Math.abs(b.x-P.x)<400&&Math.abs(b.y-P.y)<300){if(b.id==='ruin'&&b.k==='flag')continue;light(b.x,b.y-(b.id==='torch'||b.id==='lamp'||b.id==='ruin'?8:6),b.k==='lamp'?32:b.k==='lava'?18:b.id==='torch'||b.id==='lamp'||b.id==='ruin'?24:28);}
   for(const b of world.structs)if(b.id==='vlantern'&&Math.abs(b.x-P.x)<400&&Math.abs(b.y-P.y)<300)light(b.x,b.y-6,46);   // 공허 랜턴: 넓게 밝혀요
@@ -13850,11 +13854,11 @@ function drawNight(g,a,ix,iy){
   g.drawImage(dk,0,0);
   {   // 불빛 번짐: 따뜻한 빛이 어둠 위에 번져요
     g.globalCompositeOperation='lighter';
-    const gl=(x,y,r,al)=>{g.fillStyle=`rgba(255,150,50,${al})`;fillCircle(g,Math.round(x-ix),Math.round(y-iy),r);fillCircle(g,Math.round(x-ix),Math.round(y-iy),Math.round(r*0.6));};
+    const gl=(x,y,r,al)=>{g.globalAlpha=al*2;g.drawImage(glowSpr(r,'rgba(255,150,50,0.5)'),Math.round(x-ix)-r-1,Math.round(y-iy)-r-1);g.globalAlpha=1;};
     const fl=(((time*9)|0)%3===1)?0.01:0;
     gl(world.camp.x,world.camp.y-1,44,0.03+fl);
     for(const b of world.structs)if((b.id==='oven'||b.id==='furnace'||b.id==='torch'||b.id==='lamp'||(b.id==='ruin'&&(b.k==='brazier'||b.k==='lamp')))&&Math.abs(b.x-P.x)<400&&Math.abs(b.y-P.y)<300)gl(b.x,b.y-7,b.k==='lamp'?26:20,0.035+fl*0.5);
-    for(const b of world.structs)if(b.id==='vlantern'&&Math.abs(b.x-P.x)<400&&Math.abs(b.y-P.y)<300){g.fillStyle='rgba(150,100,255,0.05)';fillCircle(g,Math.round(b.x-ix),Math.round(b.y-iy-6),40);fillCircle(g,Math.round(b.x-ix),Math.round(b.y-iy-6),24);}   // 보랏빛 번짐
+    for(const b of world.structs)if(b.id==='vlantern'&&Math.abs(b.x-P.x)<400&&Math.abs(b.y-P.y)<300){g.globalAlpha=0.1;g.drawImage(glowSpr(40,'rgba(150,100,255,0.5)'),Math.round(b.x-ix)-41,Math.round(b.y-iy-6)-41);g.globalAlpha=1;}   // 보랏빛 번짐
     g.globalCompositeOperation='source-over';
   }
   g.fillStyle='rgba(255,226,110,0.95)';
