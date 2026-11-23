@@ -406,7 +406,7 @@ function welcome(skipNick){
     body.querySelector('.go').onclick=async function(){ var b=this; b.disabled=true;
       if(sel){ try{ var r=await sb.rpc('ff_avatar_set',{p_id:sel}); if(!(r&&r.error)){ try{ window.dispatchEvent(new CustomEvent('ff-avatar',{detail:{pick:sel}})); }catch(e){} } }catch(e){} }
       b.disabled=false; s3(); }; }
-  function s3(){ step=3; var H='https://frenchfries777.com/', L=[['🎮','Games',H+'games/'],['📚','Educations',H+'educations/'],['🛠️','Tools',H+'tools/'],['🏠','Hub',H+'hub/']];
+  function s3(){ step=3; var H='https://frenchfries777.com/', L=[['🎮','Games',H+'games/'],['📚','Educations',H+'educations/'],['🛠️','Tools',H+'tools/'],['🏠','Hub',H]];
     body.innerHTML=dots(3)+'<h2>'+W.s3+'</h2><p><b style="color:var(--ffw-gold,#d9b45f)">'+esc(nm)+'</b>'+W.s3p+'</p><div class="coin"><img src="'+BASE+'hubicons/coin.svg" alt=""><div><b>'+W.coin+'</b><span>'+W.coin2+'</span></div></div><div class="s">'+L.map(function(x,i){ return '<a href="'+x[2]+'"><i>'+x[0]+'</i><b>'+x[1]+'</b><span>'+W.g[i]+'</span></a>'; }).join('')+'</div><div class="row"><button type="button" class="bk">'+W.prev+'</button><button type="button" class="go">'+W.start+'</button></div>';
     body.querySelector('.bk').onclick=s2; body.querySelector('.go').onclick=done; }
   if(skipNick) s2(); else s1();
