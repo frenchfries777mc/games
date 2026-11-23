@@ -411,7 +411,8 @@ function welcome(skipNick){
     body.querySelector('.bk').onclick=s2; body.querySelector('.go').onclick=done; }
   if(skipNick) s2(); else s1();
 }
-async function signOut(){ pwClear(); if(ssoSub){ try{ localStorage.setItem('ffSsoOff','1'); }catch(e){} } try{ if(sb) await sb.auth.signOut({scope:'local'}); }catch(e){} await setUser(null); }   // 'local': only this browser, other devices stay logged in
+async function signOut(){ pwClear(); if(ssoSub){ try{ localStorage.setItem('ffSsoOff','1'); }catch(e){} } try{ if(sb&&user) await Promise.race([sb.rpc('ff_leave'),new Promise(function(r){ setTimeout(r,1500); })]); }catch(e){}   /* 로그아웃하면 '지금 접속 중'에서 바로 빠져요 */
+  try{ if(sb) await sb.auth.signOut({scope:'local'}); }catch(e){} await setUser(null); }   // 'local': only this browser, other devices stay logged in
 
 /* ---- UI ---- */
 /* 창 공용 색: 다크/라이트 두 테마 (html[data-ff-theme]) */
