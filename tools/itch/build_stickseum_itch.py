@@ -30,7 +30,7 @@ open(os.path.join(out, 'index.html'), 'w', encoding='utf-8').write(html)
 
 # 3. assets the game loads by relative path
 for f in os.listdir(src):
-    if re.match(r'music-.*\.mp3$', f) or f in ('hero-lobby.jpg', 'chars.json'):
+    if re.match(r'music-.*\.mp3$', f) or f in ('hero-lobby.jpg', 'chars.json', 'trailer-1.0.mp4'):
         shutil.copy(os.path.join(src, f), out)
 for d in ('characters', 'currency', 'emoji', 'modes'):
     shutil.copytree(os.path.join(src, d), os.path.join(out, d))
