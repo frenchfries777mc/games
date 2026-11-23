@@ -11,7 +11,3 @@ Stickseum-v1.0.1.html | 1111킬 챌린지 배너 | 킬) · 내  | build 759 | 20
 Stickseum-v1.0.1.html | 1111킬 챌린지 배너 | 🔥 1111킬 챌린지 · 모두 합쳐  | build 759 | 2026-11-09
 Stickseum-v1.0.1.html | 1111킬 챌린지 배너 | 일 남음 | build 759 | 2026-11-09
 Stickseum-v1.0.1.html | 1111킬 챌린지 배너 | 🔥 1111킬 챌린지 · 11/15까지 · 불러오는 중 | build 762 | 2026-11-10
-patchnotes.json | v879 title | 그래픽 검사: 인게임 하단 겹침 | build 879 | 2026-11-22
-patchnotes.json | v879 items[0] | 대전 중 로비 하단 글자(저작권 줄)가 하단 HUD와 겹치던 것을 고쳤어요 | build 879 | 2026-11-22
-patchnotes.json | v880 title | 로딩 가벼워짐 | build 880 | 2026-11-22
-patchnotes.json | v880 items[0] | 트레일러 영상을 게임 파일 안에서 빼서 별도 파일로 옮겼어요. 게임 파일이 17.8MB에서 7.8MB로 줄어 로딩이 빨라져요 (트레일러는 처음 한 번 볼 때만 불러와요) | build 880 | 2026-11-22
