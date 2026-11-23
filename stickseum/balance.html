@@ -285,6 +285,6 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeChar();
 window.addEventListener('hashchange', () => openChar(location.hash.slice(1)));
 fetch('patchnotes.json', {cache: 'no-cache'}).then(r => r.ok ? r.json() : Promise.reject()).then(drawLog).catch(() => drawLog(NOTES_FALLBACK));
 </script>
-<script src="https://frenchfries777.com/games/ff-auth.js?v=20261123a"></script>
+<script src="https://frenchfries777.com/games/ff-auth.js?v=20261123b"></script>
 </body>
 </html>
