@@ -6,7 +6,81 @@
    "title": "로딩 가벼워짐",
    "items": [
     "트레일러 영상을 게임 파일 안에서 빼서 별도 파일로 옮겼어요. 게임 파일이 17.8MB에서 7.8MB로 줄어 로딩이 빨라져요 (트레일러는 처음 한 번 볼 때만 불러와요)"
-   ]
+   ],
+   "tr": {
+     "ar": {
+       "title": "تحميل أخف",
+       "items": [
+         "تم نقل فيديو المقدمة الدعائية من ملف اللعبة إلى ملف منفصل. انخفض حجم ملف اللعبة من 17.8 ميغابايت إلى 7.8 ميغابايت، لذا صار التحميل أسرع (تُحمَّل المقدمة الدعائية فقط عند مشاهدتها لأول مرة)"
+       ]
+     },
+     "de": {
+       "title": "Schnellere Ladezeit",
+       "items": [
+         "Das Trailer-Video wurde aus der Spieldatei in eine separate Datei ausgelagert. Die Spieldatei schrumpfte von 17,8 MB auf 7,8 MB, daher lädt das Spiel schneller (der Trailer wird nur beim ersten Ansehen geladen)"
+       ]
+     },
+     "en": {
+       "title": "Lighter loading",
+       "items": [
+         "Moved the trailer video out of the game file into a separate file. The game file shrank from 17.8MB to 7.8MB, so loading is faster (the trailer loads only the first time you watch it)"
+       ]
+     },
+     "es": {
+       "title": "Carga más ligera",
+       "items": [
+         "Se sacó el vídeo del tráiler del archivo del juego y se pasó a un archivo aparte. El archivo del juego bajó de 17,8 MB a 7,8 MB, así que carga más rápido (el tráiler solo se descarga la primera vez que lo ves)"
+       ]
+     },
+     "fr": {
+       "title": "Chargement allégé",
+       "items": [
+         "La vidéo de la bande-annonce a été sortie du fichier du jeu et placée dans un fichier séparé. Le fichier du jeu passe de 17,8 Mo à 7,8 Mo, le chargement est donc plus rapide (la bande-annonce ne se charge qu'à la première lecture)"
+       ]
+     },
+     "it": {
+       "title": "Caricamento più leggero",
+       "items": [
+         "Il video del trailer è stato spostato dal file del gioco in un file separato. Il file del gioco è passato da 17,8 MB a 7,8 MB, quindi il caricamento è più veloce (il trailer si carica solo la prima volta che lo guardi)"
+       ]
+     },
+     "ja": {
+       "title": "読み込みが軽く",
+       "items": [
+         "トレーラー動画をゲームファイルから外して別ファイルに移しました。ゲームファイルが17.8MBから7.8MBに減り、読み込みが速くなりました（トレーラーは初めて見るときだけ読み込みます）"
+       ]
+     },
+     "pl": {
+       "title": "Lżejsze ładowanie",
+       "items": [
+         "Film zwiastuna został wyjęty z pliku gry i przeniesiony do osobnego pliku. Plik gry zmniejszył się z 17,8 MB do 7,8 MB, więc ładowanie jest szybsze (zwiastun wczytuje się tylko przy pierwszym obejrzeniu)"
+       ]
+     },
+     "pt": {
+       "title": "Carregamento mais leve",
+       "items": [
+         "O vídeo do trailer foi tirado do arquivo do jogo e colocado em um arquivo separado. O arquivo do jogo caiu de 17,8 MB para 7,8 MB, então o carregamento ficou mais rápido (o trailer só é carregado na primeira vez que você assiste)"
+       ]
+     },
+     "ru": {
+       "title": "Загрузка стала легче",
+       "items": [
+         "Видео трейлера вынесено из файла игры в отдельный файл. Файл игры уменьшился с 17,8 МБ до 7,8 МБ, поэтому загрузка быстрее (трейлер подгружается только при первом просмотре)"
+       ]
+     },
+     "tr": {
+       "title": "Yükleme hafifledi",
+       "items": [
+         "Fragman videosu oyun dosyasının içinden çıkarılıp ayrı bir dosyaya taşındı. Oyun dosyası 17,8 MB'den 7,8 MB'a düştü, bu yüzden yükleme daha hızlı (fragman yalnızca ilk izlenişte yüklenir)"
+       ]
+     },
+     "zh": {
+       "title": "加载更轻快",
+       "items": [
+         "将预告片视频从游戏文件中分离出来，放入单独的文件。游戏文件从 17.8MB 减小到 7.8MB，加载更快（预告片仅在首次观看时加载）"
+       ]
+     }
+   }
   },
   {
    "date": "2026-11-22",
@@ -14,7 +88,81 @@
    "title": "그래픽 검사: 인게임 하단 겹침",
    "items": [
     "대전 중 로비 하단 글자(저작권 줄)가 하단 HUD와 겹치던 것을 고쳤어요"
-   ]
+   ],
+   "tr": {
+     "ar": {
+       "title": "فحص الرسوميات: تداخل في الأسفل داخل اللعبة",
+       "items": [
+         "تم إصلاح تداخل النص السفلي للوبي (سطر حقوق النشر) مع واجهة HUD السفلية أثناء المباراة"
+       ]
+     },
+     "de": {
+       "title": "Grafikprüfung: Überlappung unten im Spiel",
+       "items": [
+         "Behoben: Der untere Lobby-Text (Copyright-Zeile) überlappte während des Matches das untere HUD"
+       ]
+     },
+     "en": {
+       "title": "Graphics check: in-game bottom overlap",
+       "items": [
+         "Fixed the bottom lobby text (copyright line) overlapping the bottom HUD during matches"
+       ]
+     },
+     "es": {
+       "title": "Revisión gráfica: solapamiento inferior en partida",
+       "items": [
+         "Corregido que el texto inferior del lobby (línea de copyright) se superpusiera con el HUD inferior durante la partida"
+       ]
+     },
+     "fr": {
+       "title": "Contrôle graphique : chevauchement en bas en jeu",
+       "items": [
+         "Corrigé le chevauchement du texte du bas du lobby (ligne de copyright) avec le HUD du bas pendant les parties"
+       ]
+     },
+     "it": {
+       "title": "Controllo grafica: sovrapposizione in basso in partita",
+       "items": [
+         "Corretto il testo in basso della lobby (riga del copyright) che si sovrapponeva all'HUD inferiore durante la partita"
+       ]
+     },
+     "ja": {
+       "title": "グラフィック検査：ゲーム内の下部の重なり",
+       "items": [
+         "対戦中、ロビー下部の文字（著作権表示の行）が下部HUDと重なっていた問題を直しました"
+       ]
+     },
+     "pl": {
+       "title": "Sprawdzenie grafiki: nakładanie się na dole w grze",
+       "items": [
+         "Naprawiono nakładanie się dolnego tekstu lobby (linii praw autorskich) na dolny HUD podczas meczu"
+       ]
+     },
+     "pt": {
+       "title": "Verificação gráfica: sobreposição inferior no jogo",
+       "items": [
+         "Corrigido o texto inferior do lobby (linha de direitos autorais) que se sobrepunha ao HUD inferior durante a partida"
+       ]
+     },
+     "ru": {
+       "title": "Проверка графики: наложение внизу в игре",
+       "items": [
+         "Исправлено наложение нижнего текста лобби (строки с авторскими правами) на нижний HUD во время матча"
+       ]
+     },
+     "tr": {
+       "title": "Grafik kontrolü: oyun içi alt kısım çakışması",
+       "items": [
+         "Maç sırasında lobinin alt yazısının (telif satırı) alt HUD ile çakışması düzeltildi"
+       ]
+     },
+     "zh": {
+       "title": "图形检查：游戏内底部重叠",
+       "items": [
+         "修复对战中大厅底部文字（版权行）与底部 HUD 重叠的问题"
+       ]
+     }
+   }
   },
   {
    "date": "2026-11-22",
