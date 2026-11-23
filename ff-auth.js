@@ -1087,6 +1087,9 @@ function paintNotes(panel){
   var c=panel.querySelector('[data-a=clear]'); if(c) c.onclick=async function(){ try{ await sb.from('ff_notes').delete().eq('user_id',user.id); }catch(e){} notes=[]; bellBadge(); paintNotes(panel); };
 }
 async function markRead(){ if(!unreadNotes()) return; var ids=notes.filter(function(n){ return !n.read; }).map(function(n){ return n.id; }); notes.forEach(function(n){ n.read=true; }); bellBadge(); try{ await sb.from('ff_notes').update({read:true}).in('id',ids); }catch(e){} }
+/* 챗 화면에서 그 사람과의 대화를 보고 있으면 '채팅을 보냈어요' 알림은 바로 읽음 처리 (챗 화면이 FFAuth.readChat(보는 사람들 id 목록) 을 불러요) */
+async function readChat(ids){ if(!sb||!user||!ids||!ids.length) return; var hit=notes.filter(function(n){ return n.kind==='chat'&&!n.read&&ids.indexOf(n.actor_id)>=0; }); if(!hit.length) return;
+  hit.forEach(function(n){ n.read=true; }); bellBadge(); try{ await sb.from('ff_notes').update({read:true}).eq('user_id',user.id).eq('kind','chat').in('actor_id',ids).eq('read',false); }catch(e){} }
 function goNote(n){
   var hubUrl=HUB;
   if(n.kind==='friend') return openFriends();
@@ -1102,7 +1105,7 @@ function watchNotes(){
   if(noteChan){ try{ sb.removeChannel(noteChan); }catch(e){} noteChan=null; }
   if(!sb||!user) return;
   try{ noteChan=sb.channel('ffa-notes-'+user.id)
-    .on('postgres_changes',{event:'INSERT',schema:'public',table:'ff_notes',filter:'user_id=eq.'+user.id},function(pl){ loadNotes().then(function(){ var n=pl&&pl.new; if(n&&n.kind==='dm'&&dmWith&&n.actor_id===dmWith){ seenDM(); return; } if(n&&n.kind!=='friend'&&npOn(n.kind)&&npGet().toast!==false){ toast(noteText(n)); var tt=document.getElementById('ffaToast'); if(tt) tt.querySelector('button').onclick=function(){ tt.remove(); goNote(n); }; } }); })
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'ff_notes',filter:'user_id=eq.'+user.id},function(pl){ loadNotes().then(function(){ var n=pl&&pl.new; if(n&&n.kind==='dm'&&dmWith&&n.actor_id===dmWith){ seenDM(); return; } if(n&&n.kind==='chat'&&typeof window.ffChatViewing==='function'&&window.ffChatViewing(n.actor_id)){ readChat([n.actor_id]); return; } if(n&&n.kind!=='friend'&&npOn(n.kind)&&npGet().toast!==false){ toast(noteText(n)); var tt=document.getElementById('ffaToast'); if(tt) tt.querySelector('button').onclick=function(){ tt.remove(); goNote(n); }; } }); })
     .on('postgres_changes',{event:'INSERT',schema:'public',table:'ff_dm',filter:'recipient_id=eq.'+user.id},function(pl){ var m=pl&&pl.new; if(!m) return; if(dmWith===m.sender_id){ if(!dmRows.some(function(x){ return x.id===m.id; })) dmRows.push(m); paintDM(); seenDM(); } else { dmUnread[m.sender_id]=(dmUnread[m.sender_id]||0)+1; fpaint(); } })
     .subscribe(); }catch(e){}
 }
@@ -1210,5 +1213,5 @@ document.addEventListener('visibilitychange', function(){ if(document.visibility
 window.FFAuth={ welcome:welcome, ready:ready, pollCheck:pollCheck, client:function(){ return sb; }, user:function(){ return user; }, profile:function(){ return prof; }, nickname:nick,
   canEditProfile:function(){ return editOk; }, hubUrl:HUBSITE,
   onChange:function(f){ if(typeof f==='function') subs.push(f); }, onNick:function(f){ if(typeof f!=='function') return; nickSubs.push(f); ready.then(function(){ if(user){ try{ f(nick(), user, prof); }catch(e){} } }); }, setNick:setNick, refreshNick:function(){ return nickRefresh(true); }, openLogin:openLogin, openProfile:openProfile, openFriends:openFriends, friends:function(){ return friends.slice(); }, signOut:signOut, refresh:paint, syncHub:syncHub,
-  openDM:openDM, setRoom:setRoom, openReport:openReport, openAcct:openAcct, notePrefs:{get:npGet,set:npSet}, userKey:userKey, lang:lang, loadDevs:loadDevs, devRole:devRole, devBadge:devBadge, block:block, isBlocked:isBlocked, blocked:function(){ return Object.assign({},blocks); } };
+  openDM:openDM, readChat:readChat, setRoom:setRoom, openReport:openReport, openAcct:openAcct, notePrefs:{get:npGet,set:npSet}, userKey:userKey, lang:lang, loadDevs:loadDevs, devRole:devRole, devBadge:devBadge, block:block, isBlocked:isBlocked, blocked:function(){ return Object.assign({},blocks); } };
 })();
