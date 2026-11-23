@@ -66,11 +66,12 @@ function loadNews(){
   })).then(function(all){ hubNotes=all[0]; all.forEach(function(l){ if(l[0]) notesBy[l[0].g]=l.map(function(n){ return n.key; }); }); news=[].concat.apply([],all).sort(function(a,b){ return (b.date>a.date?1:b.date<a.date?-1:0)||(a.i-b.i); }); paintNews(); paintFollow(); });
 }
 var NEWS_COL={isleport:'#4aa8ff',vowkeep:'#b48cf0',dummyparty:'#ff7ab8',gatecrash:'#ff8a4a',tumblecrown:'#ef5b66'};
+var NEWS_BAR={stickseum:'#3fe0c5',crownenvoy:'#f2dc94',beaconfall:'#f3e4b0',hub:'#ffd54a'};   /* 이름 색이 CSS에 있는 게임도 위쪽 색 줄을 똑같이 */
 function paintNews(){
   var box=$('#newsList'); if(!box) return;
   if(!news.length){ box.innerHTML='<div class="cm-e">아직 소식이 없어요.</div>'; return; }
-  box.innerHTML=news.slice(0,NEWS_N).map(function(n){ var G=NSRC[n.g], it=n.items.slice(0,4), nc=NEWS_COL[n.g];      /* 모든 게임 카드가 이름 색과 위쪽 색 줄을 갖게 (Isleport는 Beaconfall과 색이 겹쳐 따로 정함) */
-    return '<article class="nw '+G.cls+'"'+(nc?' style="border-top:3px solid '+nc+'"':'')+'><div class="nh"><span class="ng"'+(nc?' style="color:'+nc+'"':'')+'>'+esc(G.name)+'</span>'+(isNew(n)?'<span class="nnew">'+esc(F('새 패치노트'))+'</span>':'')+'<span class="nd" data-notr>'+esc(n.date)+(n.build?' · '+esc(String(n.build).replace(/\s*build\s*(\d+)/i,' b$1')):'')+'</span></div>'+
+  box.innerHTML=news.slice(0,NEWS_N).map(function(n){ var G=NSRC[n.g], it=n.items.slice(0,4), nc=NEWS_COL[n.g], bc=nc||NEWS_BAR[n.g];      /* 모든 게임 카드가 이름 색과 위쪽 색 줄을 갖게 (Isleport는 Beaconfall과 색이 겹쳐 따로 정함) */
+    return '<article class="nw '+G.cls+'"'+(bc?' style="border-top:3px solid '+bc+'"':'')+'><div class="nh" style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13px"><span class="ng"'+(nc?' style="color:'+nc+'"':'')+'>'+esc(G.name)+'</span>'+(isNew(n)?'<span class="nnew">'+esc(F('새 패치노트'))+'</span>':'')+'<span class="nd" data-notr>'+esc(n.date)+(n.build?' · '+esc(String(n.build).replace(/\s*build\s*(\d+)/i,' b$1')):'')+'</span></div>'+
       '<h3 data-notr>'+esc(n.title)+'</h3><ul data-notr>'+it.map(function(x){ return '<li>'+esc(x)+'</li>'; }).join('')+'</ul>'+
       (n.items.length>4?'<div class="nmore">'+esc(F('외 {0}개',n.items.length-4))+'</div>':'')+
       (n.g==='hub'?'<a class="nl" href="https://frenchfries777.com/patchnotes/#hub">패치노트 전체 보기 →</a>':'<a class="nl" href="'+G.site+'#notes">패치노트 전체 보기 →</a>')+'</article>'; }).join('');
