@@ -1,25 +1,26 @@
 <!DOCTYPE html><html><head><meta charset="utf-8"><title>BEACONFALL</title><meta name="robots" content="noindex"><style>html{background:#05061a}</style></head><body><script>
-/* 옛 주소(github.io)에 남은 비콘폴 저장(월드·설치한 모드·설정)을 frenchfries777.com 으로 건네는 중간 페이지예요.
-   브라우저 저장소는 주소마다 따로라서, 이 페이지가 자기 저장을 압축해 조각내고 frenchfries777.com 으로 한 조각씩 돌아가며 보내요. 보이는 건 없어요. */
+/* frenchfries777.com 과 옛 주소(github.io) 사이에서 비콘폴 저장(월드·설치한 모드·설정)을 건네는 중간 페이지예요.
+   브라우저 저장소는 주소마다 따로라서, 이 페이지가 자기 저장을 조각내 압축하고 frenchfries777.com 으로 한 번에 한 묶음씩 돌아가며 보내요. 보이는 건 없어요. */
 (function(){
-var OK='https://frenchfries777.com/',CH=250000;
+var SL=120000,RAW=400000,MAXB=170000,AL=['https://frenchfries777.com/','https://frenchfries777mc.github.io/'];
 function q(n){var m=new RegExp('[#&]'+n+'=([^&]*)').exec(location.hash);return m?decodeURIComponent(m[1]):'';}
 var back=q('back'),i=+q('i')||0;
-if(back.indexOf(OK)!==0)return;
+if(!AL.some(function(o){return back.indexOf(o)===0&&o.slice(0,-1)!==location.origin;}))return;   /* 우리 편 두 주소 중 이 페이지가 아닌 쪽으로만 돌려보내요 */
 function b64u(u8){var s='',k;for(k=0;k<u8.length;k+=0x8000)s+=String.fromCharCode.apply(null,u8.subarray(k,k+0x8000));return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
-async function pack(){
- try{var c=sessionStorage.getItem('bfpack');if(c)return JSON.parse(c);}catch(e){}
- var d={},any=0;try{for(var j=0;j<localStorage.length;j++){var k=localStorage.key(j);
-  if(/^(stranded\.|bf\.|bf_)/.test(k)&&!/^stranded\.cloud\./.test(k)&&k!=='bf_errlog'&&k!=='bf.import.v1'){d[k]=localStorage.getItem(k);any=1;}}}catch(e){}
- if(!any)return {z:0,p:[],none:1};
- var raw=new TextEncoder().encode(JSON.stringify(d)),z=0,u8=raw;
- try{if(window.CompressionStream){u8=new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new CompressionStream('gzip'))).arrayBuffer());z=1;}}catch(e){u8=raw;z=0;}
- var s=b64u(u8),p=[];for(var x=0;x<s.length;x+=CH)p.push(s.slice(x,x+CH));
- var P={z:z,p:p};try{sessionStorage.setItem('bfpack',JSON.stringify(P));}catch(e){}return P;
-}
-pack().then(function(P){
- if(P.none||!P.p.length||i>=P.p.length){location.replace(back+'#bfimp=none');return;}
- location.replace(back+'#bfimp='+P.z+'.'+i+'.'+P.p.length+'.'+P.p[i]);
-}).catch(function(){location.replace(back+'#bfimp=none');});
+function go(h){location.replace(back+'#bfimp='+h);}
+async function gz(str){var raw=new TextEncoder().encode(str);
+ try{if(window.CompressionStream)return {z:1,s:b64u(new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new CompressionStream('gzip'))).arrayBuffer()))};}catch(e){}
+ return {z:0,s:b64u(raw)};}
+(async function(){
+ var keys=[];try{for(var j=0;j<localStorage.length;j++){var k=localStorage.key(j);
+  if(/^(stranded\.|bf\.|bf_)/.test(k)&&!/^stranded\.cloud\./.test(k)&&k!=='bf_errlog'&&k.indexOf('bf.import.')!==0)keys.push(k);}}catch(e){}
+ if(!keys.length)return go('none');
+ keys.sort(function(a,b){return (a==='stranded.lobby.v1')-(b==='stranded.lobby.v1')||(a<b?-1:a>b?1:0);});   /* 월드 목록(로비)은 맨 마지막에 */
+ var parts=[];keys.forEach(function(k){var v=localStorage.getItem(k)||'',np=Math.max(1,Math.ceil(v.length/SL));for(var p=0;p<np;p++)parts.push([k,p,np,v.slice(p*SL,(p+1)*SL)]);});
+ var n=parts.length;if(i>=n)return go('done');
+ var c=0,tot=0;while(i+c<n&&(c===0||tot+parts[i+c][3].length<=RAW)){tot+=parts[i+c][3].length;c++;}
+ var out;for(;;){out=await gz(JSON.stringify(parts.slice(i,i+c)));if(out.s.length<=MAXB||c<=1)break;c=Math.max(1,c>>1);}
+ go(out.z+'.'+i+'.'+n+'.'+c+'.'+out.s);
+})().catch(function(){go('err');});
 })();
 </script></body></html>

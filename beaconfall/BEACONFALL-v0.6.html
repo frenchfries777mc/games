@@ -9,63 +9,67 @@
 window.__bstQ=null;addEventListener('message',function(e){var d=e.data;if(!d||d.type!=='bs-apply'||e.source!==parent)return;if(window.bstApply)window.bstApply(d);else window.__bstQ=d;});
 var st=document.createElement('style');st.textContent='#introScr,#me,#authgate,#backbtn{display:none!important}';document.head.appendChild(st);})();
 </script>
-<script>/* 옛 주소(frenchfries777mc.github.io)에 남은 월드·설치한 모드·설정을 frenchfries777.com 으로 가져와요. 브라우저 저장소는 주소마다 따로라서, 옛 주소의 중간 페이지(bf-bridge.html)를 한 번 다녀오며 조각으로 받아요. 이미 있는 건 지우지 않고 없는 것만 채워요. */
+<script>/* 옛 주소(frenchfries777mc.github.io)와 frenchfries777.com 중 어디로 들어와도, 반대쪽 주소에 남은 월드·설치한 모드·설정을 가져와요. 브라우저 저장소는 주소마다 따로라서, 옛 주소의 중간 페이지(bf-bridge.html)를 돌아다니며 한 묶음씩 받아 바로바로 합쳐요. 이미 있는 건 지우지 않고 없는 것만 채워요. 중간에 끊겨도 받은 건 남고, 다음에 열면 처음부터 다시 이어서 맞춰요. */
 (function(){try{
-if(location.hostname!=='frenchfries777.com'||/[?&]bstest=1/.test(location.search))return;
-var FL='bf.import.v1',GH='https://frenchfries777mc.github.io',BR=GH+'/games/beaconfall/bf-bridge.html';
+var COM='https://frenchfries777.com',GH='https://frenchfries777mc.github.io',OT=location.origin===COM?GH:location.origin===GH?COM:'';   /* 두 주소 중 어디로 들어와도 반대쪽 저장을 가져와요 */
+if(!OT||/[?&]bstest=1/.test(location.search))return;
+var FL='bf.import.v2',BR=OT+'/games/beaconfall/bf-bridge.html',SS=sessionStorage;
 if(localStorage.getItem(FL))return;
 function js(v){try{return JSON.parse(v);}catch(e){return null;}}
-function fin(){try{localStorage.setItem(FL,String(Date.now()));}catch(e){}try{for(var k=sessionStorage.length-1;k>=0;k--){var n=sessionStorage.key(k);if(n&&n.indexOf('bfimp.')===0)sessionStorage.removeItem(n);}}catch(e){}}
 function clean(){try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}}
-function merge(o){
- var ch=0,k;
- var L=js(localStorage.getItem('stranded.lobby.v1'))||{},OL=js(o['stranded.lobby.v1'])||{};
- var lw=Array.isArray(L.worlds)?L.worlds:[],ow=Array.isArray(OL.worlds)?OL.worlds:[];
- var pristine=lw.length<=1&&(!lw[0]||lw[0].id==='w1')&&(function(){var q=js(localStorage.getItem('stranded.save.v5.w1'));return !q||(+q.clock||0)<600;})();   /* 새 주소에서 아직 아무것도 안 한 빈 상태 */
- if(ow.length){
-  var m=pristine?ow.slice():lw.concat(ow.filter(function(w){return w&&!lw.some(function(x){return x&&x.id===w.id;});}));
-  var N=pristine?Object.assign({},L,OL):Object.assign({},OL,L);N.worlds=m;
-  if(pristine||!N.current||!m.some(function(w){return w&&w.id===N.current;}))N.current=OL.current||(m[0]&&m[0].id);
-  if(JSON.stringify(N)!==JSON.stringify(L)){localStorage.setItem('stranded.lobby.v1',JSON.stringify(N));ch++;}
- }
- for(k in o){
-  if(k==='stranded.lobby.v1'||typeof o[k]!=='string')continue;
-  var cur=localStorage.getItem(k);
-  if(cur===null){localStorage.setItem(k,o[k]);ch++;}
-  else if(cur!==o[k]){
-   if(k.indexOf('stranded.save.v5.')===0){var a=js(cur),b=js(o[k]);if(a&&b&&(+b.clock||0)>(+a.clock||0)){localStorage.setItem(k,o[k]);ch++;}}
-   else if(k==='bf.mods.on'||k==='bf.mods.seen'){var x=js(cur)||{},y=js(o[k])||{};localStorage.setItem(k,JSON.stringify(Object.assign({},y,x)));ch++;}
-  }
- }
- return ch;
-}
+function wipe(){try{for(var k=SS.length-1;k>=0;k--){var n=SS.key(k);if(n&&n.indexOf('bfimp.')===0)SS.removeItem(n);}}catch(e){}}
+function stop(ok){window.bfImporting=false;if(ok){try{localStorage.setItem(FL,String(Date.now()));}catch(e){}}var ch=+SS.getItem('bfimp.ch')||0;wipe();SS.setItem('bfimp.asked','1');
+ if(ch){window.bfCloudLoading=true;location.reload();}else window.bfCloudLoading=false;}
+function hop(i){location.replace(BR+'#back='+encodeURIComponent(location.origin+location.pathname+location.search)+'&i='+i);}
 function b64u(s){s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';var b=atob(s),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u;}
-async function assemble(z,n){
- var s='';for(var i=0;i<n;i++)s+=sessionStorage.getItem('bfimp.c'+i)||'';
- var u=b64u(s);
- if(+z)u=new Uint8Array(await new Response(new Blob([u]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer());
- return JSON.parse(new TextDecoder().decode(u));
+function addCh(){SS.setItem('bfimp.ch',String((+SS.getItem('bfimp.ch')||0)+1));}
+function applyKey(k,v){
+ var cur=localStorage.getItem(k);
+ if(cur===null){localStorage.setItem(k,v);addCh();return;}
+ if(cur===v)return;
+ if(k.indexOf('stranded.save.v5.')===0){var a=js(cur),b=js(v);if(a&&b&&(+b.clock||0)>(+a.clock||0)){localStorage.setItem(k,v);addCh();}}
+ else if(k==='bf.mods.on'||k==='bf.mods.seen'){var x=js(cur)||{},y=js(v)||{};localStorage.setItem(k,JSON.stringify(Object.assign({},y,x)));addCh();}
 }
-var h=location.hash||'',mm=/^#bfimp=(none|(\d)\.(\d+)\.(\d+)\.([A-Za-z0-9_-]*))$/.exec(h);
-var asked=sessionStorage.getItem('bfimp.asked')==='1',fromGh=(document.referrer||'').indexOf(GH)===0;
-if(mm&&asked&&fromGh){   /* 중간 페이지에서 돌아옴 */
- window.bfCloudLoading=true;clean();
- if(mm[1]==='none'){fin();window.bfCloudLoading=false;return;}
- var z=mm[2],i=+mm[3],n=+mm[4];
- sessionStorage.setItem('bfimp.c'+i,mm[5]);
- if(i+1<n){location.replace(BR+'#back='+encodeURIComponent(location.origin+location.pathname+location.search)+'&i='+(i+1));return;}
- assemble(z,n).then(function(o){var ch=0;try{ch=merge(o);}catch(e){}fin();if(ch)location.reload();else window.bfCloudLoading=false;}).catch(function(){fin();window.bfCloudLoading=false;});
+function applyLobby(v){
+ var L=js(localStorage.getItem('stranded.lobby.v1'))||{},OL=js(v)||{},pristine=SS.getItem('bfimp.pri')==='1';
+ var lw=Array.isArray(L.worlds)?L.worlds:[],ow=Array.isArray(OL.worlds)?OL.worlds:[];
+ if(!ow.length){if(localStorage.getItem('stranded.lobby.v1')===null&&v){localStorage.setItem('stranded.lobby.v1',v);addCh();}return;}
+ var m=pristine?ow.slice():lw.concat(ow.filter(function(w){return w&&!lw.some(function(x){return x&&x.id===w.id;});}));
+ var N=pristine?Object.assign({},L,OL):Object.assign({},OL,L);N.worlds=m;
+ if(pristine||!N.current||!m.some(function(w){return w&&w.id===N.current;}))N.current=OL.current||(m[0]&&m[0].id);
+ if(JSON.stringify(N)!==JSON.stringify(L)){localStorage.setItem('stranded.lobby.v1',JSON.stringify(N));addCh();}
+}
+function put(k,v){if(k==='stranded.lobby.v1')applyLobby(v);else applyKey(k,v);}
+var h=location.hash||'',mm=/^#bfimp=(none|done|err|(\d)\.(\d+)\.(\d+)\.(\d+)\.([A-Za-z0-9_-]*))$/.exec(h);
+var asked=SS.getItem('bfimp.asked')==='1',busy=SS.getItem('bfimp.on')==='1',fromGh=(document.referrer||'').indexOf(OT)===0;
+if(mm&&busy&&fromGh){   /* 중간 페이지에서 돌아옴 */
+ window.bfImporting=true;window.bfCloudLoading=true;clean();
+ if(mm[1]==='none'||mm[1]==='done'){stop(true);return;}
+ if(mm[1]==='err'){stop(false);return;}
+ (async function(){
+  var z=+mm[2],i=+mm[3],n=+mm[4],c=+mm[5],u=b64u(mm[6]);
+  if(z)u=new Uint8Array(await new Response(new Blob([u]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer());
+  var arr=JSON.parse(new TextDecoder().decode(u));
+  if(i===0){var q=js(localStorage.getItem('stranded.save.v5.w1')),lw=(js(localStorage.getItem('stranded.lobby.v1'))||{}).worlds;lw=Array.isArray(lw)?lw:[];
+   SS.setItem('bfimp.pri',(lw.length<=1&&(!lw[0]||lw[0].id==='w1')&&(!q||(+q.clock||0)<600))?'1':'0');   /* 새 주소에서 아직 아무것도 안 한 빈 상태인가 */}
+  arr.forEach(function(t){var k=t[0],p=t[1],np=t[2],s=t[3];
+   if(np===1){put(k,s);return;}
+   SS.setItem('bfimp.k.'+k+'.'+p,s);
+   if(p===np-1){var all='';for(var x=0;x<np;x++)all+=SS.getItem('bfimp.k.'+k+'.'+x)||'';for(x=0;x<np;x++)SS.removeItem('bfimp.k.'+k+'.'+x);put(k,all);}
+  });
+  if(i+c<n)hop(i+c);else stop(true);
+ })().catch(function(){stop(false);});
  return;
 }
 if(h&&/^#bfimp=/.test(h))clean();
 if(asked)return;   /* 이 탭에서 이미 한 번 물어봤어요 (끝없이 돌지 않게) */
+window.bfImporting=true;
 var ac=new AbortController();setTimeout(function(){ac.abort();},4000);
 fetch(BR,{method:'HEAD',signal:ac.signal,cache:'no-store'}).then(function(r){
- if(!r.ok)return;
- sessionStorage.setItem('bfimp.asked','1');
- location.replace(BR+'#back='+encodeURIComponent(location.origin+location.pathname+location.search)+'&i=0');
-}).catch(function(){});
-}catch(e){}})();</script>
+ if(!r.ok){window.bfImporting=false;return;}
+ SS.setItem('bfimp.asked','1');SS.setItem('bfimp.on','1');hop(0);
+}).catch(function(){window.bfImporting=false;});
+}catch(e){window.bfImporting=false;}})();</script>
 <script src="https://frenchfries777.com/games/ff-lang.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>BEACONFALL</title>
@@ -490,7 +494,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.6<br>build 220</p>
+    <p class="foot">v0.6<br>build 221</p>
   </nav>
 </div>
 
@@ -15359,13 +15363,13 @@ let sb=null;try{if(window.supabase)sb=window.supabase.createClient(URL_,KEY);}ca
 window.bfSb=sb;
 /* 계정 저장: 이 브라우저의 진행을 Frenchfries777 계정(beaconfall_saves)에 올려서 다른 기기에서도 이어 해요 */
 const CS_T='stranded.cloud.t',CS_U='stranded.cloud.uid',CS_TB='beaconfall_saves';
-const csOk=k=>k==='stranded.lobby.v1'||k.indexOf('stranded.save.v5.')===0;
+const csOk=k=>k==='stranded.lobby.v1'||k==='bf.mods.on'||k.indexOf('stranded.save.v5.')===0;   // 월드·설정·설치한 모드가 계정에 저장돼요
 function csKeys(){const o={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&csOk(k))o[k]=localStorage.getItem(k);}}catch(e){}return o;}
 let csUid=null,csOn=false,csDirty=false,csBusy=false,csFail=0,csLast=0,csState='';
 window.bfCloudDirty=()=>{csDirty=true;};
 window.bfCloudStatus=()=>!csUid?'로그인하면 켜져요':csState==='ask'?'선택을 기다리는 중':!csOn?(csState==='off'?'꺼짐 (서버 준비 안 됨)':'꺼짐'):csLast?('켜짐 · 마지막 저장 '+new Date(csLast).toLocaleTimeString()):'켜짐';
 async function csPush(){
-  if(!csOn||!sb||!csUid||csBusy)return;
+  if(!csOn||!sb||!csUid||csBusy||window.bfImporting)return;
   csBusy=true;csDirty=false;
   try{
     const now=new Date().toISOString();
@@ -15379,7 +15383,7 @@ function csLoad(row,uid){
   window.bfCloudLoading=true;
   try{
     const ks=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&csOk(k))ks.push(k);}
-    for(const k of ks)localStorage.removeItem(k);
+    for(const k of ks)if(!(k==='bf.mods.on'&&!(row.data&&typeof row.data['bf.mods.on']==='string')))localStorage.removeItem(k);   // 예전 계정 저장엔 모드가 없어서, 그럴 땐 이 기기의 모드를 지우지 않아요
     for(const k in row.data)if(csOk(k)&&typeof row.data[k]==='string')localStorage.setItem(k,row.data[k]);
     localStorage.setItem(CS_T,new Date(Date.parse(row.updated_at)||Date.now()).toISOString());localStorage.setItem(CS_U,uid);
   }catch(e){}
@@ -15399,7 +15403,8 @@ function csSwapAccount(old,uid){
   try{
     localStorage.setItem(CS_ACCT+old,JSON.stringify({d:csKeys(),t:localStorage.getItem(CS_T)||''}));
     const ks=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&csOk(k))ks.push(k);}
-    for(const k of ks)localStorage.removeItem(k);
+    let keepM=true;try{const s0=localStorage.getItem(CS_ACCT+uid);keepM=!(s0&&JSON.parse(s0).d['bf.mods.on']);}catch(e){}   // 새 계정 보관분에 모드가 없으면 이 기기의 모드는 그대로 둬요
+    for(const k of ks)if(!(keepM&&k==='bf.mods.on'))localStorage.removeItem(k);
     localStorage.removeItem(CS_T);
     const st=localStorage.getItem(CS_ACCT+uid);
     if(st){const o=JSON.parse(st);for(const k in o.d)if(csOk(k)&&typeof o.d[k]==='string')localStorage.setItem(k,o.d[k]);if(o.t)localStorage.setItem(CS_T,o.t);localStorage.removeItem(CS_ACCT+uid);}
@@ -15409,6 +15414,7 @@ function csSwapAccount(old,uid){
 }
 async function csLogin(uid){
   csUid=uid||null;csOn=false;csState='';csFail=0;
+  if(window.bfImporting){setTimeout(()=>csLogin(uid),1500);return;}   // 옛 주소 저장을 가져오는 동안은 기다려요
   if(uid){let lu0='';try{lu0=localStorage.getItem(CS_U)||'';}catch(e){}if(lu0&&lu0!==uid&&csSwapAccount(lu0,uid))return;}
   if(!sb||!uid)return;
   let row=null;
@@ -15645,6 +15651,21 @@ const ID_DOM='frenchfries777.com',ID_DOM_OLD='arenaclash.local';   // 계정 도
 const emailFor=(u,d)=>u.toLowerCase().replace(/[^a-z0-9_]/g,'')+'@'+(d||ID_DOM);
 const say=(t,ok)=>{msg.textContent=t||'';msg.className=ok?'ok':'';};
 const busy=b=>{bl.disabled=bs.disabled=b;};
+/* 설치한 모드 되살리기: 이 브라우저에 설치한 모드 기록이 비어 있으면(주소를 옮겼거나 브라우저 저장이 지워졌을 때), 로그인한 계정이 예전에 적용한 모드를 서버에서 한 번 다시 받아와요 */
+window.addEventListener('bf-login',async()=>{try{
+  if(!window.bfSb||!window.bfUid||localStorage.getItem('bf.mods.rebuilt'))return;
+  for(let t=0;window.bfImporting&&t<40;t++)await new Promise(r=>setTimeout(r,500));
+  const cur=JSON.parse(localStorage.getItem('bf.mods.on')||'{}');
+  if(cur&&Object.keys(cur).length){localStorage.setItem('bf.mods.rebuilt','1');return;}
+  const a=await window.bfSb.from('beaconfall_mod_applies').select('mod_id').limit(200);if(!a||a.error)return;
+  const ids=(a.data||[]).map(x=>x.mod_id).filter(x=>/^[0-9a-f-]{36}$/.test(String(x)));
+  if(ids.length){
+    const r=await window.bfSb.from('beaconfall_mods').select('*').in('id',ids);if(!r||r.error)return;
+    const o={};for(const m of (r.data||[]))o[m.id]={kind:m.kind,name:m.name,descr:m.descr||'',cat:m.cat||'',author_name:m.author_name||'',data:m.data};
+    if(Object.keys(o).length)localStorage.setItem('bf.mods.on',JSON.stringify(o));
+  }
+  localStorage.setItem('bf.mods.rebuilt','1');
+}catch(e){}});
 function enter(name,uid){window.bfUser=name;window.bfUid=uid||null;try{bfNickPull();}catch(e){}csLogin(uid||null);frStart();gate.classList.remove('show');me.textContent=(window.bfTrial&&!uid?'게스트 모드 · 로그인하기':name+' · 로그아웃');me.classList.add('show');profShow();markOnce();try{achSync();}catch(e){}try{window.dispatchEvent(new CustomEvent('bf-login',{detail:{name}}));}catch(e){}}
 /* 초대 링크: ?join=주소 로 들어오면 로그인한 뒤 바로 그 방에 참가해요 */
 (function(){
