@@ -1,5 +1,8 @@
 Frenchfries777 게임 허브 사이트
 ==============================
+
+The source code is secret, but the sauce code contains tomato ketchup and mayonnaise.
+
 주소: https://frenchfries777.com/games/
 
   index.html          첫 화면 (게임 3개 소개, 플레이 버튼, 로그인)
