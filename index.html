@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head><style id="ffTap">html,body{touch-action:manipulation}</style>
+<head><style id="ffTap">html,body{touch-action:manipulation}</style><style id="ffHold">html.ffhold body{opacity:0}</style><script>(function(){var d=document.documentElement;d.classList.add("ffhold");var u=function(){d.classList.remove("ffhold")};setTimeout(u,2500);window.ffReveal=function(){var g=function(){requestAnimationFrame(function(){requestAnimationFrame(u)})};if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",g);else g()}})()</script><link rel="preload" as="image" href="bg/back.png?v=20261121"><link rel="preload" as="image" href="bg/pier.png?v=20261121"><link rel="preload" as="image" href="bg/front.png?v=20261121"><link rel="preload" as="image" href="bg/wheel.png?v=20261121"><link rel="preload" as="image" href="bg/carousel.png?v=20261121"><link rel="preload" as="image" href="bg/ship.png?v=20261121"><link rel="preload" as="image" href="bg/car.png?v=20261121"><link rel="preload" as="image" href="bg/rider.png?v=20261121">
 <meta name="copyright" content="© 2026 Frenchfries777. CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -215,6 +215,7 @@ function go(){
  var sky=cv(),cl=FS.cloudLayer(art),sea=cv();ly('back');var tr=cv(),wh=cv();ly('pier');var at=cv();ly('front');
  function paint(){var d=new Date();FS.draw(sky,d,{noClouds:true});cl.paint(d);FS.sea(sea,d,0,223,298)}
  paint();setInterval(function(){if(!document.hidden)paint()},30000);
+ if(window.ffReveal)ffReveal();
  var lastSea=-1;
  function frame(t,still0){
   var d=new Date(),u=((t%26)/14);if(still0)u=.5;
@@ -232,7 +233,7 @@ function go(){
 })()</script>
 <div style="position:absolute;left:0;top:0;width:100%;height:100%;background:linear-gradient(180deg,rgba(14,14,14,0) 0,rgba(14,14,14,0) 500px,rgba(14,14,14,.8) 700px,rgba(14,14,14,.8) 100%)"></div>
 <div style="position:relative;padding:0 40px;display:flex;flex-direction:column">
-<div id="ffTop"><button type="button" class="srx-btn" id="srxBtn" aria-label="검색" title="검색">🔍</button><div id="onlineBar"></div><div class="tb"><span data-ff-account data-ff-nohub></span></div></div><script>(function(){var b=document.getElementById('srxBtn');if(!b)return;b.addEventListener('click',function f(e){if(b.onclick)return;b.removeEventListener('click',f);e.stopImmediatePropagation();e.preventDefault();var s=document.createElement('script');s.src='https://frenchfries777.com/games/hub.js?v=20261120c';s.onload=function(){setTimeout(function(){if(b.onclick)b.click();},500);};document.head.appendChild(s);},true);})();</script>
+<div id="ffTop"><button type="button" class="srx-btn" id="srxBtn" aria-label="검색" title="검색">🔍</button><div id="onlineBar"></div><div class="tb"><span data-ff-account data-ff-nohub></span></div></div><script>(function(){var b=document.getElementById('srxBtn');if(!b)return;b.addEventListener('click',function f(e){if(b.onclick)return;b.removeEventListener('click',f);e.stopImmediatePropagation();e.preventDefault();var s=document.createElement('script');s.src='https://frenchfries777.com/games/hub.js?v=20261123a';s.onload=function(){setTimeout(function(){if(b.onclick)b.click();},500);};document.head.appendChild(s);},true);})();</script>
 <div style="padding:70px 0 34px;display:flex;flex-direction:column;gap:16px">
 <span style="font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;letter-spacing:.2em;color:#ffd54a;text-shadow:0 1px 4px rgba(0,0,0,.9)">GAMES · 8개</span>
 <h1 style="margin:0;font-family:'Oswald',sans-serif;font-weight:700;font-size:clamp(48px,7vw,96px);line-height:.95;letter-spacing:.01em;text-shadow:0 2px 6px rgba(0,0,0,.7),0 0 18px rgba(0,0,0,.5)">Games</h1>
@@ -269,8 +270,8 @@ function go(){
 </main>
 </div>
 <script src="ff-hate.js?v=20261021r"></script>
-<script src="ff-auth.js?v=20261120b"></script>
-<script src="hub.js?v=20261120c"></script>
+<script src="ff-auth.js?v=20261123c"></script>
+<script src="hub.js?v=20261123a"></script>
 <script src="ff-splash.js?v=20261107a" defer></script>
 <script>
 (function(){

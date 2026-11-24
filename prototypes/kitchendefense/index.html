@@ -20,7 +20,7 @@ canvas{display:block;touch-action:none;user-select:none;-webkit-user-select:none
 <script src="../../ff-presence.js" async></script>
 <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script>window.FF_INGAME=true</script>
-<script src="https://frenchfries777.com/games/ff-auth.js?v=20261120b"></script>
+<script src="https://frenchfries777.com/games/ff-auth.js?v=20261123c"></script>
 </head>
 <body>
 <canvas id="c"></canvas>
@@ -601,10 +601,10 @@ function achCheck(dt){
 function drawAch(dt){
   if(!achShow&&achQ.length){achShow=achQ.shift();achT=3.4;tune('ach',true)}
   if(!achShow)return;achT-=dt;if(achT<=0){achShow=null;return}
-  const a=achShow,k=Math.min(1,(3.4-achT)*5,achT*4),y=scene==='play'?Math.round(-76+k*(76+10)):Math.round(H+8-k*132);
-  panel(W/2-220,y,440,64,16,.92);
-  txt('🏆 도전과제 달성',W/2,y+19,15,'#ffd36b',undefined,'');
-  txt(a.n+'  ·  칭호 '+a.t,W/2,y+43,19,'#fff',undefined,'');
+  const a=achShow,k=Math.min(1,(3.4-achT)*5,achT*4),y=scene==='play'?Math.round(-70+k*(70+MY+6)):Math.round(H+8-k*132);
+  panel(W/2-220,y,440,58,16,.92);
+  txt('🏆 도전과제 달성',W/2,y+17,15,'#ffd36b',undefined,'');
+  txt(a.n+'  ·  칭호 '+a.t,W/2,y+40,18,'#fff',undefined,'');
 }
 function bossDown(t){if(!save.bossSet[t]){save.bossSet[t]=1;persist()}emit({k:'bk',t})}
 /* ===== 계정 연동: 접속 신호는 ff-presence.js 가, 플레이 기록과 도전과제는 여기서 허브 프로필로 보내요 ===== */
@@ -755,14 +755,16 @@ const EQ=['냉장고 문 열어줘','나 배고파','어디로 가야 하지?','
 const SKQ={kettle:['증기 폭발!!','펄펄 끓는다!'],grill:['불맛 폭발!!','활활 타라!'],icemaker:['얼음 비!!','꽁꽁 얼어라!'],microwave:['최대 출력!!','띵띵띵!'],fryer:['기름 폭탄!!','바삭하게 튀겨주마!'],pan:['후라이팬 강타!!','계란후라이 맛 좀 봐라!','지글지글 풀파워!'],freezer:['절대영도!!','얼어붙어라 얼음땡!','렛잇고~'],chef:['칼 난사!!','김밥 썰듯 썰어주마!','칼칼칼칼칼!'],oven:['대폭발!!','굽자! 태우자!','예열 끝, 폭발!'],mixer:['블렌딩!!','갈아 마셔주마!','믹서 최대 출력!'],toaster:['빵 폭풍!!','식빵 소나기!','빵빵빵빵빵!'],cooker:['풍년 잔치!!','공깃밥 무료 제공!','밥심으로 간다!'],pressure:['긴급 방출!!','치이이익 꽝!','압력 해제!!']};
 const WORDS=['퍽!','쾅!','챙!','빡!','뿅!','철썩!','와장창!'];
 const TITLES=['달걀의 역습','당근 대행진','식재료 반란','주방 대혼란','냉장고를 사수하라','오늘의 메뉴는 너희','밥상 뒤집기','양념 폭발','유통기한 지난 분노'];
-function say(x,y,t){emit({k:'y',x,y,s:t});if(G.says.length<(LOW?2:6))G.says.push({x,y,s:t,t:2.3})}
+function say(x,y,t){if(G.says.some(o=>Math.abs(o.x-x)<170&&Math.abs(o.y-y)<46))return;emit({k:'y',x,y,s:t});if(G.says.length<(LOW?2:6))G.says.push({x,y,s:t,t:2.3})}
 function burst(x,y,col,n,sp=80){fx(x,y,col,n,{v1:sp})}
 function spiral(x,y,R){if(LOW&&Math.random()<.8)return;const a=Math.random()*6.28,l=.45;G.parts.push({x:x+Math.cos(a)*R,y:y+Math.sin(a)*R,vx:-Math.cos(a)*R/l+Math.cos(a+1.57)*70,vy:-Math.sin(a)*R/l+Math.sin(a+1.57)*70,t:l,mt:l,col:'#ff5a7a',r:3,g:0,glow:true,line:false})}
-let DSRC=null;
+let DSRC=null,flId=0;
 function damage(e,amt){
   if(e.dead)return;const raw=amt;
   if(DSRC)G.dmgBy[DSRC]=(G.dmgBy[DSRC]||0)+Math.min(raw,Math.max(0,e.hp)+Math.max(0,e.shield));
-  if(!LOW&&raw>=1&&G.floats.length<40)G.floats.push({x:e.x+rnd(-8,8),y:e.y-e.r-6,t:.6,num:Math.round(raw),col:raw>=40?'#ffd23c':'#ffffff'});
+  if(!LOW&&raw>=1){const n=Math.round(raw),m=G.floats.find(f=>f.num!==undefined&&f.t>.3&&Math.abs(f.x-e.x)<26&&Math.abs(f.y-(e.y-e.r-6))<22);
+    if(m){m.num+=n;m.t=.6;if(m.num>=40)m.col='#ffd23c';m.dirty=1}
+    else if(G.floats.length<40)G.floats.push({id:++flId,x:e.x+rnd(-8,8),y:e.y-e.r-6,t:.6,num:n,col:n>=40?'#ffd23c':'#ffffff'})}
   if(e.shield>0){const s=Math.min(e.shield,amt);e.shield-=s;amt-=s}
   e.hp-=amt;e.flash=.08;
   if(!LOW&&raw>=40&&Math.random()<.25&&G.floats.length<40)G.floats.push({x:e.x,y:e.y-e.r-22,t:.7,word:pick(WORDS),rot:rnd(-.4,.4)});
@@ -1018,8 +1020,8 @@ function compact(arr,fn){let j=0;for(let i=0;i<arr.length;i++)if(fn(arr[i]))arr[
 function updateFx(dt){
   G.t+=dt;if(G.hit>0)G.hit-=dt;if(G.shake>0)G.shake=Math.max(0,G.shake-dt);
   for(const p of G.parts){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=(p.g||0)*dt;p.t-=dt}
-  G.parts=G.parts.filter(p=>p.t>0);
-  for(const f of G.floats){f.y-=28*dt;f.t-=dt}compact(G.floats,f=>f.t>0);
+  compact(G.parts,p=>p.t>0);
+  for(const f of G.floats){f.y-=28*dt;f.t-=dt;if(f.dirty){f.dirty=0;emit({k:'fu',id:f.id,n:f.num})}}compact(G.floats,f=>f.t>0);
   for(const r of G.rings)r.t-=dt;compact(G.rings,r=>r.t>0);
   for(const c of G.corpses){c.x+=c.vx*dt;c.y+=c.vy*dt;c.vy+=900*dt;c.rot+=c.vr*dt;c.t-=dt}compact(G.corpses,c=>c.t>0);
   for(const y of G.says){y.t-=dt;y.y-=10*dt}compact(G.says,y=>y.t>0);
@@ -1253,6 +1255,7 @@ function applySnap(s){
       case 'f':fx(...ev.a);break;
       case 'r':G.rings.push(ev.r);break;
       case 'fl':if(!LOW||ev.f.num===undefined)G.floats.push(ev.f);break;
+      case 'fu':{const m=G.floats.find(f=>f.id===ev.id);if(m){m.num=ev.n;m.t=.6;if(ev.n>=40)m.col='#ffd23c'}}break;
       case 's':sfx(...ev.a);break;
       case 't':toast(ev.m);break;
       case 'sp':spiral(ev.x,ev.y,ev.R);break;
@@ -1735,7 +1738,7 @@ function playUI(dt){
   let hx=8;for(const[l,c]of[['코인 '+Math.floor(G.coins),'#ffd36b'],['웨이브 '+G.wave,'#f6ead6'],['냉장고 '+G.hp,'#f19a8a'],['타워 '+G.towers.length+'/'+TMAX,tFull()?'#ffd36b':'#f6ead6']]){g.font='17px '+FONT;const w=g.measureText(l).width+20;g.beginPath();g.roundRect(hx,5,w,30,15);g.fillStyle='#3a2619';g.fill();txt(l,hx+10,21,17,c,'left','',0,true);hx+=w+6}
   if(G.coop)NET.ids.forEach((id,i)=>{const x=hx+10+i*24;g.fillStyle=PCOL[id];g.beginPath();g.arc(x,20,10,0,7);g.fill();g.strokeStyle='#3b1d0a';g.lineWidth=2;g.stroke();txt(String(id+1),x,21,13,'#fff')});
   RES.forEach((k,i)=>{const x=500+i*75;chip(x,5,69,30);icon(k,x+16,20,10);txt(String(G.res[k]),x+32,20,18,'#fff','left','')});
-  if(G.feast>0)txt('풍년 잔치! '+Math.ceil(G.feast)+'s',W/2,MY+70,26,'#8dff8d');
+  if(G.feast>0)txt('풍년 잔치! '+Math.ceil(G.feast)+'s',W/2,MY+70+(achShow&&scene==='play'?52:0),26,'#8dff8d');
   const bs=G.over?null:G.enemies.find(e=>isBoss(e)&&!e.dead);
   if(bs){
     const bw=400,bx=W-bw-22,y0=MY+8;

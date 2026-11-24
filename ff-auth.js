@@ -266,8 +266,9 @@ async function signUp(id, pw, nick){
   if(pwWeak(pw,id)) return {error:pwWeakMsg()};
   var r=await sb.auth.signUp({email:emailFor(id), password:pw});
   if(r.error) return {error:/already|registered/i.test(r.error.message)?T.taken:errText(r.error)};
+  if(!r.data||!r.data.user||!r.data.session) return {error:'가입이 안 됐어요. 잠시 후 다시 해 주세요.'};
   var p=await sb.from('profiles').insert({id:r.data.user.id, username:id, display_name:(String(nick||'').trim()||id).slice(0,15)});
-  if(p.error) return {error:T.taken};
+  if(p.error) return {error:/duplicate|unique|23505/i.test(JSON.stringify(p.error))?T.taken:errText(p.error)};
   pwSave(id,pw); await setUser(r.data.user); return {ok:true};
 }
 /* ---- GitHub / Google login (Supabase OAuth). Providers must be turned on in the Supabase dashboard; a social account
@@ -405,12 +406,13 @@ function welcome(skipNick){
     body.querySelector('.go').onclick=async function(){ var b=this; b.disabled=true;
       if(sel){ try{ var r=await sb.rpc('ff_avatar_set',{p_id:sel}); if(!(r&&r.error)){ try{ window.dispatchEvent(new CustomEvent('ff-avatar',{detail:{pick:sel}})); }catch(e){} } }catch(e){} }
       b.disabled=false; s3(); }; }
-  function s3(){ step=3; var H='https://frenchfries777.com/', L=[['🎮','Games',H+'games/'],['📚','Educations',H+'educations/'],['🛠️','Tools',H+'tools/'],['🏠','Hub',H+'hub/']];
+  function s3(){ step=3; var H='https://frenchfries777.com/', L=[['🎮','Games',H+'games/'],['📚','Educations',H+'educations/'],['🛠️','Tools',H+'tools/'],['🏠','Hub',H]];
     body.innerHTML=dots(3)+'<h2>'+W.s3+'</h2><p><b style="color:var(--ffw-gold,#d9b45f)">'+esc(nm)+'</b>'+W.s3p+'</p><div class="coin"><img src="'+BASE+'hubicons/coin.svg" alt=""><div><b>'+W.coin+'</b><span>'+W.coin2+'</span></div></div><div class="s">'+L.map(function(x,i){ return '<a href="'+x[2]+'"><i>'+x[0]+'</i><b>'+x[1]+'</b><span>'+W.g[i]+'</span></a>'; }).join('')+'</div><div class="row"><button type="button" class="bk">'+W.prev+'</button><button type="button" class="go">'+W.start+'</button></div>';
     body.querySelector('.bk').onclick=s2; body.querySelector('.go').onclick=done; }
   if(skipNick) s2(); else s1();
 }
-async function signOut(){ pwClear(); if(ssoSub){ try{ localStorage.setItem('ffSsoOff','1'); }catch(e){} } try{ if(sb) await sb.auth.signOut({scope:'local'}); }catch(e){} await setUser(null); }   // 'local': only this browser, other devices stay logged in
+async function signOut(){ pwClear(); if(ssoSub){ try{ localStorage.setItem('ffSsoOff','1'); }catch(e){} } try{ if(sb&&user) await Promise.race([sb.rpc('ff_leave'),new Promise(function(r){ setTimeout(r,1500); })]); }catch(e){}   /* 로그아웃하면 '지금 접속 중'에서 바로 빠져요 */
+  try{ if(sb) await sb.auth.signOut({scope:'local'}); }catch(e){} await setUser(null); }   // 'local': only this browser, other devices stay logged in
 
 /* ---- UI ---- */
 /* 창 공용 색: 다크/라이트 두 테마 (html[data-ff-theme]) */
@@ -504,7 +506,7 @@ function modal(){
     '<div class="pwr"><input name="password" type="password" placeholder="'+esc(T.pw)+'"><button type="button" class="eye" aria-label="'+esc(AL().show)+'">👁</button></div>'+
     '<div class="m"></div><button type="submit" class="ffa-btn go"></button><div class="or">'+esc(OA().or)+'</div>'+'<div class="oas">'+oaBtns()+'</div><div class="sw"><span></span><a></a></div></form>';
   document.body.appendChild(el);
-  el.addEventListener('click',function(e){ if(e.target===el) close(); });
+  /* 로그인 창은 바깥을 눌러도, Esc 를 눌러도 닫히지 않아요. X 버튼으로만 닫아요 */
   el.querySelector('.x').onclick=close;
   el.querySelector('.eye').onclick=function(){ var i=el.querySelector('input[name=password]'); i.type=i.type==='password'?'text':'password'; };
   el.querySelector('.sw a').onclick=function(){ mode=mode==='in'?'up':'in'; fill(); };
@@ -590,7 +592,7 @@ function paint(){
 }
 function closeMenus(){ var ms=document.querySelectorAll('.ffa-menu,.ffa-notes'); for(var i=0;i<ms.length;i++) ms[i].style.display='none'; }
 document.addEventListener('click', closeMenus);
-document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeMenus(); close(); closeAcct(); } });
+document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeMenus(); closeAcct(); } });
 
 /* ---- my account: nickname, login ID, password (same stored-password option as the games: localStorage arenaClashPw / arenaClashPwOpt) ---- */
 var ALT={
@@ -1085,6 +1087,9 @@ function paintNotes(panel){
   var c=panel.querySelector('[data-a=clear]'); if(c) c.onclick=async function(){ try{ await sb.from('ff_notes').delete().eq('user_id',user.id); }catch(e){} notes=[]; bellBadge(); paintNotes(panel); };
 }
 async function markRead(){ if(!unreadNotes()) return; var ids=notes.filter(function(n){ return !n.read; }).map(function(n){ return n.id; }); notes.forEach(function(n){ n.read=true; }); bellBadge(); try{ await sb.from('ff_notes').update({read:true}).in('id',ids); }catch(e){} }
+/* 챗 화면에서 그 사람과의 대화를 보고 있으면 '채팅을 보냈어요' 알림은 바로 읽음 처리 (챗 화면이 FFAuth.readChat(보는 사람들 id 목록) 을 불러요) */
+async function readChat(ids){ if(!sb||!user||!ids||!ids.length) return; var hit=notes.filter(function(n){ return n.kind==='chat'&&!n.read&&ids.indexOf(n.actor_id)>=0; }); if(!hit.length) return;
+  hit.forEach(function(n){ n.read=true; }); bellBadge(); try{ await sb.from('ff_notes').update({read:true}).eq('user_id',user.id).eq('kind','chat').in('actor_id',ids).eq('read',false); }catch(e){} }
 function goNote(n){
   var hubUrl=HUB;
   if(n.kind==='friend') return openFriends();
@@ -1100,7 +1105,7 @@ function watchNotes(){
   if(noteChan){ try{ sb.removeChannel(noteChan); }catch(e){} noteChan=null; }
   if(!sb||!user) return;
   try{ noteChan=sb.channel('ffa-notes-'+user.id)
-    .on('postgres_changes',{event:'INSERT',schema:'public',table:'ff_notes',filter:'user_id=eq.'+user.id},function(pl){ loadNotes().then(function(){ var n=pl&&pl.new; if(n&&n.kind==='dm'&&dmWith&&n.actor_id===dmWith){ seenDM(); return; } if(n&&n.kind!=='friend'&&npOn(n.kind)&&npGet().toast!==false){ toast(noteText(n)); var tt=document.getElementById('ffaToast'); if(tt) tt.querySelector('button').onclick=function(){ tt.remove(); goNote(n); }; } }); })
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'ff_notes',filter:'user_id=eq.'+user.id},function(pl){ loadNotes().then(function(){ var n=pl&&pl.new; if(n&&n.kind==='dm'&&dmWith&&n.actor_id===dmWith){ seenDM(); return; } if(n&&n.kind==='chat'&&typeof window.ffChatViewing==='function'&&window.ffChatViewing(n.actor_id)){ readChat([n.actor_id]); return; } if(n&&n.kind!=='friend'&&npOn(n.kind)&&npGet().toast!==false){ toast(noteText(n)); var tt=document.getElementById('ffaToast'); if(tt) tt.querySelector('button').onclick=function(){ tt.remove(); goNote(n); }; } }); })
     .on('postgres_changes',{event:'INSERT',schema:'public',table:'ff_dm',filter:'recipient_id=eq.'+user.id},function(pl){ var m=pl&&pl.new; if(!m) return; if(dmWith===m.sender_id){ if(!dmRows.some(function(x){ return x.id===m.id; })) dmRows.push(m); paintDM(); seenDM(); } else { dmUnread[m.sender_id]=(dmUnread[m.sender_id]||0)+1; fpaint(); } })
     .subscribe(); }catch(e){}
 }
@@ -1208,5 +1213,5 @@ document.addEventListener('visibilitychange', function(){ if(document.visibility
 window.FFAuth={ welcome:welcome, ready:ready, pollCheck:pollCheck, client:function(){ return sb; }, user:function(){ return user; }, profile:function(){ return prof; }, nickname:nick,
   canEditProfile:function(){ return editOk; }, hubUrl:HUBSITE,
   onChange:function(f){ if(typeof f==='function') subs.push(f); }, onNick:function(f){ if(typeof f!=='function') return; nickSubs.push(f); ready.then(function(){ if(user){ try{ f(nick(), user, prof); }catch(e){} } }); }, setNick:setNick, refreshNick:function(){ return nickRefresh(true); }, openLogin:openLogin, openProfile:openProfile, openFriends:openFriends, friends:function(){ return friends.slice(); }, signOut:signOut, refresh:paint, syncHub:syncHub,
-  openDM:openDM, setRoom:setRoom, openReport:openReport, openAcct:openAcct, notePrefs:{get:npGet,set:npSet}, userKey:userKey, lang:lang, loadDevs:loadDevs, devRole:devRole, devBadge:devBadge, block:block, isBlocked:isBlocked, blocked:function(){ return Object.assign({},blocks); } };
+  openDM:openDM, readChat:readChat, setRoom:setRoom, openReport:openReport, openAcct:openAcct, notePrefs:{get:npGet,set:npSet}, userKey:userKey, lang:lang, loadDevs:loadDevs, devRole:devRole, devBadge:devBadge, block:block, isBlocked:isBlocked, blocked:function(){ return Object.assign({},blocks); } };
 })();
