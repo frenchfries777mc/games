@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head><style id="ffTap">html,body{touch-action:manipulation}</style>
+<head><style id="ffTap">html,body{touch-action:manipulation}</style><style id="ffHold">html.ffhold body{opacity:0}</style><script>(function(){var d=document.documentElement;d.classList.add("ffhold");var u=function(){d.classList.remove("ffhold")};setTimeout(u,2500);window.ffReveal=function(){var g=function(){requestAnimationFrame(function(){requestAnimationFrame(u)})};if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",g);else g()}})()</script><link rel="preload" as="image" href="bg/back.png?v=20261121"><link rel="preload" as="image" href="bg/pier.png?v=20261121"><link rel="preload" as="image" href="bg/front.png?v=20261121"><link rel="preload" as="image" href="bg/wheel.png?v=20261121"><link rel="preload" as="image" href="bg/carousel.png?v=20261121"><link rel="preload" as="image" href="bg/ship.png?v=20261121"><link rel="preload" as="image" href="bg/car.png?v=20261121"><link rel="preload" as="image" href="bg/rider.png?v=20261121">
 <meta name="copyright" content="© 2026 Frenchfries777. CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -215,6 +215,7 @@ function go(){
  var sky=cv(),cl=FS.cloudLayer(art),sea=cv();ly('back');var tr=cv(),wh=cv();ly('pier');var at=cv();ly('front');
  function paint(){var d=new Date();FS.draw(sky,d,{noClouds:true});cl.paint(d);FS.sea(sea,d,0,223,298)}
  paint();setInterval(function(){if(!document.hidden)paint()},30000);
+ if(window.ffReveal)ffReveal();
  var lastSea=-1;
  function frame(t,still0){
   var d=new Date(),u=((t%26)/14);if(still0)u=.5;
