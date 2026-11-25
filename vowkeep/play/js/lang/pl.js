@@ -1111,4 +1111,10 @@ export default {
 "모은 깃발": "Zebrane flagi",
 "{0}개": "{0}",
 "이번 주 같은 장, 같은 저주로 걸린 시간을 겨뤄요.": "Rywalizuj czasem w tym samym rozdziale i pod tą samą klątwą w tym tygodniu.",
+"지켜보는 중": "Obserwujesz",
+"준 피해 {0}": "Zadane obrażenia {0}",
+"일으켜 세움 {0}": "Podniesiono {0}",
+"쓰러짐 {0}": "Powalony {0}",
+"기기": "Urządzenie",
+"화면이 느려요. 설정의 「최적화」를 켜면 그림자와 빛 번짐을 줄여 더 부드러워져요.": "Obraz zwalnia. Włącz Optymalizację w ustawieniach, aby ograniczyć cienie i poświatę i grać płynniej.",
 };

@@ -1111,4 +1111,10 @@ export default {
 "모은 깃발": "Toplanan bayraklar",
 "{0}개": "{0}",
 "이번 주 같은 장, 같은 저주로 걸린 시간을 겨뤄요.": "Bu hafta aynı bölüm ve aynı lanetle geçirilen süreyi yarıştırın.",
+"지켜보는 중": "İzliyor",
+"준 피해 {0}": "Verilen hasar {0}",
+"일으켜 세움 {0}": "Ayağa kaldırdı {0}",
+"쓰러짐 {0}": "Yere serildi {0}",
+"기기": "Cihaz",
+"화면이 느려요. 설정의 「최적화」를 켜면 그림자와 빛 번짐을 줄여 더 부드러워져요.": "Ekran yavaş. Gölge ve parıltıyı azaltıp daha akıcı oynamak için Ayarlar'dan Optimizasyonu açın.",
 };

@@ -1111,4 +1111,10 @@ export default {
 "모은 깃발": "Banderas reunidas",
 "{0}개": "{0}",
 "이번 주 같은 장, 같은 저주로 걸린 시간을 겨뤄요.": "Compite por el tiempo en el mismo capítulo y con la misma maldición de esta semana.",
+"지켜보는 중": "Observando",
+"준 피해 {0}": "Daño causado {0}",
+"일으켜 세움 {0}": "Reanimó {0}",
+"쓰러짐 {0}": "Derribado {0}",
+"기기": "Dispositivo",
+"화면이 느려요. 설정의 「최적화」를 켜면 그림자와 빛 번짐을 줄여 더 부드러워져요.": "La pantalla va lenta. Activa Optimización en Ajustes para reducir sombras y brillos y jugar con más fluidez.",
 };
