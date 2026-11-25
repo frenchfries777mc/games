@@ -1111,4 +1111,10 @@ export default {
 "모은 깃발": "Flags collected",
 "{0}개": "{0}",
 "이번 주 같은 장, 같은 저주로 걸린 시간을 겨뤄요.": "Compete on time for this week's same chapter and curse.",
+"지켜보는 중": "Spectating",
+"준 피해 {0}": "Damage dealt {0}",
+"일으켜 세움 {0}": "Revived {0}",
+"쓰러짐 {0}": "Down {0}",
+"기기": "Device",
+"화면이 느려요. 설정의 「최적화」를 켜면 그림자와 빛 번짐을 줄여 더 부드러워져요.": "The screen is slow. Turn on Optimization in Settings to cut shadows and glow for smoother play.",
 };
