@@ -208,7 +208,7 @@ function nick(){ return (prof&&(prof.display_name||prof.username)) || (user&&Str
 /* ---- the same login rules as the games (id -> internal e-mail, typo-tolerant password) ---- */
 /* ID accounts are stored as <id>@<domain>. The domain is moving arenaclash.local -> frenchfries777.com (DB converted): sign-in still accepts both;
    ID_DOM is the one domain new/renamed accounts use. */
-var ID_DOM='frenchfries777.com', ID_DOM_OLD=['arenaclash.local','frenchfries777.com'];
+var ID_DOM='frenchfries777.com', ID_DOM_OLD=['arenaclash.local','frenchfries777.com','dumbduck.local'];   /* dumbduck.local = DumbDuck 계정 (같은 Supabase 계정이라 같은 아이디·비밀번호로 로그인돼요) */
 function idLocal(u){ return String(u).toLowerCase().replace(/[^a-z0-9_]/g,''); }
 function emailFor(u){ return idLocal(u)+'@'+ID_DOM; }
 function emailsFor(u){ var l=idLocal(u), out=[emailFor(u)]; ID_DOM_OLD.forEach(function(d){ var e=l+'@'+d; if(out.indexOf(e)<0) out.push(e); }); return out; }
