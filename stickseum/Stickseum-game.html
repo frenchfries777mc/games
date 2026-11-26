@@ -25607,7 +25607,7 @@ botPrewarm();
 if(!DED_HOST){ try{ fetch('versions.json?t='+Date.now(), {cache:'no-store'}).then(r=>r.json()).then(j=>{ const v=(j.versions||[]).find(x=>x.version===GAME_VERSION), n=v?+String(v.build||'').replace(/\D/g,''):0, u=new URL(location.href); if(n>buildNum(GAME_BUILD) && u.searchParams.get('b')!==String(n)){ u.searchParams.set('b', n); location.replace(u.toString()); } }).catch(()=>{}); }catch(e){} }
 })();
 </script>
-<script src="https://frenchfries777.com/games/ff-profile.js?v=20261126a"></script>
-<script src="https://frenchfries777.com/games/ff-auth.js?v=20261126b"></script>
+<script src="https://frenchfries777.com/games/ff-profile.js?v=20261126b"></script>
+<script src="https://frenchfries777.com/games/ff-auth.js?v=20261126d"></script>
 </body>
 </html>
