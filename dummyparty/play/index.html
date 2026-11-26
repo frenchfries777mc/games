@@ -8311,7 +8311,7 @@ var ffProfWait = [];
 function ffProf(cb) {
   if (window.FFProfile) return cb();
   ffProfWait.push(cb); if (ffProfWait.length > 1) return;
-  var sc = document.createElement('script'); sc.src = 'https://frenchfries777.com/games/ff-profile.js?v=20261120c';
+  var sc = document.createElement('script'); sc.src = 'https://frenchfries777.com/games/ff-profile.js?v=20261126a';
   sc.onload = function () { var q = ffProfWait; ffProfWait = []; if (window.FFProfile) q.forEach(function (f) { try { f(); } catch (e) { } }); };
   sc.onerror = function () { ffProfWait = []; };
   document.head.appendChild(sc);
