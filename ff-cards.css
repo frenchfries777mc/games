@@ -1,0 +1,26 @@
+/* Frenchfries777: one card design for Games, Educations, Tools and Prototypes (2026-11-26). The four pages load THIS file after their own styles,
+   so the size, the picture, the title, the tags, the text and the button are the same everywhere. Change the cards here, nowhere else. */
+.games{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:22px!important;align-items:stretch}
+@media(max-width:1000px){.games{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:640px){.games{grid-template-columns:minmax(0,1fr)!important}}
+.games>.game{border-radius:18px!important;min-width:0}
+.games>.game .shot{height:192px!important;aspect-ratio:auto!important}
+.games>.game .shot img{width:100%;height:100%;object-fit:cover}
+.games>.game .body{padding:4px 26px 26px!important;display:flex!important;flex-direction:column!important;gap:12px!important}
+/* title: the same face, size and case on every card */
+.games>.game h2{font-family:'Oswald','Noto Sans KR',sans-serif!important;font-weight:700!important;font-size:40px!important;line-height:1.05!important;letter-spacing:.03em!important;text-transform:uppercase!important;margin:0!important;height:44px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.games>.game .motto{margin-top:0!important;height:16px;overflow:hidden}
+/* tags: at most three, same size */
+.games>.game .tags{display:flex!important;flex-wrap:wrap!important;gap:7px!important;height:112px;overflow:hidden;align-content:flex-start}
+.games>.game .tags span{font-size:13px!important;line-height:1.35!important}
+.games>.game .tags span:nth-child(n+4){display:none!important}
+/* text: same size, the intro plus two bullets */
+.games>.game .desc{font-size:15.5px!important;line-height:1.6!important;flex:0 0 auto;height:250px;overflow:hidden;-webkit-mask-image:linear-gradient(180deg,#000 88%,transparent);mask-image:linear-gradient(180deg,#000 88%,transparent)}
+.games>.game .desc ul{margin:12px 0 0!important;padding-left:18px!important}
+.games>.game .desc li:nth-child(n+3){display:none!important}
+.games>.game .desc li{margin:0 0 6px!important}
+/* button: bottom of every card, same size */
+.games>.game .acts{margin-top:auto!important;padding-top:6px}
+.games>.game .play{min-width:112px;height:55px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+/* cards without the little motto line keep its space, so every card is exactly the same height */
+.games>.game h2+.tags{margin-top:40px!important}
