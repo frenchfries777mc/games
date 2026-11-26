@@ -3,7 +3,7 @@
 'use strict';
 
 /* ---------- 월드 ---------- */
-function makeWorld(mapId) {
+function worldBase(mapId) {
   const m = MAPS[mapId].make();
   const W = { id: mapId, w: m.w, h: m.h, g: m.g, objs: m.objs, spawns: m.spawns, starts: m.starts, rooms: m.rooms, pads: m.pads || [], finish: m.finish, pw: m.w * TS, ph: m.h * TS };
   { const st = W.starts[0], F = W.finish; W.introT = Math.max(3.5, Math.min(8, (Math.abs((F.x0 + F.x1 + 1) / 2 * TS - st.x) + Math.abs((F.y0 + F.y1) / 2 * TS - st.y)) / 620)); }   // 맵 소개: 먼 맵일수록 천천히 (최대 8초)
@@ -14,8 +14,35 @@ function makeWorld(mapId) {
     for (let d = 0; d < 14; d++) { const hit = [tx0 - d, tx0 + d].find(free); if (hit !== undefined) { sp.x = hit * TS + TS / 2; break; } }
   }
   W.hasLift = W.g.some(row => row.includes('U')); W.hasBelt = W.g.some(row => row.includes('>') || row.includes('<'));
-  buildNav(W);
   return W;
+}
+/* 길 찾기 표(buildNav)는 맵마다 늘 같아서, 한 번 만든 것은 다시 쓰고, 첫 판에 한꺼번에 만들지 않도록 인트로가 도는 동안 맵마다 조금씩 미리 만들어 둬요 */
+const NAVC = {}, NAVB = { dl: Infinity }, navOver = () => performance.now() > NAVB.dl;
+let navJob = null;
+function navSave(id, W) { NAVC[id] = { edges: W.edges, dist: W.dist, nodes: W.nodes, maxDist: W.maxDist }; }
+function navFinish() { const j = navJob; navJob = null; if (!j) return; NAVB.dl = Infinity; let r; do { r = j.g.next(); } while (!r.done); navSave(j.id, j.W); }
+function makeWorld(mapId) {
+  if (navJob && navJob.id === mapId) navFinish();      // 인트로 중에 만들던 것이면 남은 것만 마저 해요
+  const W = worldBase(mapId), c = NAVC[mapId];
+  if (c) { W.edges = c.edges; W.dist = c.dist; W.nodes = c.nodes; W.maxDist = c.maxDist; } else { buildNav(W); navSave(mapId, W); }
+  return W;
+}
+function navPrewarm() {
+  const q = MAP_IDS.slice();
+  const tick = () => {
+    const on = !!document.getElementById('intro');
+    if (!navJob) {
+      if (!on) return;                                  // 인트로가 끝났으면 새로 시작하지 않아요
+      let id = null; while (q.length && !id) { const k = q.shift(); if (!NAVC[k]) id = k; }
+      if (!id) return;
+      const W = worldBase(id); navJob = { id, W, g: buildNavG(W) };
+    }
+    const j = navJob; NAVB.dl = performance.now() + (on ? 8 : 16);
+    let r; try { r = j.g.next(); } finally { NAVB.dl = Infinity; }
+    if (r.done && navJob === j) { navSave(j.id, j.W); navJob = null; }
+    setTimeout(tick, 0);
+  };
+  setTimeout(tick, 300);
 }
 function tileAt(W, tx, ty) { if (tx < 0 || tx >= W.w) return '#'; if (ty < 0) return '.'; if (ty >= W.h) return '#'; return W.g[ty][tx]; }
 function isSolid(c) { return c === '#' || c === 'x' || c === '>' || c === '<' || c === 'I'; }
@@ -123,9 +150,11 @@ function simAct(W, tx, ty, a) {
   if (n < 0 || n === ty * W.w + tx) return null;
   return { to: n, t, x: b.x };
 }
-function buildNav(W) {
+function buildNav(W) { const g = buildNavG(W); let r; do { r = g.next(); } while (!r.done); }
+function* buildNavG(W) {
   const N = W.w * W.h, edges = new Array(N), nodes = [];
   for (let ty = 0; ty < W.h; ty++) for (let tx = 0; tx < W.w; tx++) {
+    if (tx === 0 && navOver()) yield;
     const id = ty * W.w + tx; if (!isNode(W, tx, ty)) continue; nodes.push(id);
     const es = [];
     for (const dx of [-1, 1]) if (isNode(W, tx + dx, ty)) es.push({ to: id + dx, t: TS / PH.RUN, walk: dx });
