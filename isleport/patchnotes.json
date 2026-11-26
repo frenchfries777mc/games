@@ -23,6 +23,83 @@
       "When you are logged in, your island save and sound settings are also kept in your account. Even if the browser data is cleared or the address differs (github.io · frenchfries777.com), logging in with the same account brings everything back",
       "Saves already on this device are uploaded to your account automatically the first time you log in"
      ]
+    },
+    "ja": {
+     "title": "ゲームのセーブはアカウントに保管されます",
+     "items": [
+      "ログインしていると、島のセーブと音の設定もアカウントに保存されます。ブラウザの保存データが消えたりアドレスが変わったりしても(github.io・frenchfries777.com)、同じアカウントでログインすればそのまま続けられます",
+      "この端末にあったセーブは、初めてログインしたときに自動でアカウントに上がります"
+     ]
+    },
+    "es": {
+     "title": "Los guardados se conservan en tu cuenta",
+     "items": [
+      "Si has iniciado sesión, la partida de la isla y los ajustes de sonido también se guardan en tu cuenta. Aunque se borren los datos del navegador o cambie la dirección (github.io · frenchfries777.com), al iniciar sesión con la misma cuenta todo vuelve a estar disponible",
+      "Los guardados que había en este dispositivo se suben automáticamente a tu cuenta la primera vez que inicias sesión"
+     ]
+    },
+    "fr": {
+     "title": "Les sauvegardes sont conservées dans votre compte",
+     "items": [
+      "Une fois connecté, la sauvegarde de votre île et les réglages audio sont aussi enregistrés sur votre compte. Même si les données du navigateur sont effacées ou si l'adresse change (github.io · frenchfries777.com), la même connexion retrouve tout",
+      "Les sauvegardes présentes sur cet appareil sont envoyées automatiquement sur votre compte la première fois que vous vous connectez"
+     ]
+    },
+    "de": {
+     "title": "Spielstände werden in deinem Konto gespeichert",
+     "items": [
+      "Wenn du angemeldet bist, werden Inseldaten und Toneinstellungen auch in deinem Konto gespeichert. Auch wenn die Browserdaten gelöscht werden oder sich die Adresse ändert (github.io · frenchfries777.com), kommst du mit demselben Konto wieder an alles heran",
+      "Spielstände, die auf diesem Gerät lagen, werden beim ersten Anmelden automatisch in dein Konto hochgeladen"
+     ]
+    },
+    "zh": {
+     "title": "游戏存档保存在你的账号中",
+     "items": [
+      "登录后，岛屿存档和声音设置也会保存到你的账号中。即使浏览器数据被清除或地址不同（github.io · frenchfries777.com），用同一账号登录即可恢复全部内容",
+      "这台设备上已有的存档会在你首次登录时自动上传到账号"
+     ]
+    },
+    "pt": {
+     "title": "Os salvamentos ficam guardados na sua conta",
+     "items": [
+      "Quando você está conectado, o salvamento da ilha e as configurações de som também ficam guardados na sua conta. Mesmo que os dados do navegador sejam apagados ou o endereço seja outro (github.io · frenchfries777.com), basta entrar com a mesma conta para recuperar tudo",
+      "Os salvamentos que estavam neste dispositivo são enviados automaticamente para a sua conta na primeira vez que você entrar"
+     ]
+    },
+    "ru": {
+     "title": "Сохранения хранятся в вашем аккаунте",
+     "items": [
+      "Если вы вошли в аккаунт, сохранение острова и настройки звука также хранятся в нём. Даже если данные браузера очищены или адрес другой (github.io · frenchfries777.com), вход в тот же аккаунт вернёт всё",
+      "Сохранения, которые были на этом устройстве, автоматически загружаются в аккаунт при первом входе"
+     ]
+    },
+    "tr": {
+     "title": "Oyun kayıtları hesabınızda saklanır",
+     "items": [
+      "Giriş yaptığınızda ada kaydınız ve ses ayarlarınız hesabınızda da saklanır. Tarayıcı verileri silinse ya da adres değişse bile (github.io · frenchfries777.com), aynı hesapla giriş yaptığınızda her şey geri gelir",
+      "Bu cihazdaki kayıtlar, ilk giriş yaptığınızda otomatik olarak hesabınıza yüklenir"
+     ]
+    },
+    "it": {
+     "title": "I salvataggi sono conservati nel tuo account",
+     "items": [
+      "Quando hai effettuato l'accesso, il salvataggio dell'isola e le impostazioni audio vengono conservati anche nel tuo account. Anche se i dati del browser vengono cancellati o l'indirizzo cambia (github.io · frenchfries777.com), accedendo con lo stesso account ritrovi tutto",
+      "I salvataggi presenti su questo dispositivo vengono caricati automaticamente nel tuo account la prima volta che accedi"
+     ]
+    },
+    "pl": {
+     "title": "Zapisy gry są przechowywane na Twoim koncie",
+     "items": [
+      "Po zalogowaniu zapis wyspy i ustawienia dźwięku są też zapisywane na Twoim koncie. Nawet jeśli dane przeglądarki zostaną wyczyszczone albo adres się zmieni (github.io · frenchfries777.com), po zalogowaniu na to samo konto wszystko wraca",
+      "Zapisy zapisane na tym urządzeniu są automatycznie przesyłane na Twoje konto przy pierwszym zalogowaniu"
+     ]
+    },
+    "ar": {
+     "title": "يتم حفظ تقدم اللعبة في حسابك",
+     "items": [
+      "عند تسجيل الدخول، يُحفظ أيضًا تقدم الجزيرة وإعدادات الصوت في حسابك. حتى إن مُسحت بيانات المتصفح أو تغيّر العنوان (github.io · frenchfries777.com)، فإن تسجيل الدخول بالحساب نفسه يعيد كل شيء",
+      "تُرفع الحفظات الموجودة على هذا الجهاز تلقائيًا إلى حسابك عند تسجيل الدخول لأول مرة"
+     ]
     }
    }
   },

@@ -1,6 +1,5 @@
 ## 게임 저장 계정 보관 (2026-11-26)
 - Dummy Party b109 · Vowkeep b82 · Gatecrash b43 · Tumble Crown b320 · Beaconfall b222 · Crown Envoy 새 빌드: 번역할 새 게임 문구 없음 | 사이트 문구(한국어만): 패치노트 "게임 저장이 계정에 보관돼요"
-- Isleport v0.2 build 103: 게임 안 패치노트(영어 번역 넣음), 나머지 언어는 번역 스레드가 처리 | 사이트 문구: patchnotes.json 영어 tr만 넣음
 
 ## Dummy Party b108 (2026-11-22)
 - 화면 크기 맞춤: 번역할 새 문구 없음 | 사이트 문구(한국어만): 패치노트 b108

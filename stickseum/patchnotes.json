@@ -6,7 +6,81 @@
    "title": "봇 경로 미리 계산",
    "items": [
     "봇 경로를 처음 대전에서 한꺼번에 계산하지 않고, 처음 인트로가 도는 동안 조금씩 미리 계산해요 (처음 봇과 할 때 끊기던 게 줄어요)"
-   ]
+   ],
+   "tr": {
+     "ar": {
+       "title": "حساب مسارات الروبوتات مسبقًا",
+       "items": [
+         "لم يعد يتم حساب مسارات الروبوتات دفعة واحدة في أول مباراة، بل تُحسب تدريجيًا أثناء تشغيل المقدمة الأولى (تقل التقطعات عند أول لعب ضد الروبوتات)"
+       ]
+     },
+     "de": {
+       "title": "Bot-Wege im Voraus berechnen",
+       "items": [
+         "Bot-Wege werden nicht mehr alle auf einmal im ersten Match berechnet, sondern während des ersten Intros nach und nach (weniger Ruckler beim ersten Spiel gegen Bots)"
+       ]
+     },
+     "en": {
+       "title": "Precalculate bot paths",
+       "items": [
+         "Bot paths are no longer all calculated at once in your first match. They are calculated little by little while the first intro plays (fewer stutters when you first play against bots)"
+       ]
+     },
+     "es": {
+       "title": "Cálculo previo de rutas de bots",
+       "items": [
+         "Las rutas de los bots ya no se calculan todas de golpe en la primera partida, sino poco a poco mientras se reproduce la introducción inicial (se reducen los tirones al jugar contra bots por primera vez)"
+       ]
+     },
+     "fr": {
+       "title": "Calcul anticipé des trajets des bots",
+       "items": [
+         "Les trajets des bots ne sont plus tous calculés d'un coup lors du premier match, mais peu à peu pendant l'intro (moins de saccades lors de la première partie contre des bots)"
+       ]
+     },
+     "it": {
+       "title": "Calcolo anticipato dei percorsi dei bot",
+       "items": [
+         "I percorsi dei bot non vengono più calcolati tutti insieme nella prima partita, ma poco alla volta durante l'introduzione iniziale (meno scatti la prima volta che giochi contro i bot)"
+       ]
+     },
+     "ja": {
+       "title": "ボットの経路を事前計算",
+       "items": [
+         "ボットの経路を最初の対戦でまとめて計算せず、最初のイントロが流れている間に少しずつ先に計算します（初めてボットと遊ぶときに止まっていたのが減ります）"
+       ]
+     },
+     "pl": {
+       "title": "Wcześniejsze obliczanie ścieżek botów",
+       "items": [
+         "Ścieżki botów nie są już wszystkie liczone naraz w pierwszej rozgrywce, tylko stopniowo podczas pierwszego intra (mniej zacięć przy pierwszej grze z botami)"
+       ]
+     },
+     "pt": {
+       "title": "Cálculo antecipado dos caminhos dos bots",
+       "items": [
+         "Os caminhos dos bots não são mais calculados todos de uma vez na primeira partida, e sim aos poucos durante a introdução inicial (menos travamentos na primeira vez que você joga contra bots)"
+       ]
+     },
+     "ru": {
+       "title": "Предварительный расчёт путей ботов",
+       "items": [
+         "Пути ботов больше не считаются все сразу в первом матче, а понемногу во время вступления (меньше рывков при первой игре с ботами)"
+       ]
+     },
+     "tr": {
+       "title": "Bot yollarının önceden hesaplanması",
+       "items": [
+         "Bot yolları ilk maçta tek seferde hesaplanmaz, ilk tanıtım sırasında parça parça hesaplanır (botlara karşı ilk oynamada takılmalar azalır)"
+       ]
+     },
+     "zh": {
+       "title": "提前计算机器人路径",
+       "items": [
+         "机器人路径不再在第一场对局中一次性计算，而是在开场动画播放期间逐步计算（第一次和机器人对战时的卡顿减少了）"
+       ]
+     }
+   }
   },
   {
    "date": "2026-11-26",
@@ -15,7 +89,93 @@
    "items": [
     "로그인하면 소리·화면 효과 설정, 키 설정, 내가 만든 맵, 연습 설정, 전적 기록도 계정에 저장돼요. 브라우저 저장이 지워지거나 주소가 달라져도(github.io · frenchfries777.com) 같은 계정으로 로그인하면 그대로 이어져요 (화질·FPS·조작 방식처럼 기기마다 다른 설정은 올리지 않아요)",
     "이 기기에 있던 설정·맵·기록은 처음 로그인할 때 자동으로 계정에 올라가요. 로그인하지 않으면 지금처럼 이 기기에만 저장돼요"
-   ]
+   ],
+   "tr": {
+     "ar": {
+       "title": "الإعدادات والخرائط الخاصة والسجلات تُحفظ في الحساب أيضًا",
+       "items": [
+         "عند تسجيل الدخول، تُحفظ أيضًا إعدادات الصوت والمؤثرات البصرية، ومفاتيح التحكم، والخرائط التي أنشأتها، وإعدادات التدريب، وسجل المباريات في حسابك. حتى إن مُسحت بيانات المتصفح أو تغيّر العنوان (github.io · frenchfries777.com)، فإن تسجيل الدخول بالحساب نفسه يعيد كل شيء (لا تُرفع الإعدادات الخاصة بكل جهاز، مثل جودة الرسومات وعدد الإطارات وطريقة التحكم)",
+         "تُرفع الإعدادات والخرائط والسجلات الموجودة على هذا الجهاز تلقائيًا إلى حسابك عند تسجيل الدخول لأول مرة. وإن لم تسجّل الدخول، فستبقى محفوظة على هذا الجهاز فقط كما كانت من قبل"
+       ]
+     },
+     "de": {
+       "title": "Einstellungen, eigene Karten und Statistiken auch im Konto",
+       "items": [
+         "Wenn du angemeldet bist, werden auch deine Sound- und Effekteinstellungen, Tastenbelegung, selbst erstellte Karten, Trainingseinstellungen und Spielstatistiken in deinem Konto gespeichert. Auch wenn die Browserdaten gelöscht werden oder sich die Adresse ändert (github.io · frenchfries777.com), kommst du mit demselben Konto wieder an alles heran (gerätespezifische Einstellungen wie Grafikqualität, FPS oder Steuerungsart werden nicht hochgeladen)",
+         "Einstellungen, Karten und Statistiken, die auf diesem Gerät lagen, werden beim ersten Anmelden automatisch in dein Konto hochgeladen. Ohne Anmeldung werden sie wie bisher nur auf diesem Gerät gespeichert"
+       ]
+     },
+     "en": {
+       "title": "Settings, custom maps and records are saved to your account too",
+       "items": [
+         "When you are logged in, your sound and screen effect settings, key bindings, the maps you made, practice settings and match records are also saved to your account. Even if the browser data is cleared or the address differs (github.io · frenchfries777.com), logging in with the same account brings everything back (per-device settings such as graphics quality, FPS and control style are not uploaded)",
+         "Settings, maps and records saved on this device are uploaded to your account automatically the first time you log in. If you do not log in, they are still saved only on this device, as before"
+       ]
+     },
+     "es": {
+       "title": "Ajustes, mapas propios y registros también en tu cuenta",
+       "items": [
+         "Si has iniciado sesión, los ajustes de sonido y efectos visuales, las teclas, los mapas que creaste, los ajustes de práctica y el historial de partidas también se guardan en tu cuenta. Aunque se borren los datos del navegador o cambie la dirección (github.io · frenchfries777.com), al iniciar sesión con la misma cuenta todo vuelve a estar disponible (los ajustes de cada dispositivo, como calidad gráfica, FPS o método de control, no se suben)",
+         "Los ajustes, mapas y registros que había en este dispositivo se suben automáticamente a tu cuenta la primera vez que inicias sesión. Si no inicias sesión, se siguen guardando solo en este dispositivo, como antes"
+       ]
+     },
+     "fr": {
+       "title": "Réglages, cartes perso et stats aussi sur votre compte",
+       "items": [
+         "Une fois connecté, vos réglages de son et d'effets visuels, vos touches, les cartes que vous avez créées, vos réglages d'entraînement et vos statistiques sont aussi enregistrés sur votre compte. Même si les données du navigateur sont effacées ou si l'adresse change (github.io · frenchfries777.com), la même connexion retrouve tout (les réglages propres à chaque appareil, comme la qualité graphique, les FPS ou le mode de contrôle, ne sont pas envoyés)",
+         "Les réglages, cartes et statistiques présents sur cet appareil sont envoyés automatiquement sur votre compte la première fois que vous vous connectez. Sans connexion, ils restent enregistrés uniquement sur cet appareil, comme avant"
+       ]
+     },
+     "it": {
+       "title": "Impostazioni, mappe personali e registri salvati anche nell'account",
+       "items": [
+         "Quando hai effettuato l'accesso, anche le impostazioni di suono ed effetti visivi, i tasti, le mappe che hai creato, le impostazioni di allenamento e lo storico delle partite vengono salvati nel tuo account. Anche se i dati del browser vengono cancellati o l'indirizzo cambia (github.io · frenchfries777.com), accedendo con lo stesso account ritrovi tutto (le impostazioni del singolo dispositivo, come qualità grafica, FPS e tipo di controllo, non vengono caricate)",
+         "Le impostazioni, le mappe e i registri presenti su questo dispositivo vengono caricati automaticamente nel tuo account la prima volta che accedi. Se non accedi, restano salvati solo su questo dispositivo, come prima"
+       ]
+     },
+     "ja": {
+       "title": "設定・マップ・記録もアカウントに保存",
+       "items": [
+         "ログインすると、サウンドと画面効果の設定、キー設定、自分で作ったマップ、練習の設定、戦績もアカウントに保存されます。ブラウザの保存データが消えたりアドレスが変わったりしても(github.io・frenchfries777.com)、同じアカウントでログインすればそのまま続けられます（画質・FPS・操作方式など端末ごとの設定はアップロードしません）",
+         "この端末にあった設定・マップ・記録は、初めてログインしたときに自動でアカウントに上がります。ログインしなければ今までどおりこの端末だけに保存されます"
+       ]
+     },
+     "pl": {
+       "title": "Ustawienia, własne mapy i wyniki też na koncie",
+       "items": [
+         "Po zalogowaniu ustawienia dźwięku i efektów, klawisze, mapy, które stworzyłeś, ustawienia treningu i historia meczów są też zapisywane na Twoim koncie. Nawet jeśli dane przeglądarki zostaną wyczyszczone albo adres się zmieni (github.io · frenchfries777.com), po zalogowaniu na to samo konto wszystko wraca (ustawienia zależne od urządzenia, jak jakość grafiki, FPS czy sposób sterowania, nie są wysyłane)",
+         "Ustawienia, mapy i wyniki zapisane na tym urządzeniu są automatycznie przesyłane na Twoje konto przy pierwszym zalogowaniu. Jeśli się nie zalogujesz, nadal są zapisane tylko na tym urządzeniu, jak dotąd"
+       ]
+     },
+     "pt": {
+       "title": "Configurações, mapas e registros também na sua conta",
+       "items": [
+         "Quando você está conectado, suas configurações de som e efeitos visuais, as teclas, os mapas que você criou, as configurações de treino e o histórico de partidas também ficam guardados na sua conta. Mesmo que os dados do navegador sejam apagados ou o endereço seja outro (github.io · frenchfries777.com), basta entrar com a mesma conta para recuperar tudo (configurações de cada aparelho, como qualidade gráfica, FPS e estilo de controle, não são enviadas)",
+         "As configurações, mapas e registros que estavam neste dispositivo são enviados automaticamente para a sua conta na primeira vez que você entrar. Se não entrar, eles continuam guardados só neste dispositivo, como antes"
+       ]
+     },
+     "ru": {
+       "title": "Настройки, свои карты и записи тоже в аккаунте",
+       "items": [
+         "Если вы вошли в аккаунт, настройки звука и визуальных эффектов, клавиши, созданные вами карты, настройки тренировки и записи матчей тоже хранятся в аккаунте. Даже если данные браузера очищены или адрес другой (github.io · frenchfries777.com), вход в тот же аккаунт вернёт всё (настройки, которые зависят от устройства, например качество графики, FPS и способ управления, не загружаются)",
+         "Настройки, карты и записи, которые были на этом устройстве, автоматически загружаются в аккаунт при первом входе. Если не входить, они по-прежнему хранятся только на этом устройстве"
+       ]
+     },
+     "tr": {
+       "title": "Ayarlar, kendi haritalarınız ve kayıtlar da hesaba kaydedilir",
+       "items": [
+         "Giriş yaptığınızda ses ve ekran efekti ayarlarınız, tuş ayarlarınız, oluşturduğunuz haritalar, antrenman ayarlarınız ve maç kayıtlarınız da hesabınızda saklanır. Tarayıcı verileri silinse ya da adres değişse bile (github.io · frenchfries777.com), aynı hesapla giriş yaptığınızda her şey geri gelir (grafik kalitesi, FPS ve kontrol şekli gibi cihaza özel ayarlar yüklenmez)",
+         "Bu cihazdaki ayarlar, haritalar ve kayıtlar ilk giriş yaptığınızda otomatik olarak hesabınıza yüklenir. Giriş yapmazsanız, daha önce olduğu gibi yalnızca bu cihazda saklanmaya devam eder"
+       ]
+     },
+     "zh": {
+       "title": "设置、自制地图和战绩也保存到账号",
+       "items": [
+         "登录后，声音和画面效果设置、按键设置、你制作的地图、练习设置和战绩也会保存到账号中。即使浏览器数据被清除或地址不同（github.io · frenchfries777.com），用同一账号登录即可恢复全部内容（画质、FPS、操作方式等每台设备各自的设置不会上传）",
+         "这台设备上已有的设置、地图和战绩会在你首次登录时自动上传到账号。不登录的话，和以前一样只保存在这台设备上"
+       ]
+     }
+   }
   },
   {
    "date": "2026-11-23",
