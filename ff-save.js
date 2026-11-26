@@ -188,9 +188,21 @@ function init(opt){
     return RAWR.apply(this,arguments);
   };
 
+  /* 같은 브라우저에서 다른 계정으로 바꿔 로그인하면, 앞 계정의 저장은 따로 보관하고 새 계정의 것으로 바꿔요 (계정끼리 섞이지 않게) */
+  function switchOwner(oldU,newU){
+    var OKY='ffsave.owner.'+game, ks=allKeys(), o={};
+    ks.forEach(function(k){ var v=lget(k); if(v!==null) o[k]=v; });
+    try{ if(Object.keys(o).length) RAWS.call(localStorage,'ffsave.stash.'+game+'.'+oldU,JSON.stringify(o)); }catch(e){}
+    ks.forEach(function(k){ lset(k,null); });
+    var st=jparse(raw('ffsave.stash.'+game+'.'+newU)||'');
+    if(st&&typeof st==='object'){ for(var k in st){ if(typeof st[k]==='string') lset(k,st[k]); } try{ RAWR.call(localStorage,'ffsave.stash.'+game+'.'+newU); }catch(e){} }
+    S.changed=(S.changed||0)+1;
+  }
   async function start(uid,sb){
     S.uid=uid; S.sb=sb; S.ready=false; S.state='sync'; S.changed=0; S.restored=0; loadMeta();
     try{
+      if(!opt.scoped){ var OKY='ffsave.owner.'+game, ow=raw(OKY); if(ow&&ow!==uid) switchOwner(ow,uid); if(ow!==uid){ try{ RAWS.call(localStorage,OKY,uid); }catch(e){} } }
+
       var n=await reconcile();
       if(S.uid!==uid) return;
       S.ready=true; S.state='on'; S.last=Date.now(); S.fails=0;
