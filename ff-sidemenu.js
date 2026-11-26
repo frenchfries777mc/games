@@ -60,7 +60,7 @@
     var st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
     var as=side.querySelectorAll(':scope>a');
     /* games.frenchfries777.com 같은 서브도메인: 현재 메뉴는 주소(호스트)로 정하고, 다른 사이트 링크는 그 사이트의 서브도메인으로 보내요 (허브는 frenchfries777.com) */
-    var SUBH={games:'/games/',tools:'/tools/',educations:'/educations/',edu:'/educations/',prototypes:'/prototypes/',proto:'/prototypes/',wiki:'/wiki/',lounge:'/lounge/',community:'/community/',comm:'/community/',setting:'/settings/'}, SUBTO={'/games/':'games','/tools/':'tools','/educations/':'educations','/prototypes/':'prototypes','/wiki/':'wiki','/lounge/':'lounge','/community/':'community','/settings/':'setting'};
+    var SUBH={games:'/games/',tools:'/tools/',educations:'/educations/',edu:'/educations/',prototypes:'/prototypes/',proto:'/prototypes/',wiki:'/wiki/',lounge:'/lounge/',community:'/community/',comm:'/community/',setting:'/settings/',settings:'/settings/'}, SUBTO={'/games/':'games','/tools/':'tools','/educations/':'educations','/prototypes/':'prototypes','/wiki/':'wiki','/lounge/':'lounge','/community/':'community','/settings/':'settings'};
     var hm=/^([a-z]+)\.frenchfries777\.com$/.exec(location.hostname||''), subWant=hm&&SUBH[hm[1]]||null;
     var want=subWant||(function(){ var p=(location.pathname||'/').replace(/^\/hub(?=\/)/,''); var m=/^\/(games|educations|tools|prototypes|lounge|community|wiki)(\/|$)/.exec(p); if(m) return '/'+m[1]+'/'; if(/^\/(music|gallery)(\/|$)/.test(p)) return '/lounge/'; if(/^\/(patchnotes)?\/?$/.test(p)) return '/'; return null; })();
     for(var i=0;i<as.length;i++){
