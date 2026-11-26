@@ -36,9 +36,10 @@ const cv=document.getElementById('c');let g=cv.getContext('2d');
 cv.width=W;cv.height=H;
 {const CP=CanvasRenderingContext2D.prototype;if(!CP.roundRect)CP.roundRect=function(x,y,w,h,r){this.moveTo(x+r,y);this.arcTo(x+w,y,x+w,y+h,r);this.arcTo(x+w,y+h,x,y+h,r);this.arcTo(x,y+h,x,y,r);this.arcTo(x,y,x+w,y,r);this.closePath()}}
 function withCtx(c,fn){const o=g;g=c;try{fn()}finally{g=o}}
+var FITS=1,RES_ON=false,RSCAP=9;/* 화면 해상도에 맞춰 그리기: 보이는 크기 × 기기 화소 비율 */
 function fit(){
   const vv=window.visualViewport,vw=Math.min(innerWidth,vv?vv.width:1e9),vh=Math.min(innerHeight,vv?vv.height:1e9);
-  const s=Math.min(vw/W,vh/H),cw=Math.floor(W*s),ch=Math.floor(H*s);cv.style.width=cw+'px';cv.style.height=ch+'px';
+  const s=Math.min(vw/W,vh/H),cw=Math.floor(W*s),ch=Math.floor(H*s);cv.style.width=cw+'px';cv.style.height=ch+'px';FITS=s;if(RES_ON)applyRes();
   const f=document.getElementById('ffFoot');if(f){const fs=Math.max(8,Math.min(12,12*s)),gap=(vh-ch)/2;f.style.fontSize=fs+'px';f.style.bottom=(gap>=fs*1.4+10?gap-fs*1.4-6:Math.max(0,gap)+Math.max(2,6*s))+'px';f.style.left=f.style.right=Math.max(0,(vw-cw)/2)+'px'}
 }
 addEventListener('resize',fit);addEventListener('orientationchange',()=>{fit();setTimeout(fit,250);setTimeout(fit,700)});
@@ -60,7 +61,11 @@ const DEF=()=>({best:0,kills:0,bossSet:{},mapBest:[0,0,0,0,0,0],ach:{},title:'',
 let save=DEF();
 try{const s=JSON.parse(localStorage.getItem(SK)||'null');if(s){save=Object.assign(DEF(),s);save.towers=Object.assign(DEF().towers,s.towers);save.recipes=Object.assign(DEF().recipes,s.recipes);if(!Array.isArray(save.mapBest))save.mapBest=[];while(save.mapBest.length<6)save.mapBest.push(0);if(!save.bossSet||typeof save.bossSet!=='object')save.bossSet={};if(!save.ach||typeof save.ach!=='object')save.ach={};if(!save.seen||typeof save.seen!=='object')save.seen={}}}catch(e){}
 let LOW=save.dev==='mobile'||save.perf==='low',RS=LOW?.75:1;cv.width=Math.round(W*RS);cv.height=Math.round(H*RS);
-function applyDev(){LOW=save.dev==='mobile'||save.perf==='low';RS=LOW?.75:1;cv.width=Math.round(W*RS);cv.height=Math.round(H*RS);SPS=LOW?1:2;SPR.clear();TOW.clear();MAPC=null;BGC=null}
+function applyDev(){LOW=save.dev==='mobile'||save.perf==='low';RS=0;applyRes()}
+function applyRes(){
+  let r=Math.round(FITS*Math.min(3,window.devicePixelRatio||1)*4)/4;
+  r=LOW?Math.max(.75,Math.min(1.5,r)):Math.max(1,Math.min(2.5,RSCAP,r));
+  if(r===RS)return;RS=r;cv.width=Math.round(W*RS);cv.height=Math.round(H*RS);SPS=Math.max(LOW?1:2,Math.ceil(RS));SPR.clear();TOW.clear();MAPC=null;BGC=null}
 function persist(){try{localStorage.setItem(SK,JSON.stringify(save))}catch(e){}}
 
 /* ===== 소리 ===== */
@@ -1416,7 +1421,8 @@ function sMenu(dt){
   // 계정 · 칭호 (오른쪽 위)
   if(window.FFAuth){
     let u=null,nm='';try{u=FFAuth.user();if(u)nm=FFAuth.nickname()||''}catch(e){}
-    if(u){if(btn(W-24-200,20,200,44,String(nm||'내 계정').slice(0,10),{fs:20,col:'#6f8fb0'})){try{FFAuth.openProfile(u.id,{game:'kitchendefense'})}catch(e){}}}
+    if(u){const nl=String(nm||'내 계정');g.font='20px '+FONT;const tw=g.measureText(nl).width,bw=Math.min(380,Math.max(200,tw+44)),nfs=tw+44>380?Math.max(12,Math.floor(20*336/tw)):20;
+      if(btn(W-24-bw,20,bw,44,nl,{fs:nfs,col:'#6f8fb0'})){try{FFAuth.openProfile(u.id,{game:'kitchendefense'})}catch(e){}}}
     else if(btn(W-24-130,20,130,44,'로그인',{fs:20,col:'#6f8fb0'})){try{FFAuth.openLogin()}catch(e){}}
   }
   const tt=ACH.find(a=>a.id===save.title);if(tt){g.font="16px 'Gowun Dodum',"+FONT2;g.textAlign='right';g.textBaseline='middle';g.fillStyle='#e3c7a4';g.fillText('칭호 · '+tt.t,W-26,84)}
@@ -1896,7 +1902,7 @@ function perfWatch(ms){
   perfS.a.push(ms);
   if(perfS.t>=6500){
     const a=perfS.a.sort((x,y)=>x-y),m=a[a.length>>1];perfS=null;
-    if(m>1000/35){save.perf='low';save.perfAuto=1;persist();applyDev()}
+    if(m>1000/35){if(RS>1&&RSCAP>1){RSCAP=1;applyRes()}else{save.perf='low';save.perfAuto=1;persist();applyDev()}}
   }
 }
 function loop(now){
@@ -1906,6 +1912,7 @@ function loop(now){
   const dt=Math.min(.05,(now-last)/1000);last=now;
   frame(dt);
 }
+RES_ON=true;applyRes();
 requestAnimationFrame(loop);
 </script>
 <script>setInterval(function(){var f=document.getElementById("ffFoot");if(f)f.style.display=(typeof scene!=="undefined"&&scene==="menu")?"block":"none"},300)</script>
