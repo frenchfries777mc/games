@@ -67,7 +67,7 @@ var T=L[lang()];
 var LOGIN_URL='https://frenchfries777.com/log-in/', onLP=/^\/log-in\/?/.test(location.pathname||'')&&/(^|\.)frenchfries777\.com$/.test(location.hostname), lpBusy=false;
 function lpNext(){ try{ var n=new URLSearchParams(location.search).get('next'), u=new URL(n,location.href); if(/^https:$/.test(u.protocol)&&(/(^|\.)frenchfries777\.com$/.test(u.hostname)||u.hostname==='frenchfries777mc.github.io')&&!/^\/(hub\/)?log-in\//.test(u.pathname)) return u.href; }catch(e){} return 'https://frenchfries777.com/'; }
 /* 서브도메인(chat.frenchfries777.com)은 저장소가 따로라서, 로그인 페이지가 한 번만 쓰는 표를 받아 넘겨주고 서브도메인이 그 표로 자기 세션을 만들어요 */
-var SSO_HOSTS=['chat.frenchfries777.com','frenchfries777mc.github.io'].concat(['games','tools','educations','wiki','prototypes','lounge','community','setting','edu','proto','dd','comm','dumbduck'].map(function(x){ return x+'.frenchfries777.com'; })), ssoSub=SSO_HOSTS.indexOf(location.hostname)>=0, lpSso=onLP&&/[?&]sso=1(&|$)/.test(location.search), lpGoing=false;
+var SSO_HOSTS=['chat.frenchfries777.com','frenchfries777mc.github.io'].concat(['games','tools','educations','wiki','prototypes','lounge','community','setting','edu','proto','dd','comm','dumbduck','settings'].map(function(x){ return x+'.frenchfries777.com'; })), ssoSub=SSO_HOSTS.indexOf(location.hostname)>=0, lpSso=onLP&&/[?&]sso=1(&|$)/.test(location.search), lpGoing=false;
 /* 기기 저장 맞추기: github.io 와 frenchfries777.com 은 브라우저 저장소가 따로라서, github.io 가 로그인 페이지를 다녀올 때 두 쪽의 저장값을 주고받아 같게 만들어요.
    마지막으로 맞춘 뒤 한쪽만 바뀐 값은 그쪽 것을, 둘 다 바뀐 값은 더 최근에 쓴 주소의 것을 써요. 로그인 정보(sb-...)와 400KB 를 넘는 부분은 빼요. */
 var GH='frenchfries777mc.github.io', SYNC_MAX=400000;
