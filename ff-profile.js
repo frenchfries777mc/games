@@ -80,19 +80,22 @@ function longPlay(sb, game){ if(longTimers[game]) return; var sec=0; longTimers[
 function markPlayed(sb, game){ if(oldPage) return Promise.resolve(); if(game==='isleport'||game==='beaconfall'||game==='islandtrade') longPlay(sb, game==='islandtrade'?'isleport':game); try{ if(sb&&sb.rpc) return sb.rpc('ff_mark_played',{p_game:game}).then(function(){},function(){}); }catch(e){} return Promise.resolve(); }
 
 async function fetchData(sb, uid){
-  var p=await sb.from('profiles').select('id,username,display_name,stats').eq('id',uid).single();
-  if(p.error) p=await sb.from('profiles').select('id,username,display_name').eq('id',uid).single();
-  var g=await sb.from('ff_played').select('game,plays,ach_done,ach_total').eq('user_id',uid);
-  if(g&&g.error) g=await sb.from('ff_played').select('game,plays').eq('user_id',uid);          // (before supabase-ff-achievements.sql is run)
+  /* every request goes out at once (they used to wait one after another, which made the card take 8+ seconds) */
+  var safe=function(f){ try{ return Promise.resolve(f()).then(function(r){ return r; },function(){ return null; }); }catch(e){ return Promise.resolve(null); } };
+  var pP=(async function(){ var p=await sb.from('profiles').select('id,username,display_name,stats').eq('id',uid).single(); if(p.error) p=await sb.from('profiles').select('id,username,display_name').eq('id',uid).single(); return p; })();
+  var gP=(async function(){ var g=await sb.from('ff_played').select('game,plays,ach_done,ach_total').eq('user_id',uid); if(g&&g.error) g=await sb.from('ff_played').select('game,plays').eq('user_id',uid); return g; })();   // (before supabase-ff-achievements.sql is run)
+  var aP=safe(function(){ return sb.from('ff_ach').select('game,ach_id').eq('user_id',uid).limit(5000); });
+  var dcP=safe(function(){ return sb.from('ff_deco').select('bg,fr').eq('user_id',uid).limit(1); });
+  var cdP=safe(function(){ return sb.from('ff_card').select('bio,fav,title').eq('user_id',uid).limit(1); });
+  var apP=safe(function(){ return sb.from('ff_avatar').select('pick').eq('user_id',uid).limit(1); });
+  var dvP=safe(function(){ return sb.from('ff_devs').select('role').eq('user_id',uid).limit(1); });
+  var ctP=safe(function(){ return sb.from('ff_custom_title').select('title').eq('user_id',uid).limit(1); });
+  var bP=(async function(){ try{ if(!window.FFBorders) await new Promise(function(res){ var sc=document.createElement('script'); sc.src='https://frenchfries777.com/games/ff-borders.js?v=20261104a'; sc.onload=sc.onerror=res; document.head.appendChild(sc); }); if(window.FFBorders) return await window.FFBorders.equipped(sb,uid); }catch(e){} return ''; })();
+  var R=await Promise.all([pP,gP,aP,dcP,cdP,apP,dvP,ctP,bP]);
+  var p=R[0], g=R[1], a=R[2], dc=R[3], cd=R[4], ap=R[5], dv=R[6], ct=R[7], border=R[8]||'';
   var played={}, ach={}; ((g&&g.data)||[]).forEach(function(r){ played[r.game]=r.plays||1; if(r.ach_total>0) ach[r.game]=[r.ach_done||0, r.ach_total]; });
-  var ids={}, a=null; try{ a=await sb.from('ff_ach').select('game,ach_id').eq('user_id',uid).limit(5000); }catch(e){}       // (empty before supabase-ff-ach-list.sql is run)
-  ((a&&!a.error&&a.data)||[]).forEach(function(r){ (ids[r.game]=ids[r.game]||{})[r.ach_id]=1; });
-  var deco=null; try{ var dc=await sb.from('ff_deco').select('bg,fr').eq('user_id',uid).limit(1); if(dc&&!dc.error&&dc.data&&dc.data[0]) deco=dc.data[0]; }catch(e){}      // (empty before supabase-ff-extra.sql is run)
-  var card=null; try{ var cd=await sb.from('ff_card').select('bio,fav,title').eq('user_id',uid).limit(1); if(cd&&!cd.error&&cd.data&&cd.data[0]) card=cd.data[0]; }catch(e){}      // (empty before supabase-ff-more.sql is run)
-  var avpick=null; try{ var ap=await sb.from('ff_avatar').select('pick').eq('user_id',uid).limit(1); if(ap&&!ap.error&&ap.data&&ap.data[0]) avpick=ap.data[0].pick||null; }catch(e){}      // (empty before supabase-ff-avatar.sql is run)
-  var dev=null; try{ var dv=await sb.from('ff_devs').select('role').eq('user_id',uid).limit(1); if(dv&&!dv.error&&dv.data&&dv.data[0]) dev=dv.data[0].role; }catch(e){}      // (empty before supabase-ff-dev.sql is run)
-  var ctitle=null; try{ var ct=await sb.from('ff_custom_title').select('title').eq('user_id',uid).limit(1); if(ct&&!ct.error&&ct.data&&ct.data[0]) ctitle=ct.data[0].title||null; }catch(e){}      // (empty before supabase-custom-title-2026-11-02.sql is run)
-  var border=''; try{ if(!window.FFBorders) await new Promise(function(res){ var sc=document.createElement('script'); sc.src='https://frenchfries777.com/games/ff-borders.js?v=20261104a'; sc.onload=sc.onerror=res; document.head.appendChild(sc); }); if(window.FFBorders) border=await window.FFBorders.equipped(sb,uid); }catch(e){}      // (empty before supabase-profile-borders-2026-11-03.sql is run)
+  var ids={}; ((a&&!a.error&&a.data)||[]).forEach(function(r){ (ids[r.game]=ids[r.game]||{})[r.ach_id]=1; });
+  var deco=(dc&&!dc.error&&dc.data&&dc.data[0])||null, card=(cd&&!cd.error&&cd.data&&cd.data[0])||null, avpick=(ap&&!ap.error&&ap.data&&ap.data[0]&&ap.data[0].pick)||null, dev=(dv&&!dv.error&&dv.data&&dv.data[0]&&dv.data[0].role)||null, ctitle=(ct&&!ct.error&&ct.data&&ct.data[0]&&ct.data[0].title)||null;
   return {profile:(p&&p.data)||{id:uid}, border:border, played:played, ach:ach, ids:ids, deco:deco, card:card, dev:dev, avpick:avpick, ctitle:ctitle};
 }
 
@@ -925,7 +928,7 @@ function pct(n,of){ if(!of) return null; var v=100*n/of; return v>=10||v===0?Mat
 async function list(box, sb, d, o){
   var lg=lang(o), T=L[lg], st=(d.profile&&d.profile.stats)||{};
   var LIST=[{id:'hub',name:T.hub,icon:'🍟'}].concat(GAMES);
-  var cats=await Promise.all(LIST.map(function(g){ return catalog(g.id); })), R=await rates(sb);
+  var RP=rates(sb), cats=await Promise.all(LIST.map(function(g){ return catalog(g.id); })), R=await RP;
   var mine=Object.assign({}, d.ids||{});
   if(Array.isArray(st.ach)){ mine.stickseum=Object.assign({}, mine.stickseum||{}); st.ach.forEach(function(id){ mine.stickseum[id]=1; }); }     // Stickseum keeps its own record in the profile
   var tr=function(x){ return x?(x[lg]||(['zh','pt','ru','tr','it','pl','ar','nw'].indexOf(lg)>=0&&x.en)||x.ko||''):''; }, h='<div class="n">'+esc(T.rate)+'</div>';
@@ -1099,7 +1102,7 @@ async function open(sb, uid, o){
   statusLine(el, sb, uid);
   var own=false;
   try{ var s=await sb.auth.getSession(), me=s&&s.data&&s.data.session&&s.data.session.user;
-    if(me&&me.id===uid){ own=true; var h=await syncHub(sb, uid, d); if(h){ d.ids=d.ids||{}; d.ids.hub={}; h.forEach(function(k){ d.ids.hub[k]=1; }); rateCache=null; }
+    if(me&&me.id===uid){ own=true; syncHub(sb, uid, d).then(function(h){ if(h){ d.ids=d.ids||{}; d.ids.hub={}; h.forEach(function(k){ d.ids.hub[k]=1; }); rateCache=null; } });
       if(inGame(o)){ }
       else if(editOk){ dcb.style.display=''; dcb.onclick=function(){ var P=el.querySelector('.D'); if(P.classList.toggle('on')) decoPanel(el, sb, uid, d, cv, o); }; }
       else { var hn=el.querySelector('.hn'); hn.innerHTML=esc(T.hubOnly)+'<a href="'+HUBSITE+'">'+esc(T.hubGo)+'</a>'; hn.style.display='block'; } } }catch(e){}

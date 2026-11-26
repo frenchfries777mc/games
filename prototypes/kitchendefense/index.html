@@ -611,7 +611,7 @@ function bossDown(t){if(!save.bossSet[t]){save.bossSet[t]=1;persist()}emit({k:'b
 let ffMarked='',ffAchT=0;
 function ffProfile(){
   if(window.FFProfile)return Promise.resolve(true);
-  return new Promise(res=>{const sc=document.createElement('script');sc.src='https://frenchfries777.com/games/ff-profile.js?v=20261120c';sc.onload=()=>res(!!window.FFProfile);sc.onerror=()=>res(false);document.head.appendChild(sc)});
+  return new Promise(res=>{const sc=document.createElement('script');sc.src='https://frenchfries777.com/games/ff-profile.js?v=20261126a';sc.onload=()=>res(!!window.FFProfile);sc.onerror=()=>res(false);document.head.appendChild(sc)});
 }
 function ffSync(){
   clearTimeout(ffAchT);ffAchT=setTimeout(async()=>{
