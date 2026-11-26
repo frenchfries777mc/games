@@ -6,7 +6,8 @@
 <link rel="icon" type="image/svg+xml" href="https://frenchfries777.com/games/gamelogo/stickseum.svg">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Stickseum</title>
-<script src="https://frenchfries777.com/games/ff-lang.js?v=20261120c"></script>   <!-- Frenchfries777 공용 언어: 허브·다른 게임과 언어 설정을 맞춤 (언어를 읽는 코드보다 먼저) -->
+<script src="https://frenchfries777.com/games/ff-lang.js?v=20261120c"></script>
+<script src="https://frenchfries777.com/games/ff-save.js?v=1"></script>   <!-- Frenchfries777 공용 언어: 허브·다른 게임과 언어 설정을 맞춤 (언어를 읽는 코드보다 먼저) -->
 <script id="i18nEngine">
 (function(){
 var LS='arenaClashLang', LANGS=['ko','en','es','fr','de','ja','zh','pt','ru','tr','it','pl','ar','nw','gk'];
@@ -9237,6 +9238,7 @@ try{ if(window.supabase) sb=window.supabase.createClient(SUPABASE_URL, SUPABASE_
 if(sb) window.FFAuthClient=sb;          // the hub's account script (ff-auth.js, loaded at the end of the page) reuses this client
 
 let sbUser=null; // {id, username}
+try{FFSave.init({game:'stickseum',match:['arenaClashSettings','arenaClashKeybinds','stickseumCustomMaps','arenaClashPractice','stickseumStats_v1','stickseumMatchStats_v2'],client:()=>sb,uid:()=>sbUser&&sbUser.id,omit:{arenaClashSettings:['lowspec','quality','controls','fpsLimit','showFps','saver','touchScale','touchLift']}});}catch(e){}   // 설정·키 설정·내 맵·연습 설정·기록을 계정에 저장해요 (진행 상황 자체는 cloudSaveSync가 계정에 올려요)
 let sbSessionReloading=false;
 function sbSessionChanged(){ if(sbSessionReloading) return; sbSessionReloading=true; try{ location.reload(); }catch(e){} }      // the browser's account was switched (hub / another tab) while this tab kept the old one: start again with the right one
 try{ if(sb) sb.auth.onAuthStateChange((ev, session)=>{ try{ const uid=session && session.user && session.user.id; if(sbUser && uid && uid!==sbUser.id) setTimeout(()=>{ if(sbUser && uid!==sbUser.id) sbSessionChanged(); }, 400); }catch(e){} }); }catch(e){}
@@ -25605,7 +25607,7 @@ botPrewarm();
 if(!DED_HOST){ try{ fetch('versions.json?t='+Date.now(), {cache:'no-store'}).then(r=>r.json()).then(j=>{ const v=(j.versions||[]).find(x=>x.version===GAME_VERSION), n=v?+String(v.build||'').replace(/\D/g,''):0, u=new URL(location.href); if(n>buildNum(GAME_BUILD) && u.searchParams.get('b')!==String(n)){ u.searchParams.set('b', n); location.replace(u.toString()); } }).catch(()=>{}); }catch(e){} }
 })();
 </script>
-<script src="https://frenchfries777.com/games/ff-profile.js?v=20261120c"></script>
-<script src="https://frenchfries777.com/games/ff-auth.js?v=20261123c"></script>
+<script src="https://frenchfries777.com/games/ff-profile.js?v=20261126a"></script>
+<script src="https://frenchfries777.com/games/ff-auth.js?v=20261126b"></script>
 </body>
 </html>

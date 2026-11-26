@@ -3,10 +3,20 @@
   {
    "date": "2026-11-26",
    "build": "v0.2 build 103",
-   "title": "처음 땅·바다 그림을 인트로 동안 나눠서",
+   "title": "게임 저장이 계정에 보관돼요",
    "items": [
-    "처음 항해를 시작할 때 땅과 바다 그림을 한꺼번에 만들며 멈추던 것을, 인트로가 도는 동안 조금씩 나눠서 만들도록 했어요 (폰에서 처음 켤 때 특히 덜 끊겨요)"
-   ]
+    "로그인하면 섬 저장과 소리 설정이 계정에도 저장돼요. 브라우저 저장이 지워지거나 주소가 달라져도(github.io · frenchfries777.com) 같은 계정으로 로그인하면 그대로 이어져요",
+    "이 기기에 있던 저장은 처음 로그인할 때 자동으로 계정에 올라가요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Game saves are kept in your account",
+     "items": [
+      "When you are logged in, your island save and sound settings are also kept in your account. Even if the browser data is cleared or the address differs (github.io · frenchfries777.com), logging in with the same account brings everything back",
+      "Saves already on this device are uploaded to your account automatically the first time you log in"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-22",

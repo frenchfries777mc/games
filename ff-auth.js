@@ -67,7 +67,7 @@ var T=L[lang()];
 var LOGIN_URL='https://frenchfries777.com/log-in/', onLP=/^\/log-in\/?/.test(location.pathname||'')&&/(^|\.)frenchfries777\.com$/.test(location.hostname), lpBusy=false;
 function lpNext(){ try{ var n=new URLSearchParams(location.search).get('next'), u=new URL(n,location.href); if(/^https:$/.test(u.protocol)&&(/(^|\.)frenchfries777\.com$/.test(u.hostname)||u.hostname==='frenchfries777mc.github.io')&&!/^\/(hub\/)?log-in\//.test(u.pathname)) return u.href; }catch(e){} return 'https://frenchfries777.com/'; }
 /* 서브도메인(chat.frenchfries777.com)은 저장소가 따로라서, 로그인 페이지가 한 번만 쓰는 표를 받아 넘겨주고 서브도메인이 그 표로 자기 세션을 만들어요 */
-var SSO_HOSTS=['chat.frenchfries777.com','frenchfries777mc.github.io'], ssoSub=SSO_HOSTS.indexOf(location.hostname)>=0, lpSso=onLP&&/[?&]sso=1(&|$)/.test(location.search), lpGoing=false;
+var SSO_HOSTS=['chat.frenchfries777.com','frenchfries777mc.github.io'].concat(['games','tools','educations','wiki','prototypes','lounge','community','setting','edu','proto','dd','comm','dumbduck'].map(function(x){ return x+'.frenchfries777.com'; })), ssoSub=SSO_HOSTS.indexOf(location.hostname)>=0, lpSso=onLP&&/[?&]sso=1(&|$)/.test(location.search), lpGoing=false;
 /* 기기 저장 맞추기: github.io 와 frenchfries777.com 은 브라우저 저장소가 따로라서, github.io 가 로그인 페이지를 다녀올 때 두 쪽의 저장값을 주고받아 같게 만들어요.
    마지막으로 맞춘 뒤 한쪽만 바뀐 값은 그쪽 것을, 둘 다 바뀐 값은 더 최근에 쓴 주소의 것을 써요. 로그인 정보(sb-...)와 400KB 를 넘는 부분은 빼요. */
 var GH='frenchfries777mc.github.io', SYNC_MAX=400000;
@@ -112,7 +112,8 @@ async function lpGo(){ if(lpGoing) return; lpGoing=true; var n=lpNext();
     try{ if(user&&sb&&!/[?&]tok=0(&|$)/.test(location.search)){ var s=(await sb.auth.getSession()).data.session, r=await fetch(SB_URL+'/functions/v1/dynamic-action',{method:'POST',headers:{Authorization:'Bearer '+s.access_token,apikey:SB_KEY}}), j=r.ok?await r.json():null; t=(j&&j.t)||''; } }catch(e){}
     n=n.replace(/#.*$/,'')+'#ffsso='+(t||0)+sy; } }catch(e){}
   location.replace(n); }
-async function ssoIn(u){ var m=/^#ffsso=([^&]*)/.exec(location.hash||''), gh=location.hostname===GH, auto=false, off=false;
+async function ssoIn(u){ if(!u&&location.hostname!=='frenchfries777mc.github.io'&&!/^#ffsso=/.test(location.hash||'')&&/bot|crawl|spider|lighthouse|headless/i.test(navigator.userAgent||'')) return null;   /* 검색 로봇은 로그인 페이지를 왔다 갔다 하지 않아요 */
+  var m=/^#ffsso=([^&]*)/.exec(location.hash||''), gh=location.hostname===GH, auto=false, off=false;
   try{ auto=sessionStorage.getItem('ffSsoAuto')==='1'; sessionStorage.removeItem('ffSsoAuto'); off=!!localStorage.getItem('ffSsoOff'); }catch(e){}
   if(ffPull) return u||null;
   if(m){ try{ history.replaceState(null,'',location.pathname+location.search); sessionStorage.setItem('ffSsoTried','1'); }catch(e){} }
@@ -207,7 +208,7 @@ function nick(){ return (prof&&(prof.display_name||prof.username)) || (user&&Str
 /* ---- the same login rules as the games (id -> internal e-mail, typo-tolerant password) ---- */
 /* ID accounts are stored as <id>@<domain>. The domain is moving arenaclash.local -> frenchfries777.com (DB converted): sign-in still accepts both;
    ID_DOM is the one domain new/renamed accounts use. */
-var ID_DOM='frenchfries777.com', ID_DOM_OLD=['arenaclash.local','frenchfries777.com'];
+var ID_DOM='frenchfries777.com', ID_DOM_OLD=['arenaclash.local','frenchfries777.com','dumbduck.local'];   /* dumbduck.local = DumbDuck 계정 (같은 Supabase 계정이라 같은 아이디·비밀번호로 로그인돼요) */
 function idLocal(u){ return String(u).toLowerCase().replace(/[^a-z0-9_]/g,''); }
 function emailFor(u){ return idLocal(u)+'@'+ID_DOM; }
 function emailsFor(u){ var l=idLocal(u), out=[emailFor(u)]; ID_DOM_OLD.forEach(function(d){ var e=l+'@'+d; if(out.indexOf(e)<0) out.push(e); }); return out; }
@@ -537,7 +538,7 @@ async function chipBorder(root){ try{ if(!sb||!user) return; var uid=user.id;
   if(!window.FFBorders) await loadScript(BASE+'ff-borders.js?v=20261104a', function(){ return !!window.FFBorders; });
   if(!window.FFBorders||!user||user.id!==uid) return; var id=await window.FFBorders.equipped(sb,uid), b=window.FFBorders.get(id); if(!b) return;
   var col=b.a==='rainbow'?'#ffd23f':b.a, im=root.querySelector('.ffa-av'); if(im){ im.style.borderRadius='6px'; im.style.boxShadow='0 0 0 2px '+col+',0 0 8px '+col+'99'; } }catch(e){} }
-function profileLib(){ return loadScript(BASE+'ff-profile.js?v=20261120c', function(){ return !!window.FFProfile; }); }
+function profileLib(){ return loadScript(BASE+'ff-profile.js?v=20261126a', function(){ return !!window.FFProfile; }); }
 /* 프로필은 창이 아니라 허브의 프로필 페이지로 열어요. 게임 안, 도전과제 창, 카드 창(o.modal)만 예전처럼 창으로 열어요 */
 function profilePage(uid, o){ try{
   if((o&&(o.modal||o.openAch||o.game||o.noDeco!=null))||window.FF_INGAME) return null;

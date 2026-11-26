@@ -598,8 +598,8 @@ const BGM=(()=>{
   ['pointerdown','keydown','touchend'].forEach(ev=>addEventListener(ev,go,{passive:true}));   // 브라우저는 클릭·키 입력 뒤에만 소리를 허락해요
   setInterval(tick,1000);
   return {get vol(){return vol;},
-    setVol(v){vol=Math.max(0,Math.min(1,v));if(master)master.gain.setTargetAtTime(vol,ctx.currentTime,0.05);try{localStorage.setItem('stranded.bgmvol',String(vol));}catch(e){}},
-    toggle(){on=!on;try{localStorage.setItem('stranded.bgm',on?'1':'0');}catch(e){}if(!on){for(const k in ch)ch[k].a.pause();}else tick();return on;},
+    setVol(v){vol=Math.max(0,Math.min(1,v));if(master)master.gain.setTargetAtTime(vol,ctx.currentTime,0.05);try{localStorage.setItem('stranded.bgmvol',String(vol));}catch(e){}try{if(window.bfCloudDirty)bfCloudDirty();}catch(e){}},
+    toggle(){on=!on;try{localStorage.setItem('stranded.bgm',on?'1':'0');}catch(e){}try{if(window.bfCloudDirty)bfCloudDirty();}catch(e){}if(!on){for(const k in ch)ch[k].a.pause();}else tick();return on;},
     get on(){return on;},
     setPack(m){   // 리소스팩/모드: 곡 바꾸기·새 곡 넣기 ({이름: 데이터주소})
       PACK=(m&&typeof m==='object')?m:{};
@@ -15387,8 +15387,9 @@ let sb=null;try{if(window.supabase)sb=window.supabase.createClient(URL_,KEY);}ca
 window.bfSb=sb;
 /* 계정 저장: 이 브라우저의 진행을 Frenchfries777 계정(beaconfall_saves)에 올려서 다른 기기에서도 이어 해요 */
 const CS_T='stranded.cloud.t',CS_U='stranded.cloud.uid',CS_TB='beaconfall_saves';
-const csOk=k=>k==='stranded.lobby.v1'||k==='bf.mods.on'||k.indexOf('stranded.save.v5.')===0;   // 월드·설정·설치한 모드가 계정에 저장돼요
-function csKeys(){const o={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&csOk(k))o[k]=localStorage.getItem(k);}}catch(e){}return o;}
+const csOk=k=>k==='stranded.lobby.v1'||k==='bf.mods.on'||k.indexOf('stranded.save.v5.')===0;
+const csX=k=>k==='stranded.bgmvol'||k==='stranded.bgm';   // 음악 설정도 계정에 저장돼요 (계정을 바꿔 로그인해도 지우지 않고, 예전 계정 저장에 없으면 이 기기 값을 그대로 둬요)   // 월드·설정·설치한 모드가 계정에 저장돼요
+function csKeys(){const o={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&(csOk(k)||csX(k)))o[k]=localStorage.getItem(k);}}catch(e){}return o;}
 let csUid=null,csOn=false,csDirty=false,csBusy=false,csFail=0,csLast=0,csState='';
 window.bfCloudDirty=()=>{csDirty=true;};
 window.bfCloudStatus=()=>!csUid?'로그인하면 켜져요':csState==='ask'?'선택을 기다리는 중':!csOn?(csState==='off'?'꺼짐 (서버 준비 안 됨)':'꺼짐'):csLast?('켜짐 · 마지막 저장 '+new Date(csLast).toLocaleTimeString()):'켜짐';
@@ -15408,7 +15409,7 @@ function csLoad(row,uid){
   try{
     const ks=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&csOk(k))ks.push(k);}
     for(const k of ks)if(!(k==='bf.mods.on'&&!(row.data&&typeof row.data['bf.mods.on']==='string')))localStorage.removeItem(k);   // 예전 계정 저장엔 모드가 없어서, 그럴 땐 이 기기의 모드를 지우지 않아요
-    for(const k in row.data)if(csOk(k)&&typeof row.data[k]==='string')localStorage.setItem(k,row.data[k]);
+    for(const k in row.data)if((csOk(k)||csX(k))&&typeof row.data[k]==='string')localStorage.setItem(k,row.data[k]);
     localStorage.setItem(CS_T,new Date(Date.parse(row.updated_at)||Date.now()).toISOString());localStorage.setItem(CS_U,uid);
   }catch(e){}
   location.reload();
