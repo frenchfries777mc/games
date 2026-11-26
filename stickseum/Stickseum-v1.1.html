@@ -6633,7 +6633,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-23-v880';
+const GAME_BUILD='build 2026-11-26-v881';
 const GAME_VERSION='1.1', GAME_VERSION_NAME='Shadows of London';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -18967,11 +18967,14 @@ function botPickSpot(xsSorted, A){
   if(r.length<=3) x = Math.abs(lo-c)<=Math.abs(hi-c) ? lo+inset : hi-inset;   // a narrow one: the inner end, a little inside
   return {x, run:r.length, lo, hi, width:r[r.length-1]-r[0]};
 }
-function botBuildGraph(){
+const BGS={dl:Infinity}, bgOver=()=>performance.now()>BGS.dl;      // time slicing: when the slice is used up the graph builder gives way and carries on a moment later
+function botBuildGraph(){ const g=botBuildGraphG(); let r; do{ r=g.next(); }while(!r.done); return r.value; }
+function* botBuildGraphG(){
   const pls=MAP.platforms, n=pls.length, edges=[];
-  const savedWalls=walls, savedX=[];
-  walls=[];                                                                      // the planner must not see temporary walls (e.g. an smg barrier)
-  pls.forEach((pl,i)=>{ savedX[i]=pl.x; if(pl.move && pl.move.base!==undefined) pl.x=pl.move.base; });   // plan against where moving platforms rest
+  let savedWalls=walls; const savedX=[];
+  const enter=()=>{ savedWalls=walls; walls=[]; pls.forEach((pl,i)=>{ savedX[i]=pl.x; if(pl.move && pl.move.base!==undefined) pl.x=pl.move.base; }); };   // the planner must not see temporary walls (e.g. an smg barrier); plan against where moving platforms rest
+  const leave=()=>{ pls.forEach((pl,i)=>{ pl.x=savedX[i]; }); walls=savedWalls; };
+  enter();
   const wild=pls.map(pl=>!!(pl.move && Math.abs(pl.move.amp||0)>40));           // large movers can't be relied on, so they get no edges
   try{
     for(let i=0;i<n;i++){
@@ -18988,6 +18991,7 @@ function botBuildGraph(){
         if(x0<=lo+0.01) xs.add(lo); if(x1>=hi-0.01) xs.add(hi);                  // the very ends of the platform are the longest jumps
       }
       for(const x of xs) for(const dir of [-1,1]){
+        if(bgOver()){ leave(); yield; enter(); }
         const r=botSimLanding(A, i, x, dir, true);
         if(r && !wild[r.pi]) add(r.pi, x, dir, true, r.x);
       }
@@ -18997,6 +19001,7 @@ function botBuildGraph(){
       if(!MAP.isParkour) for(let j=0;j<n;j++){ if(j===i||wild[j]||found[j]) continue; foundDash[j]=null; }   // (parkour has no dash, so no dash routes there)
       if(Object.keys(foundDash).length){
         for(const x of xs) for(const dir of [-1,1]) for(const ds of DASH_STEPS){
+          if(bgOver()){ leave(); yield; enter(); }
           const r=botSimLanding(A, i, x, dir, true, ds);
           if(r && !wild[r.pi] && foundDash[r.pi]!==undefined) (foundDash[r.pi]=foundDash[r.pi]||[]).push({x,dir,ds,lx:r.x});
         }
@@ -19041,8 +19046,7 @@ function botBuildGraph(){
       }
     }
   } finally {
-    pls.forEach((pl,i)=>{ pl.x=savedX[i]; });
-    walls=savedWalls;
+    leave();
   }
   return {n, edges, at:Date.now()};
 }
@@ -19059,8 +19063,33 @@ function botDeriveGraph(){
   const edges=MAP.platforms.map(pl=>{ const fi=idx.get(pl); return fi===undefined ? [] : full.edges[fi].filter(e=>inv[e.to]!==undefined).map(e=>Object.assign({}, e, {to:inv[e.to]})); });
   return {n:MAP.platforms.length, edges, at:Date.now()};
 }
+function botGKey(){ return MAP.platforms.length+'|'+(MAP.plankSig?MAP.platforms.filter(pl=>pl.pk!==undefined).map(pl=>pl.pk).join(','):'')+'|'+(MAP.gateGp===undefined?'':MAP.gateGp); }
+// The first match used to wait for this graph in one go (0.65 s .. 1.5 s on a phone, more). While the intro plays it is built a little at a time, map after map; a match that
+// needs a graph that is half done finishes only the rest.
+let botPre=null;
+function* botPreG(mp){ const gs=mp.__botGraphs||(mp.__botGraphs={}), key=botGKey(); if(gs[key] && gs[key].n===MAP.platforms.length) return; gs[key]=yield* botBuildGraphG(); }
+function botPreFinish(){ const j=botPre; botPre=null; if(!j) return; const keep=MAP; MAP=j.mp; BGS.dl=Infinity; try{ let r; do{ r=j.g.next(); }while(!r.done); } finally { MAP=keep; } }
+function botPrewarm(){
+  const q=[]; try{ const s=JSON.parse(localStorage.getItem(PRACTICE_KEY)||'null'); if(s && practiceMapIds().includes(s.mapId)) q.push(s.mapId); }catch(e){}
+  for(const id of practiceMapIds()) if(!q.includes(id)) q.push(id);
+  const tick=()=>{
+    const el=document.getElementById('introScr'), on=!!el && !el.classList.contains('out');
+    if(!botPre){
+      if(!on) return;                                                    // the intro is over: no new map is started
+      let mp=null; while(q.length && !mp){ const m=MAP_TEMPLATES[q.shift()]; if(m && !m.planks) mp=m; }
+      if(!mp) return;
+      botPre={mp, g:botPreG(mp)};
+    }
+    const j=botPre, keep=MAP; MAP=j.mp; BGS.dl=performance.now()+(on?8:16);
+    let r; try{ r=j.g.next(); } finally { BGS.dl=Infinity; MAP=keep; }
+    if(r.done && botPre===j) botPre=null;
+    setTimeout(tick,0);
+  };
+  setTimeout(tick,300);
+}
 function botGraph(){
-  const key=MAP.platforms.length+'|'+(MAP.plankSig?MAP.platforms.filter(pl=>pl.pk!==undefined).map(pl=>pl.pk).join(','):'')+'|'+(MAP.gateGp===undefined?'':MAP.gateGp);      // (the maps whose planks / gates come and go keep one graph per layout, so the bots neither rebuild it all the time nor walk to a plank that is gone)
+  if(botPre && botPre.mp===MAP) botPreFinish();
+  const key=botGKey();      // (the maps whose planks / gates come and go keep one graph per layout, so the bots neither rebuild it all the time nor walk to a plank that is gone)
   const gs=MAP.__botGraphs||(MAP.__botGraphs={}), g=gs[key];
   if(g && g.n===MAP.platforms.length) return g;
   if(MAP.planks){ if(!MAP.basePlats) MAP.basePlats=MAP.platforms.filter(pl=>pl.pk===undefined); return gs[key]=botDeriveGraph(); }
@@ -25569,6 +25598,7 @@ function renderAuthGateForm(){
   };
 }
 initAuthGate();
+botPrewarm();
 
 { const ph=document.getElementById('pracHead'); if(ph) ph.addEventListener('click',()=>document.getElementById('practicePanel').classList.toggle('min')); }
 /* a stale cached page: if the site already has a newer build of this version, reload once with that build in the address (a new address is never served from the browser cache) */

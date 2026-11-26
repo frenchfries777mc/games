@@ -306,6 +306,7 @@ async function ffMatchDone() {
 $('resBack').onclick = () => { loop.on = false; ffMatchDone(); endToLobby(); };
 $('exitBtn').onclick = () => { loop.on = false; RP = null; $('res').classList.remove('on'); endToLobby(); };
 
+navPrewarm();
 document.addEventListener('pointerdown', () => { SFX.unlock(); if (scr !== 'game' && !document.getElementById('intro')) BGM.play('top-of-the-leaderboard'); });
 window.GCIntroDone = () => { if (scr !== 'game') BGM.play('top-of-the-leaderboard'); };
 addEventListener('keydown', e => {
