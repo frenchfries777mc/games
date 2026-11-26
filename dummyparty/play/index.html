@@ -1767,6 +1767,8 @@ body.playing #emoBar{display:flex}
 </style>
 <script>window.FF_INGAME=true</script>
 <script src="https://frenchfries777.com/games/ff-auth.js?v=20261123c"></script>
+<script src="https://frenchfries777.com/games/ff-save.js?v=1"></script>
+<script>try{FFSave.init({game:"dummyparty",match:/^(dummyparty\.(ach|stats|name|title|dance|face|gl|hat|sfx)|dpPub|dpTitle|dpRules)$/,merge:{"dummyparty.ach":"json","dummyparty.stats":"json"}});}catch(e){}</script>
 </head>
 <body class="onhome">
 <button class="exitHub" id="exitHub">← 나가기</button>
@@ -8509,7 +8511,7 @@ var PREFIX = 'ff-dummyparty-', CODE_CH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', MAX
 var PTS = [5, 3, 2, 1];
 var T_INTRO = 6, T_COUNT = 3, T_END = 4.0, T_RESULT = 6;
 // 게임 버전(0.x)과 빌드. 버전이 다르면 같은 방에 못 들어와요 (빌드가 달라도 괜찮아요). dp_config 의 min_build 보다 낮은 빌드는 dC를 못 받아요
-var DP_VER = '0.1', DP_BUILD = 108;
+var DP_VER = '0.1', DP_BUILD = 109;
 function dpNotice(msg) { dpAsk(msg, '확인', function () { }); }
 var BOT_NAMES = ['방귀쟁이', '홀쭉이', '바보1', '멍청이', '10급 공무원', '교무실 단골', '벌점부자', '말썽이', '김개똥'];
 var qs = new URLSearchParams(location.search);

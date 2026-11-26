@@ -595,6 +595,22 @@ window.CE_RAW={get:function(k){return g.call(localStorage,k);},set:function(k,v)
 /* 로그인·로그아웃으로 계정이 바뀌면(게임 중이 아닐 때) 새로 불러온다 */
 setInterval(function(){if(cur()===window.CE_UID)return;try{if(typeof Net!=='undefined'&&Net.mode)return;}catch(e){}window.ceReload&&window.ceReload();},1500);
 }catch(e){}})();</script>
+<script src="https://frenchfries777.com/games/ff-save.js?v=1"></script>
+<script>/* 계정 저장: 시나리오·저장 게임·도전과제·설정을 Frenchfries777 계정에도 보관해요 (ff-save.js). 기기마다 다른 값(ce_device·ce_perf·ce_autolow)은 올리지 않아요 */
+(function(){try{var U=window.CE_UID||null,PER=/^(ce_custom_tpls|ce_scen_shared|ce_scen_price|ce_sv_.+|ce_stars|ce_ach|ce_meta_ach|ce_dex|ce_tplplays)$/,R=window.CE_RAW;
+/* 로그인하기 전에 이 기기에 있던 저장은, 이 기기에서 처음 로그인하는 계정으로 자동으로 가져와요 (한 번만) */
+if(U&&R&&!R.get('ffsave.claim.crownenvoy')){R.set('ffsave.claim.crownenvoy',U);
+ R.keys().filter(function(k){return k.indexOf('@')<0&&PER.test(k);}).forEach(function(k){var v=R.get(k),sk=k+'@'+U,cur=R.get(sk);
+  if(v!==null){if(cur===null)R.set(sk,v);else if(k==='ce_sv_idx'||k==='ce_custom_tpls'){try{var a=JSON.parse(cur),b=JSON.parse(v),ids={};a.forEach(function(x){ids[x&&x.id]=1;});b.forEach(function(x){if(x&&!ids[x.id])a.push(x);});R.set(sk,JSON.stringify(a));}catch(e){}}
+   if(R.get(sk)!==null)R.remove(k);}});}
+function byId(a,b){try{var x=JSON.parse(a),y=JSON.parse(b),m={},o=[];x.concat(y).forEach(function(r){if(!r)return;var p=m[r.id];if(p===undefined){m[r.id]=o.length;o.push(r);}else if((r.at||0)>(o[p].at||0))o[p]=r;});return JSON.stringify(o);}catch(e){return null;}}
+FFSave.init({game:'crownenvoy',scoped:true,
+ match:/^(ce_custom_tpls|ce_scen_shared|ce_scen_price|ce_sv_.+|ce_stars|ce_ach|ce_meta_ach|ce_dex|ce_tplplays|ce_rt_save_v1|ce_rt_save_v1_m|ce_name|ce_kname|ce_bgm_vol|ce_bgm_on|ce_snd|ce_fx2|ce_blurflag|ce_mapmode|ce_trmode|ce_tut|ce_tut2|ce_tut_min)$/,
+ uid:function(){var u=window.FFAuth&&FFAuth.user&&FFAuth.user();return u&&U&&u.id===U?U:null;},
+ enumKey:function(pk){if(U&&pk.slice(-(U.length+1))==='@'+U)return pk.slice(0,-(U.length+1));if(PER.test(pk)||pk.indexOf('@')>0)return null;return pk;},
+ merge:{'ce_sv_idx':byId,'ce_custom_tpls':byId,'/^ce_(ach|meta_ach|dex|stars|tplplays|scen_shared|scen_price)$/':'json'},
+ onRestore:function(){if(window.ceReload)window.ceReload();else location.reload();}});
+}catch(e){}})();</script>
 <script>(function(){var el=document.getElementById('introScr'),done=0,T1=0,t0=Date.now(),held=0;function fin(){if(window.__introSongDone)return;window.__introSongDone=1;try{Music.start();}catch(e){}}
 function go(){if(done)return;done=1;clearTimeout(T1);fin();el.classList.add('out');document.documentElement.classList.add('introDone');try{window.dispatchEvent(new Event('introdone'));}catch(e){}setTimeout(function(){el.remove();},800);}
 function arm(){clearTimeout(T1);T1=setTimeout(go,Math.max(0,6200-(Date.now()-t0)));}arm();   /* 인트로는 건너뛸 수 없다 (끝까지 재생) */window.__introGo=go;
@@ -643,7 +659,7 @@ if(document.body)arm();else document.addEventListener('DOMContentLoaded',arm);
 </script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.8 · build 203</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.8 · build 204</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div><p class="tagline">사절을 보내 동맹을 맺고, 군대를 보내 왕관을 차지하세요.</p></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
