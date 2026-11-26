@@ -39,7 +39,8 @@
   'html body #onlineBar{margin:0!important;font-size:14px!important;color:#fff!important}'+      /* ff-online.js (educations, tools) uses a bigger font, a margin and a dim colour */
   'html body #onlineBar .on-n,html body #onlineBar .on-c,html body #onlineBar .on-c>span,html body #onlineBar .on-c b{color:#fff!important;font-size:14px!important}'+
   'html body #onlineBar .on-c{padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;height:auto!important}'+
-  '.ffx-foot nav{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px}';
+  '.ffx-foot nav{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px}'+
+  '#onlineBar .on-p{display:inline-flex;align-items:baseline;gap:5px}#onlineBar .on-p small{margin-left:4px}';
   /* the four menu names that are written in Korean in every page */
   var LB={'위키':{en:'Wiki',es:'Wiki',fr:'Wiki',de:'Wiki',ja:'Wiki',zh:'Wiki',pt:'Wiki',ru:'Wiki',tr:'Wiki',it:'Wiki',pl:'Wiki',ar:'Wiki',nw:'Truthbook'},
     '커뮤니티':{en:'Community',es:'Comunidad',fr:'Communauté',de:'Community',ja:'コミュニティ',zh:'社区',pt:'Comunidade',ru:'Сообщество',tr:'Topluluk',it:'Community',pl:'Społeczność',ar:'المجتمع',nw:'Comradehall'},
@@ -53,28 +54,61 @@
     for(var i=0;i<as.length;i++){ var n=as[i].lastChild; if(!n||n.nodeType!==3)continue; var k=n.nodeValue.trim(), t=LB[k]&&LB[k][l]; if(t)n.nodeValue=t; }
   }
   function run(){
-    var st2=document.createElement('style'); st2.textContent=css2; document.head.appendChild(st2);
+    var fresh=document.body&&document.body.hasAttribute('data-fftop');      /* the new-style pages keep their own online bar look */
+    if(!fresh){ var st2=document.createElement('style'); st2.textContent=css2; document.head.appendChild(st2); }
     var rail=document.querySelector('nav.rail'); if(rail)names(rail);      /* prototypes page */
+    if(document.body&&document.body.hasAttribute('data-fftop')){ topBar(null); return; }      /* pages built without the old left menu (games, educations, tools, prototypes) */
     var side=document.querySelector('aside[style*="flex:0 0 232px"]'); if(!side||side.__ffsm)return; side.__ffsm=1;
-    names(side);
-    var st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
-    var as=side.querySelectorAll(':scope>a');
-    /* games.frenchfries777.com 같은 서브도메인: 현재 메뉴는 주소(호스트)로 정하고, 다른 사이트 링크는 그 사이트의 서브도메인으로 보내요 (허브는 frenchfries777.com) */
+    topBar(side);
+  }
+  /* 2026-11-26: the left menu is replaced by a top bar (logo + text menu, search / online count / login at the right). The page's own #ffTop (search, online bar, account)
+     is MOVED into the bar, so everything that already hooks into those elements keeps working. */
+  var TOP=[['Hub','/'],['Games','/games/'],['Educations','/educations/'],['Tools','/tools/'],['Wiki','/wiki/'],['Community','/community/'],['Lounge','/lounge/'],['Prototypes','/prototypes/'],['Settings','/settings/']];
+  var TCSS='.ffx-root>aside[style*="flex:0 0 232px"],nav.rail{display:none!important}'+
+  '#ffnTop{display:flex;align-items:center;gap:20px;height:64px;padding:0 clamp(16px,3vw,40px);background:rgba(0,0,0,.92);border-bottom:1px solid rgba(255,213,74,.4);color:#fff;position:relative;z-index:60;box-sizing:border-box;width:100%;font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif}'+
+  '#ffnTop *{box-sizing:border-box}'+
+  '#ffnTop .fn-logo{flex:none;display:flex;align-items:center;gap:9px;font-family:Oswald,sans-serif;font-weight:600;font-size:19px;letter-spacing:.04em;color:#fff;text-decoration:none}#ffnTop .fn-logo img{width:30px;height:30px;border-radius:8px}#ffnTop .fn-logo b{color:#ffd54a;font-weight:600}'+
+  '#ffnTop .fn-nw{position:relative;flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:4px}'+
+  '#ffnTop .fn-nav{display:flex;gap:26px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-ms-overflow-style:none;white-space:nowrap;cursor:grab;flex:1 1 auto;min-width:0;padding:0 2px}#ffnTop .fn-nav::-webkit-scrollbar{display:none}'+
+  '#ffnTop .fn-nav a{flex:none;color:#a9a9a9;font-size:15px;font-weight:500;text-decoration:none;padding:7px 0;border-bottom:2px solid transparent;-webkit-user-drag:none;background:none}#ffnTop .fn-nav a:hover{color:#fff}#ffnTop .fn-nav a.on{color:#ffd54a;border-bottom-color:#ffd54a;font-weight:700}'+
+  '#ffnTop .fn-ar{flex:none;width:26px;height:30px;border:0;background:none;color:#ffd54a;font-size:22px;line-height:1;cursor:pointer;padding:0;visibility:hidden}#ffnTop .fn-ar.show{visibility:visible}'+
+  '#ffnTop .fn-rt{flex:none;display:flex;align-items:center;gap:10px;margin-left:auto}'+
+  '#ffnTop #ffTop{display:flex!important;flex-wrap:nowrap!important;align-items:center;justify-content:flex-end;gap:10px!important;padding:0!important;height:auto!important;margin:0!important}'+
+  '#onlineBar .on-p{display:inline-flex;align-items:baseline;gap:5px}#onlineBar .on-p small{margin-left:4px}'+
+  '@media(max-width:1500px){#ffnTop #onlineBar .on-f{display:none!important}}'+
+  '#ffnTop #onlineBar .on-c{display:none!important}#ffnTop #ffTop .srx-btn{width:40px;height:40px}#ffnTop #ffTop .tb{margin:0}'+
+  '#ffnTop [data-ff-account] .ffa-btn{width:auto;min-width:84px;height:40px;padding:0 18px;border-radius:99px;background:#ffd54a;color:#1c1405;font-size:14px;font-weight:700;gap:0}#ffnTop [data-ff-account] .ffa-btn .ffa-ic{display:none}'+
+  '@media(max-width:760px){#ffnTop{gap:10px}#ffnTop #onlineBar{display:none!important}#ffnTop .fn-nav{gap:18px}}'+
+  '@media(max-width:520px){#ffnTop .fn-logo span{display:none}}';
+  function topBar(side){
+    if(document.getElementById('ffnTop'))return;
+    var st=document.createElement('style'); st.id='ffnCss'; st.textContent=TCSS; document.head.appendChild(st);
     var SUBH={games:'/games/',tools:'/tools/',educations:'/educations/',edu:'/educations/',prototypes:'/prototypes/',proto:'/prototypes/',wiki:'/wiki/',lounge:'/lounge/',community:'/community/',comm:'/community/',setting:'/settings/',settings:'/settings/'}, SUBTO={'/games/':'games','/tools/':'tools','/educations/':'educations','/prototypes/':'prototypes','/wiki/':'wiki','/lounge/':'lounge','/community/':'community','/settings/':'settings'};
     var hm=/^([a-z]+)\.frenchfries777\.com$/.exec(location.hostname||''), subWant=hm&&SUBH[hm[1]]||null;
-    var want=subWant||(function(){ var p=(location.pathname||'/').replace(/^\/hub(?=\/)/,''); var m=/^\/(games|educations|tools|prototypes|lounge|community|wiki)(\/|$)/.exec(p); if(m) return '/'+m[1]+'/'; if(/^\/(music|gallery)(\/|$)/.test(p)) return '/lounge/'; if(/^\/(patchnotes)?\/?$/.test(p)) return '/'; return null; })();
-    for(var i=0;i<as.length;i++){
-      var a=as[i], sp=a.querySelector(':scope>span[style*="width:8px"]'); if(!sp)continue;
-      var h=(a.getAttribute('href')||'').replace(/^https?:\/\/[^\/]+/,''); var k=IC[h]; if(!k)continue;
-      var on=want?(h===want):/#26221a/i.test(a.getAttribute('style')||'');   /* 주소로 정해요: 패치노트·AI Chat 에 Lounge 가 켜져 있던 것 */
-      a.classList.add('ffsm'); if(on)a.classList.add('on');
-      var s=document.createElementNS('http://www.w3.org/2000/svg','svg'); s.setAttribute('viewBox','0 0 24 24'); s.innerHTML=k;
-      a.replaceChild(s,sp);
+    var want=subWant||(function(){ var p=(location.pathname||'/').replace(/^\/hub(?=\/)/,''); var m=/^\/(games|educations|tools|prototypes|lounge|community|wiki|settings)(\/|$)/.exec(p); if(m) return '/'+m[1]+'/'; if(/^\/(music|gallery)(\/|$)/.test(p)) return '/lounge/'; if(/^\/(patchnotes)?\/?$/.test(p)) return '/'; return null; })();
+    var h=document.createElement('div'); h.id='ffnTop'; h.setAttribute('role','banner');      /* a div, not <header>: the new-style pages style every <header> of their own */
+    var links=TOP.map(function(i){ var href=i[1]; if(subWant){ if(href==='/') href='https://frenchfries777.com/'; else if(SUBTO[href]) href='https://'+SUBTO[href]+'.frenchfries777.com/'; }
+      return '<a href="'+href+'"'+(i[1]===want?' class="on"':'')+'>'+i[0]+'</a>'; }).join('');
+    h.innerHTML='<a class="fn-logo" href="'+(subWant?'https://frenchfries777.com/':'/')+'"><img src="https://frenchfries777.com/logo.svg" alt=""><span>FRENCHFRIES<b>777</b></span></a>'+
+      '<div class="fn-nw"><button type="button" class="fn-ar l" aria-label="‹">‹</button><nav class="fn-nav">'+links+'</nav><button type="button" class="fn-ar r" aria-label="›">›</button></div><div class="fn-rt"></div>';
+    var rt=h.querySelector('.fn-rt'), top=document.getElementById('ffTop');
+    if(!top){ /* pages without their own #ffTop (wiki): search button + the page's login button */
+      top=document.createElement('div'); top.id='ffTop';
+      var sb=document.createElement('button'); sb.type='button'; sb.className='srx-btn'; sb.id='srxBtn'; sb.setAttribute('aria-label','검색'); sb.title='검색'; sb.textContent='🔍';
+      sb.style.cssText='flex:none;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:rgba(14,14,14,.6);border:1px solid #262626;color:#fff;font-size:16px;cursor:pointer;padding:0';
+      top.appendChild(sb);
+      sb.addEventListener('click',function f(e){ if(sb.onclick) return; sb.removeEventListener('click',f); e.stopImmediatePropagation(); e.preventDefault(); var sc=document.createElement('script'); sc.src='https://frenchfries777.com/games/hub.js?v=20261126a'; sc.onload=function(){ setTimeout(function(){ if(sb.onclick) sb.click(); },500); }; document.head.appendChild(sc); },true);
+      var ac=document.querySelector('[data-ff-account]'); if(ac){ var tb=document.createElement('div'); tb.className='tb'; tb.appendChild(ac); top.appendChild(tb); }
     }
-    if(subWant){ for(var j=0;j<as.length;j++){ var ah=as[j].getAttribute('href')||'', q=/^\/[a-z]*\/?$/.test(ah)?ah:'';
-        if(ah==='/') as[j].setAttribute('href','https://frenchfries777.com/');
-        else if(q&&q!==subWant&&SUBTO[q]) as[j].setAttribute('href','https://'+SUBTO[q]+'.frenchfries777.com/'); } }
-    ffScrollHint(side,'a.ffsm.on');
+    rt.appendChild(top);
+    var root=side&&side.parentNode; if(root) root.parentNode.insertBefore(h,root); else document.body.insertBefore(h,document.body.firstChild);
+    var nav=h.querySelector('.fn-nav'), L=h.querySelector('.fn-ar.l'), R=h.querySelector('.fn-ar.r');
+    function upd(){ var o=nav.scrollWidth>nav.clientWidth+1; L.classList.toggle('show',o&&nav.scrollLeft>2); R.classList.toggle('show',o&&nav.scrollLeft<nav.scrollWidth-nav.clientWidth-2); }
+    L.onclick=function(){ nav.scrollBy({left:-160,behavior:'smooth'}); }; R.onclick=function(){ nav.scrollBy({left:160,behavior:'smooth'}); };
+    nav.addEventListener('scroll',upd,{passive:true}); window.addEventListener('resize',upd);
+    var d=null, moved=false; nav.addEventListener('pointerdown',function(e){ d={x:e.clientX,s:nav.scrollLeft}; moved=false; }); window.addEventListener('pointermove',function(e){ if(d){ if(Math.abs(e.clientX-d.x)>4) moved=true; nav.scrollLeft=d.s-(e.clientX-d.x); } }); window.addEventListener('pointerup',function(){ d=null; });
+    nav.addEventListener('click',function(e){ if(moved){ e.preventDefault(); moved=false; } },true);
+    var act=nav.querySelector('a.on'); function center(){ if(act) nav.scrollLeft=Math.max(0,act.offsetLeft-nav.clientWidth/2+act.offsetWidth/2); upd(); } center(); setTimeout(center,120); window.addEventListener('load',center);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();
 })();

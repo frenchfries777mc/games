@@ -49,7 +49,7 @@ if(now&&now!=='en'&&auOn()){ try{ localStorage.removeItem(AU); }catch(x){} }    
 try{ if(!document.getElementById('ffTap')){ var tp=document.createElement('style'); tp.id='ffTap'; tp.textContent='html,body{touch-action:manipulation}'; (document.head||document.documentElement).appendChild(tp); } }catch(e){}
 /* 모든 페이지에서 접속 신호(+게임 화면이면 "지금 하는 게임")를 보내는 ff-presence.js 도 불러요 */
 try{ var me=document.currentScript, base=(me&&me.src)?me.src.replace(/[^\/]*$/,''):'https://frenchfries777.com/games/';
-  if(!window.FFPresence){ var ps=document.createElement('script'); ps.src=base+'ff-presence.js?v=20261107h'; ps.async=true; (document.head||document.documentElement).appendChild(ps); } }catch(e){}
+  if(!window.FFPresence){ var ps=document.createElement('script'); ps.src=base+'ff-presence.js?v=20261126a'; ps.async=true; (document.head||document.documentElement).appendChild(ps); } }catch(e){}
 /* 공통 다듬기(ff-polish.js): 스크롤바 숨김, 뒤로가기로 팝업 닫기, 사진 크게 보기, 페이지 전환, 숫자 자리, 화면 꺼짐 방지 */
 try{ if(!window.__ffPolish){ var pp=document.createElement('script'); pp.src=base+'ff-polish.js?v=20261120c'; pp.async=true; (document.head||document.documentElement).appendChild(pp); } }catch(e){}
 /* 즐겨찾기(ff-fav.js): 카드 목록(#games)이 있는 첫 화면에서만 동작해요 */
