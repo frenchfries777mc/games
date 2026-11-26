@@ -504,7 +504,7 @@ const TUT=[
  [P('다 자라면 ▼ 표시의 밭을 눌러 수확해요','When it is grown, tap the field with the ▼ to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=103;
+const OUTMAX=12,BUILD=104;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const CASTLE_T=[
  {n:P('망루','Watchtower'),d:P('돌로 쌓은 망루를 세워요. 세금이 걷히기 시작해요','A stone watchtower. Taxes start to come in'),cost:6000,rank:1},
@@ -649,6 +649,7 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-11-26',build:'v0.2 build 104',title:P('처음 땅·바다 그림을 인트로 동안 나눠서','Land and sea art built during the intro'),items:[P('처음 항해를 시작할 때 땅과 바다 그림을 한꺼번에 만들며 멈추던 것을, 인트로가 도는 동안 조금씩 나눠서 만들도록 했어요 (폰에서 처음 켤 때 특히 덜 끊겨요)','The land and sea art used to be built in one go when you first set sail and the game froze for a moment. It is now built a little at a time while the intro plays (fewer hitches when first launching on a phone)')]},
  {date:'2026-11-26',build:'v0.2 build 103',title:P('게임 저장이 계정에 보관돼요','Game saves are kept in your account'),items:[P('로그인하면 섬 저장과 소리 설정이 계정에도 저장돼요. 브라우저 저장이 지워지거나 주소가 달라져도(github.io · frenchfries777.com) 같은 계정으로 로그인하면 그대로 이어져요','When you are logged in, your island save and sound settings are also kept in your account. Even if the browser data is cleared or the address differs (github.io · frenchfries777.com), logging in with the same account brings everything back'),P('이 기기에 있던 저장은 처음 로그인할 때 자동으로 계정에 올라가요','Saves already on this device are uploaded to your account automatically the first time you log in')]},
  {date:'2026-11-22',build:'v0.2 build 102',title:P('그래픽·성능 다듬기','Graphics and performance polish'),items:[P('위쪽 금화·계급·계절 표시를 바뀔 때만 다시 그려서 느린 컴퓨터와 폰에서 더 가볍게 했어요','The top gold, rank and season display now redraws only when it changes, so slow computers and phones run lighter'),P('폰 세로 화면 바다에서 오른쪽 끝 섬 이름이 잘리던 것을 고쳤어요','Fixed the island name at the right edge being cut off on the sea map on a portrait phone')]},
  {date:'2026-11-22',build:'v0.2 build 101',title:P('화면 크기별 잘림 수정','Screen size fixes'),items:[P('연구 창에서 튼튼한 배와 호위 훈련 칸이 겹치던 것을 고쳤어요','Fixed the Sturdy hulls and Escort drills research boxes overlapping'),P('한국어 문장이 단어 중간에서 끊기던 것을 고쳤어요','Fixed Korean sentences breaking in the middle of words'),P('제목 화면 아래 글이 전체화면 버튼에 가려지고 라이선스 문구가 끊기던 것을 고쳤어요','Fixed the title screen footer hiding under the fullscreen button and the license text breaking'),P('가로로 짧은 화면에서 창 안 글자와 여백을 줄여 스크롤이 덜 필요하게 했어요','On short landscape screens, window text and spacing are tighter so less scrolling is needed')]},
