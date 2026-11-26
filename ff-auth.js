@@ -417,7 +417,7 @@ async function signOut(){ pwClear(); if(ssoSub){ try{ localStorage.setItem('ffSs
 
 /* ---- UI ---- */
 /* 창 공용 색: 다크/라이트 두 테마 (html[data-ff-theme]) */
-if(!document.getElementById('ffwVars')){ var wv=document.createElement('style'); wv.id='ffwVars'; wv.textContent=':root{--ffw-bg:var(--bg,#0e0e0e);--ffw-in:var(--bg,#0e0e0e);--ffw-tx:var(--text,#ece6d8);--ffw-dim:var(--dim,#a39c8c);--ffw-ln:color-mix(in srgb,var(--fry,#d9b45f) 50%,transparent);--ffw-hv:color-mix(in srgb,var(--fry,#d9b45f) 16%,transparent);--ffw-ov:color-mix(in srgb,var(--bg,#0e0e0e) 80%,transparent);--ffw-err:#ff9b7a;--ffw-ok:#7ddc8a;--ffw-gold:var(--fry,#d9b45f);--ffw-gold2:var(--fry2,#b8923a);--ffw-gt:var(--bg,#0e0e0e);--ffw-sh:rgba(0,0,0,.5)}html[data-ff-theme=light]{--ffw-err:#b3261e;--ffw-ok:#1b6e2e;--ffw-sh:rgba(0,0,0,.18)}'; (document.head||document.documentElement).appendChild(wv); }
+if(!document.getElementById('ffwVars')){ var wv=document.createElement('style'); wv.id='ffwVars'; wv.textContent=':root{--ffw-bg:var(--bg,#0e0e0e);--ffw-in:var(--bg,#0e0e0e);--ffw-tx:var(--text,#ece6d8);--ffw-dim:var(--dim,#a39c8c);--ffw-ln:color-mix(in srgb,var(--fry,#d9b45f) 50%,transparent);--ffw-hv:color-mix(in srgb,var(--fry,#d9b45f) 16%,transparent);--ffw-ov:color-mix(in srgb,var(--bg,#0e0e0e) 55%,transparent);--ffw-err:#ff9b7a;--ffw-ok:#7ddc8a;--ffw-gold:var(--fry,#d9b45f);--ffw-gold2:var(--fry2,#b8923a);--ffw-gt:var(--bg,#0e0e0e);--ffw-sh:rgba(0,0,0,.5)}html[data-ff-theme=light]{--ffw-err:#b3261e;--ffw-ok:#1b6e2e;--ffw-sh:rgba(0,0,0,.18)}'; (document.head||document.documentElement).appendChild(wv); }
 var CSS='.ffa-btn{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--fry,#d9b45f),var(--fry2,#b8923a));color:#1a1206;border:0;border-radius:9px;padding:7px 13px;font:inherit;font-size:14px;font-weight:800;cursor:pointer;white-space:nowrap}'+
  '[data-ff-account] .ffa-btn{width:124px;justify-content:center;box-sizing:border-box;padding-left:0;padding-right:0}.ffa-btn:hover{filter:brightness(1.06)}.ffa-wrap{position:relative;display:inline-flex;align-items:center;flex-wrap:nowrap;margin-left:16px}[data-ff-account]{display:inline-flex;align-items:center;flex:none;flex-wrap:nowrap;white-space:nowrap;vertical-align:middle}'+
  '.ffa-hub{display:inline-flex!important;align-items:center;gap:5px;margin-left:16px;background:var(--ffw-bg,#171717);color:var(--ffw-tx,#ece6d8);border:1px solid var(--ffw-ln,#2e2b25);border-radius:9px;padding:6px 11px;font-size:14px;font-weight:700;text-decoration:none;white-space:nowrap;vertical-align:middle}'+
@@ -538,7 +538,7 @@ async function chipBorder(root){ try{ if(!sb||!user) return; var uid=user.id;
   if(!window.FFBorders) await loadScript(BASE+'ff-borders.js?v=20261104a', function(){ return !!window.FFBorders; });
   if(!window.FFBorders||!user||user.id!==uid) return; var id=await window.FFBorders.equipped(sb,uid), b=window.FFBorders.get(id); if(!b) return;
   var col=b.a==='rainbow'?'#ffd23f':b.a, im=root.querySelector('.ffa-av'); if(im){ im.style.borderRadius='6px'; im.style.boxShadow='0 0 0 2px '+col+',0 0 8px '+col+'99'; } }catch(e){} }
-function profileLib(){ return loadScript(BASE+'ff-profile.js?v=20261126a', function(){ return !!window.FFProfile; }); }
+function profileLib(){ return loadScript(BASE+'ff-profile.js?v=20261126b', function(){ return !!window.FFProfile; }); }
 /* 프로필은 창이 아니라 허브의 프로필 페이지로 열어요. 게임 안, 도전과제 창, 카드 창(o.modal)만 예전처럼 창으로 열어요 */
 function profilePage(uid, o){ try{
   if((o&&(o.modal||o.openAch||o.game||o.noDeco!=null))||window.FF_INGAME) return null;

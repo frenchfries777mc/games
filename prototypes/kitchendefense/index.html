@@ -20,7 +20,7 @@ canvas{display:block;touch-action:none;user-select:none;-webkit-user-select:none
 <script src="../../ff-presence.js" async></script>
 <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script>window.FF_INGAME=true</script>
-<script src="https://frenchfries777.com/games/ff-auth.js?v=20261126b"></script>
+<script src="https://frenchfries777.com/games/ff-auth.js?v=20261126d"></script>
 <script src="https://frenchfries777.com/games/ff-save.js?v=1"></script>
 <script>try{FFSave.init({game:"kitchendefense",match:["kitchenDefense_v1"],omit:{"kitchenDefense_v1":["dev","perf","perfAuto","perfManual"]}});}catch(e){}</script>
 </head>
@@ -618,7 +618,7 @@ function bossDown(t){if(!save.bossSet[t]){save.bossSet[t]=1;persist()}emit({k:'b
 let ffMarked='',ffAchT=0;
 function ffProfile(){
   if(window.FFProfile)return Promise.resolve(true);
-  return new Promise(res=>{const sc=document.createElement('script');sc.src='https://frenchfries777.com/games/ff-profile.js?v=20261126a';sc.onload=()=>res(!!window.FFProfile);sc.onerror=()=>res(false);document.head.appendChild(sc)});
+  return new Promise(res=>{const sc=document.createElement('script');sc.src='https://frenchfries777.com/games/ff-profile.js?v=20261126b';sc.onload=()=>res(!!window.FFProfile);sc.onerror=()=>res(false);document.head.appendChild(sc)});
 }
 function ffSync(){
   clearTimeout(ffAchT);ffAchT=setTimeout(async()=>{
