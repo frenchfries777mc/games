@@ -59,7 +59,10 @@
     names(side);
     var st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
     var as=side.querySelectorAll(':scope>a');
-    var want=(function(){ var p=(location.pathname||'/').replace(/^\/hub(?=\/)/,''); var m=/^\/(games|educations|tools|prototypes|lounge|community|wiki)(\/|$)/.exec(p); if(m) return '/'+m[1]+'/'; if(/^\/(music|gallery)(\/|$)/.test(p)) return '/lounge/'; if(/^\/(patchnotes)?\/?$/.test(p)) return '/'; return null; })();
+    /* games.frenchfries777.com 같은 서브도메인: 현재 메뉴는 주소(호스트)로 정하고, 다른 사이트 링크는 그 사이트의 서브도메인으로 보내요 (허브는 frenchfries777.com) */
+    var SUBH={games:'/games/',tools:'/tools/',educations:'/educations/',edu:'/educations/',prototypes:'/prototypes/',proto:'/prototypes/',wiki:'/wiki/',lounge:'/lounge/',community:'/community/',comm:'/community/',setting:'/settings/'}, SUBTO={'/games/':'games','/tools/':'tools','/educations/':'educations','/prototypes/':'prototypes','/wiki/':'wiki','/lounge/':'lounge','/community/':'community','/settings/':'setting'};
+    var hm=/^([a-z]+)\.frenchfries777\.com$/.exec(location.hostname||''), subWant=hm&&SUBH[hm[1]]||null;
+    var want=subWant||(function(){ var p=(location.pathname||'/').replace(/^\/hub(?=\/)/,''); var m=/^\/(games|educations|tools|prototypes|lounge|community|wiki)(\/|$)/.exec(p); if(m) return '/'+m[1]+'/'; if(/^\/(music|gallery)(\/|$)/.test(p)) return '/lounge/'; if(/^\/(patchnotes)?\/?$/.test(p)) return '/'; return null; })();
     for(var i=0;i<as.length;i++){
       var a=as[i], sp=a.querySelector(':scope>span[style*="width:8px"]'); if(!sp)continue;
       var h=(a.getAttribute('href')||'').replace(/^https?:\/\/[^\/]+/,''); var k=IC[h]; if(!k)continue;
@@ -68,6 +71,9 @@
       var s=document.createElementNS('http://www.w3.org/2000/svg','svg'); s.setAttribute('viewBox','0 0 24 24'); s.innerHTML=k;
       a.replaceChild(s,sp);
     }
+    if(subWant){ for(var j=0;j<as.length;j++){ var ah=as[j].getAttribute('href')||'', q=/^\/[a-z]*\/?$/.test(ah)?ah:'';
+        if(ah==='/') as[j].setAttribute('href','https://frenchfries777.com/');
+        else if(q&&q!==subWant&&SUBTO[q]) as[j].setAttribute('href','https://'+SUBTO[q]+'.frenchfries777.com/'); } }
     ffScrollHint(side,'a.ffsm.on');
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();
