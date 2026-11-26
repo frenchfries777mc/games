@@ -21,7 +21,9 @@ SITE_OPEN = "window.open('https://frenchfries777.com/games/','_blank');"
 if game == 'crownenvoy':
     # login modal stays as is (ID/password)
     rep("location.href='https://frenchfries777.com/games/?r='+Date.now();", SITE_OPEN)
-    rep('<script src="https://frenchfries777.com/games/ff-auth.js"></script>', '')
+    # 주소 뒤에 ?v=버전 이 붙어도 지워지게
+    html, n = re.subn(r'<script src="https://frenchfries777\.com/games/ff-auth\.js[^"]*"></script>', '', html)
+    assert n >= 1, 'not found: ff-auth.js script'
 else:  # beaconfall
     rep('<button class="btn sm" data-gosite>사이트로 이동</button>', '<button class="btn sm" data-gosite>사이트 열기</button>')
     rep("location.href='https://frenchfries777.com/games/?r='+Date.now();", SITE_OPEN)
