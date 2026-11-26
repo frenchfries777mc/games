@@ -48,10 +48,13 @@ function freshToken(){
   var t=token(); if(t) return Promise.resolve(t);
   var c=window.FFAuthClient||window.sb; if(!c||!c.auth||!c.auth.getSession) return Promise.resolve(null);
   try{ return Promise.resolve(c.auth.getSession()).then(function(r){ var s=r&&r.data&&r.data.session; return s&&s.access_token||null; },function(){ return null; }); }catch(e){ return Promise.resolve(null); } }
-function gid(){ var g=null; try{ g=localStorage.getItem('ff_gid'); }catch(e){}
+function ck(){ var m=/(?:^|; )ff_gid=([0-9a-f-]{36})/.exec(document.cookie||''); return m?m[1]:null; }
+function gid(){ var g=null; try{ g=localStorage.getItem('ff_gid'); }catch(e){} var c=ck();
+  if(c&&/^[0-9a-f-]{36}$/.test(c)) g=c;      /* the .frenchfries777.com cookie is shared by every subdomain, so one browser is one visitor everywhere */
   if(!g||!/^[0-9a-f-]{36}$/.test(g)){ try{ g=(crypto.randomUUID&&crypto.randomUUID())||null; }catch(e){}
-    if(!g){ g='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){ var r=Math.random()*16|0; return (c==='x'?r:(r&3|8)).toString(16); }); }
-    try{ localStorage.setItem('ff_gid',g); }catch(e){} }
+    if(!g){ g='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){ var r=Math.random()*16|0; return (c==='x'?r:(r&3|8)).toString(16); }); } }
+  try{ localStorage.setItem('ff_gid',g); }catch(e){}
+  try{ if(/(^|\.)frenchfries777\.com$/.test(location.hostname)) document.cookie='ff_gid='+g+'; domain=.frenchfries777.com; path=/; max-age=31536000; SameSite=Lax; Secure'; }catch(e){}
   return g; }
 function rpc(name,body,tok,keep){ return fetch(URL_+'/rest/v1/rpc/'+name,{method:'POST',keepalive:!!keep,headers:{'apikey':KEY,'Authorization':'Bearer '+(tok||KEY),'Content-Type':'application/json'},body:JSON.stringify(body||{})}).catch(function(){}); }
 var last=0, wasGuest=false, busy=false, noSite=false;
@@ -75,7 +78,7 @@ function ping(force){
   }).then(function(){ busy=false; try{ window.dispatchEvent(new Event('ffpresence')); }catch(e){} },function(){ busy=false; });
 }
 /* 창을 닫거나 다른 페이지로 가면 바로 접속 표시에서 빠져요 (로그인한 사람만) */
-function leave(){ var t=token(); if(!t) return; last=0; rpc('ff_leave_at',{p_place:game||'hub'},t,true); }   /* 떠나는 페이지의 신호만 지워요 (supabase-presence-v8.sql 전에는 조용히 건너뜀, 신호는 150초 뒤 저절로 사라져요) */
+function leave(){ var t=token(); if(!t){ if(!isBot()){ last=0; rpc('ff_guest_leave',{p_gid:gid()},null,true); } return; } last=0; rpc('ff_leave_at',{p_place:game||'hub'},t,true); }   /* 떠나는 페이지의 신호만 지워요 (supabase-presence-v8.sql 전에는 조용히 건너뜀, 신호는 150초 뒤 저절로 사라져요) */
 window.addEventListener('pagehide', leave);
 setTimeout(ping, 1500);
 setInterval(ping, 45000);
