@@ -55,6 +55,7 @@ function gid(){ var g=null; try{ g=localStorage.getItem('ff_gid'); }catch(e){}
   return g; }
 function rpc(name,body,tok,keep){ return fetch(URL_+'/rest/v1/rpc/'+name,{method:'POST',keepalive:!!keep,headers:{'apikey':KEY,'Authorization':'Bearer '+(tok||KEY),'Content-Type':'application/json'},body:JSON.stringify(body||{})}).catch(function(){}); }
 var last=0, wasGuest=false, busy=false, noSite=false;
+function isBot(){ try{ if(navigator.webdriver) return true; }catch(e){} return /bot|crawl|spider|slurp|headless|lighthouse|pagespeed|preview|facebookexternalhit|embedly/i.test(navigator.userAgent||''); }
 /* 로그인한 사람의 손님 신호(같은 브라우저 번호)는 지워서 한 사람이 두 명으로 세어지지 않게 해요 (supabase-presence-v7.sql 전에는 조용히 건너뜀) */
 var guestCleared=false;
 function clearGuest(t){ if(guestCleared) return; var g=null; try{ g=localStorage.getItem('ff_gid'); }catch(e){} if(!g) return; guestCleared=true; rpc('ff_guest_clear',{p_gid:g},t); }
@@ -69,7 +70,8 @@ function ping(force){
         if(r&&!r.ok&&coarse(site)!==site) return rpc('ff_site_ping',{p_site:coarse(site)},t).then(function(r2){ if(r2&&r2.status===404){ noSite=true; return rpc('ff_hub_ping',{},t); } });   /* v7 전이면 프로그램 이름 대신 사이트로 */
         if(r&&!r.ok&&site==='games') return rpc('ff_hub_ping',{},t); });
       return rpc('ff_hub_ping',{},t); }
-    wasGuest=true; return rpc('ff_guest_ping',{p_gid:gid(),p_place:place});
+    wasGuest=true; if(isBot()) return;      /* automated browsers (search crawlers, tests) are not people: no guest signal */
+    return rpc('ff_guest_ping',{p_gid:gid(),p_place:place});
   }).then(function(){ busy=false; try{ window.dispatchEvent(new Event('ffpresence')); }catch(e){} },function(){ busy=false; });
 }
 /* 창을 닫거나 다른 페이지로 가면 바로 접속 표시에서 빠져요 (로그인한 사람만) */
