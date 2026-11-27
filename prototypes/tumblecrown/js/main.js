@@ -1983,6 +1983,8 @@ function frame(now) {
     }
     S.evq.length = 0;
   }
+  // 서버 방장(?dedicated=1)에 사람이 한 명도 없으면 그리기를 쉬어요 (규칙 계산은 위에서 그대로 돌아서 경기 시계는 안 느려져요). 사람이 들어오면 바로 다시 그려요
+  if (S.srv && !S.slots.some(q => !q.srv && !q.bot)) return;
   view.tick(dt, t); view.render(); nightDraw(dt);
   if (S.snap && S.snap.ph !== 'intro' && $('hud').classList.contains('on')) drawOverlay(dt); else oc.clearRect(0, 0, innerWidth, innerHeight);
 }
