@@ -494,7 +494,7 @@ window.bfIntro=function(){if(run)return;run=1;window.__bfIon=1;t0=Date.now();el.
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.6<br>build 227</p>
+    <p class="foot">v0.6<br>build 228</p>
   </nav>
 </div>
 
@@ -4739,8 +4739,25 @@ function showBackups(id){
     ${l.length?`<ul class="wlist">${rows}</ul>`:'<p class="hint">아직 백업이 없어요. 플레이하다 보면 자동으로 만들어져요.</p>'}
     <div class="actions"><button class="btn sm ghost" data-baknow="${esc(id)}">지금 백업</button><button class="btn sm ghost" data-baktoback>뒤로</button></div>`,null,'single');
 }
+/* 열 때마다: 이 기기에 남은 자동 백업이 지금 저장보다 확실히 더 많이 한 진행이면(저장이 덮이거나 못 써진 경우) 월드를 그 백업으로 자동 복구해요. 직접 '되돌리기'를 한 월드는 건드리지 않아요. 복구 전 상태도 백업으로 남아요 */
+function bakAuto(){
+  try{
+    for(const w of (settings.worlds||[])){
+      const id=w&&w.id;if(!id||localStorage.getItem('bf.bak.manual.'+id))continue;
+      let cur=-1;try{const d=JSON.parse(localStorage.getItem(SAVE_KEY(id)));if(d&&Number.isFinite(d.clock))cur=d.clock;}catch(e){}
+      let bi=-1,bc=-1;
+      for(let i=0;i<BAK_N;i++){const b=bakRead(id,i);if(!b)continue;let c=-1;try{c=JSON.parse(b.save).clock;}catch(e){}if(Number.isFinite(c)&&c>bc){bc=c;bi=i;}}
+      if(bi<0||!(bc>cur+120))continue;
+      const b=bakRead(id,bi);bakPush(id);
+      try{localStorage.setItem(SAVE_KEY(id),b.save);}catch(e){continue;}
+      settings.winv=settings.winv||{};if(b.inv)settings.winv[id]=b.inv;
+    }
+    saveSettings();
+  }catch(e){}
+}
 function bakRestore(id,i){
   const b=bakRead(id,i);if(!b)return false;
+  try{localStorage.setItem('bf.bak.manual.'+id,'1');}catch(e){}
   bakPush(id);   // 되돌리기 전 상태도 백업으로 남겨요 (순서가 밀려 i번 백업이 바뀌지 않도록 이미 읽어 둠)
   try{localStorage.setItem(SAVE_KEY(id),b.save);}catch(e){return false;}
   settings.winv=settings.winv||{};
@@ -4750,6 +4767,7 @@ function bakRestore(id,i){
   saveSettings();if(window.bfCloudDirty)bfCloudDirty();
   return true;
 }
+bakAuto();
 addEventListener('beforeunload',e=>{if(mode==='play'||net.role){e.preventDefault();e.returnValue='';}});
 addEventListener('visibilitychange',()=>{if(document.hidden)saveWorld(true);});
 
