@@ -11,5 +11,3 @@ Stickseum-v1.0.1.html | 1111킬 챌린지 배너 | 킬) · 내  | build 759 | 20
 Stickseum-v1.0.1.html | 1111킬 챌린지 배너 | 🔥 1111킬 챌린지 · 모두 합쳐  | build 759 | 2026-11-09
 Stickseum-v1.0.1.html | 1111킬 챌린지 배너 | 일 남음 | build 759 | 2026-11-09
 Stickseum-v1.0.1.html | 1111킬 챌린지 배너 | 🔥 1111킬 챌린지 · 11/15까지 · 불러오는 중 | build 762 | 2026-11-10
-patchnotes.json | v883 title | 서버 방 열기 오류 수정 | build 883 | 2026-11-28
-patchnotes.json | v883 items[0] | 서버가 대신 열어주는 랭크전·전용 방이 계속 끊기던 문제를 고쳤어요 | build 883 | 2026-11-28
