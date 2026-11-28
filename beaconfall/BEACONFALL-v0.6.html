@@ -494,7 +494,7 @@ window.bfIntro=function(){if(run)return;run=1;window.__bfIon=1;t0=Date.now();el.
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.6<br>build 231</p>
+    <p class="foot">v0.6<br>build 232</p>
   </nav>
 </div>
 
@@ -6257,16 +6257,17 @@ $('#equip').addEventListener('click',e=>{
 let SANDBOX=false;
 /* ===== 월드 옵션 — 난이도(몬스터 피해·체력), 죽어도 아이템 유지, 하드코어 ===== */
 const DIFFS={easy:{n:'쉬움',dmg:0.6,hp:0.8},normal:{n:'보통',dmg:1,hp:1},hard:{n:'어려움',dmg:1.5,hp:1.4}};
-const WOPT={dmg:1,hp:1,keep:false,hard:false};
+const WOPT={dmg:1,hp:1,keep:false,hard:false,pvp:false};
 function setWopt(w){
   const D=DIFFS[w&&w.diff]||DIFFS.normal;
-  WOPT.dmg=D.dmg;WOPT.hp=D.hp;WOPT.keep=!!(w&&w.keep)&&!(w&&w.hard);WOPT.hard=!!(w&&w.hard);
+  WOPT.dmg=D.dmg;WOPT.hp=D.hp;WOPT.keep=!!(w&&w.keep)&&!(w&&w.hard);WOPT.hard=!!(w&&w.hard);WOPT.pvp=!!(w&&w.pvp);
 }
 function wOptText(w){
   const a=[];
   if(w.sandbox)a.push('샌드박스');
   if(w.diff&&w.diff!=='normal'&&DIFFS[w.diff])a.push(DIFFS[w.diff].n);
   if(w.keep&&!w.hard)a.push('아이템 유지');
+  if(w.pvp)a.push('PvP');
   if(w.hard)a.push(w.over?'하드코어 끝남':'하드코어');
   return a.length?' · '+a.join(' · '):'';
 }
@@ -6579,6 +6580,43 @@ function findMonster(){
   }
   return best;
 }
+/* ===== PvP: 월드 설정에서 켜면 다른 플레이어를 공격할 수 있어요 (피해 판정은 방장이 해요) ===== */
+const PVP_MUL=0.5;
+const pvpOn=()=>!!WOPT.pvp&&mode==='play'&&!!net.role;
+function findPlayerTarget(){
+  if(!pvpOn()||P.dead||P.down)return null;
+  let best=null,bd=1e9;
+  for(const [id,r] of remotes){
+    if(!r||r.dead||r.down||r.air)continue;
+    const dx=r.x-P.x,dy=r.y-P.y,d=Math.hypot(dx,dy);
+    if(d>15)continue;
+    if(d>6&&(dx*P.fx+dy*P.fy)/d<0.35)continue;
+    if(d<bd){bd=d;best={id,x:r.x,y:r.y};}
+  }
+  return best;
+}
+function pvpStrike(id,dmg,far,noRoll){
+  if(!pvpOn())return;
+  let kind=0;
+  if(!noRoll){dmg*=fightMul();const rh=rollHit(dmg,far);dmg=rh.dmg;kind=rh.kind;}
+  dmg=Math.round(Math.max(0.5,Math.min(12,dmg*PVP_MUL))*10)/10;
+  const r=remotes.get(id);
+  if(r){dnum(r.x,r.y-16,dmg,kind);SFX.monHit('slime',r.x,r.y);}
+  if(isGuest())sendHost({t:'pvp',id,d:dmg,bow:far?1:0});
+  else pvpApply('host',id,dmg,P.x,P.y);
+}
+function pvpApply(attId,tid,dmg,ax,ay){
+  if(!WOPT.pvp||!world||tid===attId)return;
+  const an=attId==='host'?myName():String((remotes.get(attId)||{}).name||'손님').slice(0,15);
+  if(tid==='host'){
+    const dx=P.x-ax,dy=P.y-ay,d=Math.hypot(dx,dy)||1;
+    LASTHIT={n:an,y:'player',t:time};damagePlayer(dmg,dx/d*110,dy/d*110);return;
+  }
+  const tr=remotes.get(tid);if(!tr||tr.dead||tr.down)return;
+  const dx=tr.x-ax,dy=tr.y-ay,d=Math.hypot(dx,dy)||1;
+  const c=net.conns.find(q=>q.peer===tid);
+  if(c&&c.open)try{c.send({t:'dmg',n:dmg,kx:dx/d*110,ky:dy/d*110,fx:'',an});}catch(e){}
+}
 function workFor(kind,key){
   if(kind==='t')return world.removed[key]?null:{kind,key,need:quickNeed('axe',3)*(bufOn('work')?0.78:1)*gatherMul()};
   if(kind==='b'){
@@ -6635,6 +6673,7 @@ function findBowTarget(c){
     const d=Math.hypot(m.x-P.x,m.y-P.y);
     if(d<bd){bd=d;best=m;}
   }
+  if(pvpOn())for(const [id,r] of remotes){if(!r||r.dead||r.down||r.air)continue;const d=Math.hypot(r.x-P.x,r.y-P.y);if(d<bd){bd=d;best={x:r.x,y:r.y,pl:1};}}
   if(!best)for(const a of animals){   // 몬스터가 없으면 새를 노려요
     if(a.type!=='bird')continue;
     const d=Math.hypot(a.x-P.x,(a.y-12)-P.y);
@@ -6687,6 +6726,11 @@ function updateArrows(dt){
       if(m.burn||m.hid||m.dead)continue;
       const cx=m.x-px,cy=(m.y-4)-py,u=sl>0?Math.max(0,Math.min(1,(cx*sx+cy*sy)/sl)):0;
       if(Math.hypot(cx-sx*u,cy-sy*u)<(m.boss?10:6)){hitMonster(m,a.dmg,a.from!=='g',undefined,a.from==='g');hit=true;break;}
+    }
+    if(!hit&&pvpOn())for(const [id,r] of remotes){
+      if(!r||r.dead||r.down||r.air)continue;
+      const cx=r.x-px,cy=(r.y-5)-py,u=sl>0?Math.max(0,Math.min(1,(cx*sx+cy*sy)/sl)):0;
+      if(Math.hypot(cx-sx*u,cy-sy*u)<6){pvpStrike(id,a.dmg,a.from!=='g',a.from==='g');hit=true;break;}
     }
     if(!hit&&world){const sb=world.sgrid.get(Math.floor((a.y+6)/GRID)*GW+Math.floor(a.x/GRID));if(sb&&sb.id==='bomb'){bombIgnite(sb);hit=true;}}   // 화살에 맞은 폭탄
     if(hit){for(let j=0;j<5;j++)parts.push({x:a.x,y:a.y,vx:(Math.random()-0.5)*40,vy:-10-Math.random()*20,life:0.3,c:j%2?'#ffffff':'#e0434f'});}
@@ -6788,7 +6832,7 @@ function updatePlayer(dt){
     if(P.buf&&(time|0)!==P.bufDraw){P.bufDraw=time|0;renderBuf();}
     if(P.sinceHit>6&&P.hp<P.maxhp){P.regT+=dt;if(P.regT>=3){P.regT=0;P.hp++;renderHp();}}
     // 목표 찾기: 몬스터 > 구조물 > 나무
-    P.mtarget=findMonster();P.atarget=P.mtarget?null:findAnimal();
+    P.mtarget=findMonster();P.ptarget=P.mtarget?null:findPlayerTarget();P.atarget=(P.mtarget||P.ptarget)?null:findAnimal();
     P.starget=findStructTarget();
     P.target=findTarget();P.btarget=findBoulder();
     if(P.target>=0&&P.btarget>=0){
@@ -6801,7 +6845,7 @@ function updatePlayer(dt){
       if(!P.starget){const o=cellOf(P.x,P.y);P.starget=world.rgrid.get(o.gy*GW+o.gx)||world.fgrid.get(o.gy*GW+o.gx)||null;}
     }
     csel=cursorSel();   // Ctrl+커서로 고른 블록이 있으면 그걸 대상으로
-    if(csel){P.mtarget=null;P.atarget=null;P.starget=csel.kind==='s'&&!csel.b.lm?csel.b:null;P.target=csel.kind==='t'?csel.key:-1;P.btarget=csel.kind==='b'?csel.key:-1;}
+    if(csel){P.mtarget=null;P.ptarget=null;P.atarget=null;P.starget=csel.kind==='s'&&!csel.b.lm?csel.b:null;P.target=csel.kind==='t'?csel.key:-1;P.btarget=csel.kind==='b'?csel.key:-1;}
     bowTick(dt);
     if(pendBreak.size){   // 참가자: 방장 답이 없으면 다시 보내요 (최대 3번)
       for(const [bk,q] of pendBreak){
@@ -6815,6 +6859,8 @@ function updatePlayer(dt){
     if(can){
       if(P.mtarget){
         if(P.atkCd<=0){const w=weaponStats();P.atkCd=w.cd;P.atkAnim=0.22;P.swing=0;hitMonster(P.mtarget,w.dmg,false,w.rune);SFX.swing();SFX.weaponHit(P.mtarget.x,P.mtarget.y);if(w.tool)wearSel();}
+      }else if(P.ptarget){
+        if(P.atkCd<=0){const w=weaponStats();P.atkCd=w.cd;P.atkAnim=0.22;P.swing=0;pvpStrike(P.ptarget.id,w.dmg,false);SFX.swing();if(w.tool)wearSel();}
       }else if(P.atarget){
         if(P.atkCd<=0){const w=weaponStats();P.atkCd=w.cd;P.atkAnim=0.22;P.swing=0;hitAnimal(P.atarget,w.dmg);SFX.swing();SFX.weaponHit(P.atarget.x,P.atarget.y);if(w.tool)wearSel();}
       }else{
@@ -10275,7 +10321,7 @@ async function dvTravel(back){   // 공허의 포탈: Deep Void 차원 ↔ 원�
     const id='v'+hashStr(par.id+'|deepvoid').toString(36);
     tgt=settings.worlds.find(w=>w.id===id);
     if(!tgt){tgt={id,name:(par.name+' · Deep Void').slice(0,30),seed:String(1+hashStr(String(par.seed)+'|deepvoid')%999999998),created:Date.now(),dim:{p:par.id,n:'Deep Void',k:'dv'},sz:1};
-      if(par.diff)tgt.diff=par.diff;if(par.keep)tgt.keep=true;if(par.hard)tgt.hard=true;if(par.sandbox){tgt.sandbox=true;tgt.sbEver=true;}
+      if(par.diff)tgt.diff=par.diff;if(par.keep)tgt.keep=true;if(par.hard)tgt.hard=true;if(par.sandbox){tgt.sandbox=true;tgt.sbEver=true;}if(par.pvp)tgt.pvp=true;
       settings.worlds.push(tgt);}
   }
   modTravelBusy=true;
@@ -10716,7 +10762,7 @@ async function modTravel(name){   // define world 로 만든 월드(또는 원�
     tgt=settings.worlds.find(w=>w.id===id);
     if(!tgt){const sd=dd.sd||String(1+hashStr(String(par.seed)+'|'+name)%999999998);
       tgt={id,name:(par.name+' · '+name).slice(0,30),seed:sd,created:Date.now(),dim:{p:par.id,n:name},sz:1};
-      if(par.diff)tgt.diff=par.diff;if(par.keep)tgt.keep=true;if(par.hard)tgt.hard=true;if(par.sandbox){tgt.sandbox=true;tgt.sbEver=true;}
+      if(par.diff)tgt.diff=par.diff;if(par.keep)tgt.keep=true;if(par.hard)tgt.hard=true;if(par.sandbox){tgt.sandbox=true;tgt.sbEver=true;}if(par.pvp)tgt.pvp=true;
       settings.worlds.push(tgt);}
   }
   if(tgt.id===cur.id)return;
@@ -14026,6 +14072,9 @@ function drawPlayFx(g){
   if(P.mtarget&&!P.mtarget.burn){
     const m=P.mtarget;g.fillStyle='rgba(255,90,90,0.95)';
     g.fillRect(Math.round(m.x)-1,Math.round(m.y)-SLIME.h-14+bob,3,1);g.fillRect(Math.round(m.x),Math.round(m.y)-SLIME.h-13+bob,1,1);
+  }else if(P.ptarget){
+    const m=P.ptarget;g.fillStyle='rgba(255,90,90,0.95)';
+    g.fillRect(Math.round(m.x)-1,Math.round(m.y)-SLIME.h-14+bob,3,1);g.fillRect(Math.round(m.x),Math.round(m.y)-SLIME.h-13+bob,1,1);
   }else if(P.starget){
     const b=P.starget,[x0,y0,sz]=structBox(b);g.fillStyle='rgba(255,255,255,0.9)';
     for(const [ax,ay,bw,bh] of (sz===CG?[[0,0,2,1],[0,0,1,2],[6,0,2,1],[7,0,1,2],[0,7,2,1],[0,6,1,2],[6,7,2,1],[7,6,1,2]]:[[0,0,3,1],[0,0,1,3],[13,0,3,1],[15,0,1,3],[0,15,3,1],[0,13,1,3],[13,15,3,1],[15,13,1,3]]))g.fillRect(x0+ax,y0+ay,bw,bh);
@@ -14543,7 +14592,7 @@ function showSingle(){
   delArm='';
   const rows=settings.worlds.filter(w=>!w.dim).map(w=>`<li class="wrow${w.id===settings.current?' on':''}">
     <div class="winfo"><b>${esc(w.name)}</b><span>SEED ${esc(w.seed)}${wOptText(w)}</span></div>
-    <div class="wbtn"><button class="btn sm" data-open="${esc(w.id)}"${w.over?' disabled':''}>열기</button><button class="btn sm ghost" data-share="${esc(w.id)}">주소 만들기</button><button class="btn sm ghost" data-bak="${esc(w.id)}">백업</button><button class="btn sm ghost" data-sbtog="${esc(w.id)}">샌드박스 ${w.sandbox?'끄기':'켜기'}</button><button class="btn sm ghost" data-del="${esc(w.id)}">삭제</button></div></li>`).join('');
+    <div class="wbtn"><button class="btn sm" data-open="${esc(w.id)}"${w.over?' disabled':''}>열기</button><button class="btn sm ghost" data-share="${esc(w.id)}">주소 만들기</button><button class="btn sm ghost" data-bak="${esc(w.id)}">백업</button><button class="btn sm ghost" data-sbtog="${esc(w.id)}">샌드박스 ${w.sandbox?'끄기':'켜기'}</button><button class="btn sm ghost" data-pvptog="${esc(w.id)}">PvP ${w.pvp?'끄기':'켜기'}</button><button class="btn sm ghost" data-del="${esc(w.id)}">삭제</button></div></li>`).join('');
   openModal(`<h2>싱글 플레이<small>SINGLE PLAY</small></h2>
     <ul class="wlist">${rows}</ul>
     <h3>새 월드 만들기</h3>
@@ -14553,10 +14602,12 @@ function showSingle(){
     <div class="row"><span>난이도</span><div class="seg" id="ndiff">${Object.keys(DIFFS).map(k=>`<button data-diff="${k}" aria-pressed="${k==='normal'}">${DIFFS[k].n}</button>`).join('')}</div></div>
     <div class="row"><span>죽어도 아이템 유지</span><button class="tog" id="nkeep" aria-pressed="false">꺼짐</button></div>
     <div class="row"><span>하드코어</span><button class="tog" id="nhard" aria-pressed="false">꺼짐</button></div>
-    <p class="hint">시드가 같으면 같은 섬, 다르면 전혀 다른 섬이 만들어져요. 샌드박스는 무적, 내구도 무한, B키로 모든 아이템을 꺼낼 수 있어요. 쉬움은 몬스터가 약하고(피해 0.6배, 체력 0.8배) 어려움은 강해요(피해 1.5배, 체력 1.4배). 하드코어는 한 번 쓰러지면 그 월드를 다시 열 수 없어요.</p>
+    <div class="row"><span>PvP (플레이어끼리 공격)</span><button class="tog" id="npvp" aria-pressed="false">꺼짐</button></div>
+    <p class="hint">시드가 같으면 같은 섬, 다르면 전혀 다른 섬이 만들어져요. 샌드박스는 무적, 내구도 무한, B키로 모든 아이템을 꺼낼 수 있어요. 쉬움은 몬스터가 약하고(피해 0.6배, 체력 0.8배) 어려움은 강해요(피해 1.5배, 체력 1.4배). 하드코어는 한 번 쓰러지면 그 월드를 다시 열 수 없어요. PvP를 켜면 같은 방의 다른 플레이어를 공격할 수 있어요. 만든 뒤에도 월드 목록의 PvP 버튼으로 바꿀 수 있어요.</p>
     <div class="actions"><button class="btn sm ghost" data-close>닫기</button><button class="btn sm" data-newworld>월드 만들기</button></div>`,m=>{
       const b=m.querySelector('#nsand');b.onclick=()=>{const on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',on);b.textContent=on?'켜짐':'꺼짐';};
       const tg=(el,on)=>{el.setAttribute('aria-pressed',on);el.textContent=on?'켜짐':'꺼짐';};
+      {const pv=m.querySelector('#npvp');pv.onclick=()=>tg(pv,pv.getAttribute('aria-pressed')!=='true');}
       const kp=m.querySelector('#nkeep'),hd=m.querySelector('#nhard');
       kp.onclick=()=>{const on=kp.getAttribute('aria-pressed')!=='true';tg(kp,on);if(on)tg(hd,false);};
       hd.onclick=()=>{const on=hd.getAttribute('aria-pressed')!=='true';tg(hd,on);if(on)tg(kp,false);};
@@ -14699,6 +14750,12 @@ function onHostData(c,d){
     {const sb=world.sgrid.get((d.gy|0)*GW+(d.gx|0)),r=remotes.get(c.peer);if(sb&&sb.id==='bomb'&&r&&Math.hypot(sb.x-r.x,sb.y-r.y)<=70)bombIgnite(sb);}
   }else if(d.t==='smash'&&Number.isFinite(d.gx)&&Number.isFinite(d.gy)){
     {const sb=structMap(L2(d.l)).get(skey(L2(d.l),d.gx|0,d.gy|0));if(!(sb&&sb.id==='tgate'&&sb.ow&&sb.ow!==nameOfPeer(c.peer)))smashStructAuth(d.gx|0,d.gy|0,L2(d.l));}
+  }else if(d.t==='pvp'){
+    const r=remotes.get(c.peer);
+    if(WOPT.pvp&&r&&!r.dead&&!r.down&&typeof d.id==='string'&&d.id!==c.peer&&(r.lastPvp||0)<time-0.12){
+      const tg=d.id==='host'?{x:P.x,y:P.y,dead:P.dead,down:P.down}:remotes.get(d.id);
+      if(tg&&!tg.dead&&!tg.down&&Math.hypot(tg.x-r.x,tg.y-r.y)<=(d.bow?210:30)){r.lastPvp=time;pvpApply(c.peer,d.id,Math.max(0.5,Math.min(12,+d.d||1)),r.x,r.y);}
+    }
   }else if(d.t==='hit'){
     const m=monsters.find(q=>q.id===d.id),r=remotes.get(c.peer);
     if(m&&r&&Math.hypot(m.x-r.x,m.y-r.y)<=(d.bow?200:26))monsterDamage(m,Math.max(0.5,Math.min(d.bow?26:30,+d.d||1)),r.x,r.y,(d.rn==='fire'||d.rn==='ice'||d.rn==='venom')?d.rn:'',Math.max(0,Math.min(2,d.hv|0)));
@@ -14943,12 +15000,13 @@ async function guestHandle(d){
     {let ml=[];try{if(typeof d.mods==='string'&&d.mods)ml=JSON.parse(d.mods);}catch(e){ml=[];}if(!Array.isArray(ml))ml=[];ml=ml.slice(0,50).filter(m=>m&&m.data&&typeof m.data==='object');
       if(ml.length){const ok=await modAsk(ml);closeModal();if(!ok){netLeave('모드를 허용하지 않아서 방에서 나왔어요.');return;}}
       modApply(ml);}
-    if(/^\d{1,10}$/.test(String(d.seed))){net.wname=String(d.name||'').slice(0,16);WOPT.keep=!!d.keep;WOPT.hard=false;WOPT.dmg=WOPT.hp=1;netRefresh();PTF=cleanTF(d.tf);try{await loadWorld(String(d.seed),net.wname,null,d.sz?1:0);}finally{PTF=null;}}
+    if(/^\d{1,10}$/.test(String(d.seed))){net.wname=String(d.name||'').slice(0,16);WOPT.keep=!!d.keep;WOPT.pvp=!!d.pvp;WOPT.hard=false;WOPT.dmg=WOPT.hp=1;netRefresh();PTF=cleanTF(d.tf);try{await loadWorld(String(d.seed),net.wname,null,d.sz?1:0);}finally{PTF=null;}}
   }else if(!world){return;}
   else if(d.t==='state'){
     applyState(d);closeModal();
     if(mode!=='play')enterPlay();
-    toast(`‘${net.wname}’ 월드에 들어왔어요.`);
+    toast(`‘${net.wname}’ 월드에 들어왔어요.`+(WOPT.pvp?' 이 월드는 PvP가 켜져 있어요.':''));
+  }else if(d.t==='pvp'){WOPT.pvp=!!d.on;toast('방장이 PvP를 '+(WOPT.pvp?'켰어요.':'껐어요.'));
   }else if(d.t==='players'){
     const seen=new Set();
     for(const p of (d.list||[])){
@@ -15098,7 +15156,7 @@ async function hostRoom(addr,wid){
       c.on('open',()=>{
         if(!world||world.id!==w.id){try{c.close();}catch(e){}return;}
         net.conns.push(c);
-        try{let ms='';try{const l=MOD.on.map(m=>({id:m.id,kind:m.kind,name:m.name,author_name:m.author_name,data:m.data}));ms=JSON.stringify(l);if(ms.length>200000)ms='';if(ms==='[]')ms='';}catch(e){}c.send({t:'world',tf:(w.tf||null),name:w.name,seed:w.seed,sz:w.sz?1:0,keep:WOPT.keep?1:0,ver:GAME_VER,mods:ms});}catch(e){}
+        try{let ms='';try{const l=MOD.on.map(m=>({id:m.id,kind:m.kind,name:m.name,author_name:m.author_name,data:m.data}));ms=JSON.stringify(l);if(ms.length>200000)ms='';if(ms==='[]')ms='';}catch(e){}c.send({t:'world',tf:(w.tf||null),name:w.name,seed:w.seed,sz:w.sz?1:0,keep:WOPT.keep?1:0,pvp:WOPT.pvp?1:0,ver:GAME_VER,mods:ms});}catch(e){}
         sendSnapshot(c);
         bcast();
       });
@@ -15193,7 +15251,7 @@ document.addEventListener('click',async e=>{
     const seed=($('#nseed').value.replace(/\D/g,'')||randSeedNum()).replace(/^0+(?=\d)/,'');
     const name=($('#nname').value.trim()||`${seed}번 섬`).slice(0,16);
     const w={id:'w'+Date.now().toString(36),name,seed,sz:1,created:Date.now(),sandbox:$('#nsand').getAttribute('aria-pressed')==='true'};if(w.sandbox)w.sbEver=true;
-    {const df=document.querySelector('#ndiff [aria-pressed="true"]');if(df&&df.dataset.diff!=='normal')w.diff=df.dataset.diff;if($('#nkeep').getAttribute('aria-pressed')==='true')w.keep=true;if($('#nhard').getAttribute('aria-pressed')==='true')w.hard=true;}
+    {const df=document.querySelector('#ndiff [aria-pressed="true"]');if(df&&df.dataset.diff!=='normal')w.diff=df.dataset.diff;if($('#nkeep').getAttribute('aria-pressed')==='true')w.keep=true;if($('#nhard').getAttribute('aria-pressed')==='true')w.hard=true;if($('#npvp').getAttribute('aria-pressed')==='true')w.pvp=true;}
     settings.worlds.push(w);settings.current=w.id;saveSettings();closeModal();
     if(net.role)netLeave('');
     await loadWorld(w.seed,w.name,w.id);enterPlay();return;
@@ -15224,6 +15282,7 @@ document.addEventListener('click',async e=>{
     if(BPS.arm!==d.bpdel){BPS.arm=d.bpdel;t.textContent='한 번 더 누르면 삭제';return;}
     BPS.arm='';settings.bp=bpList().filter(x=>x.id!==d.bpdel);saveSettings();bpMenu();return;
   }
+  if(d.pvptog){const w=settings.worlds.find(q=>q.id===d.pvptog);if(w){w.pvp=!w.pvp;saveSettings();if(world&&world.id===w.id&&!isGuest()){WOPT.pvp=!!w.pvp;if(net.role==='host')bcastAll({t:'pvp',on:WOPT.pvp?1:0});toast('PvP '+(WOPT.pvp?'켜짐':'꺼짐'));}}showSingle();return;}
   if(d.sbtog){const w=settings.worlds.find(q=>q.id===d.sbtog);if(w){w.sandbox=!w.sandbox;if(w.sandbox)w.sbEver=true;saveSettings();}showSingle();return;}
   if(d.bak){showBackups(d.bak);return;}
   if('baktoback' in d){showSingle();return;}
