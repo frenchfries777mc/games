@@ -494,7 +494,7 @@ window.bfIntro=function(){if(run)return;run=1;window.__bfIon=1;t0=Date.now();el.
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.6<br>build 235</p>
+    <p class="foot">v0.6<br>build 236</p>
   </nav>
 </div>
 
@@ -1870,9 +1870,9 @@ eq={helm:null,chest:null,legs:null,boots:null};
 if(settings.equip)for(const k of ARMOR_ORDER){const id=settings.equip[k],a=armorInfo(id);if(a&&a.piece===k){eq[k]=id;const dd=settings.equipd&&settings.equipd[k];if(Number.isFinite(dd))eqd[k]=Math.max(1,Math.min(ITEMS[id].dur,Math.round(dd)));}}
 const defTotal=()=>ARMOR_ORDER.reduce((a,k)=>a+(eq[k]?armorDef(eq[k]):0),0);
 const defRed=()=>{const d=defTotal();return d/(d+25);};
-/* 화염·독 지속 피해를 한 번 받을 때마다 없앨 확률(%): 방어구가 없으면 0, 있으면 기본 5, 입은 방어구의 재질 단계가 오를 때마다 +3.75 (입은 조각의 평균 단계) */
+/* 화염·독 지속 피해를 한 번 받을 때마다 없앨 확률(%): 방어구가 없으면 0, 있으면 기본 7.125, 입은 방어구의 재질 단계가 오를 때마다 +3.7856 (입은 조각의 평균 단계) */
 const ARMOR_TIER=(()=>{const o={};ARMOR_MATS.slice().sort((x,y)=>ARMOR_MUL[x]-ARMOR_MUL[y]).forEach((m,i)=>{o[m]=i;});return o;})();
-function dotResist(){let n=0,t=0;for(const k of ARMOR_ORDER){const a=eq[k]&&armorInfo(eq[k]);if(a){n++;t+=ARMOR_TIER[a.mat]|0;}}return n?5+3.75*(t/n):0;}
+function dotResist(){let n=0,t=0;for(const k of ARMOR_ORDER){const a=eq[k]&&armorInfo(eq[k]);if(a){n++;t+=ARMOR_TIER[a.mat]|0;}}return n?7.125+3.7856*(t/n):0;}
 ITEMS.armorbench={name:'갑옷제작대',place:'armorbench',icon(g){
   g.fillStyle='#3d2412';g.fillRect(1,7,10,4);g.fillStyle='#8a5a2b';g.fillRect(2,8,8,1);g.fillStyle='#6b4423';g.fillRect(2,9,1,3);g.fillRect(9,9,1,3);
   g.fillStyle='#2a2d38';g.fillRect(3,3,7,2);g.fillRect(1,3,3,1);g.fillRect(5,5,3,2);g.fillStyle='#c3c5cf';g.fillRect(3,3,7,1);
@@ -6249,7 +6249,7 @@ function renderEquip(){
     }else{ITEMS[`ar_${k}_iron_2`].icon(g);el.classList.add('empty');el.title=ARMOR_PIECES[k].name+' 칸';bar.style.display='none';}
   }
   {const el=$('#eqbag'),g=el.firstChild.getContext('2d');g.clearRect(0,0,12,12);(ITEMS[bagSlot?bagId:'bag']||ITEMS.bag).icon(g);el.classList.toggle('empty',!bagSlot);}
-  const d=defTotal();$('#eqdef').textContent=d>0?`방어 ${d.toFixed(1)} · 피해 -${Math.round(defRed()*100)}% · 화독 무효 ${dotResist().toFixed(1)}%${fullSet('leather')?' · 방한':''}`:'';
+  const d=defTotal();$('#eqdef').textContent=d>0?`방어 ${d.toFixed(1)} · 피해 -${Math.round(defRed()*100)}% · 화독 무효 ${dotResist().toFixed(2)}%${fullSet('leather')?' · 방한':''}`:'';
 }
 function afterEq(){renderEquip();persist();renderInv();if(ARMOR_ORDER.every(k=>eq[k]))achGrant('armor_full');}
 $('#equip').addEventListener('click',e=>{
