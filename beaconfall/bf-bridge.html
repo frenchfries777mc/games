@@ -15,7 +15,8 @@ async function gz(str){var raw=new TextEncoder().encode(str);
  var keys=[];try{for(var j=0;j<localStorage.length;j++){var k=localStorage.key(j);
   if(/^(stranded\.|bf\.|bf_)/.test(k)&&!/^stranded\.cloud\./.test(k)&&k!=='bf_errlog'&&k.indexOf('bf.import.')!==0)keys.push(k);}}catch(e){}
  if(!keys.length)return go('none');
- keys.sort(function(a,b){return (a==='stranded.lobby.v1')-(b==='stranded.lobby.v1')||(a<b?-1:a>b?1:0);});   /* 월드 목록(로비)은 맨 마지막에 */
+ function rk(x){return x==='stranded.lobby.v1'?2:x.indexOf('stranded.bak.v1.')===0?1:0;}
+ keys.sort(function(a,b){return (rk(a)-rk(b))||(a<b?-1:a>b?1:0);});   /* 월드 목록(로비)은 맨 마지막에 */
  var parts=[];keys.forEach(function(k){var v=localStorage.getItem(k)||'',np=Math.max(1,Math.ceil(v.length/SL));for(var p=0;p<np;p++)parts.push([k,p,np,v.slice(p*SL,(p+1)*SL)]);});
  var n=parts.length;if(i>=n)return go('done');
  var c=0,tot=0;while(i+c<n&&(c===0||tot+parts[i+c][3].length<=RAW)){tot+=parts[i+c][3].length;c++;}

@@ -39,7 +39,7 @@ function applyLobby(v){
  if(pristine||!N.current||!m.some(function(w){return w&&w.id===N.current;}))N.current=OL.current||(m[0]&&m[0].id);
  if(JSON.stringify(N)!==JSON.stringify(L)){localStorage.setItem('stranded.lobby.v1',JSON.stringify(N));addCh();}
 }
-function put(k,v){if(k==='stranded.lobby.v1')applyLobby(v);else applyKey(k,v);}
+function put(k,v){if(k==='stranded.lobby.v1')applyLobby(v);else if(k.indexOf('stranded.bak.v1.')===0){try{applyKey(k,v);}catch(e){}}else applyKey(k,v);}   /* 백업은 공간이 모자라면 건너뛰어요 (월드 저장이 우선) */
 var h=location.hash||'',mm=/^#bfimp=(none|done|err|(\d)\.(\d+)\.(\d+)\.(\d+)\.([A-Za-z0-9_-]*))$/.exec(h);
 var asked=SS.getItem('bfimp.asked')==='1',busy=SS.getItem('bfimp.on')==='1',fromGh=(document.referrer||'').indexOf(OT)===0;
 if(mm&&busy&&fromGh){   /* 중간 페이지에서 돌아옴 */
@@ -494,7 +494,7 @@ window.bfIntro=function(){if(run)return;run=1;window.__bfIon=1;t0=Date.now();el.
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.6<br>build 224</p>
+    <p class="foot">v0.6<br>build 225</p>
   </nav>
 </div>
 
@@ -1228,7 +1228,7 @@ const cv=$('#view'), vctx=cv.getContext('2d');
 const STORE='stranded.lobby.v1';
 let eq=null,eqd={};
 function loadSettings(){try{return JSON.parse(localStorage.getItem(STORE))||{};}catch(e){return {};}}
-function saveSettings(){if(window.bfCloudLoading)return;try{localStorage.setItem(STORE,JSON.stringify(settings));}catch(e){}if(window.bfCloudDirty)bfCloudDirty();}
+function saveSettings(){if(window.bfCloudLoading)return;try{bfSetSave(STORE,JSON.stringify(settings));}catch(e){}if(window.bfCloudDirty)bfCloudDirty();}
 const settings=Object.assign({drift:!matchMedia('(prefers-reduced-motion: reduce)').matches,clouds:true,scale:'auto',worlds:null,current:null},loadSettings());
 if(!Array.isArray(settings.worlds)||!settings.worlds.length||settings.worlds.some(w=>!w||!/^\d{1,10}$/.test(String(w.seed)))){
   settings.worlds=[{id:'w1',name:'불시착 섬',seed:1,created:Date.now()}];settings.current='w1';
@@ -4624,6 +4624,18 @@ $('#rlist').addEventListener('contextmenu',e=>{
 /* 월드 저장 (월드별로 베어낸 나무 · 설치물 · 바닥 아이템 · 플레이어 위치) */
 const SAVE_KEY=id=>'stranded.save.v5.'+id;   // 섬 구성이 바뀌어 예전 저장과는 호환되지 않아요
 let lastSaveT=0;
+/* 저장 공간(브라우저 localStorage)이 가득 차면 월드 저장이 조용히 실패해서 진행이 사라졌어요. 그럴 땐 자동 백업부터 지워서(다른 월드 것·오래된 것 먼저) 월드 저장을 우선해요 */
+function bfSetSave(k,v){
+  try{localStorage.setItem(k,v);return true;}catch(e){}
+  try{
+    const mine='.'+(world&&world.id)+'.',ks=[];
+    for(let i=0;i<localStorage.length;i++){const n=localStorage.key(i);if(n&&n.indexOf('stranded.bak.v1.')===0)ks.push(n);}
+    ks.sort((a,b)=>((a.indexOf(mine)>=0)-(b.indexOf(mine)>=0))||(a<b?1:-1));
+    for(const n of ks){localStorage.removeItem(n);try{localStorage.setItem(k,v);return true;}catch(e){}}
+  }catch(e){}
+  window.bfSaveFail=Date.now();
+  return false;
+}
 function saveWorld(force){
   if(window.BST)return;
   if(!world||!world.id||!force||window.bfCloudLoading||world.bakHold||window.__bpBulk)return;
@@ -4631,7 +4643,7 @@ function saveWorld(force){
   try{
     const rem=collectRemoved(),brm=collectBrem();
     if(mode==='play')world.savedPlayer=(P.air&&P.airX!==undefined)?{x:Math.round(P.airX),y:Math.round(P.airY),f:P.f}:{x:Math.round(P.sailing&&P.landX!==undefined?P.landX:P.x),y:Math.round(P.sailing&&P.landY!==undefined?P.landY:P.y),f:P.f};
-    localStorage.setItem(SAVE_KEY(world.id),JSON.stringify({
+    bfSetSave(SAVE_KEY(world.id),JSON.stringify({
       v:1,vpt:world.vpt||null,mg:world.mg||[],tf:world.tf||null,vr:world.vars||{},rc:world.rcIt||null,stc:world.stc||{},nt:world.nt|0,pt:Math.round(world.pt||0),pe:Math.round(world.pe||0),clock:Math.round(world.clock),removed:rem,brem:brm,ores:world.conv,trader:world.trader,lastTraderDay:world.lastTraderDay,expl:packBits(world.expl),treasureInit:!!world.treasureInit,lmChestInit:world.lmChestInit|0,pirInit:world.pirInit|0,ruinInit:world.ruinInit|0,dvo:world.dvo||[],dvk:world.dvk||{},trClean:world.trClean|0,dunFl:world.dunFl||{},dunBD:world.dunBD|0,fortBD:world.fortBD|0,skyDay:world.skyDay||{},dby:world.discBy||{},gsDay:world.gsDay|0,trains:[...(world.trains||[]),...((typeof P!=='undefined'&&P&&P.train)?[P.train]:[])].slice(0,40).map(T=>({x:T.gx,y:T.gy,dx:T.dx,dy:T.dy,p:Math.round(T.p*100)/100,run:T.run?1:0,it:(T.it||[]).map(q=>q?Object.assign({},q):null)})),herd:animals.filter(a=>a.tame).map(a=>[ANIM_IDX.indexOf(a.type),Math.round(a.hx),Math.round(a.hy),a.baby?1:0,Math.round(a.gt||0)]),disc:world.disc.map(b=>b?'1':'0').join(''),seen:world.seen.map(b=>b?'1':'0').join(''),escaped:!!world.escaped,pilot:world.pilot?1:0,vship:world.voidShip?world.voidShip.x+','+world.voidShip.y:'',voidWon:world.voidWon|0,voidBD:world.voidBD|0,intro:world.introSeen?1:0,bossDay:world.bossDay.join(','),
       beltv:2,
       structs:world.structs.filter(b=>!b.lm).map(b=>Object.assign({id:b.id,gx:b.gx,gy:b.gy},exOf(b))),
