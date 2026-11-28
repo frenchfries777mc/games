@@ -494,7 +494,7 @@ window.bfIntro=function(){if(run)return;run=1;window.__bfIon=1;t0=Date.now();el.
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.6<br>build 233</p>
+    <p class="foot">v0.6<br>build 234</p>
   </nav>
 </div>
 
@@ -4647,6 +4647,8 @@ function saveWorld(force){
     bfSetSave(SAVE_KEY(world.id),JSON.stringify({
       v:1,vpt:world.vpt||null,mg:world.mg||[],tf:world.tf||null,vr:world.vars||{},rc:world.rcIt||null,stc:world.stc||{},nt:world.nt|0,pt:Math.round(world.pt||0),pe:Math.round(world.pe||0),clock:Math.round(world.clock),removed:rem,brem:brm,ores:world.conv,trader:world.trader,lastTraderDay:world.lastTraderDay,expl:packBits(world.expl),treasureInit:!!world.treasureInit,lmChestInit:world.lmChestInit|0,pirInit:world.pirInit|0,ruinInit:world.ruinInit|0,dvo:world.dvo||[],dvk:world.dvk||{},trClean:world.trClean|0,dunFl:world.dunFl||{},dunBD:world.dunBD|0,fortBD:world.fortBD|0,skyDay:world.skyDay||{},dby:world.discBy||{},gsDay:world.gsDay|0,trains:[...(world.trains||[]),...((typeof P!=='undefined'&&P&&P.train)?[P.train]:[])].slice(0,40).map(T=>({x:T.gx,y:T.gy,dx:T.dx,dy:T.dy,p:Math.round(T.p*100)/100,run:T.run?1:0,it:(T.it||[]).map(q=>q?Object.assign({},q):null)})),herd:animals.filter(a=>a.tame).map(a=>[ANIM_IDX.indexOf(a.type),Math.round(a.hx),Math.round(a.hy),a.baby?1:0,Math.round(a.gt||0)]),disc:world.disc.map(b=>b?'1':'0').join(''),seen:world.seen.map(b=>b?'1':'0').join(''),escaped:!!world.escaped,pilot:world.pilot?1:0,vship:world.voidShip?world.voidShip.x+','+world.voidShip.y:'',voidWon:world.voidWon|0,voidBD:world.voidBD|0,intro:world.introSeen?1:0,bossDay:world.bossDay.join(','),
       beltv:2,
+      fauna:animals.slice(0,300).map(a=>[ANIM_IDX.indexOf(a.type),Math.round(a.x),Math.round(a.y),Math.round((+a.hp||0)*10)/10,a.tame?1:0,a.baby?1:0,Math.round(a.gt||0),Math.round(a.hx||a.x),Math.round(a.hy||a.y),Math.round(a.fed||0),Math.round(a.mt||0)]),
+      mons:monsters.filter(m=>m&&!m.boss&&!m.of&&!m.rit&&!m.burn&&!m.hid&&!m.dead&&MT_KEYS.indexOf(m.ty)>=0&&Number.isFinite(m.x)&&!(typeof dunFloorAt==='function'&&dunFloorAt(m.x,m.y))).slice(0,150).map(m=>[MT_KEYS.indexOf(m.ty),Math.round(m.x),Math.round(m.y),Math.round((+m.hp||1)*10)/10,m.elite?1:0,m.mhp|0]),
       structs:world.structs.filter(b=>!b.lm).map(b=>Object.assign({id:b.id,gx:b.gx,gy:b.gy},exOf(b))),
       drops:drops.map(d=>({x:Math.round(d.tx),y:Math.round(d.ty),v:d.v,item:d.item||'stick',n:d.n||1,dur:d.dur})),
       cargo:(world.cargo||[]).map(e=>({fq:e.fq,item:e.item,n:e.n,dur:e.dur,sx:e.sx,sy:e.sy,dx:e.dx,dy:e.dy,gx:e.gx,gy:e.gy,rem:e.rem,tot:e.tot,ox:e.ox,oy:e.oy,pir:e.pir,hit:e.hit})),
@@ -4671,6 +4673,12 @@ function applySave(){
   world.treasureInit=!!d.treasureInit;world.lmChestInit=d.lmChestInit|0;world.pirInit=d.pirInit|0;world.ruinInit=d.ruinInit|0;world.dvo=Array.isArray(d.dvo)?d.dvo.filter(Number.isInteger).slice(0,8):[];world.dvk=(d.dvk&&typeof d.dvk==='object')?d.dvk:{};world.trClean=d.trClean|0;world.dunFl=(d.dunFl&&typeof d.dunFl==='object')?d.dunFl:{};world.dunBD=d.dunBD|0;world.fortBD=d.fortBD|0;world.skyDay=(d.skyDay&&typeof d.skyDay==='object')?d.skyDay:{};world.gsDay=d.gsDay|0;world.discBy=(d.dby&&typeof d.dby==='object')?d.dby:{};
   if(!isGuest())world.trains=(Array.isArray(d.trains)?d.trains:[]).slice(0,40).filter(q=>q&&Number.isFinite(+q.x)&&Number.isFinite(+q.y)&&Math.abs(q.dx|0)+Math.abs(q.dy|0)===1).map(q=>({gx:q.x|0,gy:q.y|0,dx:q.dx|0,dy:q.dy|0,p:Math.max(0,Math.min(0.99,+q.p||0)),spd:96,stop:false,auto:true,run:!!q.run,it:sanitize(q.it,CH_N)}));
   if(!isGuest()&&Array.isArray(d.herd)){animals=animals.filter(a=>!a.tame);for(const q of d.herd){const ty=ANIM_IDX[q[0]];if(!ty||!Number.isFinite(+q[1]))continue;const T=ANIM_TYPES[ty],x=+q[1],y=+q[2];animals.push({id:nextAid++,type:ty,x,y,tx:x,ty:y,f:1,hp:T.hp,hurt:0,wt:0,wa:0,ws:0,flee:0,fx:0,fy:0,stun:0,kx:0,ky:0,lay:0,fed:0,mt:25,tame:1,baby:q[3]?1:0,gt:q[4]||0,hx:x,hy:y,love:0,bc:0});}}
+  if(!isGuest()&&Array.isArray(d.fauna)){   // 동물은 종류·수·위치·체력·길들임까지 그대로 (예전 저장에는 길들인 동물만 있어요)
+    animals=[];for(const q of d.fauna.slice(0,300)){const ty=ANIM_IDX[q[0]];if(!ty||!Number.isFinite(+q[1])||!Number.isFinite(+q[2]))continue;const T=ANIM_TYPES[ty],x=+q[1],y=+q[2],a={id:nextAid++,type:ty,x,y,tx:x,ty:y,f:1,hp:Math.max(1,Math.min(T.hp,+q[3]||T.hp)),hurt:0,wt:0,wa:0,ws:0,flee:0,fx:0,fy:0,stun:0,kx:0,ky:0,lay:0,fed:Math.max(0,q[9]|0),mt:Math.max(0,Math.min(60,q[10]|0))||25};if(q[4]){a.tame=1;a.baby=q[5]?1:0;a.gt=q[6]||0;a.hx=Number.isFinite(+q[7])?+q[7]:x;a.hy=Number.isFinite(+q[8])?+q[8]:y;a.love=0;a.bc=0;}animals.push(a);}
+  }
+  if(!isGuest()&&Array.isArray(d.mons)){   // 몬스터도 종류·수·위치·체력 그대로 (보스와 의식·소환 몬스터는 제외)
+    for(const q of d.mons.slice(0,150)){const ty=MT_KEYS[q[0]],T=ty&&MTYPES[ty];if(!T||T.boss||!Number.isFinite(+q[1])||!Number.isFinite(+q[2]))continue;const x=+q[1],y=+q[2],m={id:nextMid++,ty,x,y,tx:x,ty2:y,f:1,born:0,burn:0,wt:0,wa:0,ws:0,spd:T.wander,hp:Math.max(1,Math.min(+q[5]||T.hp,+q[3]||T.hp)),st:0,wind:0,cd:1,stun:0,hurt:0,kx:0,ky:0};if(q[4]){m.elite=1;m.mhp=(q[5]|0)||Math.round(T.hp*2.5);}monsters.push(m);}
+  }
   if(typeof d.disc==='string')for(let i=0;i<world.disc.length;i++)if(d.disc[i]==='1')world.disc[i]=true;
   if(typeof d.seen==='string')for(let i=0;i<world.seen.length;i++)if(d.seen[i]==='1')world.seen[i]=true;
   world.rcIt=Array.isArray(d.rc)?d.rc.slice(0,CH_N).map(q=>q&&typeof q.id==='string'&&ITEMS[q.id]&&(q.n|0)>0?q:null):null;
@@ -5426,9 +5434,12 @@ function addStructCell(id,gx,gy,ex){
   const key=skey(def.layer,gx,gy),map=structMap(def.layer);if(map.has(key))return null;
   const b=def.layer==='c'?{id,gx,gy,layer:'c',x:gx*CG+4,y:gy*CG+8}:{id,gx,gy,layer:def.layer,x:gx*GRID+8,y:gy*GRID+15};
   if(ex)for(const k of ['md','gr','tt','mat','it','ct','gt','tr','dr','lk','sr','fl','th','tg','to','rp','of','ru','rc','ob','cb','co','fq','sp','fi','fo','fp','lv','ar','ins','hd','op','aq','ps','pc','pl','pp','ow','on','ml','gb','fis','fnm','fnt','snm','rj','rn','rq'])if(ex[k]!==undefined&&ex[k]!==null){if(k==='fl'&&!ITEMS[ex[k]])continue;let v=(k==='it')?sanitize(ex[k],CH_N):ex[k];if(k==='tg'||k==='to')v=String(v).slice(0,8);if(k==='th')v=Math.max(1,Math.min(9999,(v|0)||10));if(k==='rp')v=Math.max(1,Math.min(9,(v|0)||1));if(k==='of')v=v?1:0;if(k==='ru')v=Math.max(0,v|0);if(k==='fq')v=String(v).slice(0,8);if(k==='rc')v=String(v).slice(0,90);if(k==='ob')v=Math.max(-1,Math.min(3,v|0));if(k==='cb'){const o={};for(const [i,n] of Object.entries(v||{}))if(ITEMS[i]&&n>0)o[i]=Math.min(999,n|0);v=o;}if(k==='fp')v=Math.max(0,Math.min(3,+v||0));if(k==='snm')v=stationClean(v);if(k==='rj')v=Math.max(-1,Math.min(4,v|0));if(k==='rn')v=Math.max(0,Math.min(11,v|0));if(k==='co'||k==='fi'||k==='fo'){if(!v||!ITEMS[v.id])continue;v={id:v.id,n:Math.max(1,v.n|0)};}b[k]=v;}
+  if(ex)for(const k in ex)if(PKEY(k)&&ex[k]!==undefined&&ex[k]!==null&&typeof ex[k]!=='function'&&JSON.stringify(ex[k]).length<4000)b[k]=ex[k];
   map.set(key,b);world.structs.push(b);world.structs.sort((a,c)=>a.y-c.y);return b;
 }
-const exOf=b=>{const o={};for(const k of ['gr','tt','mat','it','ct','gt','tr','dr','lk','sr','fl','th','tg','to','rp','of','ru','rc','ob','cb','co','fq','sp','fi','fo','fp','lv','ar','ins','hd','op','aq','ps','pc','pl','pp','ow','on','ml','gb','fis','fnm','fnt','snm','rj','rn','rq'])if(b[k]!==undefined)o[k]=b[k];return o;};
+/* 구조물 저장: 아래 목록 + 이름이 p_ 로 시작하는 값은 자동으로 월드 저장에 들어가요 (새 블록이 상태를 저장하려면 b.p_이름 에 넣기만 하면 돼요) */
+const PKEY=k=>/^p_[a-z0-9_]{1,14}$/.test(k);
+const exOf=b=>{const o={};for(const k of ['md','gr','tt','mat','it','ct','gt','tr','dr','lk','sr','fl','th','tg','to','rp','of','ru','rc','ob','cb','co','fq','sp','fi','fo','fp','lv','ar','ins','hd','op','aq','ps','pc','pl','pp','ow','on','ml','gb','fis','fnm','fnt','snm','rj','rn','rq'])if(b[k]!==undefined)o[k]=b[k];for(const k in b)if(PKEY(k)&&b[k]!==undefined&&b[k]!==null&&typeof b[k]!=='function')o[k]=b[k];return o;};
 function removeStructCell(gx,gy,layer){
   const map=structMap(layer),key=skey(layer,gx,gy),b=map.get(key);if(!b)return null;
   map.delete(key);const i=world.structs.indexOf(b);if(i>=0)world.structs.splice(i,1);return b;
