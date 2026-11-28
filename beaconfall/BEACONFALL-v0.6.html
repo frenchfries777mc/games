@@ -494,7 +494,7 @@ window.bfIntro=function(){if(run)return;run=1;window.__bfIon=1;t0=Date.now();el.
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.6<br>build 225</p>
+    <p class="foot">v0.6<br>build 226</p>
   </nav>
 </div>
 
@@ -4626,14 +4626,14 @@ const SAVE_KEY=id=>'stranded.save.v5.'+id;   // 섬 구성이 바뀌어 예전 �
 let lastSaveT=0;
 /* 저장 공간(브라우저 localStorage)이 가득 차면 월드 저장이 조용히 실패해서 진행이 사라졌어요. 그럴 땐 자동 백업부터 지워서(다른 월드 것·오래된 것 먼저) 월드 저장을 우선해요 */
 function bfSetSave(k,v){
-  try{localStorage.setItem(k,v);return true;}catch(e){}
+  try{localStorage.setItem(k,v);if(window.bfPend)delete window.bfPend[k];return true;}catch(e){}
   try{
     const mine='.'+(world&&world.id)+'.',ks=[];
     for(let i=0;i<localStorage.length;i++){const n=localStorage.key(i);if(n&&n.indexOf('stranded.bak.v1.')===0)ks.push(n);}
     ks.sort((a,b)=>((a.indexOf(mine)>=0)-(b.indexOf(mine)>=0))||(a<b?1:-1));
-    for(const n of ks){localStorage.removeItem(n);try{localStorage.setItem(k,v);return true;}catch(e){}}
+    for(const n of ks){localStorage.removeItem(n);try{localStorage.setItem(k,v);if(window.bfPend)delete window.bfPend[k];return true;}catch(e){}}
   }catch(e){}
-  window.bfSaveFail=Date.now();
+  window.bfSaveFail=Date.now();(window.bfPend=window.bfPend||{})[k]=v;   /* 이 기기에 못 써도 계정(서버) 저장에는 올려요 */
   return false;
 }
 function saveWorld(force){
@@ -15404,9 +15404,9 @@ window.bfSb=sb;
 const CS_T='stranded.cloud.t',CS_U='stranded.cloud.uid',CS_TB='beaconfall_saves';
 const csOk=k=>k==='stranded.lobby.v1'||k==='bf.mods.on'||k.indexOf('stranded.save.v5.')===0;
 const csX=k=>k==='stranded.bgmvol'||k==='stranded.bgm';   // 음악 설정도 계정에 저장돼요 (계정을 바꿔 로그인해도 지우지 않고, 예전 계정 저장에 없으면 이 기기 값을 그대로 둬요)   // 월드·설정·설치한 모드가 계정에 저장돼요
-function csKeys(){const o={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&(csOk(k)||csX(k)))o[k]=localStorage.getItem(k);}}catch(e){}return o;}
+function csKeys(){const o={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&(csOk(k)||csX(k)))o[k]=localStorage.getItem(k);}}catch(e){}try{for(const k in (window.bfPend||{}))if(csOk(k))o[k]=window.bfPend[k];}catch(e){}return o;}
 let csUid=null,csOn=false,csDirty=false,csBusy=false,csFail=0,csLast=0,csState='';
-window.bfCloudDirty=()=>{csDirty=true;};
+let csT=0;window.bfCloudDirty=()=>{csDirty=true;if(!csT)csT=setTimeout(()=>{csT=0;if(csDirty)csPush();},20000);};   // 저장하고 20초 안에 계정(서버)에도 올려요 (예전엔 최대 45초)
 window.bfCloudStatus=()=>!csUid?'로그인하면 켜져요':csState==='ask'?'선택을 기다리는 중':!csOn?(csState==='off'?'꺼짐 (서버 준비 안 됨)':'꺼짐'):csLast?('켜짐 · 마지막 저장 '+new Date(csLast).toLocaleTimeString()):'켜짐';
 async function csPush(){
   if(!csOn||!sb||!csUid||csBusy||window.bfImporting)return;
@@ -15414,7 +15414,7 @@ async function csPush(){
   try{
     const now=new Date().toISOString();
     const r=await sb.from(CS_TB).upsert({user_id:csUid,data:csKeys(),updated_at:now});
-    if(r.error){csDirty=true;if(++csFail>=3){csOn=false;csState='off';}}
+    if(r.error){csDirty=true;if(++csFail>=3){csOn=false;csState='off';setTimeout(()=>{if(csUid&&!csOn&&csState==='off'){csOn=true;csState='';csFail=0;csDirty=true;}},120000);}}   // 3번 실패해도 2분 뒤 다시 시도해요
     else{csFail=0;csLast=Date.now();try{localStorage.setItem(CS_T,now);localStorage.setItem(CS_U,csUid);}catch(e){}}
   }catch(e){csDirty=true;}
   csBusy=false;
