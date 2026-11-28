@@ -15,6 +15,9 @@ let browser = null, stopping = false;
 async function runRoom(i) {
   const ctx = await browser.newContext({ viewport: { width: 480, height: 320 } });
   const page = await ctx.newPage(); let startedAt = 0, endedAt = 0, ok = false;
+  // 서버 방장은 로그인 페이지가 필요 없어요: 어떤 이유로든 거기로 가려 하면 막고 기록해 둬요 (Cloudflare에서 이 서버 IP가 /log-in/ 을 계속 불러서, 누가 부르는지 알아내려고)
+  await ctx.route(/\/log-in\//, r => { log('로그인 페이지 요청을 막았어요', r.request().resourceType(), r.request().url().slice(0, 120), '← 화면', page.url().slice(0, 100)); r.abort(); });
+  page.on('framenavigated', f => { if (f === page.mainFrame()) log('화면 이동', f.url().slice(0, 140)); });
   const close = async why => { log('방 닫음', why || ''); try { await ctx.close(); } catch (e) { } };
   page.on('pageerror', e => { const m = String(e && e.message || e); if (!/ResizeObserver|Script error/.test(m)) log('page error', m.slice(0, 160)); });
   try {
