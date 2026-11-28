@@ -494,7 +494,7 @@ window.bfIntro=function(){if(run)return;run=1;window.__bfIon=1;t0=Date.now();el.
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.6<br>build 226</p>
+    <p class="foot">v0.6<br>build 227</p>
   </nav>
 </div>
 
@@ -15429,6 +15429,31 @@ function csLoad(row,uid){
   }catch(e){}
   location.reload();
 }
+/* 로그인했는데 서버 저장이 이 기기보다 새것이면 묻지 않고 합쳐요: 월드는 더 오래 한 쪽을 남기고, 한쪽에만 있는 월드·모드는 모두 살려요 (설정과 현재 월드는 이 기기 것 유지) */
+function csMerge(row,uid){
+  window.bfCloudLoading=true;let ch=0;
+  const js=v=>{try{return JSON.parse(v);}catch(e){return null;}};
+  for(const k in row.data){
+    try{
+      if(!csOk(k)||typeof row.data[k]!=='string')continue;
+      const v=row.data[k],cur=localStorage.getItem(k);
+      if(cur===null){localStorage.setItem(k,v);ch++;continue;}
+      if(cur===v)continue;
+      if(k.indexOf('stranded.save.v5.')===0){const a=js(cur),b=js(v);if(a&&b&&(+b.clock||0)>(+a.clock||0)){localStorage.setItem(k,v);ch++;}}
+      else if(k==='bf.mods.on'){const x=js(cur)||{},y=js(v)||{};const s=JSON.stringify(Object.assign({},y,x));if(s!==cur){localStorage.setItem(k,s);ch++;}}
+      else if(k==='stranded.lobby.v1'){
+        const L=js(cur)||{},OL=js(v)||{},lw=Array.isArray(L.worlds)?L.worlds:[],ow=Array.isArray(OL.worlds)?OL.worlds:[];
+        const m=lw.concat(ow.filter(w=>w&&!lw.some(x=>x&&x.id===w.id)));
+        const N=Object.assign({},OL,L);N.worlds=m;if(!N.current||!m.some(w=>w&&w.id===N.current))N.current=OL.current||(m[0]&&m[0].id);
+        const s=JSON.stringify(N);if(s!==cur){localStorage.setItem(k,s);ch++;}
+      }
+    }catch(e){}
+  }
+  try{localStorage.setItem(CS_T,new Date(Date.parse(row.updated_at)||Date.now()).toISOString());localStorage.setItem(CS_U,uid);}catch(e){}
+  csOn=true;csDirty=true;
+  if(ch){location.reload();return;}   // 합친 결과로 다시 열어요 (다시 열리면 합친 저장이 서버에 올라가요)
+  window.bfCloudLoading=false;csPush();
+}
 function csAsk(row,uid){
   let n=0;try{const s=JSON.parse(row.data['stranded.lobby.v1']||'{}');n=Array.isArray(s.worlds)?s.worlds.length:0;}catch(e){}
   const when=new Date(Date.parse(row.updated_at)||Date.now()).toLocaleString();
@@ -15465,7 +15490,7 @@ async function csLogin(uid){
   if(has&&(lu!==uid||(Date.parse(row.updated_at)||0)>lt)){
     const local=Object.keys(csKeys()).some(k=>k.indexOf('stranded.save.v5.')===0);
     if(!local){csLoad(row,uid);return;}
-    csState='ask';csAsk(row,uid);return;
+    csMerge(row,uid);return;
   }
   csOn=true;csSetOwner(uid);csDirty=true;csPush();
 }
