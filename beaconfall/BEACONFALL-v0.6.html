@@ -494,7 +494,7 @@ window.bfIntro=function(){if(run)return;run=1;window.__bfIon=1;t0=Date.now();el.
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.6<br>build 232</p>
+    <p class="foot">v0.6<br>build 233</p>
   </nav>
 </div>
 
@@ -4625,6 +4625,7 @@ $('#rlist').addEventListener('contextmenu',e=>{
 const SAVE_KEY=id=>'stranded.save.v5.'+id;   // 섬 구성이 바뀌어 예전 저장과는 호환되지 않아요
 let lastSaveT=0;
 /* 저장 공간(브라우저 localStorage)이 가득 차면 월드 저장이 조용히 실패해서 진행이 사라졌어요. 그럴 땐 자동 백업부터 지워서(다른 월드 것·오래된 것 먼저) 월드 저장을 우선해요 */
+window.bfWarn=m=>{const n=Date.now();if(n-(bfWarn.t||0)<120000)return;bfWarn.t=n;try{toast(m);}catch(e){}};
 function bfSetSave(k,v){
   try{localStorage.setItem(k,v);if(window.bfPend)delete window.bfPend[k];return true;}catch(e){}
   try{
@@ -4633,7 +4634,7 @@ function bfSetSave(k,v){
     ks.sort((a,b)=>((a.indexOf(mine)>=0)-(b.indexOf(mine)>=0))||(a<b?1:-1));
     for(const n of ks){localStorage.removeItem(n);try{localStorage.setItem(k,v);if(window.bfPend)delete window.bfPend[k];return true;}catch(e){}}
   }catch(e){}
-  window.bfSaveFail=Date.now();(window.bfPend=window.bfPend||{})[k]=v;   /* 이 기기에 못 써도 계정(서버) 저장에는 올려요 */
+  window.bfSaveFail=Date.now();(window.bfPend=window.bfPend||{})[k]=v;try{bfWarn('이 기기에 저장할 공간이 부족해요. 계정 저장에는 올라가지만, 오래된 월드나 백업을 지워 주세요.');}catch(e){}   /* 이 기기에 못 써도 계정(서버) 저장에는 올려요 */
   return false;
 }
 function saveWorld(force){
@@ -15268,6 +15269,7 @@ document.addEventListener('click',async e=>{
     try{localStorage.removeItem(SAVE_KEY(d.del));}catch(x){}
     try{for(let i=0;i<BAK_N;i++)localStorage.removeItem(BAK_KEY(d.del,i));}catch(x){}
     settings.worlds=settings.worlds.filter(x=>x.id!==d.del);
+    settings.delw=(settings.delw||[]).filter(x=>x!==d.del).concat(d.del).slice(-200);   // 지운 월드 표시: 다른 기기·서버 저장에서 다시 살아나지 않게
     if(settings.winv)delete settings.winv[d.del];
     if(!settings.worlds.length){const nid='w'+Date.now().toString(36);settings.worlds=[{id:nid,name:'새 섬',seed:1+((Math.random()*99999)|0),created:Date.now()}];settings.current=nid;}
     else if(wasCur)settings.current=settings.worlds[0].id;
@@ -15483,20 +15485,107 @@ const csOk=k=>k==='stranded.lobby.v1'||k==='bf.mods.on'||k.indexOf('stranded.sav
 const csX=k=>k==='stranded.bgmvol'||k==='stranded.bgm';   // 음악 설정도 계정에 저장돼요 (계정을 바꿔 로그인해도 지우지 않고, 예전 계정 저장에 없으면 이 기기 값을 그대로 둬요)   // 월드·설정·설치한 모드가 계정에 저장돼요
 function csKeys(){const o={};csKeys.bad=false;try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&(csOk(k)||csX(k))){const v=localStorage.getItem(k);if(v===null)csKeys.bad=true;else o[k]=v;}}}catch(e){csKeys.bad=true;}try{for(const k in (window.bfPend||{}))if(csOk(k))o[k]=window.bfPend[k];}catch(e){}return o;}
 let csUid=null,csOn=false,csDirty=false,csBusy=false,csFail=0,csLast=0,csState='';
-let csT=0;window.bfCloudDirty=()=>{csDirty=true;if(!csT)csT=setTimeout(()=>{csT=0;if(csDirty)csPush();},20000);};   // 저장하고 20초 안에 계정(서버)에도 올려요 (예전엔 최대 45초)
+let csT=0;window.bfCloudDirty=()=>{csDirty=true;try{mirSoon();}catch(e){}if(!csT)csT=setTimeout(()=>{csT=0;if(csDirty)csPush();},20000);};   // 저장하고 20초 안에 계정(서버)에도 올려요 (예전엔 최대 45초)
 window.bfCloudStatus=()=>!csUid?'로그인하면 켜져요':csState==='ask'?'선택을 기다리는 중':!csOn?(csState==='off'?'꺼짐 (서버 준비 안 됨)':'꺼짐'):csLast?('켜짐 · 마지막 저장 '+new Date(csLast).toLocaleTimeString()):'켜짐';
+let csSeen=null;   // 이 기기가 마지막으로 본 서버 저장의 시각: 그 사이 다른 기기가 올렸으면 덮어쓰지 않고 합쳐서 올려요
+function csJoin(srv,loc){   // 서버 저장(srv)과 이 기기 저장(loc)을 합쳐요: 월드는 더 오래 한 쪽, 한쪽에만 있는 월드·모드는 모두 남겨요. 합친 결과는 어느 쪽보다 작아지지 않아요
+  const js=v=>{try{return JSON.parse(v);}catch(e){return null;}},SV='stranded.save.v5.';
+  const out={};for(const k in srv)if(typeof srv[k]==='string'&&(csOk(k)||csX(k)))out[k]=srv[k];
+  for(const k in loc){
+    const v=loc[k];if(typeof v!=='string')continue;
+    const sv=out[k];
+    if(sv===undefined||sv===v){out[k]=v;continue;}
+    if(k.indexOf(SV)===0){const a=js(v),b=js(sv);out[k]=(a&&b&&(+b.clock||0)>(+a.clock||0))?sv:v;}
+    else if(k==='bf.mods.on'){out[k]=JSON.stringify(Object.assign({},js(sv)||{},js(v)||{}));}
+    else if(k==='stranded.lobby.v1'){
+      const L=js(v)||{},S=js(sv)||{};
+      const dl=[...new Set([].concat(S.delw||[],L.delw||[]))].slice(-200);
+      const lw=Array.isArray(L.worlds)?L.worlds:[],sw=Array.isArray(S.worlds)?S.worlds:[];
+      const ws=lw.concat(sw.filter(w=>w&&!lw.some(x=>x&&x.id===w.id))).filter(w=>w&&!dl.includes(w.id));
+      const N=Object.assign({},S,L);N.worlds=ws;if(dl.length)N.delw=dl;
+      N.ach=Object.assign({},S.ach,L.ach);N.winv=Object.assign({},S.winv,L.winv);
+      if(!ws.some(w=>w.id===N.current))N.current=(ws[0]&&ws[0].id)||N.current;
+      out[k]=JSON.stringify(N);
+    }else out[k]=v;
+  }
+  try{const N=js(out['stranded.lobby.v1'])||{},dead=new Set(N.delw||[]);for(const k of Object.keys(out))if(k.indexOf(SV)===0&&dead.has(k.slice(SV.length)))delete out[k];}catch(e){}
+  return out;
+}
+async function csSend(dd){
+  const upd=async(data,seen)=>{
+    const now=new Date().toISOString();
+    if(seen){const w=await sb.from(CS_TB).update({data,updated_at:now}).eq('user_id',csUid).eq('updated_at',seen).select('updated_at');
+      if(w.error)return {err:w.error};return (w.data&&w.data.length)?{ok:1,at:w.data[0].updated_at||now}:{conf:1};}
+    const w=await sb.from(CS_TB).insert({user_id:csUid,data,updated_at:now}).select('updated_at');
+    if(w.error)return (w.error.code==='23505')?{conf:1}:{err:w.error};
+    return {ok:1,at:(w.data&&w.data[0]&&w.data[0].updated_at)||now};
+  };
+  let data=dd,seen=csSeen;
+  for(let t=0;t<4;t++){
+    const r=await upd(data,seen);
+    if(r.ok){csSeen=r.at;return {ok:1};}
+    if(r.err)return {err:r.err};
+    const g=await sb.from(CS_TB).select('data,updated_at').eq('user_id',csUid).maybeSingle();   // 그 사이 서버 저장이 바뀌었어요: 받아서 합친 뒤 다시 올려요
+    if(g.error)return {err:g.error};
+    if(g.data&&g.data.data){data=csJoin(g.data.data,dd);seen=g.data.updated_at;}else{data=dd;seen=null;}
+  }
+  return {err:{message:'conflict'}};
+}
 async function csPush(){
   if(!csOn||!sb||!csUid||csBusy||window.bfImporting)return;
   csBusy=true;csDirty=false;
   try{
-    const now=new Date().toISOString(),dd=csKeys();
+    const dd=csKeys();
     if(csKeys.bad){csDirty=true;csBusy=false;return;}   // 기기 저장을 읽다가 실패했으면 일부만 올려 서버를 덮어쓰지 않아요
-    const r=await sb.from(CS_TB).upsert({user_id:csUid,data:dd,updated_at:now});
-    if(r.error){csDirty=true;if(++csFail>=3){csOn=false;csState='off';setTimeout(()=>{if(csUid&&!csOn&&csState==='off'){csOn=true;csState='';csFail=0;csDirty=true;}},120000);}}   // 3번 실패해도 2분 뒤 다시 시도해요
-    else{csFail=0;csLast=Date.now();try{localStorage.setItem(CS_T,now);localStorage.setItem(CS_U,csUid);}catch(e){}}
+    const r=await csSend(dd);
+    if(r.err){csDirty=true;if(++csFail>=3){csOn=false;csState='off';try{bfWarn('계정 저장이 서버에 올라가지 않고 있어요. 인터넷을 확인해 주세요.');}catch(e){}setTimeout(()=>{if(csUid&&!csOn&&csState==='off'){csOn=true;csState='';csFail=0;csDirty=true;}},120000);}}   // 3번 실패해도 2분 뒤 다시 시도해요
+    else{csFail=0;csLast=Date.now();try{localStorage.setItem(CS_T,new Date().toISOString());localStorage.setItem(CS_U,csUid);}catch(e){}}
   }catch(e){csDirty=true;}
   csBusy=false;
 }
+/* 이 기기 안의 두 번째 사본(IndexedDB): 브라우저가 localStorage를 비우거나 못 써도 월드를 되살려요. 더 오래 한 쪽만 남겨서 줄어들지 않고, 30분마다 따로 5개를 돌려가며 보관해요 */
+function mirOpen(){return new Promise(res=>{try{const q=indexedDB.open('bf-mirror',1);q.onupgradeneeded=()=>q.result.createObjectStore('s');q.onsuccess=()=>res(q.result);q.onerror=()=>res(null);q.onblocked=()=>res(null);}catch(e){res(null);}});}
+let mirT=0;
+function mirSoon(){if(mirT)return;mirT=setTimeout(()=>{mirT=0;mirPut();},60000);}
+async function mirPut(){
+  try{
+    if(window.bfCloudLoading||window.bfImporting)return;
+    const d=csKeys();if(csKeys.bad||!Object.keys(d).some(k=>k.indexOf('stranded.save.v5.')===0))return;
+    const db=await mirOpen();if(!db)return;
+    const now=Date.now(),u=(()=>{try{return localStorage.getItem(CS_U)||'';}catch(e){return '';}})();
+    await new Promise(r=>{
+      try{
+        const tx=db.transaction('s','readwrite'),st=tx.objectStore('s'),g=st.get('last');
+        g.onsuccess=()=>{try{const o=g.result;const j=(o&&o.d&&(!o.u||!u||o.u===u))?csJoin(o.d,d):d;st.put({t:now,u,d:j},'last');st.put({t:now,u,d},'h'+(Math.floor(now/1800000)%5));}catch(e){}};
+        tx.oncomplete=()=>r();tx.onerror=tx.onabort=()=>r();
+      }catch(e){r();}
+    });
+    try{db.close();}catch(e){}
+  }catch(e){}
+}
+async function mirRestore(){
+  try{
+    if(sessionStorage.getItem('bf.mirr')||window.bfImporting||window.bfCloudLoading)return;
+    const db=await mirOpen();if(!db)return;
+    const rec=await new Promise(r=>{try{const q=db.transaction('s').objectStore('s').get('last');q.onsuccess=()=>r(q.result);q.onerror=()=>r(null);}catch(e){r(null);}});
+    try{db.close();}catch(e){}
+    if(!rec||!rec.d)return;
+    const loc=csKeys();if(csKeys.bad)return;
+    let u='';try{u=localStorage.getItem(CS_U)||'';}catch(e){}
+    if(rec.u&&u&&rec.u!==u)return;   // 다른 계정의 사본은 쓰지 않아요
+    const j=csJoin(rec.d,loc),js=v=>{try{return JSON.parse(v);}catch(e){return null;}};
+    let ch=0;
+    for(const k in j){
+      const cur=loc[k];
+      if(k.indexOf('stranded.save.v5.')===0){if(cur!==j[k]){localStorage.setItem(k,j[k]);ch++;}}
+      else if(k==='bf.mods.on'){if(cur===undefined||Object.keys(js(j[k])||{}).length>Object.keys(js(cur)||{}).length){localStorage.setItem(k,j[k]);ch++;}}
+      else if(k==='stranded.lobby.v1'){const a=js(j[k])||{},b=js(cur||'{}')||{};if((a.worlds||[]).length>(b.worlds||[]).length){localStorage.setItem(k,j[k]);ch++;}}
+    }
+    if(ch){sessionStorage.setItem('bf.mirr','1');window.bfCloudLoading=true;location.reload();}
+  }catch(e){}
+}
+window.addEventListener('load',()=>setTimeout(mirRestore,2500));
+document.addEventListener('visibilitychange',()=>{if(document.hidden)mirPut();});
 function csLoad(row,uid){
   window.bfCloudLoading=true;
   try{
@@ -15521,8 +15610,9 @@ function csMerge(row,uid){
       else if(k==='bf.mods.on'){const x=js(cur)||{},y=js(v)||{},o=Object.assign({},y,x);if(Object.keys(o).length>Object.keys(x).length){localStorage.setItem(k,JSON.stringify(o));ch++;}}
       else if(k==='stranded.lobby.v1'){
         const L=js(cur)||{},OL=js(v)||{},lw=Array.isArray(L.worlds)?L.worlds:[],ow=Array.isArray(OL.worlds)?OL.worlds:[];
-        const m=lw.concat(ow.filter(w=>w&&!lw.some(x=>x&&x.id===w.id)));
-        const N=Object.assign({},OL,L);N.worlds=m;if(!N.current||!m.some(w=>w&&w.id===N.current))N.current=OL.current||(m[0]&&m[0].id);
+        const dl=[...new Set([].concat(OL.delw||[],L.delw||[]))].slice(-200);
+        const m=lw.concat(ow.filter(w=>w&&!lw.some(x=>x&&x.id===w.id))).filter(w=>w&&!dl.includes(w.id));
+        const N=Object.assign({},OL,L);N.worlds=m;if(dl.length)N.delw=dl;if(!N.current||!m.some(w=>w&&w.id===N.current))N.current=OL.current||(m[0]&&m[0].id);
         if(m.length>lw.length||N.current!==L.current){localStorage.setItem(k,JSON.stringify(N));ch++;}else if(Object.keys(N).length>Object.keys(L).length)localStorage.setItem(k,JSON.stringify(N));   // 바뀐 게 없으면 다시 열지 않아요 (열 때마다 합쳐도 끝없이 다시 열리지 않게)
       }
     }catch(e){}
@@ -15563,6 +15653,7 @@ async function csLogin(uid){
   let row=null;
   try{const r=await sb.from(CS_TB).select('data,updated_at').eq('user_id',uid).maybeSingle();if(r.error){csState='off';return;}row=r.data;}catch(e){csState='off';return;}
   if(csUid!==uid)return;
+  csSeen=(row&&row.updated_at)||null;
   let lt=0,lu='';try{lt=Date.parse(localStorage.getItem(CS_T)||'')||0;lu=localStorage.getItem(CS_U)||'';}catch(e){}
   const has=row&&row.data&&typeof row.data==='object'&&Object.keys(row.data).length>0;
   if(has){   // 로그인할 때마다 서버 저장과 합쳐요: 이 기기가 서버보다 오래된 상태여도 서버 저장을 덮어쓰지 않게
