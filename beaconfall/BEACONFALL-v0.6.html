@@ -494,7 +494,7 @@ window.bfIntro=function(){if(run)return;run=1;window.__bfIon=1;t0=Date.now();el.
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.6<br>build 228</p>
+    <p class="foot">v0.6<br>build 229</p>
   </nav>
 </div>
 
@@ -14570,7 +14570,7 @@ function showSettings(){
     <div class="row"><span>효과음</span><div class="seg">${[['0','끔'],['0.3','작게'],['0.6','보통'],['1','크게']].map(([v,t])=>`<button data-sfx="${v}" aria-pressed="${String(settings.sfx===undefined?0.6:+settings.sfx)===v}">${t}</button>`).join('')}</div></div>
     <div class="row"><span>배경음악 소리</span><input type="range" id="bgmvol" min="0" max="100" step="5" value="${Math.round(BGM.vol*100)}" style="width:140px"></div>
     <div class="row"><span>픽셀 크기</span><div class="seg">${['auto','2','3','4','5','6','7','8'].map(v=>`<button data-scale="${v}" aria-pressed="${String(settings.scale)===v}">${v==='auto'?'자동':v+'×'}</button>`).join('')}</div></div>
-    <div class="row"><span>계정 저장</span><span style="font-size:12px;opacity:.85;text-align:right">${esc(window.bfCloudStatus?bfCloudStatus():'')}</span></div>
+    <div class="row"><span>계정 저장</span><span style="font-size:12px;opacity:.85;text-align:right">${esc(window.bfCloudStatus?bfCloudStatus():'')}${window.bfUid?' <button class="btn sm ghost" data-cspull>서버 저장 지금 가져오기</button>':''}</span></div>
     <div class="row"><span>언어</span><div class="seg" style="flex-wrap:wrap">${I18N_LANGS.filter(v=>!I18N_VIRT[v]).map(v=>`<button data-lang="${v}" aria-pressed="${i18nPick()===v}">${I18N_NAMES[v]}</button>`).join('')}</div></div>
     <div class="row"><span>가상 언어</span><div class="seg" style="flex-wrap:wrap">${['nw','gk','au','sg','em'].map(v=>`<button data-lang="${v}" aria-pressed="${i18nPick()===v}"${v==='au'?` style="font-family:'FF Aurebesh',system-ui"`:v==='sg'?` style="font-family:'FF Galactic',system-ui"`:''}>${I18N_NAMES[v]}</button>`).join('')}</div></div>
     <div class="row"><span>기기</span><div class="seg">${[['pc','컴퓨터'],['mobile','모바일']].map(([v,t])=>`<button data-device="${v}" aria-pressed="${(settings.device||'pc')===v}">${t}</button>`).join('')}</div></div>
@@ -15512,6 +15512,21 @@ async function csLogin(uid){
   }
   csOn=true;csSetOwner(uid);csDirty=true;csPush();
 }
+/* 설정의 '서버 저장 지금 가져오기': 로그인한 계정의 서버 저장을 바로 받아서 이 기기와 합쳐요 (자동으로 안 됐을 때 직접 한 번 더) */
+document.addEventListener('click',async e=>{
+  const b=e.target&&e.target.closest&&e.target.closest('[data-cspull]');if(!b||b.disabled)return;
+  const say=x=>{try{b.textContent=x;}catch(_){}};
+  if(!sb||!csUid){say('로그인이 필요해요');return;}
+  b.disabled=true;say('가져오는 중…');
+  try{
+    const r=await sb.from(CS_TB).select('data,updated_at').eq('user_id',csUid).maybeSingle();
+    if(r.error){say('서버에 연결하지 못했어요');b.disabled=false;return;}
+    const row=r.data;
+    if(!row||!row.data||!Object.keys(row.data).length){say('서버에 저장이 아직 없어요');b.disabled=false;return;}
+    say('합치는 중…');csMerge(row,csUid);
+    setTimeout(()=>{say('이미 최신이에요');b.disabled=false;},1500);   // 바뀐 게 없으면 다시 열리지 않아요
+  }catch(x){say('실패했어요 (다시 눌러 보세요)');b.disabled=false;}
+});
 setInterval(()=>{if(csDirty)csPush();},45000);
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&csDirty)csPush();});
 /* 친구: Stickseum과 같은 friendships 테이블을 그대로 써요 (Frenchfries777 계정 친구라 어느 게임에서 추가해도 같이 보여요)
