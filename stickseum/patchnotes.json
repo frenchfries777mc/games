@@ -6,7 +6,21 @@
    "title": "서버 방 열기 오류 수정",
    "items": [
     "서버가 대신 열어주는 랭크전·전용 방이 계속 끊기던 문제를 고쳤어요"
-   ]
+   ],
+   "tr": {
+    "ar": {"title": "إصلاح خطأ فتح الغرف على الخادم", "items": ["تم إصلاح مشكلة انقطاع الغرف المصنفة والمخصصة التي يفتحها الخادم بدلاً منك باستمرار"]},
+    "de": {"title": "Fehler beim Öffnen von Server-Räumen behoben", "items": ["Ein Problem behoben, durch das Rang- und dedizierte Räume, die der Server für dich öffnet, immer wieder abbrachen"]},
+    "en": {"title": "Fix server room opening error", "items": ["Fixed an issue where ranked and dedicated rooms opened for you by the server kept disconnecting"]},
+    "es": {"title": "Corregido el error al abrir salas del servidor", "items": ["Se corrigió el problema por el que las salas clasificatorias y dedicadas que abre el servidor por ti se desconectaban constantemente"]},
+    "fr": {"title": "Correction d'une erreur d'ouverture de salon serveur", "items": ["Correction d'un problème où les salons classés et dédiés ouverts à ta place par le serveur se coupaient sans cesse"]},
+    "it": {"title": "Corretto errore di apertura stanze sul server", "items": ["Risolto il problema per cui le stanze classificate e dedicate aperte per te dal server continuavano a disconnettersi"]},
+    "ja": {"title": "サーバーの部屋を開くエラーを修正", "items": ["サーバーが代わりに開くランクマッチ・専用ルームが切断され続ける問題を修正しました"]},
+    "pl": {"title": "Naprawiono błąd otwierania pokoi na serwerze", "items": ["Naprawiono problem, przez który pokoje rankingowe i dedykowane otwierane za Ciebie przez serwer ciągle się rozłączały"]},
+    "pt": {"title": "Corrigido erro ao abrir salas do servidor", "items": ["Corrigido o problema em que as salas ranqueadas e dedicadas abertas pelo servidor para você continuavam caindo"]},
+    "ru": {"title": "Исправлена ошибка открытия комнат на сервере", "items": ["Исправлена проблема, из-за которой рейтинговые и выделенные комнаты, которые сервер открывает за вас, постоянно обрывались"]},
+    "tr": {"title": "Sunucu oda açma hatası düzeltildi", "items": ["Sunucunun sizin yerinize açtığı dereceli ve özel odaların sürekli kopması sorunu düzeltildi"]},
+    "zh": {"title": "修复服务器房间开启错误", "items": ["修复了服务器代为开启的排位赛和专用房间频繁断开的问题"]}
+   }
   },
   {
    "date": "2026-11-26",
