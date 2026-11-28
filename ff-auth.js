@@ -112,7 +112,8 @@ async function lpGo(){ if(lpGoing) return; lpGoing=true; var n=lpNext();
     try{ if(user&&sb&&!/[?&]tok=0(&|$)/.test(location.search)){ var s=(await sb.auth.getSession()).data.session, r=await fetch(SB_URL+'/functions/v1/dynamic-action',{method:'POST',headers:{Authorization:'Bearer '+s.access_token,apikey:SB_KEY}}), j=r.ok?await r.json():null; t=(j&&j.t)||''; } }catch(e){}
     n=n.replace(/#.*$/,'')+'#ffsso='+(t||0)+sy; } }catch(e){}
   location.replace(n); }
-async function ssoIn(u){ if(!u&&location.hostname!=='frenchfries777mc.github.io'&&!/^#ffsso=/.test(location.hash||'')&&/bot|crawl|spider|lighthouse|headless/i.test(navigator.userAgent||'')) return null;   /* 검색 로봇은 로그인 페이지를 왔다 갔다 하지 않아요 */
+async function ssoIn(u){ if(/[?&]dedicated=1(&|$)/.test(location.search||'')) return u||null;   /* 서버의 전용 방장(화면 없는 브라우저)은 로그인 페이지를 다녀오지 않아요: 다녀오면 방장 창이 계속 끊겨요 */
+  if(!u&&location.hostname!=='frenchfries777mc.github.io'&&!/^#ffsso=/.test(location.hash||'')&&/bot|crawl|spider|lighthouse|headless/i.test(navigator.userAgent||'')) return null;   /* 검색 로봇은 로그인 페이지를 왔다 갔다 하지 않아요 */
   var m=/^#ffsso=([^&]*)/.exec(location.hash||''), gh=location.hostname===GH, auto=false, off=false;
   try{ auto=sessionStorage.getItem('ffSsoAuto')==='1'; sessionStorage.removeItem('ffSsoAuto'); off=!!localStorage.getItem('ffSsoOff'); }catch(e){}
   if(ffPull) return u||null;
