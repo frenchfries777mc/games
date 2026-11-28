@@ -494,7 +494,7 @@ window.bfIntro=function(){if(run)return;run=1;window.__bfIon=1;t0=Date.now();el.
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.6<br>build 223</p>
+    <p class="foot">v0.6<br>build 224</p>
   </nav>
 </div>
 
@@ -15050,6 +15050,9 @@ function netTick(now){
     if(now-(net.tFell||0)>(lowH?800:500)){net.tFell=now;if(!net.fellC||now-(net.fellT||0)>2000){net.fellT=now;net.fellC=world.structs.filter(b=>b.id==='feller'||b.id==='miner'||b.id==='crafter');}const fl=net.fellC.map(b=>[b.gx,b.gy,b.pf===undefined?-1:Math.round(b.pf*100)/100,b.ru|0]);if(fl.length)bcastAll({t:'fell',list:fl});}
   }
 }
+/* 방장 탭이 가려지면 화면 그리기가 멈춰 netTick도 멈추므로, 그동안 참가자가 10초 넘게 소식을 못 받아 로비로 나가던 것을 막아요: 가려진 동안은 1초마다 가벼운 시계 신호를 보내요. 참가자도 탭에 돌아온 직후엔 시간을 다시 재요 */
+setInterval(()=>{try{if(document.hidden&&isHost()&&net.conns.length&&world)bcastAll({t:'clock',c:world.clock});}catch(e){}},1000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&isGuest())net.rx=performance.now();});
 async function hostRoom(addr,wid){
   if(net.busy||net.role)return;
   if(!addrOk(addr)){net.msg='주소는 영문·숫자·-·_ 로 3~24자까지 쓸 수 있어요.';return netRefresh();}
