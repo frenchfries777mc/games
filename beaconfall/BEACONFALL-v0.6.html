@@ -494,7 +494,7 @@ window.bfIntro=function(){if(run)return;run=1;window.__bfIon=1;t0=Date.now();el.
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.6<br>build 234</p>
+    <p class="foot">v0.6<br>build 235</p>
   </nav>
 </div>
 
@@ -1864,11 +1864,15 @@ for(const piece of ARMOR_ORDER)for(const mat of ARMOR_MATS)for(let q=1;q<=3;q++)
   ITEMS[`ar_${piece}_${mat}_${q}`]={name:`${MATNAME[mat]} ${ARMOR_PIECES[piece].name} ${'★'.repeat(q)}`,icon:armorIcon(piece,mat,q),max:1,armor:{piece,mat,q},dur:Math.round(ARMOR_DUR[mat]*PIECE_DUR[piece]*QDUR[q])};
 }
 const armorInfo=id=>(ITEMS[id]&&ITEMS[id].armor)||null;
-const armorDef=id=>{const a=armorInfo(id);return a?ARMOR_PIECES[a.piece].def*ARMOR_MUL[a.mat]*QMUL[a.q]:0;};
+const ARMOR_BOOST=1.25;   // 방어구 효과 배수
+const armorDef=id=>{const a=armorInfo(id);return a?ARMOR_PIECES[a.piece].def*ARMOR_MUL[a.mat]*QMUL[a.q]*ARMOR_BOOST:0;};
 eq={helm:null,chest:null,legs:null,boots:null};
 if(settings.equip)for(const k of ARMOR_ORDER){const id=settings.equip[k],a=armorInfo(id);if(a&&a.piece===k){eq[k]=id;const dd=settings.equipd&&settings.equipd[k];if(Number.isFinite(dd))eqd[k]=Math.max(1,Math.min(ITEMS[id].dur,Math.round(dd)));}}
 const defTotal=()=>ARMOR_ORDER.reduce((a,k)=>a+(eq[k]?armorDef(eq[k]):0),0);
 const defRed=()=>{const d=defTotal();return d/(d+25);};
+/* 화염·독 지속 피해를 한 번 받을 때마다 없앨 확률(%): 방어구가 없으면 0, 있으면 기본 5, 입은 방어구의 재질 단계가 오를 때마다 +3.75 (입은 조각의 평균 단계) */
+const ARMOR_TIER=(()=>{const o={};ARMOR_MATS.slice().sort((x,y)=>ARMOR_MUL[x]-ARMOR_MUL[y]).forEach((m,i)=>{o[m]=i;});return o;})();
+function dotResist(){let n=0,t=0;for(const k of ARMOR_ORDER){const a=eq[k]&&armorInfo(eq[k]);if(a){n++;t+=ARMOR_TIER[a.mat]|0;}}return n?5+3.75*(t/n):0;}
 ITEMS.armorbench={name:'갑옷제작대',place:'armorbench',icon(g){
   g.fillStyle='#3d2412';g.fillRect(1,7,10,4);g.fillStyle='#8a5a2b';g.fillRect(2,8,8,1);g.fillStyle='#6b4423';g.fillRect(2,9,1,3);g.fillRect(9,9,1,3);
   g.fillStyle='#2a2d38';g.fillRect(3,3,7,2);g.fillRect(1,3,3,1);g.fillRect(5,5,3,2);g.fillStyle='#c3c5cf';g.fillRect(3,3,7,1);
@@ -4648,7 +4652,7 @@ function saveWorld(force){
       v:1,vpt:world.vpt||null,mg:world.mg||[],tf:world.tf||null,vr:world.vars||{},rc:world.rcIt||null,stc:world.stc||{},nt:world.nt|0,pt:Math.round(world.pt||0),pe:Math.round(world.pe||0),clock:Math.round(world.clock),removed:rem,brem:brm,ores:world.conv,trader:world.trader,lastTraderDay:world.lastTraderDay,expl:packBits(world.expl),treasureInit:!!world.treasureInit,lmChestInit:world.lmChestInit|0,pirInit:world.pirInit|0,ruinInit:world.ruinInit|0,dvo:world.dvo||[],dvk:world.dvk||{},trClean:world.trClean|0,dunFl:world.dunFl||{},dunBD:world.dunBD|0,fortBD:world.fortBD|0,skyDay:world.skyDay||{},dby:world.discBy||{},gsDay:world.gsDay|0,trains:[...(world.trains||[]),...((typeof P!=='undefined'&&P&&P.train)?[P.train]:[])].slice(0,40).map(T=>({x:T.gx,y:T.gy,dx:T.dx,dy:T.dy,p:Math.round(T.p*100)/100,run:T.run?1:0,it:(T.it||[]).map(q=>q?Object.assign({},q):null)})),herd:animals.filter(a=>a.tame).map(a=>[ANIM_IDX.indexOf(a.type),Math.round(a.hx),Math.round(a.hy),a.baby?1:0,Math.round(a.gt||0)]),disc:world.disc.map(b=>b?'1':'0').join(''),seen:world.seen.map(b=>b?'1':'0').join(''),escaped:!!world.escaped,pilot:world.pilot?1:0,vship:world.voidShip?world.voidShip.x+','+world.voidShip.y:'',voidWon:world.voidWon|0,voidBD:world.voidBD|0,intro:world.introSeen?1:0,bossDay:world.bossDay.join(','),
       beltv:2,
       fauna:animals.slice(0,300).map(a=>[ANIM_IDX.indexOf(a.type),Math.round(a.x),Math.round(a.y),Math.round((+a.hp||0)*10)/10,a.tame?1:0,a.baby?1:0,Math.round(a.gt||0),Math.round(a.hx||a.x),Math.round(a.hy||a.y),Math.round(a.fed||0),Math.round(a.mt||0)]),
-      mons:monsters.filter(m=>m&&!m.boss&&!m.of&&!m.rit&&!m.burn&&!m.hid&&!m.dead&&MT_KEYS.indexOf(m.ty)>=0&&Number.isFinite(m.x)&&!(typeof dunFloorAt==='function'&&dunFloorAt(m.x,m.y))).slice(0,150).map(m=>[MT_KEYS.indexOf(m.ty),Math.round(m.x),Math.round(m.y),Math.round((+m.hp||1)*10)/10,m.elite?1:0,m.mhp|0]),
+      mons:monsters.filter(m=>m&&!m.of&&!m.rit&&!m.burn&&!m.hid&&!m.dead&&MT_KEYS.indexOf(m.ty)>=0&&Number.isFinite(m.x)&&!(typeof dunFloorAt==='function'&&dunFloorAt(m.x,m.y))).slice(0,150).map(m=>[MT_KEYS.indexOf(m.ty),Math.round(m.x),Math.round(m.y),Math.round((+m.hp||1)*10)/10,m.elite?1:0,m.mhp|0,m.boss?1:0,m.isl|0,m.ph|0]),
       structs:world.structs.filter(b=>!b.lm).map(b=>Object.assign({id:b.id,gx:b.gx,gy:b.gy},exOf(b))),
       drops:drops.map(d=>({x:Math.round(d.tx),y:Math.round(d.ty),v:d.v,item:d.item||'stick',n:d.n||1,dur:d.dur})),
       cargo:(world.cargo||[]).map(e=>({fq:e.fq,item:e.item,n:e.n,dur:e.dur,sx:e.sx,sy:e.sy,dx:e.dx,dy:e.dy,gx:e.gx,gy:e.gy,rem:e.rem,tot:e.tot,ox:e.ox,oy:e.oy,pir:e.pir,hit:e.hit})),
@@ -4676,8 +4680,8 @@ function applySave(){
   if(!isGuest()&&Array.isArray(d.fauna)){   // 동물은 종류·수·위치·체력·길들임까지 그대로 (예전 저장에는 길들인 동물만 있어요)
     animals=[];for(const q of d.fauna.slice(0,300)){const ty=ANIM_IDX[q[0]];if(!ty||!Number.isFinite(+q[1])||!Number.isFinite(+q[2]))continue;const T=ANIM_TYPES[ty],x=+q[1],y=+q[2],a={id:nextAid++,type:ty,x,y,tx:x,ty:y,f:1,hp:Math.max(1,Math.min(T.hp,+q[3]||T.hp)),hurt:0,wt:0,wa:0,ws:0,flee:0,fx:0,fy:0,stun:0,kx:0,ky:0,lay:0,fed:Math.max(0,q[9]|0),mt:Math.max(0,Math.min(60,q[10]|0))||25};if(q[4]){a.tame=1;a.baby=q[5]?1:0;a.gt=q[6]||0;a.hx=Number.isFinite(+q[7])?+q[7]:x;a.hy=Number.isFinite(+q[8])?+q[8]:y;a.love=0;a.bc=0;}animals.push(a);}
   }
-  if(!isGuest()&&Array.isArray(d.mons)){   // 몬스터도 종류·수·위치·체력 그대로 (보스와 의식·소환 몬스터는 제외)
-    for(const q of d.mons.slice(0,150)){const ty=MT_KEYS[q[0]],T=ty&&MTYPES[ty];if(!T||T.boss||!Number.isFinite(+q[1])||!Number.isFinite(+q[2]))continue;const x=+q[1],y=+q[2],m={id:nextMid++,ty,x,y,tx:x,ty2:y,f:1,born:0,burn:0,wt:0,wa:0,ws:0,spd:T.wander,hp:Math.max(1,Math.min(+q[5]||T.hp,+q[3]||T.hp)),st:0,wind:0,cd:1,stun:0,hurt:0,kx:0,ky:0};if(q[4]){m.elite=1;m.mhp=(q[5]|0)||Math.round(T.hp*2.5);}monsters.push(m);}
+  if(!isGuest()&&Array.isArray(d.mons)){   // 몬스터도 종류·수·위치·체력 그대로, 보스는 남은 체력 그대로 (의식·소환 몬스터는 제외)
+    for(const q of d.mons.slice(0,150)){const ty=MT_KEYS[q[0]],T=ty&&MTYPES[ty];if(!T||!!T.boss!==!!q[6]||!Number.isFinite(+q[1])||!Number.isFinite(+q[2]))continue;if(q[6]&&monsters.some(z=>z.boss&&z.isl===(q[7]|0)))continue;const x=+q[1],y=+q[2],m={id:nextMid++,ty,x,y,tx:x,ty2:y,f:1,born:0,burn:0,wt:0,wa:0,ws:0,spd:T.wander,hp:Math.max(1,Math.min(+q[5]||T.hp,+q[3]||T.hp)),st:0,wind:0,cd:1,stun:0,hurt:0,kx:0,ky:0};if(q[4]){m.elite=1;m.mhp=(q[5]|0)||Math.round(T.hp*2.5);}if(q[6]){m.boss=true;m.isl=q[7]|0;m.pcd=2;m.cd=2;m.ph=q[8]|0;if(m.hp<=T.hp*0.5)m.rage=true;}monsters.push(m);}
   }
   if(typeof d.disc==='string')for(let i=0;i<world.disc.length;i++)if(d.disc[i]==='1')world.disc[i]=true;
   if(typeof d.seen==='string')for(let i=0;i<world.seen.length;i++)if(d.seen[i]==='1')world.seen[i]=true;
@@ -6245,7 +6249,7 @@ function renderEquip(){
     }else{ITEMS[`ar_${k}_iron_2`].icon(g);el.classList.add('empty');el.title=ARMOR_PIECES[k].name+' 칸';bar.style.display='none';}
   }
   {const el=$('#eqbag'),g=el.firstChild.getContext('2d');g.clearRect(0,0,12,12);(ITEMS[bagSlot?bagId:'bag']||ITEMS.bag).icon(g);el.classList.toggle('empty',!bagSlot);}
-  const d=defTotal();$('#eqdef').textContent=d>0?`방어 ${d.toFixed(1)} · 피해 -${Math.round(defRed()*100)}%${fullSet('leather')?' · 방한':''}`:'';
+  const d=defTotal();$('#eqdef').textContent=d>0?`방어 ${d.toFixed(1)} · 피해 -${Math.round(defRed()*100)}% · 화독 무효 ${dotResist().toFixed(1)}%${fullSet('leather')?' · 방한':''}`:'';
 }
 function afterEq(){renderEquip();persist();renderInv();if(ARMOR_ORDER.every(k=>eq[k]))achGrant('armor_full');}
 $('#equip').addEventListener('click',e=>{
@@ -6543,6 +6547,7 @@ function drawGrave(g){
 }
 function die(){
   if(P.dead)return;
+  try{saveWorld(true);}catch(e){}   // 죽는 순간의 보스 체력·동물·몬스터도 저장해요
   MODX.victim=myName();MODX.attacker=(time-LASTHIT.t<10&&LASTHIT.n)?LASTHIT.n:'환경';MODX.ap=false;MODX.vp=true;
   stAdd('death');
   // 인벤토리·가방·제작칸·손·갑옷을 모두 떨궈요 (보트도 포함)
@@ -9659,7 +9664,7 @@ function updateHazards(dt){
   const id=(P.sailing||P.air||safe)?-1:bioAt(P.x,P.y);P.bioId=id>0?id:0;
   st.cold=(id===8&&!fullSet('leather'))?5:0;
   hz.tick+=dt;
-  if(hz.tick>=1){hz.tick-=1;if(st.poison>0)dotDamage(0.5);if(st.burn>0)dotDamage(1);}
+  if(hz.tick>=1){hz.tick-=1;const rs=dotResist();if(st.poison>0&&!(Math.random()*100<rs))dotDamage(0.5);if(st.burn>0&&!(Math.random()*100<rs))dotDamage(1);}
   if(st.poison>0)st.poison=Math.max(0,st.poison-dt);
   if(st.burn>0)st.burn=Math.max(0,st.burn-dt);
   const hour=hourNow(),day=hour>=7&&hour<19;
