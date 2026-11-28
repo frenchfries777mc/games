@@ -494,7 +494,7 @@ window.bfIntro=function(){if(run)return;run=1;window.__bfIon=1;t0=Date.now();el.
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.6<br>build 229</p>
+    <p class="foot">v0.6<br>build 230</p>
   </nav>
 </div>
 
@@ -15458,12 +15458,12 @@ function csMerge(row,uid){
       if(cur===null){localStorage.setItem(k,v);ch++;continue;}
       if(cur===v)continue;
       if(k.indexOf('stranded.save.v5.')===0){const a=js(cur),b=js(v);if(a&&b&&(+b.clock||0)>(+a.clock||0)){localStorage.setItem(k,v);ch++;}}
-      else if(k==='bf.mods.on'){const x=js(cur)||{},y=js(v)||{};const s=JSON.stringify(Object.assign({},y,x));if(s!==cur){localStorage.setItem(k,s);ch++;}}
+      else if(k==='bf.mods.on'){const x=js(cur)||{},y=js(v)||{},o=Object.assign({},y,x);if(Object.keys(o).length>Object.keys(x).length){localStorage.setItem(k,JSON.stringify(o));ch++;}}
       else if(k==='stranded.lobby.v1'){
         const L=js(cur)||{},OL=js(v)||{},lw=Array.isArray(L.worlds)?L.worlds:[],ow=Array.isArray(OL.worlds)?OL.worlds:[];
         const m=lw.concat(ow.filter(w=>w&&!lw.some(x=>x&&x.id===w.id)));
         const N=Object.assign({},OL,L);N.worlds=m;if(!N.current||!m.some(w=>w&&w.id===N.current))N.current=OL.current||(m[0]&&m[0].id);
-        const s=JSON.stringify(N);if(s!==cur){localStorage.setItem(k,s);ch++;}
+        if(m.length>lw.length||N.current!==L.current){localStorage.setItem(k,JSON.stringify(N));ch++;}else if(Object.keys(N).length>Object.keys(L).length)localStorage.setItem(k,JSON.stringify(N));   // 바뀐 게 없으면 다시 열지 않아요 (열 때마다 합쳐도 끝없이 다시 열리지 않게)
       }
     }catch(e){}
   }
@@ -15505,7 +15505,7 @@ async function csLogin(uid){
   if(csUid!==uid)return;
   let lt=0,lu='';try{lt=Date.parse(localStorage.getItem(CS_T)||'')||0;lu=localStorage.getItem(CS_U)||'';}catch(e){}
   const has=row&&row.data&&typeof row.data==='object'&&Object.keys(row.data).length>0;
-  if(has&&(lu!==uid||(Date.parse(row.updated_at)||0)>lt)){
+  if(has){   // 로그인할 때마다 서버 저장과 합쳐요: 이 기기가 서버보다 오래된 상태여도 서버 저장을 덮어쓰지 않게
     const local=Object.keys(csKeys()).some(k=>k.indexOf('stranded.save.v5.')===0);
     if(!local){csLoad(row,uid);return;}
     csMerge(row,uid);return;
