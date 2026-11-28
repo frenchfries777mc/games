@@ -48,7 +48,7 @@ WorkingDirectory=/opt/ff-host
 EnvironmentFile=/etc/ff-host.env
 ExecStart=$(command -v node) /opt/ff-host/ff-host.js
 Restart=always
-RestartSec=5
+RestartSec=30
 [Install]
 WantedBy=multi-user.target
 UNIT

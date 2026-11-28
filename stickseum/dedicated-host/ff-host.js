@@ -109,7 +109,7 @@ async function startDispatcher(){
   await page.waitForFunction(()=>window.__ffd && typeof window.Peer==='function', null, {timeout:60000});
   await page.evaluate(()=>window.__ffd.dispatch());
   log('방 부탁 받는 중 (최대', MAXR, '방)');
-  setInterval(async()=>{ try{ const s=await page.evaluate(()=>window.__ffd.dispState()); if(!s.open && !stopping){ if(++dispBad>=5){ log('부탁 창구가 닫혀서 다시 시작해요', s.err); process.exit(1); } } else dispBad=0; }catch(e){ log('창구 확인 실패, 다시 시작해요'); process.exit(1); } }, 10000);
+  setInterval(async()=>{ try{ const s=await page.evaluate(()=>window.__ffd.dispState()); if(!s.open && !stopping){ if(++dispBad>=5){ log('부탁 창구가 닫혀서 다시 시작해요', s.err); await sleep(60000); process.exit(1); } } else dispBad=0; }catch(e){ log('창구 확인 실패, 다시 시작해요'); await sleep(60000); process.exit(1); } }, 10000);
 }
 let dispBad=0;
 async function main(){
@@ -122,7 +122,7 @@ async function main(){
     const waiting=live.filter(h=>!h.started).length;
     if(waiting<WAITING && live.length<MAXR){
       const h=await openRoom();
-      if(h){ fails=0; live.push(h); watch(h); } else { fails++; await sleep(Math.min(30000, 2000*fails)); }
+      if(h){ fails=0; live.push(h); watch(h); } else { fails++; await sleep(Math.min(300000, 5000*Math.pow(2, Math.min(fails,6)))); }      // (안 열리면 5초, 10초, 20초... 최대 5분까지 늘려요: 계속 실패하는데 몇 초마다 게임을 통째로 받으면 서버와 사이트에 부담이 커요)
       continue;
     }
     if(RESTART_H>0 && Date.now()-T0>RESTART_H*3600*1000 && live.every(h=>!h.started)){ log('새 빌드를 받으러 다시 시작해요'); break; }
